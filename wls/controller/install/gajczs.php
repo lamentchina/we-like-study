@@ -1,5 +1,5 @@
 <?php
-class install_xznlcs extends wls {
+class install_gajczs extends wls {
 
 	public $ques = array();
 	
@@ -9,41 +9,27 @@ class install_xznlcs extends wls {
 
 	public $content = null;
 
-	public $paper = array();
-
-
-	public function readContent($path=null){
-		if(isset($_REQUEST['path']) && $path==null)$path = $_REQUEST['path'];
-		$path = mb_convert_encoding($path,'GBK','UTF-8');
-		$content = file($path);
-		$content = implode("\n", $content);
-//		$content = mb_convert_encoding($content,'UTF-8','GBK');
-		$content = str_replace("DISPLAY: none","",$content);
-		$content = str_replace("A. ","A) ",$content);
-		$content = str_replace("B. ","B) ",$content);
-		$content = str_replace("C. ","C) ",$content);
-		$content = str_replace("D. ","D) ",$content);
-		$content = str_replace("<a id=\"donw\" href=\"","",$content);
-
-		$this->content = $content;
-
-	}
+	public $paper = array(
+		'id'=>0,
+		'title'=>0,
+		'title_quiz_type'=>0,
+		'id_quiz_type'=>0,
+	);
 	
 	public function readList(){
-		//http://wei1224hf.gicp.net:8067/plugins/wls/wls.php?controller=install_xznlcs&action=readList
-		$content = file("http://www.yfzxmn.cn/com/left/left.jsp?so_id=13&su_id=5");  
+		$content = file("http://www.yfzxmn.cn/com/left/left.jsp?so_id=49&su_id=5");  
 		$content = implode("\n", $content);
 		$content = mb_convert_encoding($content,'UTF-8','GBK');
 		$content = str_replace("\n","",$content);
 		
-		$fileName="file/yf/国家公务员_行政职业能力.list";
+		$fileName="file/yf/国家公务员_公安基础知识.list";
 		$fileName = mb_convert_encoding($fileName,'GBK','UTF-8');
 		$handle=fopen($fileName,"a");
 		fwrite($handle,$content);
 		fclose($handle);
 		
 		$arr2 = explode("ex_id=",$content);
-		$fileName="file/yf/国家公务员_行政职业能力.downlist";
+		$fileName="file/yf/国家公务员_公安基础知识.downlist";
 		$fileName = mb_convert_encoding($fileName,'GBK','UTF-8');
 		$handle=fopen($fileName,"a");
 		$ids = '';
@@ -54,14 +40,14 @@ class install_xznlcs extends wls {
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
 		fclose($handle);
-
-		$fileName="file/yf/国家公务员_行政职业能力.ids";
+		
+		$fileName="file/yf/国家公务员_公安基础知识.ids";
 		$fileName = mb_convert_encoding($fileName,'GBK','UTF-8');
 		$handle=fopen($fileName,"a");
 		fwrite($handle,$ids);
-		fclose($handle);			
+		fclose($handle);
 		
-//		$this->downLoadPaper($ids);
+		$this->downLoadPaper($ids);
 	}
 	
 	public function downLoadPaper($ids){
@@ -78,9 +64,10 @@ var index = 0;
 var readPaper = function(){
 	if(index==arr.length-1)return;
 	$.ajax({
-		url: \"wls.php?controller=install_xznlcs&action=downLoadPaper2&id=\"+arr[index],
+		url: \"wls.php?controller=install_gajczs&action=downLoadPaper2&id=\"+arr[index],
 		success: function(msg){
 			$(\"#console\").html($(\"#console\").html()+\"<br/>下载试卷\"+arr[index]);
+			$(\"#index\").html(arr[index]+':'+arr.length);
 			index ++;
 			readPaper(index);
 		}
@@ -90,6 +77,7 @@ readPaper();
 </script>
 </head>
 <body>
+<div id='index'><div>
 <div id=\"console\"><div>
 </body>
 </html>
@@ -98,7 +86,7 @@ readPaper();
 	}
 	
 	public function downLoadPaper2(){
-		$fileName="file/yf/公务员类/模拟题试卷/国家公务员/行政职业能力/5_".$_REQUEST['id'].".html";
+		$fileName="file/yf/公务员类/模拟题试卷/国家公务员/公安基础知识/5_".$_REQUEST['id'].".html";
 		$fileName = mb_convert_encoding($fileName,'GBK','UTF-8');
 		if(file_exists($fileName)){
 			return;
@@ -107,6 +95,25 @@ readPaper();
 			$data = mb_convert_encoding($data,'UTF-8','GBK');
 			file_put_contents($fileName,$data);
 		}
+	}
+
+
+	public function readContent($path=null){
+		if(isset($_REQUEST['path']) && $path==null)$path = $_REQUEST['path'];
+		if($path==null)$path = "E:/Projects/WEBS/PHP/Discuz_7_2/upload/plugins/wls/file/yf/公务员类/模拟题试卷/国家公务员/公安基础知识/".$_REQUEST["id"].".html";
+		$path = mb_convert_encoding($path,'GBK','UTF-8');
+		$content = file_get_contents($path);
+//		$content = implode("\n", $content);
+		$content = str_replace("DISPLAY: none","",$content);
+		$content = str_replace("A. ","A) ",$content);
+		$content = str_replace("B. ","B) ",$content);
+		$content = str_replace("C. ","C) ",$content);
+		$content = str_replace("D. ","D) ",$content);
+		$content = str_replace("<a id=\"donw\" href=\"","",$content);
+
+		$this->content = $content;
+		echo ($content);
+
 	}
 
 	public function getRead(){
@@ -136,17 +143,17 @@ readPaper();
 	public function read(){
 		$this->readContent();
 
-		$this->savePaper();
+//		$this->savePaper();
 		$this->getQuestions();
 		$this->getRead();
-		$this->saveQuestion();
+//		$this->saveQuestion();
 		$this->getImages();
-		$this->updatePaper();
-		echo json_encode(
-			array(
-				'id'=>$this->paper['id']
-			)
-		);
+//		$this->updatePaper();
+//		echo json_encode(
+//			array(
+//				'id'=>$this->paper['id']
+//			)
+//		);
 	}
 
 	public function getImages(){
@@ -171,15 +178,22 @@ readPaper();
 		if(isset($_REQUEST['path']) && $path==null)$path = $_REQUEST['path'];
 		$f= fopen($path,"r");
 		while (!feof($f)){
-			$line = fgets($f);
-			$this->GrabImage($line);			
+			$url = fgets($f);			
+
+			$ext=strrchr($url,"/");
+			$filename="file/images/tp/gwy".$ext;			
+			
+			if(file_exists(trim($filename))){
+				return;
+			}else{
+				$img=file_get_contents(trim($url));
+				file_put_contents(trim($filename),$img);
+			}			
 		}
 		fclose($f);
 	}
 	
 	public function read2(){
-		$path = "公务员类/模拟题试卷/国家公务员/行政职业能力";
-//		$path = mb_convert_encoding($path,'GBK','UTF-8');
 		$html = "
 <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html xmlns=\"http://www.w3.org/1999/xhtml\">
@@ -188,16 +202,13 @@ readPaper();
 <script src=\"libs/DWZ/javascripts/jquery-1.4.2.js\" type=\"text/javascript\"></script>
 <script src=\"libs/jqueryextend.js\" type=\"text/javascript\"></script>
 <script type=\"text/javascript\">
-var arr = [201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,246,247,248,249,250,251,252,253,254,255,313,314,315,316,317,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,503,504,505,506,507,508,509,510,511,512,513,514,515,516,517,518,519,520,521,522,523,524,525,526,527,528,529,530,531,533,534,535,536,537,727,728,729,730,731,744,745,746,747,751,752,753,754,755,756,757,758,759,761,762,763,764,765,766,767,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,784,785,786,787,788,789,790,791,792,793,794,795,796,797,798,799,800,801,1292,1293,1294,1295,1296,1297,1298,1299,1300,1301,1302,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1437,1455,1456,1457,1458,1459,1460,1461,1462,1463,1464,1465,1466,1467,1468,1469,1470,1471,1472,1473,1474,1475,1476,1477,1670,1671,1672,1928,1929,1930,1931,1932,1933,1934,1935,1936,1937,1938,1939,1940,1941,1942,1943,1944,1945,1946,1947,1948,1949,1950,1951,1952];
-var index = 0;
-var readPaper = function(){	
+var index = 1;
+var readPaper = function(id){
 	$.ajax({
-		url: \"wls.php?controller=install_xznlcs&action=read\",
-		data:{path:\"file/yf/".$path."/5_\"+arr[index]+\".html\",id_:arr[index]},
-		type: \"POST\",
+		url: \"wls.php?controller=install_xznlcs&action=read&path=E:/TDDOWNLOAD/yf/%B9%FA%BC%D2%B9%AB%CE%F1%D4%B1_%B9%AB%B9%B2%BB%F9%B4%A1%D6%AA%CA%B6/examcontext(\"+id+\").jsp\",
 		success: function(msg){
 			var obj = jQuery.parseJSON(msg);
-			$(\"#console\").html($(\"#console\").html()+\"<br/>导入试卷\"+arr[index]);
+			$(\"#console\").html($(\"#console\").html()+\"<br/>导入试卷\"+id);
 			readImages(obj.id);
 		}
 	});
@@ -207,14 +218,14 @@ var readImages = function(id){
 		url: \"wls.php?controller=install_xznlcs&action=downloadImages&path=file/yf/\"+id+\"_images.downlist\",
 		success: function(msg){
 			//var obj = jQuery.parseJSON(msg);
-			$(\"#console\").html($(\"#console\").html()+\"<br/>导入图片\"+arr[index]);
-			if(index==arr.length-1)return;
+			$(\"#console\").html($(\"#console\").html()+\"<br/>导入图片\"+id);
+			if(index==11)return;
 			index++;
-			readPaper();
+			readPaper(index);
 		}
 	});
 }
-readPaper();
+readPaper(index);
 </script>
 </head>
 <body style=\"border: 0px; padding: 0px; margin: 0px;\">
@@ -358,6 +369,7 @@ readPaper();
 			}
 			$this->ques[] = $data;
 		}
+		print_r($this->ques);
 	}
 
 	public function saveQuestion(){

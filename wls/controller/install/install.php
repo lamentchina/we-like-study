@@ -36,10 +36,6 @@ class install{
 	}
 	
 	public function step2(){
-		include_once 'controller/user.php';
-		$obj = new user();
-		$obj->initTable();			
-
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
 		$obj->initTable();		
@@ -68,7 +64,10 @@ class install{
 		if($obj->cfg->cmstype=='discuz'){
 			include_once 'controller/install/discuz.php';
 			$obj2 = new install_discuz();
+			
 			$obj2->initGroup();
+			$obj2->extendUser();
+			$obj2->rewirteConfig($obj2->rewrite);
 		}		
 		
 		$data = array(

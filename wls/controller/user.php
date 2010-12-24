@@ -1,110 +1,18 @@
 <?php
 class user extends wls {
 	
-	public function initTable(){
-		$conn = $this->conn();
-		$pfx = $this->cfg->dbprefix;
-		
-		$sql = "drop table if exists ".$pfx."wls_user;";
-		mysql_query($sql,$conn);
-		$sql = "		
-			create table ".$pfx."wls_user(
-				 id int primary key auto_increment	comment '自动编号'
-				,id_user int not null				comment '从另外一个系统同步过来的用户编号,使之一一对应'
-				,id_group varchar(200)				comment '用户组编号'
-				,title_group varchar(200) 			comment '用户组名称'
-				,sex int default 0					comment '性别'
-				,name varchar(200) default '张三'	comment '姓名'
-				,money int default 0				comment '学习币'
-				,money_used int default 0			comment '已消费的学习币'
-				,cents int default 0				comment '积分'
-				,count_wrongs int default 0			comment '错题累积数'
-				,count_papers int default 0			comment '累积做了几篇试卷'
-				,ids_papers text					comment '总共做了哪些试卷,存储试卷编号'
-				,photo varchar(200) default 'file/user/none.jpg' comment '用户照片'
-				,myquiz varchar(200) default ''		comment '我参加的考试科目'
-			) DEFAULT CHARSET=utf8 					comment='用户信息,同步自原有系统';
-			";
-
-		mysql_query($sql,$conn);
-		
-//		$sql = "drop table if exists ".$pfx."wls_user_group;";
-//		mysql_query($sql,$conn);
-//		$sql = "		
-//			create table ".$pfx."wls_user_group(
-//				 id int primary key auto_increment	comment '自动编号'
-//				,name varchar(200) default '用户组' comment '用户组'
-//				,id_parent int default 0			comment '上级编号'
-//				,ordering int default 0				comment '排序'
-//				,description text					comment '说明'
-//			) DEFAULT CHARSET=utf8 					comment='此用户组中的内容只用于WLS本身';
-//			";
-//		mysql_query($sql,$conn);		
-	}	
-	
 	public function getUserInfo($id=null){
-
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();		
 		
 		$data = null;
 		if($id==null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
-
-		if($id==null || $id=='mine' ){
-
-			//需要依赖COOKIE和SESSION
-//			if(!isset($_SESSION))session_start();
-//			if(!isset($_SESSION['wls_user']) || count($_SESSION['wls_user'])==1){
-				$cms = $this->cfg->cmstype;
-				if($cms=='discuz'){
-					if(isset($_COOKIE['qW3_sid'])){
-						$sid = $_COOKIE['qW3_sid'];
-						$sql = "select uid from ".$pfx."sessions where sid = '".$sid."'";
-						$res = mysql_query($sql,$conn);
-						$temp = mysql_fetch_assoc($res);	
-						$id = $temp['uid'];		
-					}else{
-						$id = 0;
-					}
-				}
-				if($id!=0){
-					$sql_ = "select *					
-						from ".$pfx."wls_user 
-						where id_user = ".$id.";";
-					$res_ = mysql_query($sql_,$conn);
-					if($data = mysql_fetch_assoc($res_)){
-						return $data;
-					}else{
-						if($cms=='discuz'){
-							include_once 'controller/install/discuz.php';
-							$obj = new install_discuz();
-							$obj->updateUser($id);
-						}
-						return $this->getUserInfo($id);
-					}
-					
-//					$_SESSION['wls_user'] = $data;
-				}else{
-//					$_SESSION['wls_user'] = array('id_user'=>0,'id_group'=>0);
-					$data = array('id_user'=>0,'id_group'=>0,'photo'=>'file/images/user/none.jpg','name'=>'访客','sex'=>'0',
-					'money'=>'0','cents'=>0,'count_wrongs'=>0,'count_papers'=>0,'myquiz'=>'所有测试用试卷');
-				}			
-//			}else{
-//				$data = $_SESSION['wls_user'];
-//			}
-		}else{
-			$sql_ = "select id_user,id_group,money,cents,count_wrongs,count_papers,sex,name,photo						
-				from ".$pfx."wls_user 
-				where id_user = ".$id.";";
-			$res_ = mysql_query($sql_,$conn);
-			if($temp = mysql_fetch_assoc($res_)){
-				$data = $temp;
-			}else{
-				$data = array('id_user'=>0,'id_group'=>0,'photo'=>'file/images/user/none.jpg','name'=>'访客','sex'=>'0',
-			'money'=>'0','cents'=>0,'count_wrongs'=>0,'count_papers'=>0,'myquiz'=>'所有测试用试卷');
-			}
+		if($this->cfg->cmstype=='discuz'){
+			include_once 'controller/install/discuz.php';
+			$obj = new install_discuz();		
+			$data = $obj->getUserInfo($id);				
 		}
-
+		
 		return $data;
 	}
 	
@@ -113,6 +21,9 @@ class user extends wls {
 	}
 	
 	public function viewProfile($id=null){	
+		
+		
+
 		$userinfo = $this->getUserInfo('mine');
 		if($userinfo['id_user']==0){
 			echo "
@@ -137,7 +48,7 @@ class user extends wls {
 		
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
-		$quiztypeList = $obj->getList('array',1,100,null);
+		$quiztypeList = $obj->getListWithLevel();
 		
 		
 		include_once 'controller/quiz/record.php';

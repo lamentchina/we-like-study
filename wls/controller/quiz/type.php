@@ -18,6 +18,7 @@ class quiz_type extends wls{
 			create table ".$pfx."wls_quiz_type(
 				 id int AUTO_INCREMENT primary key 	comment '自动编号'
 				,id_parent int default 0			comment '上级编号'
+				,haschild int default 0				comment '是否含有下级科目'
 				,title varchar(200) 				comment '科目名称'
 				,creator varchar(200) not null		comment '创建者'
 				,ordering int default 0 			comment '排序'
@@ -52,24 +53,49 @@ class quiz_type extends wls{
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 		
+		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,haschild,title,creator,date_created)
+		VALUES ('0','1', '英语', 'admin', '".date('Y-m-d')."')";
+		mysql_query($sql,$conn);
+		$id = mysql_insert_id($conn);
+		
 		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('0', '大学英语三级', 'admin', '".date('Y-m-d')."')";
+		VALUES ('".$id."', '公共英语四级', 'admin', '".date('Y-m-d')."')";
 		mysql_query($sql,$conn);
 		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('0', '大学英语四级', 'admin', '".date('Y-m-d')."')";
+		VALUES ('".$id."', '大学英语四级', 'admin', '".date('Y-m-d')."')";
 		mysql_query($sql,$conn);
 		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('0', '大学英语六级', 'admin', '".date('Y-m-d')."')";
+		VALUES ('".$id."', '大学英语六级', 'admin', '".date('Y-m-d')."')";
+		mysql_query($sql,$conn);
+		
+		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,haschild,title,creator,date_created)
+		VALUES ('0','1', '公务员', 'admin', '".date('Y-m-d')."')";
+		mysql_query($sql,$conn);
+		$id = mysql_insert_id($conn);		
+		
+		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
+		VALUES ('".$id."', '公共基础', 'admin', '".date('Y-m-d')."')";
 		mysql_query($sql,$conn);
 		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('0', '托福考试', 'admin', '".date('Y-m-d')."')";
+		VALUES ('".$id."', '行政能力', 'admin', '".date('Y-m-d')."')";
 		mysql_query($sql,$conn);
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('0', '雅思考试', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('0', '行政能力', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
+	}
+	
+	public function getListWithLevel(){
+		$data = $this->getList('array');
+		$data = $data['rows'];
+		$arr = array();
+		for($i=0;$i<count($data);$i++){
+			if($data[$i]['id_parent']==0){
+				$arr[$data[$i]['id']] = $data[$i];
+			}else{
+				$arr[$data[$i]['id_parent']]['child'][] = $data[$i];
+			}
+			if($data[$i]['haschild']==1){
+				$arr[$data[$i]['id']]['child'] = array();
+			}			
+		}
+		return $arr;
 	}
 	
 	public function getList($returnType = null,$page=null,$rows=null,$search=null){
