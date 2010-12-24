@@ -88,8 +88,18 @@ if ($.browser.msie) {
 							<li><a href="wls.php?controller=quiz_paper_paper&action=getDWZlist" target="navTab">所有试卷</a>
 								<ul>
 								<?php 
-									for($i=0;$i<count($quiztypeList['rows']);$i++){
-										echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList['rows'][$i]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList['rows'][$i]['id']."\">".$quiztypeList['rows'][$i]['title']."</a></li>";
+									$keys = array_keys($quiztypeList);
+									for($i=0;$i<count($keys);$i++){
+										if(isset($quiztypeList[$keys[$i]]['child'])){
+											echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['id']."\">".$quiztypeList[$keys[$i]]['title']."</a>";
+											echo "<ul>";
+											for($ii=0;$ii<count($quiztypeList[$keys[$i]]['child']);$ii++){
+												echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['child'][$ii]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['child'][$ii]['id']."\">".$quiztypeList[$keys[$i]]['child'][$ii]['title']."</a></li>";
+											}
+											echo "</ul></li>";
+										}else{
+											echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['id']."\">".$quiztypeList[$keys[$i]]['title']."</a></li>";
+										}
 									}
 								?>
 
