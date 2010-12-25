@@ -12,6 +12,10 @@
  * */
 class install_discuz extends wls {
 	
+	public function test(){
+		print_r($_SERVER);
+	}
+	
 	public $rewrite = array();
 
 	/**
@@ -223,7 +227,22 @@ class install_discuz extends wls {
 		$this->rewrite['group_admin']=$id1;
 		$this->rewrite['group_teacher']=$id2;
 		$this->rewrite['group_student']=$id3;
-
+	}
+	
+	public function initNav(){
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;
+		$sql = "insert into ".$pfx."navs (
+			 name
+			,title
+			,url
+			,available			
+		) values(
+			 'wls'
+			,'WeLikeStudy'
+			,'".$_SERVER['SCRIPT_NAME']."?controller=user&action=viewProfile'
+			,'1'
+		)  ";		
 	}
 }
 ?>

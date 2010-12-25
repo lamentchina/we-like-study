@@ -69,6 +69,7 @@ class install{
 			
 			$obj2->initGroup();
 			$obj2->extendUser();
+			$obj2->initNav();
 			$this->rewirteConfig($obj2->rewrite);
 		}		
 		

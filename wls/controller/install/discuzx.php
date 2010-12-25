@@ -229,5 +229,21 @@ class wlsconfig{
 		fwrite($file_handle,$content);
 		fclose($file_handle);
 	}
+	
+	public function initNav(){
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;
+		$sql = "insert into ".$pfx."common_nav (
+			 name
+			,title
+			,url
+			,available			
+		) values(
+			 'wls'
+			,'WeLikeStudy'
+			,'".$_SERVER['SCRIPT_NAME']."?controller=user&action=viewProfile'
+			,'1'
+		)  ";		
+	}
 }
 ?>
