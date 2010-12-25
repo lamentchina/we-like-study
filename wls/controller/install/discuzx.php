@@ -105,7 +105,7 @@ class install_discuzx extends wls {
 		$this->rewrite['user_extend_myquiz']='myquiz';
 		$this->rewrite['user_extend_wrongs']='wrongs';
 		$this->rewrite['user_extend_papers']='papers';
-
+		$this->rewrite['loginpath']='/member.php?mod=register';		
 	}
 
 	public function getUserInfo($id){
@@ -184,66 +184,31 @@ class install_discuzx extends wls {
 			return true;
 		}
 	}
-
-	/**
-	 * 重写配置文件
-	 * **/
-	public function rewirteConfig($foo=null){
-		if($this->cfg->debug!=1){
-			$this->hackAttack();
-			return;
-		}
-		$file_name = "config.php";
-		if(!$file_handle = fopen($file_name,"w")){
-			die("不能打開$file_name");
-		}
-		$arr = array();
-		$cfg = (array)$this->cfg;
-		$keys = array_keys($cfg);
-		for($i=0;$i<count($keys);$i++){
-			eval('$arr["'.$keys[$i].'"] = $this->cfg->'.$keys[$i].';');
-		}		
-		
-		
-		if($foo!=null){
-			$keys = array_keys($foo);
-			for($i=0;$i<count($foo);$i++){
-				$arr[$keys[$i]] = $foo[$keys[$i]];
-			}
-		}
-
-		$content = "
-<?php
-class wlsconfig{
-";
-		$keys = array_keys($arr);
-		for($i=0;$i<count($arr);$i++){
-			$content .= "
-			public \$".$keys[$i]." = '".$arr[$keys[$i]]."';";
-		}
-		$content.=
-"
-}
-?>
-		";
-		fwrite($file_handle,$content);
-		fclose($file_handle);
-	}
 	
 	public function initNav(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
-		$sql = "insert into ".$pfx."common_nav (
+		$sql = "delete from ".$pfx."common_nav where title = 'wls' ";
+		mysql_query($sql,$conn);
+		$sql = "
+		insert into ".$pfx."common_nav (
 			 name
 			,title
 			,url
-			,available			
+			,available	
+			,displayorder	
+			,highlight
+			,navtype	
 		) values(
-			 'wls'
-			,'WeLikeStudy'
+			 '在线考试学习'
+			,'wls'
 			,'".$_SERVER['SCRIPT_NAME']."?controller=user&action=viewProfile'
 			,'1'
-		)  ";		
+			,'9'
+			,'0'
+			,'0'
+		)  ";	
+		mysql_query($sql,$conn);		
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class install{	
+class install extends wls{	
 	public function main(){
 		include_once 'view/install/install.php';
 	}
@@ -67,7 +67,6 @@ class install{
 			include_once 'controller/install/discuzx.php';
 			$obj2 = new install_discuzx();
 			
-			$obj2->initGroup();
 			$obj2->extendUser();
 			$obj2->initNav();
 			$this->rewirteConfig($obj2->rewrite);
@@ -102,9 +101,7 @@ class install{
 		$keys = array_keys($cfg);
 		for($i=0;$i<count($keys);$i++){
 			eval('$arr["'.$keys[$i].'"] = $this->cfg->'.$keys[$i].';');
-		}
-		
-		
+		}	
 		
 		if($foo!=null){
 			$keys = array_keys($foo);
