@@ -3,7 +3,7 @@
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <title>WeLikeStudy 我们喜欢学习! 插件安装</title>
-<script src="/plugins/wls/libs/DWZ/javascripts/jquery-1.4.2.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/jquery-1.4.2.js" type="text/javascript"></script>
 <script type="text/javascript">
 var wls_install_step1 = function(){
 	$.ajax({
@@ -69,12 +69,15 @@ var wls_install_step3 = function(){
 				<select name="cmstype">
 					<option value="null" selected="selected">请选择</option>
 					<option value="discuz">Discuz</option>
+					<option value="discuzx">DiscuzX</option>
+					<!-- 
 					<option value="phpwind">phpWind</option>
 					<option value="x1">帝国CMS</option>
 					<option value="x2">织梦CMS</option>
 					<option value="joomla">Joomla</option>
 					<option value="drupal">Drupal</option>
 					<option value="wordpress">Wordpress</option>
+					 -->
 				</select>
 			</td>		
 		</tr>
