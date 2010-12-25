@@ -225,51 +225,5 @@ class install_discuz extends wls {
 		$this->rewrite['group_student']=$id3;
 
 	}
-
-	/**
-	 * 重写配置文件
-	 * **/
-	public function rewirteConfig($foo=null){
-		if($this->cfg->debug!=1){
-			$this->hackAttack();
-			return;
-		}
-		$file_name = "config.php";
-		if(!$file_handle = fopen($file_name,"w")){
-			die("不能打開$file_name");
-		}
-		$arr = array();
-		$cfg = (array)$this->cfg;
-		$keys = array_keys($cfg);
-		for($i=0;$i<count($keys);$i++){
-			eval('$arr["'.$keys[$i].'"] = $this->cfg->'.$keys[$i].';');
-		}
-		
-		
-		
-		if($foo!=null){
-			$keys = array_keys($foo);
-			for($i=0;$i<count($foo);$i++){
-				$arr[$keys[$i]] = $foo[$keys[$i]];
-			}
-		}
-		print_r($arr);
-		$content = "
-<?php
-class wlsconfig{
-";
-		$keys = array_keys($arr);
-		for($i=0;$i<count($arr);$i++){
-			$content .= "
-			public \$".$keys[$i]." = '".$arr[$keys[$i]]."';";
-		}
-		$content.=
-"
-}
-?>
-		";
-		fwrite($file_handle,$content);
-		fclose($file_handle);
-	}
 }
 ?>
