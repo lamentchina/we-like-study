@@ -100,7 +100,7 @@ readPaper();
 
 	public function readContent($path=null){
 		if(isset($_REQUEST['path']) && $path==null)$path = $_REQUEST['path'];
-		if($path==null)$path = "E:/Projects/WEBS/PHP/Discuz_7_2/upload/plugins/wls/file/yf/语言类/模拟题试卷/公共英语/公共英语4级/".$_REQUEST["id"].".html";
+		if($path==null)$path = "E:/Projects/WEBS/PHP/Discuz_7_2/upload/plugins/wls/file/yf/语言类/模拟题试卷/公共英语/公共英语4级/2_".$_REQUEST["id"].".html";
 		$path = mb_convert_encoding($path,'GBK','UTF-8');
 		$content = file_get_contents($path);
 //		$content = implode("\n", $content);

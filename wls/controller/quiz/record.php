@@ -221,7 +221,8 @@ class quiz_record extends wls {
 	 * 查看我个人最近的学习成绩变化曲线
 	 * */
 	public function getChart(){
-		$html = '			
+		$html = '	
+			<!--		
 			考试科目:
 			<select onchange="foo();">
 				<option value="1">CET4</option>
@@ -230,6 +231,7 @@ class quiz_record extends wls {
 			<input type="radio" name="w_q_r_c_r" onchange="foo();"  />排名<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>
 			历次测验正确率<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>知识点掌握度<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>时间投入
 			<div class="divider"></div>
+			-->
 			<b>历次测验学习成绩:</b>
 			<div id="w_q_r_c" style="width:98%;height:200px;"></div>
 			<div class="divider"></div>
