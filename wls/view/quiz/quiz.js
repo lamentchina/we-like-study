@@ -176,9 +176,8 @@ var wls_quiz = function(){
 			}			
 		}
 		
-		if(this.submitQuesWay=='onceAll'){
-			this.submit3(null);
-			
+		if(this.submitQuesWay=='onceAll' && this.type=='paper'){
+			this.isMyMoneyEnough(this.naming+".submit3(null)");	
 		}else{
 			this.submit2(0);
 		}		
@@ -218,11 +217,11 @@ var wls_quiz = function(){
 		var myAnswers = this.getMyAnswers();
 		if(this.count_giveup==this.questions_sub.length){
 			$.unblockUI();
-			alert('放弃的题目太多,无法不允许提交');
+			alert('放弃的题目太多,无效!');
 			$('.w_q_button',$('.w_q_sidebar')).css('display','');
-//			this.initButton();
 			return;
 		}
+
 		this.count_giveup = 0;
 		$.ajax({
 			url: thisObj.config.AJAXPATH+"?controller=quiz_quiz&action=checkAllOnce",

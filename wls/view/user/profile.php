@@ -15,9 +15,9 @@
 
 <script type="text/javascript">
 $(function(){	
-	DWZ.init("dwz.frag.xml", {
+	DWZ.init("file/dwz.frag.xml", {
 //		loginUrl:"loginsub.html", loginTitle:"登录",	// 弹出登录对话框
-		loginUrl:"login.html",	// 跳到登录页面
+//		loginUrl:"login.html",	// 跳到登录页面
 		debug:false,	// 调试模式 【true|false】
 		callback:function(){
 			initEnv();
@@ -105,8 +105,9 @@ if ($.browser.msie) {
 
 								</ul>
 							</li>
+							<!--
 							<li><a href="wls.php?controller=quiz_type&action=getDWZlist" target="navTab" rel="quiz_type">考试科目</a></li>
-							<!--  
+							  
 							<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_panel">日常练习</a></li>
 							<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_validation">特训考场 </a>
 								<ul>
@@ -134,7 +135,7 @@ if ($.browser.msie) {
 					</div>
 					<div class="accordionContent">
 						<ul class="tree">
-							<li><a href="wls.php?controller=quiz_record&action=getList&returnType=dwz" target="navTab" rel="dlg_page">历次考试记录</a></li>
+							<li><a href="wls.php?controller=quiz_record&action=getDWZlist" target="navTab" rel="dlg_page">历次考试记录</a></li>
 							<li><a href="wls.php?controller=quiz_wrongs&action=getDWZlist" target="navTab" rel="dlg_page">错题集</a></li>
 						</ul>
 					</div>
@@ -143,14 +144,16 @@ if ($.browser.msie) {
 					$arr = explode(",",$userinfo['id_group']);
 					if(in_array($this->cfg->group_admin,$arr)){
 					?>
+					<!-- 
 					<div class="accordionHeader">
 						<h2><span>Folder</span>管理员中心</h2>
 					</div>
 					<div class="accordionContent">
 						<ul class="tree">
-							<li><a href="wls.php?controller=user&action=getDWZlist" target="navTab" rel="userlist">查看用户</a></li>						
+							<li><a href="wls.php?controller=user&action=getDWZlist" target="navTab" rel="userlist">查看用户</a></li>					
 						</ul>
 					</div>
+					 -->
 					<?php 
 					}
 					?>

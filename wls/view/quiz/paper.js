@@ -82,6 +82,36 @@ var wls_quiz_paper = function(){
 		});			
 	}
 	
+	/**
+	 * 做这张试卷,你的money够了吗?
+	 * 不够就去充值
+	 * */
+	this.isMyMoneyEnough = function(nextFunction){
+		var thisObj = this;
+		$.ajax({
+			url: thisObj.config.AJAXPATH+"?controller=quiz_paper_paper&action=isMyMoneyEnough&id="+thisObj.paperId,
+			success: function(msg){
+				var obj = jQuery.parseJSON(msg);
+				if(obj.enough=='yes'){
+					eval(nextFunction);
+				}else{
+					$.blockUI({
+						 message: '你的金额不够<br/>你应该去充值', 
+						 css: { 
+				            border: 'none', 
+				            padding: '15px', 
+				            backgroundColor: '#000', 
+				            '-webkit-border-radius': '10px', 
+				            '-moz-border-radius': '10px', 
+				            opacity: .5, 
+				            color: '#fff' 
+				        } }); 
+					setTimeout($.unblockUI, 2000); 
+				}				
+			}
+		});		
+	}
+	
 	this.get_elapsed_time_string = function(total_seconds){
 		function pretty_time_string(num) {
 			return ( num < 10 ? "0" : "" ) + num;
@@ -128,17 +158,19 @@ var wls_quiz_paper = function(){
 					count_right:thisObj.count_right,
 					count_giveup:thisObj.count_giveup,
 					type:'paper'
-					},
-					
+					},					
 			type: "POST",
 			success: function(msg){
 				var obj = jQuery.parseJSON(msg);
-				thisObj.getMyMark();
-				
+				thisObj.getMyMark();				
 			}
 		});
 	}
 	
+	/**
+	 * 在试卷右侧显示我这次测验的分数结果
+	 * 来个2秒的闪烁
+	 * */
 	this.getMyMark = function(){
 		$.blockUI({
 			 message: '<b>成绩</b>:'+(this.mycent/1000)+'<br/><b>总分</b>:'+(this.cent/1000), 
