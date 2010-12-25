@@ -42,21 +42,10 @@ class user extends wls {
 			return;
 		}
 		
-		include_once 'controller/quiz/paper/paper.php';
-		$obj = new quiz_paper();
-		$paperList = $obj->getRecentList();
-		
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
-		$quiztypeList = $obj->getListWithLevel();
-		
-		
-		include_once 'controller/quiz/record.php';
-		$obj = new quiz_record();
-		$myList = $obj->getRecentList();
-		
-		$profile = $this->getProfile();
-		
+		$quiztypeList = $obj->getListWithLevel();		
+		$profile = $this->getProfile();		
 		$title = $this->cfg->title;
 		$head = $this->headerScripts();
 		
@@ -190,22 +179,5 @@ class user extends wls {
 		include_once 'view/user/dwzlist.php';
 	}
 	
-	public function viewAddMoney(){
-		$data = $this->getList('array',1,100,null);
-		include_once 'view/user/addMoney.php';
-	}
-	
-	public function addMoney(){
-		$pfx = $this->cfg->dbprefix;
-		$conn = $this->conn();
-		$sql = "update ".$pfx."wls_user set money = money + ".$_REQUEST['money']." where id = ".$_REQUEST['id'];
-		mysql_query($sql);
-		echo json_encode(
-			array(
-				'state'=>'ok',
-				'sql'=>$sql,
-			)
-		);	
-	}
 }
 ?>

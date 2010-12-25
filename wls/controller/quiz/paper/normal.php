@@ -231,9 +231,7 @@ class quiz_paper_normal extends quiz_paper {
 		$this->getQuestion();
 		$this->saveQuestion();
 
-		$this->updatePaper();
-		
-		
+		$this->updatePaper();		
 	}
 
 	public function exportExcel($id=null){
@@ -405,18 +403,22 @@ class quiz_paper_normal extends quiz_paper {
 
 	public function viewUploadExcel2(){
 		$html = '
-			<html>
+				<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+				<html xmlns="http://www.w3.org/1999/xhtml">		
+				<head>
+					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				</head>
 				<body>
+					目前只能以EXCEL导入的形式添加试题和题目
 					<form action="wls.php?controller=quiz_paper_normal&action=saveUpload" method="post"
 					enctype="multipart/form-data">
-						<label for="file">Filename:</label>
+						<label for="file">EXCEL文件:</label>
 						<input type="file" name="file" id="file" />
 						<br />
-						<input type="submit" name="submit" value="Submit" />
+						<input type="submit" name="submit" value="提交" />
 					</form>
 				</body>
-			</html>
-		
+			</html>		
 		';
 		echo $html;
 	}
@@ -425,12 +427,8 @@ class quiz_paper_normal extends quiz_paper {
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			//			echo "Upload: " . $_FILES["file"]["name"] . "<br />";
-			//			echo "Type: " . $_FILES["file"]["type"] . "<br />";
-			//			echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
-//			echo "Stored in: " . $_FILES["file"]["tmp_name"];
-			move_uploaded_file($_FILES["file"]["tmp_name"],"file/download/" . $_FILES["file"]["name"]);
-			$this->importExcel("file/download/" . $_FILES["file"]["name"]);
+			move_uploaded_file($_FILES["file"]["tmp_name"],"file/upload/" . $_FILES["file"]["name"]);
+			$this->importExcel("file/upload/" . $_FILES["file"]["name"]);
 		}
 	}
 }

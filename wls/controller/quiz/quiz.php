@@ -13,7 +13,7 @@ class quiz extends wls{
 	}
 	
 	public function authorInfo(){
-		$content = file('aboutme.txt');
+		$content = file('file/aboutme.txt');
 		$content = implode("\n", $content);
 		$content = str_replace("\n","<br/>",$content);
 		
@@ -21,7 +21,7 @@ class quiz extends wls{
 	}
 	
 	public function commercial(){
-		$content = file('commercial.txt');
+		$content = file('file/commercial.txt');
 		$content = implode("\n", $content);
 		$content = str_replace("\n","<br/>",$content);
 		
@@ -29,7 +29,7 @@ class quiz extends wls{
 	}
 	
 	public function aboutplugin(){
-		$content = file('readme.txt');
+		$content = file('file/readme.txt');
 		$content = implode("\n", $content);
 		$content = str_replace("\n","<br/>",$content);
 		

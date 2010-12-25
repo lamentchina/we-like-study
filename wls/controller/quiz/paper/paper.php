@@ -122,64 +122,6 @@ class quiz_paper extends wls{
 		}
 	}
 
-	public function getRecentList($returnType = null,$page=null,$rows=null,$search=null){
-		if($page==null && isset($_REQUEST['page']))$page=$_REQUEST['page'];
-		if($rows==null && isset($_REQUEST['rows']))$rows=$_REQUEST['rows'];
-		if($returnType==null && isset($_REQUEST['returnType']))$returnType =$_REQUEST['returnType'];
-		if($search==null && isset($_REQUEST['search']))$search =json_encode($_REQUEST['search']);
-		if($page==null)$page = 1;
-		if($rows==null)$rows = 10;
-		if($returnType==null)$returnType = 'dom';
-
-		$list = $this->getList('array',$page,$rows);
-		$arr = $list['rows'];
-		$html = "<table style='width:100%' width='100%'  cellpadding='0' cellspacing='0' border='0'>
-					<tr>
-						<td colspan='2' class='listHeader'>
-							<img src='file/images/systm/fbico2.gif'/>&nbsp;最新试卷
-						</td>
-					</tr>";
-		for($i=0;$i<10;$i++){
-			if(isset($arr[$i])){
-				$html.= "	<tr>
-						<td width='15px;'>&nbsp;<img src='file/images/systm/dot.gif'/></td>
-						<td>
-							<a target='_blank' href='wls.php?controller=quiz_paper&action=viewOne&id=".$arr[$i]['id']."'>".$arr[$i]['title']."</a>
-						</td>
-						<td style='text-align:left'>".$this->getFormateMoney($arr[$i]['price_money'])."</td>
-					</tr>";
-			}else{
-				$html.= "
-					<tr>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-						<td>&nbsp;</td>
-					</tr>
-			";
-			}
-		}
-		$html .="</table>";
-		switch($returnType) {
-			case 'dom':
-				return $html;
-				break;
-			case 'html':
-				echo $html;
-				break;
-			default:
-				echo 'returnType is not defined';
-				break;
-		}
-	}
-
-	public function getFormateMoney($num){
-		if($num==0){
-			return '免费';
-		}else{
-			return $num."学币";
-		}
-	}
-
 	public function getList($returnType = null,$page=null,$rows=null,$search=null){
 		if($page==null && isset($_REQUEST['page']))$page=$_REQUEST['page'];
 		if($rows==null && isset($_REQUEST['rows']))$rows=$_REQUEST['rows'];
@@ -343,7 +285,30 @@ class quiz_paper extends wls{
 		echo json_encode(array_values($ques));
 	}
 
-	
+	/**
+	 * 做这张试卷,我的钱够花吗
+	 * */
+	public function isMyMoneyEnough(){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "select price_money,id from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		if($this->cfg->cmstype=='discuz'){
+			include_once 'controller/install/discuz.php';
+			$obj = new install_discuz();
+			if($obj->reduceMyMoney('mine',$temp['price_money'])){
+				echo json_encode(array(
+					'enough'=>'yes'
+				));
+			}else{
+				echo json_encode(array(
+					'enough'=>'no'
+				));
+			}
+		}
+	}
 }
 
 /**

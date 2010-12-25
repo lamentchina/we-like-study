@@ -132,15 +132,40 @@ class install_discuz extends wls {
 			'id_user'=>$id,
 			'title_group'=>'',
 			'name'=>$temp['username'],
-			'id_group'=>$temp['groupid'],
+			'id_group'=>$temp['extgroupids'],
 			'sex'=>$temp['gender'],
 			'money'=>$temp['extcredits2'],
 			'cents'=>$temp['credits'],
 			'count_wrongs'=>$temp["field_".$this->cfg->user_extend_wrongs],
 			'count_papers'=>$temp["field_".$this->cfg->user_extend_papers],
 			'myquiz'=>$temp["field_".$this->cfg->user_extend_myquiz],
-		);
-		
+		);		
+	}
+	
+	public function reduceMyMoney($id,$money){
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;
+		if($id==null || $id=='mine'){
+			if(isset($_COOKIE['qW3_sid'])){
+				$sid = $_COOKIE['qW3_sid'];
+				$sql = "select uid from ".$pfx."sessions where sid = '".$sid."'";
+				$res = mysql_query($sql,$conn);
+				$temp = mysql_fetch_assoc($res);
+				$id = $temp['uid'];				
+			}else{
+				
+			}
+		}	
+		$sql = "select extcredits2 from ".$pfx."members where uid =".$id;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		if($temp['extcredits2']<$money){
+			return false;
+		}else{
+			$sql = "update ".$pfx."members set extcredits2 = ".($temp['extcredits2']-$money)." where uid =".$id;
+			mysql_query($sql,$conn);
+			return true;
+		}
 	}
 
 	/**

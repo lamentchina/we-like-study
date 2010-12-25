@@ -1,4 +1,8 @@
 <?php
+/**
+ * 记录每次测验的测验结果
+ * 测验包括 : 考卷测验 错题本联系 题型训练 多人在线考试等等
+ * */
 class quiz_record extends wls {
 
 	public function initTable(){
@@ -35,6 +39,9 @@ class quiz_record extends wls {
 		mysql_query($sql,$conn);
 	}
 
+	/**
+	 * 添加一条记录
+	 * */
 	public function add(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
@@ -98,14 +105,11 @@ class quiz_record extends wls {
 			
 			$sql = "update ".$pfx."wls_quiz_paper set 
 			score_avg = ".($temp['score_avg']*$temp['count_used']+$_REQUEST['mycent'])/($temp['count_used']+1).",
-			count_used = ".($temp['count_used']+1)." ".$topstr;
-			
+			count_used = ".($temp['count_used']+1)." ".$topstr;			
 			
 			$sql .= " where id = ".$_REQUEST['id'];
-			mysql_query($sql,$conn);
-			
+			mysql_query($sql,$conn);			
 			$sql = "update ".$pfx."wls_user set count_papers = count_papers+1 where id_user =".$userinfo['id_user'];
-
 			mysql_query($sql,$conn);
 		}
 	
@@ -119,9 +123,8 @@ class quiz_record extends wls {
 		);
 	}
 
-
 	/**
-	 * 已完成的试卷
+	 * 查看我个人已完成的试卷
 	 * */
 	public function getList($returnType = null,$page=null,$rows=null,$search=null){
 		if($page==null && isset($_REQUEST['page']))$page=$_REQUEST['page'];
@@ -178,29 +181,7 @@ class quiz_record extends wls {
 				);
 				unset($arr);
 				echo json_encode($arr2);
-				break;
-			case 'jsonflexgrid'://jquery flexgrid 对JSON有特殊的要求
-				$rows = array();
-				$keys = array_keys($data[0]);
-				for($i=0;$i<count($data);$i++){
-					$cell = array();
-					for($j=0;$j<count($keys);$j++){
-						$cell[] = $data[$i][$keys[$j]];
-					}
-					$rows[] = array(
-						'id'=>$data[$i]['id'],
-						'cell'=>$cell,
-					);
-				}
-				$arr2 = array(
-					'page'=>$page,
-					'rows'=>$rows,
-					'sql'=>$sql,
-					'total'=>$total,
-				);
-				unset($arr);
-				echo json_encode($arr2);
-				break;				
+				break;			
 			case 'array':
 				$arr2 = array(
 					'page'=>$page,
@@ -211,50 +192,17 @@ class quiz_record extends wls {
 					'pagenum'=>$pagenum,
 				);
 				return $arr2;
-				break;
-			case 'html':
-				$arr = $data;
-				$html = "<div id='w_q_r_l' >已完成试卷";
-				$html .= "<table style='width:100%' width='100%' cellpadding='0' cellspacing='0' border='0'>
-							<tr>
-								<td>标题</td><td>得分/总分</td><td>考试时间</td><td>花费时间 </td><td>错题率</td>
-							</tr>
-								";
-				for($i=0;$i<count($arr);$i++){
-					$html.= "<tr>
-								<td><a target='_blank' href='wls.php?controller=quiz_paper&action=viewOne&id=".$arr[$i]['id_quiz_paper']."'>".$this->split_title($arr[$i]['title_quiz_paper'],7)."</a></td>
-								<td>".$arr[$i]['cent']."/".$arr[$i]['cent_total']."</td>
-								<td>".substr($arr[$i]['date_created'],0,10)."</td>
-								<td>".$this->getTimer($arr[$i]['timer'])."</td>
-								<td>".$arr[$i]['count_wrong']."/".$arr[$i]['count_total']."</td>
-							</tr>";
-				}
-				$html .="</table>";
-				for($i=0;$i<$pagenum;$i++){
-					$html .= "<a href=\"wls.php?controller=user&action=viewProfile&page=".($i+1)."\">".($i+1)."</a>";
-				}
-				$html .="</div>";
-				echo $html;
-				break;
-			case 'htmlflexgrid':
-				$this->getListByHtmlflexgrid();
 				break;	
-			case 'dwz':
-				$arr2 = array(
-					'page'=>$page,
-					'rows'=>$data,
-					'sql'=>$sql,
-					'total'=>$total,
-					'pagenum'=>$pagenum,
-				);
-				$this->getDWZlist($arr2);
-				break;		
 			default:
 				echo 'returnType is not defined';
 				break;
 		}
 	}
 	
+	/**
+	 * 显示我最近做题的列表
+	 * 前台使用DWZ框架
+	 * */
 	public function getDWZlist($returnType = null,$page=null,$rows=null,$search=null){
 		if($page==null && isset($_REQUEST['pageNum']))$page=$_REQUEST['pageNum'];
 		if($rows==null && isset($_REQUEST['numPerPage']))$rows=$_REQUEST['numPerPage'];
@@ -269,38 +217,9 @@ class quiz_record extends wls {
 		include_once 'view/quiz/paper/record/list.php';
 	}
 	
-	public function getRecentList($returnType = null,$page=null,$rows=null,$search=null){
-		if($page==null && isset($_REQUEST['page']))$page=$_REQUEST['page'];
-		if($rows==null && isset($_REQUEST['rows']))$rows=$_REQUEST['rows'];
-		if($returnType==null && isset($_REQUEST['returnType']))$returnType =$_REQUEST['returnType'];
-		if($search==null && isset($_REQUEST['search']))$search =json_encode($_REQUEST['search']);
-		if($page==null)$page = 1;
-		if($rows==null)$rows = 20;
-		if($returnType==null)$returnType = 'dom';
-		
-		$list = $this->getList('array',$page,$rows);
-		$arr = $list['rows'];
-		$dom = "<table width='100%' cellpadding='0' cellspacing='0' border='0'>
-					<tr>
-						<td style='font-size:20px;font-color:rgb(161,215,180);height:25px;border:1px solid rgb(0,99,175);background-color:rgb(0,204,255);' colspan='2'>
-							<img src='file/images/systm/fbico2.gif'/>&nbsp;最近考试:
-						</td>
-					</tr>";
-		for($i=0;$i<count($arr);$i++){
-			$dom.= "<tr >
-						<td>
-							<a target='_blank' href='wls.php?controller=quiz_paper&action=viewOne&id=".$arr[$i]['id_quiz_paper']."'>".$this->split_title($arr[$i]['title_quiz_paper'],10)."</a>
-						</td>
-						<td>
-							".$arr[$i]['proportion']."
-						</td>
-					</tr>
-			";
-		}
-		$dom .="</table>";
-		return $dom;
-	}
-	
+	/**
+	 * 查看我个人最近的学习成绩变化曲线
+	 * */
 	public function getChart(){
 		$html = '			
 			考试科目:
@@ -311,7 +230,7 @@ class quiz_record extends wls {
 			<input type="radio" name="w_q_r_c_r" onchange="foo();"  />排名<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>
 			历次测验正确率<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>知识点掌握度<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>时间投入
 			<div class="divider"></div>
-			<b>正确率变化过程线:</b>
+			<b>历次测验学习成绩:</b>
 			<div id="w_q_r_c" style="width:98%;height:200px;"></div>
 			<div class="divider"></div>
 			<script type="text/javascript">
