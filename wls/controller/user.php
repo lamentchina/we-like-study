@@ -1,6 +1,7 @@
 <?php
 class user extends wls {
 	
+	
 	public function getUserInfo($id=null){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();		
