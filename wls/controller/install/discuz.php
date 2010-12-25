@@ -232,16 +232,22 @@ class install_discuz extends wls {
 	public function initNav(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
+		
+		$sql = "delete from ".$pfx."common_nav where title = 'wls' ";
+		mysql_query($sql,$conn);		
+		
 		$sql = "insert into ".$pfx."navs (
 			 name
 			,title
 			,url
-			,available			
+			,available		
+			,displayorder	
 		) values(
-			 'wls'
-			,'WeLikeStudy'
+			 '在线考试学习'
+			,'wls'
 			,'".$_SERVER['SCRIPT_NAME']."?controller=user&action=viewProfile'
 			,'1'
+			,'9'		
 		)  ";		
 	}
 }
