@@ -133,7 +133,7 @@ class install_discuzx extends wls {
 		}
 		$sql = "
 		 select  
-		 ".$pfx."common_member.uid,username,gender,extgroupids,credits,extcredits2
+		 ".$pfx."common_member.uid,username,gender,adminid,extgroupids,credits,extcredits2
 		 ,".$this->cfg->user_extend_myquiz."
 		 ,".$this->cfg->user_extend_wrongs."
 		 ,".$this->cfg->user_extend_papers."
