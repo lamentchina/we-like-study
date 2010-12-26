@@ -307,6 +307,18 @@ class quiz_paper extends wls{
 					'enough'=>'no'
 				));
 			}
+		}else if($this->cfg->cmstype=='discuzx'){
+			include_once 'controller/install/discuzx.php';
+			$obj = new install_discuzx();
+			if($obj->reduceMyMoney('mine',$temp['price_money'])){
+				echo json_encode(array(
+					'enough'=>'yes'
+				));
+			}else{
+				echo json_encode(array(
+					'enough'=>'no'
+				));
+			}
 		}
 	}
 }

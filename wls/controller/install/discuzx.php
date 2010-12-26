@@ -41,11 +41,11 @@ class install_discuzx extends wls {
 			,'myquiz'
 			,200
 			,'参加的考试科目'
-			,text
+			,'text'
 		)";
 		mysql_query($sql,$conn);
 		$id = mysql_insert_id($conn);
-		$sql = "alter table ".$pfx."common_member_profile add column ".$id." varchar(200) default '无';";
+		$sql = "alter table ".$pfx."common_member_profile add column myquiz varchar(200) default '无';";
 		mysql_query($sql,$conn);
 
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '错题数';";
@@ -68,11 +68,11 @@ class install_discuzx extends wls {
 			,'wrongs'
 			,2
 			,'错题数'
-			,text
+			,'text'
 		)";
 		mysql_query($sql,$conn);
 		$id2 = mysql_insert_id($conn);
-		$sql = "alter table ".$pfx."common_member_profile add column ".$id2." int default 0;";
+		$sql = "alter table ".$pfx."common_member_profile add column wrongs int default 0;";
 		mysql_query($sql,$conn);
 		
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '已做试卷数';";
@@ -95,11 +95,11 @@ class install_discuzx extends wls {
 			,'papers'
 			,2
 			,'已做试卷数'
-			,text
+			,'text'
 		)";
 		mysql_query($sql,$conn);
 		$id3 = mysql_insert_id($conn);
-		$sql = "alter table ".$pfx."common_member_profile add column ".$id3." int default 0;";
+		$sql = "alter table ".$pfx."common_member_profile add column papers int default 0;";
 		mysql_query($sql,$conn);
 		
 		$this->rewrite['user_extend_myquiz']='myquiz';
@@ -112,12 +112,13 @@ class install_discuzx extends wls {
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 		if($id==null || $id=='mine'){
-			if(isset($_COOKIE['qW3_sid'])){
-				$sid = $_COOKIE['qW3_sid'];
+			if(isset($_COOKIE['SE7P_2132_sid'])){
+				$sid = $_COOKIE['SE7P_2132_sid'];
 				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
+
 				$res = mysql_query($sql,$conn);
 				$temp = mysql_fetch_assoc($res);
-				$id = $temp['uid'];				
+				$id = $temp['uid'];	
 			}else{
 				return array(
 					'id_user'=>0,
@@ -131,6 +132,20 @@ class install_discuzx extends wls {
 				);
 			}
 		}
+		
+		if($id==0){
+			return array(
+					'id_user'=>0,
+					'id_group'=>0,
+					'sex'=>0,
+					'money'=>0,
+					'cents'=>0,
+					'count_wrongs'=>0,
+					'count_papers'=>0,
+					'myquiz'=>'免费试卷',
+				);
+		}
+		
 		$sql = "
 		 select  
 		 ".$pfx."common_member.uid,username,gender,adminid,extgroupids,credits,extcredits2
@@ -142,10 +157,11 @@ class install_discuzx extends wls {
 		".$pfx."common_member.uid = ".$id."  
 		and ".$pfx."common_member.uid = ".$pfx."common_member_count.uid
 		and ".$pfx."common_member.uid = ".$pfx."common_member_profile.uid ;";
+
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$temp['extgroupids'] = str_replace("\t",",",$temp['extgroupids']);
-		return array(
+		$data = array(
 			'id_user'=>$id,
 			'title_group'=>'',
 			'name'=>$temp['username'],
@@ -156,24 +172,32 @@ class install_discuzx extends wls {
 			'count_wrongs'=>$temp[$this->cfg->user_extend_wrongs],
 			'count_papers'=>$temp[$this->cfg->user_extend_papers],
 			'myquiz'=>$temp[$this->cfg->user_extend_myquiz],
-		);		
+		);
+		if($temp['adminid']==1){
+			$data['id_group'] = $this->cfg->group_admin;
+		}
+		if($temp['extgroupids']==null || $temp['extgroupids']==''){
+			$data['id_group'] = $this->cfg->group_student;
+		}
+		return $data;	
 	}
 	
 	public function reduceMyMoney($id,$money){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 		if($id==null || $id=='mine'){
-			if(isset($_COOKIE['qW3_sid'])){
-				$sid = $_COOKIE['qW3_sid'];
+			if(isset($_COOKIE['SE7P_2132_sid'])){
+				$sid = $_COOKIE['SE7P_2132_sid'];
 				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
 				$res = mysql_query($sql,$conn);
 				$temp = mysql_fetch_assoc($res);
 				$id = $temp['uid'];				
 			}else{
-				
+				return false;
 			}
 		}	
 		$sql = "select extcredits2 from ".$pfx."common_member_count where uid =".$id;
+//		echo $sql;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		if($temp['extcredits2']<$money){
@@ -209,6 +233,25 @@ class install_discuzx extends wls {
 			,'0'
 		)  ";	
 		mysql_query($sql,$conn);		
+	}
+	
+	public function addUpQuiz($id){
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;		
+		if($id==null || $id=='mine'){
+			if(isset($_COOKIE['SE7P_2132_sid'])){
+				$sid = $_COOKIE['SE7P_2132_sid'];
+				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
+
+				$res = mysql_query($sql,$conn);
+				$temp = mysql_fetch_assoc($res);
+				$id = $temp['uid'];	
+			}
+		}
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;
+		$sql = "update ".$pfx."common_member_profile set papers = papers+1 where uid = ".$id;
+		mysql_query($sql,$conn);
 	}
 }
 ?>

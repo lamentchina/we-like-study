@@ -88,6 +88,7 @@ class quiz_record extends wls {
 			,".$_REQUEST['timer']."
 			,".($_REQUEST['count_right']/($_REQUEST['count_right']+$_REQUEST['count_wrong']))."
 		);";
+		$sql2 = $sql;
 		mysql_query($sql,$conn);
 		$id = mysql_insert_id($conn);
 		
@@ -108,17 +109,19 @@ class quiz_record extends wls {
 			count_used = ".($temp['count_used']+1)." ".$topstr;			
 			
 			$sql .= " where id = ".$_REQUEST['id'];
-			mysql_query($sql,$conn);			
-			$sql = "update ".$pfx."wls_user set count_papers = count_papers+1 where id_user =".$userinfo['id_user'];
-			mysql_query($sql,$conn);
+			mysql_query($sql,$conn);	
+			eval('include_once "controller/install/'.$this->cfg->cmstype.'.php";');
+			eval('$obj = new install_'.$this->cfg->cmstype.'();');
+			eval('$obj->addUpQuiz("mine");');
 		}
-	
+
 		echo json_encode(
 			array(
 				'ok'=>1,
 				'id'=>$id,
 				'a'=>$userinfo,
 				'sql'=>$sql,
+				'sql2'=>$sql2,
 			)
 		);
 	}

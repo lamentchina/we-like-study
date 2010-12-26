@@ -12,19 +12,15 @@ class user extends wls {
 			include_once 'controller/install/discuz.php';
 			$obj = new install_discuz();		
 			$data = $obj->getUserInfo($id);				
-		}
-		
+		}else if($this->cfg->cmstype=='discuzx'){
+			include_once 'controller/install/discuzx.php';
+			$obj = new install_discuzx();		
+			$data = $obj->getUserInfo($id);				
+		}		
 		return $data;
 	}
 	
-	public function viewOne($id=null){
-		print_r($this->getUserInfo());
-	}
-	
 	public function viewProfile($id=null){	
-		
-		
-
 		$userinfo = $this->getUserInfo('mine');
 		if($userinfo['id_user']==0){
 			echo "

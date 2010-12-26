@@ -223,10 +223,6 @@ class question extends wls {
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
 		
-		include_once 'controller/user.php';
-		$user = new user();
-		$userinfo = $user->getUserInfo();
-		
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);

@@ -63,6 +63,7 @@ var wls_quiz_paper = function(){
 	
 	//得到这张试卷的所有题目编号和题型
 	this.AJAXData = function(nextFunction){
+
 		var thisObj = this;
 		$.ajax({
 			url: thisObj.config.AJAXPATH+"?controller=quiz_paper_paper&action=getOne&id="+thisObj.paperId,
@@ -92,6 +93,7 @@ var wls_quiz_paper = function(){
 			url: thisObj.config.AJAXPATH+"?controller=quiz_paper_paper&action=isMyMoneyEnough&id="+thisObj.paperId,
 			success: function(msg){
 				var obj = jQuery.parseJSON(msg);
+//				alert(obj);
 				if(obj.enough=='yes'){
 					eval(nextFunction);
 				}else{

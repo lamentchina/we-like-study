@@ -26,15 +26,15 @@ var wls_question_blank = function(){
 		}
 		
 		$(".w_qw_title",$("#"+this.quesDomId)).append(this.quesData.title);
-		var class = 'w_qs_blank';
+		var class_ = 'w_qs_blank';
 		var rows = 1;
 		if(this.quesData.details==null || this.quesData.details.lines=='1'){
-			class += ' w_qs_blank_single';
+			class_ += ' w_qs_blank_single';
 		}else{
-			class += ' w_qs_blank_writing';
+			class_ += ' w_qs_blank_writing';
 			rows = this.quesData.details.lines;
 		}
-		$("#w_qs__"+this.quesData.id).append("<textarea rows='"+rows+"' name='w_qs_"+this.quesData.id+"' class='"+class+"' /></textarea>");
+		$("#w_qs__"+this.quesData.id).append("<textarea rows='"+rows+"' name='w_qs_"+this.quesData.id+"' class='"+class_+"' /></textarea>");
 		if(this.parentQuestion==null){
 			this.quiz.quesId_parsed.push(this.quesData.id);
 		}

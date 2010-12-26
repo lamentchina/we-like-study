@@ -18,14 +18,15 @@
 <div id='wls'><div>
 <script type="text/javascript">
 var obj_paper = new wls_quiz_paper();
-obj_paper.config.AJAXPATH = "/plugins/wls/wls.php";
-obj_paper.config.MP3PATH = "/plugins/wls/file/mp3/";
+
 obj_paper.naming ='obj_paper';
 obj_paper.quizDomId ='wls';
 obj_paper.initLayout();
 obj_paper.paperId = <?php echo $id?>;
 obj_paper.submitQuesWay = 'onceAll';
-obj_paper.AJAXData('obj_paper.AJAXAllQues("obj_paper.initButton();obj_paper.addSubQuesNav();obj_paper.getClock();")');
+var funstr = 'obj_paper.AJAXAllQues("obj_paper.initButton();obj_paper.addSubQuesNav();obj_paper.getClock();")';
+//var funstr = 'obj_paper.AJAXAllQues(null)';
+obj_paper.AJAXData(funstr);
 </script>
 </body>
 </html>

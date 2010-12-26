@@ -9,6 +9,7 @@
 
 <!--[if IE]>
 <link href="themes/css/ieHack.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="libs/excanvas.min.js"></script>
 <![endif]-->
 
 
