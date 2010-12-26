@@ -141,11 +141,6 @@ class quiz_record extends wls {
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 
-		include_once 'controller/user.php';
-		$user = new user();
-		$userinfo = $user->getUserInfo();
-		//$search = array('id_user'=>$userinfo['id_user']);
-
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
@@ -215,8 +210,16 @@ class quiz_record extends wls {
 		if($rows==null)$rows = 10;
 		if($returnType==null)$returnType = 'html';
 		
-		$data = $this->getList('array',$page,$rows,$search);
+		include_once 'controller/user.php';
+		$obj = new user();
+		$userinfo = $obj->getUserInfo('mine');
+		if($search==null){
+			$search = array(
+				'id_user'=>$userinfo['id_user']
+			);
+		}
 		
+		$data = $this->getList('array',$page,$rows,$search);		
 		include_once 'view/quiz/paper/record/list.php';
 	}
 	
@@ -249,5 +252,16 @@ class quiz_record extends wls {
 		$html .= $obj->getProfile();
 		echo $html;
 	}
+	
+	public function getMyChartData(){
+		include_once 'controller/user.php';
+		$obj = new user();
+		$userinfo = $obj->getUserInfo('mine');
+
+		$this->getList('json',1,100,array(
+			'id_user'=>$userinfo['id_user'],
+		));
+	}
 }
+
 ?>
