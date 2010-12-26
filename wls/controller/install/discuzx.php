@@ -235,6 +235,11 @@ class install_discuzx extends wls {
 		mysql_query($sql,$conn);		
 	}
 	
+	/**
+	 * 累加已做试卷的数目
+	 * 
+	 * @param $id 用户编号
+	 * */
 	public function addUpQuiz($id){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;		
@@ -248,8 +253,6 @@ class install_discuzx extends wls {
 				$id = $temp['uid'];	
 			}
 		}
-		$conn = $this->conn();
-		$pfx = $this->cfg->dbprefix;
 		$sql = "update ".$pfx."common_member_profile set papers = papers+1 where uid = ".$id;
 		mysql_query($sql,$conn);
 	}

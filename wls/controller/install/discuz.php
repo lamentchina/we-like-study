@@ -11,11 +11,6 @@
  *   依赖Discuz中原有的 usergroups 表,并将 radminid 作为上级编号处理
  * */
 class install_discuz extends wls {
-	
-	public function test(){
-		print_r($_SERVER);
-	}
-	
 	public $rewrite = array();
 
 	/**
@@ -229,11 +224,15 @@ class install_discuz extends wls {
 		$this->rewrite['group_student']=$id3;
 	}
 	
+	/**
+	 * 在系统的主导航栏上添加一个项目
+	 * 但是没有保存,需要用户在后台 更新保存一下 才可以
+	 * */
 	public function initNav(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 		
-		$sql = "delete from ".$pfx."common_nav where title = 'wls' ";
+		$sql = "delete from ".$pfx."navs where title = 'wls' ";
 		mysql_query($sql,$conn);		
 		
 		$sql = "insert into ".$pfx."navs (
@@ -249,6 +248,29 @@ class install_discuz extends wls {
 			,'1'
 			,'9'		
 		)  ";		
+		mysql_query($sql,$conn);
+	}
+	
+	/**
+	 * 累加已做试卷的数目
+	 * 
+	 * @param $id 用户编号
+	 * */
+	public function addUpQuiz($id){
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;		
+		if($id==null || $id=='mine'){
+			if(isset($_COOKIE['SE7P_2132_sid'])){
+				$sid = $_COOKIE['SE7P_2132_sid'];
+				$sql = "select uid from ".$pfx."session where sid = '".$sid."'";
+
+				$res = mysql_query($sql,$conn);
+				$temp = mysql_fetch_assoc($res);
+				$id = $temp['uid'];	
+			}
+		}
+		$sql = "update ".$pfx."memberfields set papers = papers+1 where uid = ".$id;
+		mysql_query($sql,$conn);
 	}
 }
 ?>

@@ -62,6 +62,7 @@ class install extends wls{
 			
 			$obj2->initGroup();
 			$obj2->extendUser();
+			$obj2->initNav();
 			$this->rewirteConfig($obj2->rewrite);
 		}else if($obj->cfg->cmstype=='discuzx'){
 			include_once 'controller/install/discuzx.php';
