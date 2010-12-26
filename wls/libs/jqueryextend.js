@@ -107,7 +107,7 @@ jQuery.extend(
  ***/
  jQuery.fn.jmp3 = function(passedOptions){
  	// hard-wired options
- 	var playerpath = "/plugins/wls/libs/";					// SET THIS FIRST: path to singlemp3player.swf
+ 	var playerpath = "libs/";					// SET THIS FIRST: path to singlemp3player.swf
 
  	// passable options
  	var options = {
