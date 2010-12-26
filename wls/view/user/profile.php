@@ -7,19 +7,10 @@
 
 <?php echo $head ?>
 
-<!--[if IE]>
-<link href="themes/css/ieHack.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="libs/excanvas.min.js"></script>
-<![endif]-->
-
-
-
 <script type="text/javascript">
 $(function(){	
 	DWZ.init("file/dwz.frag.xml", {
-//		loginUrl:"loginsub.html", loginTitle:"登录",	// 弹出登录对话框
-//		loginUrl:"login.html",	// 跳到登录页面
-		debug:false,	// 调试模式 【true|false】
+		debug:false,	
 		callback:function(){
 			initEnv();
 			$("#themeList").theme({themeBase:"libs/DWZ/themes"});
@@ -37,39 +28,19 @@ if ($.browser.msie) {
 	<div id="layout">
 		<div id="header">
 			<div class="headerNav">
-
 				<a class="logo" href="javascript:void(0)">标志</a>
 				<ul class="nav">
-					<!--  
-					<li id="switchEnvBox"><a href="javascript:">（<span>北京</span>）切换角色</a>
-						<ul>		
-							<li><a href="sidebar_bj.html">北京</a></li>
-							<li><a href="sidebar_sh.html">上海</a></li>
-
-							<li><a href="sidebar_sh.html">南京</a></li>
-							<li><a href="sidebar_sh.html">深圳</a></li>
-							<li><a href="sidebar_sh.html">广州</a></li>
-							<li><a href="sidebar_sh.html">天津</a></li>
-							<li><a href="sidebar_sh.html">杭州</a></li>
-						</ul>
-
-					</li>
-					<li><a href="changepwd.html" target="dialog">设置</a></li>
-					-->
 					<!--<li><a href="javascript:void(0)">反馈</a></li>-->
 					<li><a href="/" target="_blank">论坛</a></li>
 					<!--<li><a href="login.html">退出</a></li>-->
 				</ul>
 				<ul class="themeList" id="themeList">
-
 					<li theme="default"><div class="selected">蓝色</div></li>
 					<li theme="green"><div>绿色</div></li>
-					<!--<li theme="red"><div>红色</div></li>-->
 					<li theme="purple"><div>紫色</div></li>
 					<li theme="silver"><div>银色</div></li>
 				</ul>
 			</div>
-
 		</div>
 		
 		<div id="leftside">
