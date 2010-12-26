@@ -1,8 +1,12 @@
 var wls_user = function(){
- this.getChart = function(domid){
+ 
+	/**
+	 * 得到我个人的历次测验的成绩情况统计表
+	 * */
+	this.getMyQuizChart = function(domid){
 		var thisObj = this;
 		$.ajax({
-			url: thisObj.config.AJAXPATH+"?controller=quiz_record&action=getList&returnType=json",
+			url: thisObj.config.AJAXPATH+"?controller=quiz_record&action=getMyChartData",
 			success: function(msg){
 				var obj = jQuery.parseJSON(msg);
 				var data = [];

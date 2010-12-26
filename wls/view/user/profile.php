@@ -23,7 +23,7 @@ $(function(){
 		callback:function(){
 			initEnv();
 			$("#themeList").theme({themeBase:"libs/DWZ/themes"});
-			navTab.openTab('main', '我的主页', 'wls.php?controller=quiz_record&action=getChart', 'user.getChart("w_q_r_c")');
+			navTab.openTab('main', '我的主页', 'wls.php?controller=quiz_record&action=getChart', 'user.getMyQuizChart("w_q_r_c")');
 		}
 	});
 });
