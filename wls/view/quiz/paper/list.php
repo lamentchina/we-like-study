@@ -7,26 +7,6 @@
 </form>
 		
 <div class="page">
-<!--  
-	<div class="pageHeader">
-		<form onsubmit="return navTabSearch(this);" action="wls.php?controller=quiz_paper&action=getDWZlist" method="post">
-		<div class="searchBar">
-			<ul class="searchContent">
-				<li>
-					<label>试卷名称：</label>
-					<input name='keywords' type="text" />
-				</li>
-			</ul>
-			<div class="subBar">
-				<ul>
-					<li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
-					<li><a class="button" href="demo_page6.html" target="dialog" rel="dlg_page1" title="查询框"><span>高级检索</span></a></li>
-				</ul>
-			</div>
-		</div>
-		</form>
-	</div>
-	-->
 	<div class="pageContent">
 		<?php 
 		$arr = explode(",",$userinfo['id_group']);
@@ -36,7 +16,8 @@
 			<ul class="toolBar">				
 				<li><a class="add" href="wls.php?controller=quiz_paper_normal&action=viewUploadExcel" target="dialog" rel="dlg_upload" mask="true"><span>添加</span></a></li>				
 				<li><a class="delete" href="wls.php?controller=quiz_paper&action=del&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
-				<li><a class="icon" href="wls.php?controller=quiz_paper_normal&action=exportExcel&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>导出</span></a></li>
+				<li><a class="icon" href="wls.php?controller=quiz_paper_normal&action=exportExcel&id={sid_user}" target="dialog" rel="dlg_export" mask="true"><span>导出</span></a></li>
+				<li><a class="icon" href="wls.php?controller=quiz_paper_normal&action=viewEditByDWZ&id={sid_user}" target="dialog" rel="dlg_modify" mask="true"><span>修改</span></a></li>
 				<li class="line">line</li>
 			</ul>
 		</div>
@@ -76,12 +57,7 @@
 					-->
 					<td>'.substr($data['rows'][$i]['date_created'],0,10).'</td>
 					<td>'.substr($data['rows'][$i]['price_money'],0,10).'</td>
-					<td><a href="wls.php?controller=quiz_paper&action=viewOneInDWZ&id='.$data['rows'][$i]['id'].'" target="_blank" >做题</a>';
-					if(in_array($this->cfg->group_admin,$arr)){
-						echo '&nbsp;<a href="wls.php?controller=quiz_paper&action=viewEditByDWZ&id='.$data['rows'][$i]['id'].'" target="dialog" mask="true" >修改</a>';
-					}			
-					echo 
-					'</td>
+					<td><a href="wls.php?controller=quiz_paper&action=viewOneInDWZ&id='.$data['rows'][$i]['id'].'" target="_blank" >做题</a></td>
 				</tr>
 			';
 		}

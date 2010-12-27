@@ -197,7 +197,6 @@ class install_discuzx extends wls {
 			}
 		}	
 		$sql = "select extcredits2 from ".$pfx."common_member_count where uid =".$id;
-//		echo $sql;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		if($temp['extcredits2']<$money){

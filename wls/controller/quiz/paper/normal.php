@@ -110,7 +110,7 @@ class quiz_paper_normal extends quiz_paper {
 						'options'=>array()
 					);
 				}
-				$temp = $this->format($currentSheet->getCell('C'.$i)->getValue());
+				$temp = $this->formatTitle($currentSheet->getCell('C'.$i)->getValue());
 				$arr = explode(". ",$temp);
 				$data[$index]['details_']['options'][] = array(
 					'option'=>$arr[0],
@@ -138,14 +138,14 @@ class quiz_paper_normal extends quiz_paper {
 				}
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '题目'){		
 				if(isset($data[$index]['title'])){
-					$data[$index]['title'] .= $this->format($currentSheet->getCell('C'.$i)->getValue());
+					$data[$index]['title'] .= $this->formatTitle($currentSheet->getCell('C'.$i)->getValue());
 				}else{
-					$data[$index]['title'] = $this->format($currentSheet->getCell('C'.$i)->getValue());
+					$data[$index]['title'] = $this->formatTitle($currentSheet->getCell('C'.$i)->getValue());
 				}
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '答案'){		
-				$data[$index]['answer'] = $this->format($currentSheet->getCell('C'.$i)->getValue());
+				$data[$index]['answer'] = $this->formatTitle($currentSheet->getCell('C'.$i)->getValue());
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '解题说明'){				
-				$data[$index]['description'] = $this->format($currentSheet->getCell('C'.$i)->getValue());
+				$data[$index]['description'] = $this->formatTitle($currentSheet->getCell('C'.$i)->getValue());
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '属于'){		
 				$data[$index]['belongto'] = $currentSheet->getCell('C'.$i)->getValue();
 			}

@@ -15,27 +15,31 @@ class quiz_type_record extends wls{
 		$user = new user();
 		$userinfo = $user->getUserInfo('mine');
 
-		$sql = "select title from ".$pfx."wls_quiz_type where id = ".$_REQUEST['id'];
+		$sql = "select title,price_money from ".$pfx."wls_quiz_type where id = ".$_REQUEST['id'];
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
-
-		$data = array(
-			'id_quiz_type'=>$_REQUEST['id'],
-			'title_quiz_type'=>$temp['title'],
-			'id_user'=>$userinfo['id_user'],
-			'username'=>$userinfo['name'],
-			'date_created'=>date('Y-m-d'),
-		);
-		$keys = array_keys($data);
-		$keys = implode(",",$keys);
-		$values = array_values($data);
-		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_quiz_type_record (".$keys.") values ('".$values."')";
-		mysql_query($sql,$conn);
-
-		$this->updateMyquiz();
-		$this->updateType($_REQUEST['id']);
-
+		
+		eval("include_once 'controller/install/".$this->cfg->cmstype.".php';");
+		eval('$obj = new install_'.$this->cfg->cmstype.'();');
+		eval('$isEnough = $obj->reduceMyMoney($id,'.$temp['price_money'].');');
+		if($isEnough){
+			$data = array(
+				'id_quiz_type'=>$_REQUEST['id'],
+				'title_quiz_type'=>$temp['title'],
+				'id_user'=>$userinfo['id_user'],
+				'username'=>$userinfo['name'],
+				'date_created'=>date('Y-m-d'),
+			);
+			$keys = array_keys($data);
+			$keys = implode(",",$keys);
+			$values = array_values($data);
+			$values = implode("','",$values);
+			$sql = "insert into ".$pfx."wls_quiz_type_record (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+	
+			$this->updateMyquiz();
+			$this->updateType($_REQUEST['id']);
+		}
 		header('Location: wls.php?controller=quiz_type&action=getDWZlist');
 	}
 
@@ -74,5 +78,38 @@ class quiz_type_record extends wls{
 			";
 		mysql_query($sql,$conn);
 	}
+	
+public function updateMyquiz(){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+
+		include_once 'controller/user.php';
+		$user = new user();
+		$userinfo = $user->getUserInfo('mine');
+
+		$sql = "select title_quiz_type from ".$pfx."wls_quiz_type_record where id_user = ".$userinfo['id_user'];
+		$res = mysql_query($sql,$conn);
+		$str = "";
+		while($temp = mysql_fetch_assoc($res)){
+			$str .= $temp['title_quiz_type'].",";
+		}
+		$str = substr($str,0,strlen($str)-1);
+		$sql = "update ".$pfx."wls_user set myquiz = '".$str."' where id_user = ".$userinfo['id_user'];
+		mysql_query($sql,$conn);
+	}
+
+	public function updateType($id_quiz_type=null){
+		if($id_quiz_type==null && isset($_REQUEST['id_quiz_type']))$id_quiz_type = $_REQUEST['id_quiz_type'];
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		$sql = "select count(*) as count_ from ".$pfx."wls_quiz_type_record where id_quiz_type = ".$id_quiz_type;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$sql = "update ".$pfx."wls_quiz_type set count_joined = ".$temp['count_']." where id = ".$id_quiz_type;
+		//		echo $sql;
+		mysql_query($sql,$conn);
+	}
+
+
 }
 ?>

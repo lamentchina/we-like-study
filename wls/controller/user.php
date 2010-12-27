@@ -33,10 +33,10 @@ class user extends wls {
 			";
 			return;
 		}
-//		setcookie("SE7P_2132_sid", $_COOKIE['SE7P_2132_sid']);
+
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
-		$quiztypeList = $obj->getListWithLevel();		
+		$quiztypeList = $obj->getMyList();		
 		$profile = $this->getProfile();		
 		$title = $this->cfg->title;
 		$head = $this->headerScripts();

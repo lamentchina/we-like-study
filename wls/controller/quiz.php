@@ -36,6 +36,9 @@ class quiz extends wls{
 		echo $content;		
 	}
 	
+	/**
+	 * 一次性检验所有的题目
+	 * */
 	public function checkAllOnce(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;

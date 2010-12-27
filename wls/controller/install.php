@@ -115,6 +115,10 @@ class install extends wls{
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
 		$obj->initTable();
+		
+		include_once 'controller/quiz/type/record.php';
+		$obj = new quiz_type_record();
+		$obj->initTable();
 
 		include_once 'controller/quiz/paper.php';
 		$obj = new quiz_paper();
@@ -159,8 +163,8 @@ class install extends wls{
 			<htm><head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 			<script language="javascript">
-			alert("数据库表结构初始化结束,开始导入XML数据");
-			window.navigate("wls.php?controller=install&action=importXML");
+			alert("数据库表结构初始化结束,安装结束");
+			//window.navigate("wls.php?controller=install&action=importXML");
 			</script>
 			</head><body></body></html>
 			';	

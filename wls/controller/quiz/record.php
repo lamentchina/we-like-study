@@ -238,7 +238,7 @@ class quiz_record extends wls {
 			历次测验正确率<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>知识点掌握度<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>时间投入
 			<div class="divider"></div>
 			-->
-			<b>历次测验学习成绩:</b>
+			<b><span title="点击刷新" onclick="user.getMyQuizChart(\'w_q_r_c\');">历次测验学习成绩:</span></b>
 			<div id="w_q_r_c" style="width:98%;height:200px;"></div>
 			<div class="divider"></div>
 			<script type="text/javascript">

@@ -13,9 +13,8 @@
 		?>
 		<div class="panelBar">
 			<ul class="toolBar">				
-				<li><a class="add" href="wls.php?controller=quiz_type&action=add" target="dialog" rel="dlg_upload" mask="true"><span>添加</span></a></li>				
-				<li><a class="delete" href="wls.php?controller=quiz_type&action=del&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
-				<li><a class="icon" href="wls.php?controller=quiz_type&action=exportExcel&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>导出</span></a></li>
+				<li><a class="add" href="wls.php?controller=quiz_type&action=viewAddByDWZ" target="dialog" rel="dlg_q_t_a" mask="true"><span>添加</span></a></li>				
+				<li><a class="delete" href="wls.php?controller=quiz_type&action=getRemoveByDWZ&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
 				<li><a class="icon" href="wls.php?controller=quiz_type&action=viewUpdateByDWZ&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>修改</span></a></li>
 				<li class="line">line</li>
 			</ul>
@@ -32,6 +31,7 @@
 					<th width="80">题目总数</th>
 					
 					<th width="80">参与人数</th>
+					<th width="80">价格</th>
 					<th width="80">状态</th>
 					<th width="80">操作</th>
 				</tr>
@@ -46,16 +46,17 @@
 					<td>'.$data['rows'][$i]['count_paper'].'</td>
 					<td>'.$data['rows'][$i]['count_question'].'</td>
 					<td>'.$data['rows'][$i]['count_joined'].'</td>
+					<td>'.$data['rows'][$i]['price_money'].'</td>
 					';
 			
-			if($this->check($userinfo['id_user'],$data['rows'][$i]['id'])){
+			if($this->isJoined($userinfo['id_user'],$data['rows'][$i]['id'])){
 				echo '
 				<td>已参加</td>
-				<td><a href="wls.php?controller=quiz_type&action=remove&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >退出</a></td>';
+				<td><a href="wls.php?controller=quiz_type_record&action=remove&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >退出</a></td>';
 			}else{
 				echo '
 				<td>未参加</td>
-				<td><a href="wls.php?controller=quiz_type&action=add&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >参加</a></td>';
+				<td><a href="wls.php?controller=quiz_type_record&action=add&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >参加</a></td>';
 			}
 			echo '</tr>';
 		}

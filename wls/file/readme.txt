@@ -1,8 +1,6 @@
 weLikeStudy V0.5
-
-这个插件提供一个“网络学习平台”
+这个插件提供一个'网络学习平台'
 计划升级的功能有:
-
 1 能够集成到各种主流的CMS系统中,包括Discuz,phpWind,Joomla,Wordpress,Drupal,PhpBB,织梦,帝国
  1.1 能直接以.RAR包上传到CMS插件安装口后集成
  1.2 能够支持MYSQL 和 PostGreSql 两种数据库

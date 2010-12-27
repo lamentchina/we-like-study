@@ -229,7 +229,7 @@ var wls_quiz = function(){
 
 		this.count_giveup = 0;
 		$.ajax({
-			url: thisObj.config.AJAXPATH+"?controller=quiz_quiz&action=checkAllOnce",
+			url: thisObj.config.AJAXPATH+"?controller=quiz&action=checkAllOnce",
 			data: {myAnswers:myAnswers},
 			type: "POST",
 			success: function(msg){
