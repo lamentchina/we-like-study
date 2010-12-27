@@ -229,7 +229,6 @@ class quiz_type extends wls{
 		$this->updateMyquiz();
 		$this->updateType($_REQUEST['id']);
 		
-//		echo '<div style="padding:15px;">已参加</div>';
 		header('Location: wls.php?controller=quiz_type&action=getDWZlist');
 	}
 	
@@ -266,8 +265,6 @@ class quiz_type extends wls{
 		$str = substr($str,0,strlen($str)-1);
 		$sql = "update ".$pfx."wls_user set myquiz = '".$str."' where id_user = ".$userinfo['id_user'];
 		mysql_query($sql,$conn);
-		
-
 	}
 	
 	public function updateType($id_quiz_type=null){
@@ -295,9 +292,7 @@ class quiz_type extends wls{
 			}			
 		}else{
 			return false;
-		}
-		
-	}
-	
+		}		
+	}	
 }
 ?>

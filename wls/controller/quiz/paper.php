@@ -321,6 +321,84 @@ class quiz_paper extends wls{
 			}
 		}
 	}
+	
+	/**
+	 * 修改一张试卷的属性
+	 * */
+	public function viewEditByDWZ(){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		$sql = "select id,title,price_money,rank from ".$pfx."wls_quiz_paper where id =".$_REQUEST['id'];
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		
+		echo '
+		<div class="pageFormContent" layoutH="56">
+			<p>
+				<label>标题：</label>
+				<input name="id" type="hidden" value="'.$_REQUEST['id'].'" />
+				<input name="title" type="text" size="30" value="'.$temp['title'].'" />				
+			</p>
+			<p>
+				<label>价格：</label>
+				<input name="price_money" type="text" size="30" value="'.$temp['price_money'].'" />
+			</p>
+			<p>
+				<label>使用级别：</label>
+				<input name="rank" type="text" size="30" value="'.$temp['rank'].'" />
+			</p>
+			<p>
+				<button onclick="wls_q_p_save();">提交</button>
+			</p>
+		</div>
+		<script type="text/javascript">
+		var wls_q_p_save = function(){
+			$.ajax({
+				url: "wls.php?controller=quiz_paper_paper&action=saveOne",
+				data: {
+				id:$("input[name=id]").val(),
+				title:$("input[name=title]").val(),
+				price_money:$("input[name=price_money]").val(),
+				rank:$("input[name=rank]").val()
+				},
+				type: "POST",
+				success: function(msg){			
+					var obj = jQuery.parseJSON(msg);	
+					$.pdialog.closeCurrent();
+					navTab.reload(null,null,"allpaper");
+				}
+			});
+		}
+		</script>
+		';
+	}
+	
+	/**
+	 * 根据前台传过来的数据,更新一条记录
+	 * */
+	public function saveOne(){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		
+		$id = $_POST['id'];
+		unset($_POST['id']);
+		$keys = array_keys($_POST);		
+		
+		$sql = " update ".$pfx."wls_quiz_paper set ";
+		for($i=0;$i<count($keys);$i++){
+			$sql .= $keys[$i]." = '".$_POST[$keys[$i]]."',";
+		}
+		$sql = substr($sql,0,strlen($sql)-1);
+		$sql .= " where id =".$id;
+
+		mysql_query($sql,$conn);	
+
+		echo json_encode(
+			array(
+				'ok'=>'yes'
+			)
+		);
+	}
 }
 
 /**

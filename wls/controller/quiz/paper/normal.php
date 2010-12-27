@@ -1,6 +1,5 @@
 <?php
-include_once 'controller/quiz/paper/paper.php';
-
+include_once 'controller/quiz/paper.php';
 
 /**
  * 普通型的试卷导入

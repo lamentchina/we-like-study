@@ -111,6 +111,7 @@ class install_discuzx extends wls {
 	public function getUserInfo($id){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
+
 		if($id==null || $id=='mine'){
 			if(isset($_COOKIE['SE7P_2132_sid'])){
 				$sid = $_COOKIE['SE7P_2132_sid'];
@@ -175,8 +176,7 @@ class install_discuzx extends wls {
 		);
 		if($temp['adminid']==1){
 			$data['id_group'] = $this->cfg->group_admin;
-		}
-		if($temp['extgroupids']==null || $temp['extgroupids']==''){
+		}else if($temp['extgroupids']==null || $temp['extgroupids']==''){
 			$data['id_group'] = $this->cfg->group_student;
 		}
 		return $data;	
@@ -223,6 +223,7 @@ class install_discuzx extends wls {
 			,displayorder	
 			,highlight
 			,navtype	
+			,target
 		) values(
 			 '在线考试学习'
 			,'wls'
@@ -231,6 +232,7 @@ class install_discuzx extends wls {
 			,'9'
 			,'0'
 			,'0'
+			,'1'
 		)  ";	
 		mysql_query($sql,$conn);		
 	}

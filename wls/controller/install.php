@@ -1,9 +1,22 @@
 <?php
+/**
+ * 插件安装入口
+ * 
+ * 安装结束之后,此文件也不应该被删掉
+ * */
 class install extends wls{	
+	
+	/**
+	 * 访问主入口,就是打开一个页面
+	 * */
 	public function main(){
 		include_once 'view/install/install.php';
 	}
 	
+	/**
+	 * 根据前台传过来的配置参数,重写配置文件
+	 * 必须保证 config.php 可写
+	 * */
 	public function step1(){
 		$data = array();
 		
@@ -30,6 +43,10 @@ class install extends wls{
 		echo json_encode($data);
 	}
 	
+	/**
+	 * 初始化数据库表结构
+	 * 并和CMS系统做桥接
+	 * */
 	public function step2(){
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
@@ -56,6 +73,7 @@ class install extends wls{
 		$obj = new quiz_record();
 		$obj->initTable();	
 		
+		//根据CMS系统的类型做不同的桥接
 		if($obj->cfg->cmstype=='discuz'){
 			include_once 'controller/install/discuz.php';
 			$obj2 = new install_discuz();
@@ -81,6 +99,9 @@ class install extends wls{
 		echo json_encode($data);
 	}
 	
+	/**
+	 * 插件安装完成之后,导入一些试卷做测试用的
+	 * */
 	public function step3(){
 		
 	}

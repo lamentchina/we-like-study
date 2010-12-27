@@ -1,14 +1,7 @@
 <?php
 /**
- * 如果此系统是集成到 discuz 中去的话,需要执行的步骤:
- *  1同步用户DISCUZ中用户信息到插件中的用户表,以后用户在Discuz中修改了用户信息后
- *   每次用户打开此插件,都会将更新后的数据同步过去
- *   依赖Discuz中的members表
- *  2往Discuz中的用户组表中插入用户组的内容,包括: 
- *   考试系统管理员
- *   学员
- *   老师
- *   依赖Discuz中原有的 usergroups 表,并将 radminid 作为上级编号处理
+ * 集成到Discuz系统中去
+ * 
  * */
 class install_discuz extends wls {
 	public $rewrite = array();
@@ -92,9 +85,11 @@ class install_discuz extends wls {
 		$this->rewrite['user_extend_myquiz']=$id;
 		$this->rewrite['user_extend_wrongs']=$id2;
 		$this->rewrite['user_extend_papers']=$id3;
-
 	}
 
+	/**
+	 * 得到用户的基本信息
+	 * */
 	public function getUserInfo($id){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
@@ -141,6 +136,10 @@ class install_discuz extends wls {
 		);		
 	}
 	
+	/**
+	 * 减少某个用户的学习币
+	 * Discuz中,用extcredits2字段
+	 * */
 	public function reduceMyMoney($id,$money){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
@@ -241,12 +240,14 @@ class install_discuz extends wls {
 			,url
 			,available		
 			,displayorder	
+			,target
 		) values(
 			 '在线考试学习'
 			,'wls'
 			,'".$_SERVER['SCRIPT_NAME']."?controller=user&action=viewProfile'
 			,'1'
-			,'9'		
+			,'9'	
+			,'1'	
 		)  ";		
 		mysql_query($sql,$conn);
 	}

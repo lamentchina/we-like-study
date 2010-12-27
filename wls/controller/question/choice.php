@@ -1,5 +1,5 @@
 <?php
-include_once 'controller/question/question.php';
+include_once 'controller/question.php';
 
 
 /**

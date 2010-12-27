@@ -1,6 +1,5 @@
 <?php
-class user extends wls {
-	
+class user extends wls {	
 	
 	public function getUserInfo($id=null){
 		$pfx = $this->cfg->dbprefix;
@@ -8,15 +7,11 @@ class user extends wls {
 		
 		$data = null;
 		if($id==null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
-		if($this->cfg->cmstype=='discuz'){
-			include_once 'controller/install/discuz.php';
-			$obj = new install_discuz();		
-			$data = $obj->getUserInfo($id);				
-		}else if($this->cfg->cmstype=='discuzx'){
-			include_once 'controller/install/discuzx.php';
-			$obj = new install_discuzx();		
-			$data = $obj->getUserInfo($id);				
-		}		
+		
+		eval("include_once 'controller/install/".$this->cfg->cmstype.".php';");
+		eval('$obj = new install_'.$this->cfg->cmstype.'();');
+		eval('$data = $obj->getUserInfo($id);');
+
 		return $data;
 	}
 	
@@ -38,7 +33,7 @@ class user extends wls {
 			";
 			return;
 		}
-		
+//		setcookie("SE7P_2132_sid", $_COOKIE['SE7P_2132_sid']);
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
 		$quiztypeList = $obj->getListWithLevel();		
