@@ -1,4 +1,4 @@
-<form id="pagerForm" method="post" action="wls.php?controller=quiz_paper_paper&action=getDWZlist">
+<form id="pagerForm" method="post" action="wls.php?controller=quiz_paper&action=getDWZlist">
 	<input type="hidden" name="status" value="${param.status}">
 	<input type="hidden" name="search" value="<?php echo str_replace("\"","'",$search_) ?>" />
 	<input type="hidden" name="pageNum" value="<?php echo $data['page'] ?>" />
@@ -9,7 +9,7 @@
 <div class="page">
 <!--  
 	<div class="pageHeader">
-		<form onsubmit="return navTabSearch(this);" action="wls.php?controller=quiz_paper_paper&action=getDWZlist" method="post">
+		<form onsubmit="return navTabSearch(this);" action="wls.php?controller=quiz_paper&action=getDWZlist" method="post">
 		<div class="searchBar">
 			<ul class="searchContent">
 				<li>
@@ -35,7 +35,7 @@
 		<div class="panelBar">
 			<ul class="toolBar">				
 				<li><a class="add" href="wls.php?controller=quiz_paper_normal&action=viewUploadExcel" target="dialog" rel="dlg_upload" mask="true"><span>添加</span></a></li>				
-				<li><a class="delete" href="wls.php?controller=quiz_paper_paper&action=del&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
+				<li><a class="delete" href="wls.php?controller=quiz_paper&action=del&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
 				<li><a class="icon" href="wls.php?controller=quiz_paper_normal&action=exportExcel&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>导出</span></a></li>
 				<li class="line">line</li>
 			</ul>
@@ -46,15 +46,17 @@
 		<table class="table" layouth="138">
 			<thead>
 				<tr>
-					<th width="18"></th>
-					<th width="40">类型</th>
+					<th width="20"></th>
+					<th width="70">类型</th>
 					<th width="120">试卷名称</th>
-					<th width="50" title="最高分/平均分 ">分数</th>
-					<th width="80" title="题总数/子题总数">题目</th>
-					<th width="80" align="center">使用次数</th>
+					<th width="50">最高分/平均分</th>
+					<th width="60">题总数/子题数</th>
+					<th width="45" align="center">使用次数</th>
+					<!--
 					<th width="80" title="访问级别/难度级别">级别</th>
-					<th width="80">考试日期</th>
-					<th width="40">价格</th>
+					-->
+					<th width="45">加入日期</th>
+					<th width="30">价格</th>
 					<th width="80">操作</th>
 				</tr>
 			</thead>
@@ -69,10 +71,17 @@
 					<td>'.$data['rows'][$i]['score_top'].'/'.$data['rows'][$i]['score_avg'].'</td>
 					<td>'.$data['rows'][$i]['count_quetions'].'/'.$data['rows'][$i]['count_subquestions'].'</td>
 					<td>'.$data['rows'][$i]['count_used'].'</td>
+					<!--
 					<td>'.$data['rows'][$i]['rank'].'/'.$data['rows'][$i]['difficulty'].'</td>
+					-->
 					<td>'.substr($data['rows'][$i]['date_created'],0,10).'</td>
 					<td>'.substr($data['rows'][$i]['price_money'],0,10).'</td>
-					<td><a href="wls.php?controller=quiz_paper_paper&action=viewOneInDWZ&id='.$data['rows'][$i]['id'].'" target="_blank" >做题</a></td>
+					<td><a href="wls.php?controller=quiz_paper&action=viewOneInDWZ&id='.$data['rows'][$i]['id'].'" target="_blank" >做题</a>';
+					if(in_array($this->cfg->group_admin,$arr)){
+						echo '&nbsp;<a href="wls.php?controller=quiz_paper&action=viewEditByDWZ&id='.$data['rows'][$i]['id'].'" target="dialog" mask="true" >修改</a>';
+					}			
+					echo 
+					'</td>
 				</tr>
 			';
 		}

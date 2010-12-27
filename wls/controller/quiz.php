@@ -84,7 +84,5 @@ class quiz extends wls{
 		}
 		echo json_encode($answers);
 	}
-	
-
 }
 ?>

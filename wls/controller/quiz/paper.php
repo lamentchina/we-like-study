@@ -251,7 +251,14 @@ class quiz_paper extends wls{
 	public function del(){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
-		$sql = "delete from ".$pfx."wls_quiz_paper where id in (".$_REQUEST['id']."); ";
+		
+		$sql = "select id_quiz_type from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$sql = "update ".$pfx."wls_quiz_type set count_paper = count_paper-1 where id = ".$temp['id_quiz_type'];
+		mysql_query($sql,$conn);	
+		
+		$sql = "delete from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
 		mysql_query($sql);
 		echo '
 		{
@@ -262,12 +269,14 @@ class quiz_paper extends wls{
 		"forwardUrl":""
 		}		
 		';
+		
+		
 	}
 
 	public function getAllQues($id=null){
 		if($id==null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
 
-		include_once 'controller/question/question.php';
+		include_once 'controller/question.php';
 		$obj = new question();
 		$list = $obj->getList('array',1,400,array('id_quiz_paper'=>$id),' order by id_parent ');
 		$data = $list['rows'];
@@ -282,6 +291,7 @@ class quiz_paper extends wls{
 				$ques[$data[$i]['id_parent']]['child'][] = $data[$i];
 			}
 		}
+		
 		echo json_encode(array_values($ques));
 	}
 
@@ -354,7 +364,7 @@ class quiz_paper extends wls{
 		<script type="text/javascript">
 		var wls_q_p_save = function(){
 			$.ajax({
-				url: "wls.php?controller=quiz_paper_paper&action=saveOne",
+				url: "wls.php?controller=quiz_paper&action=saveOne",
 				data: {
 				id:$("input[name=id]").val(),
 				title:$("input[name=title]").val(),

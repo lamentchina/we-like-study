@@ -30,9 +30,7 @@ if ($.browser.msie) {
 			<div class="headerNav">
 				<a class="logo" href="javascript:void(0)">标志</a>
 				<ul class="nav">
-					<!--<li><a href="javascript:void(0)">反馈</a></li>-->
-					<li><a href="/" target="_blank">论坛</a></li>
-					<!--<li><a href="login.html">退出</a></li>-->
+					<li><a href="/" target="_blank">返回论坛</a></li>
 				</ul>
 				<ul class="themeList" id="themeList">
 					<li theme="default"><div class="selected">蓝色</div></li>
@@ -57,36 +55,36 @@ if ($.browser.msie) {
 					</div>
 					<div class="accordionContent">
 						<ul class="tree treeFolder">
-							<li><a href="wls.php?controller=quiz_paper_paper&action=getDWZlist" target="navTab">所有试卷</a>
+							<li><a href="wls.php?controller=quiz_paper&action=getDWZlist" target="navTab" rel="allpaper">所有试卷</a>
 								<ul>
 								<?php 
 									$keys = array_keys($quiztypeList);
 									for($i=0;$i<count($keys);$i++){
 										if(isset($quiztypeList[$keys[$i]]['child'])){
-											echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['id']."\">".$quiztypeList[$keys[$i]]['title']."</a>";
+											echo "<li><a href=\"wls.php?controller=quiz_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['id']."\">".$quiztypeList[$keys[$i]]['title']."</a>";
 											echo "<ul>";
 											for($ii=0;$ii<count($quiztypeList[$keys[$i]]['child']);$ii++){
-												echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['child'][$ii]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['child'][$ii]['id']."\">".$quiztypeList[$keys[$i]]['child'][$ii]['title']."</a></li>";
+												echo "<li><a href=\"wls.php?controller=quiz_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['child'][$ii]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['child'][$ii]['id']."\">".$quiztypeList[$keys[$i]]['child'][$ii]['title']."</a></li>";
 											}
 											echo "</ul></li>";
 										}else{
-											echo "<li><a href=\"wls.php?controller=quiz_paper_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['id']."\">".$quiztypeList[$keys[$i]]['title']."</a></li>";
+											echo "<li><a href=\"wls.php?controller=quiz_paper&action=getDWZlist&search={'id_quiz_type':'".$quiztypeList[$keys[$i]]['id']."'}\" target=\"navTab\" rel=\"page".$quiztypeList[$keys[$i]]['id']."\">".$quiztypeList[$keys[$i]]['title']."</a></li>";
 										}
 									}
 								?>
 
 								</ul>
 							</li>
-							<!--
+							
 							<li><a href="wls.php?controller=quiz_type&action=getDWZlist" target="navTab" rel="quiz_type">考试科目</a></li>
-							  
-							<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_panel">日常练习</a></li>
-							<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_validation">特训考场 </a>
+							  <!--
+							<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_panel">日常练习</a></li>
+							<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_validation">特训考场 </a>
 								<ul>
-									<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_validation">闯关训练</a></li>
-									<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_datepicker">抢答练习</a></li>
-									<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_button">模拟考场</a></li>
-									<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="w_textInput">考场说明</a></li>
+									<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_validation">闯关训练</a></li>
+									<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_datepicker">抢答练习</a></li>
+									<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_button">模拟考场</a></li>
+									<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_textInput">考场说明</a></li>
 								</ul>
 							</li>
 							-->
@@ -98,8 +96,8 @@ if ($.browser.msie) {
 					</div>
 					<div class="accordionContent">
 						<ul class="tree treeFolder">
-							<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="demo_page1">未开通</a></li>
-							<li><a href="wls.php?controller=quiz_quiz&action=undo" target="navTab" rel="demo_page1">正在开发中</a></li>
+							<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="demo_page1">未开通</a></li>
+							<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="demo_page1">正在开发中</a></li>
 					</div>
  					-->
 					<div class="accordionHeader">
@@ -135,15 +133,13 @@ if ($.browser.msie) {
 					</div>
 					<div class="accordionContent">
 						<ul class="tree">
-							<li><a href="wls.php?controller=quiz_quiz&action=aboutplugin" target="dialog" rel="dlg_page1">插件说明</a></li>
-							<li><a href="wls.php?controller=quiz_quiz&action=authorInfo" target="dialog" rel="dlg_page2">联系作者</a></li>
-							<li><a href="wls.php?controller=quiz_quiz&action=commercial" target="dialog" rel="dlg_page3">商业合作</a></li>							
+							<li><a href="wls.php?controller=quiz&action=aboutplugin" target="dialog" rel="dlg_page1">插件说明</a></li>
+							<li><a href="wls.php?controller=quiz&action=authorInfo" target="dialog" rel="dlg_page2">联系作者</a></li>
+							<li><a href="wls.php?controller=quiz&action=commercial" target="dialog" rel="dlg_page3">商业合作</a></li>							
 						</ul>
 					</div>
-				</div>
-				
+				</div>				
 			</div>
-
 		</div>
 		<div id="container">
 			<div id="navTab" class="tabsPage">

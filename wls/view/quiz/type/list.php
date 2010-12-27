@@ -7,10 +7,22 @@
 </form>		
 <div class="page">
 	<div class="pageContent">
+		<?php 
+		$arr = explode(",",$userinfo['id_group']);
+		if(in_array($this->cfg->group_admin,$arr)){
+		?>
 		<div class="panelBar">
 			<ul class="toolBar">				
+				<li><a class="add" href="wls.php?controller=quiz_type&action=add" target="dialog" rel="dlg_upload" mask="true"><span>添加</span></a></li>				
+				<li><a class="delete" href="wls.php?controller=quiz_type&action=del&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
+				<li><a class="icon" href="wls.php?controller=quiz_type&action=exportExcel&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>导出</span></a></li>
+				<li><a class="icon" href="wls.php?controller=quiz_type&action=viewUpdateByDWZ&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>修改</span></a></li>
+				<li class="line">line</li>
 			</ul>
 		</div>
+		<?php 
+		}
+		?>
 		<table class="table" layouth="138">
 			<thead>
 				<tr>

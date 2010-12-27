@@ -1,31 +1,89 @@
 <?php
 /**
  * 插件安装入口
- * 
+ *
  * 安装结束之后,此文件也不应该被删掉
  * */
-class install extends wls{	
+class install extends wls{
 	
 	/**
 	 * 访问主入口,就是打开一个页面
 	 * */
-	public function main(){
-		include_once 'view/install/install.php';
+	public function setConfig(){
+		$html = '
+		<form action="wls.php?controller=install&action=saveConfig" method="post">
+		<table>
+		<tr>
+			<td>目标程序:</td>
+			<td>
+				<select name="cmstype">
+					<option value="null" selected="selected">请选择</option>
+					<option value="discuzx">DiscuzX 1.5</option>
+					<option value="discuz">Discuz 7.2</option>
+				</select>
+			</td>		
+		</tr>
+		<tr>
+			<td>服务器地址</td>
+			<td>
+				<input name="host" value="localhost" />
+			</td>		
+		</tr>			
+		<tr>
+			<td>数据库名称</td>
+			<td>
+				<input name="db" />
+			</td>		
+		</tr>	
+		<tr>
+			<td>数据库用户名</td>
+			<td>
+				<input name="user" />
+			</td>		
+		</tr>	
+		<tr>
+			<td>数据库密码</td>
+			<td>
+				<input name="password" />
+			</td>		
+		</tr>	
+		<tr>	
+			<td>数据库表前缀</td>
+			<td>
+				<input name="dbprefix" />
+			</td>		
+		</tr>		
+		<tr>	
+			<td colspan="2">
+				<button type="submit" >提交</button>
+			</td>		
+		</tr>								
+	</table>
+	</form>
+		';
+		echo $html;
 	}
-	
+
 	/**
 	 * 根据前台传过来的配置参数,重写配置文件
 	 * 必须保证 config.php 可写
 	 * */
-	public function step1(){
+	public function saveConfig(){
 		$data = array();
-		
-		if($_REQUEST['host']=='' || 
-			$_REQUEST['user']=='' ||
-			$_REQUEST['password']=='' ||
-			$_REQUEST['db']=='' ||
-			$_REQUEST['dbprefix']=='' ){
-				$data['message'] = '必要的参数为空';
+		if($_REQUEST['host']=='' ||
+		$_REQUEST['user']=='' ||
+		$_REQUEST['password']=='' ||
+		$_REQUEST['db']=='' ||
+		$_REQUEST['dbprefix']=='' ){
+			echo '
+				<htm><head>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				<script language="javascript">
+				alert("缺少必要的参数");
+				window.navigate("wls.php?controller=install&action=setConfig");
+				</script>
+				</head><body></body></html>
+				';
 		}else{
 			$arr = array(
 				'host'=>$_REQUEST['host'],
@@ -37,82 +95,84 @@ class install extends wls{
 				'cmstype'=>$_REQUEST['cmstype'],
 			);
 			$this->rewirteConfig($arr);
-			$data['message'] = '已设置配置文件';
-			$data['state'] = 'ok';			
-		}		
-		echo json_encode($data);
+			echo '
+				<htm><head>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				<script language="javascript">
+				alert("参数配置结束,开始初始化数据库表结构");
+				window.location.href=("wls.php?controller=install&action=initTables");
+				</script>
+				</head><body></body></html>
+				';	
+		}
 	}
-	
+
 	/**
 	 * 初始化数据库表结构
 	 * 并和CMS系统做桥接
 	 * */
-	public function step2(){
+	public function initTables(){
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
-		$obj->initTable();		
-		$obj->initTestData();	
-		
-		include_once 'controller/quiz/paper/paper.php';
+		$obj->initTable();
+
+		include_once 'controller/quiz/paper.php';
 		$obj = new quiz_paper();
 		$obj->initTable();
-		
-		include_once 'controller/question/question.php';
+
+		include_once 'controller/question.php';
 		$obj = new question();
-		$obj->initTable();			
-		
+		$obj->initTable();
+
 		include_once 'controller/quiz/wrongs.php';
 		$obj = new quiz_wrongs();
-		$obj->initTable();	
+		$obj->initTable();
 
 		include_once 'controller/question/record.php';
 		$obj = new question_record();
-		$obj->initTable();	
+		$obj->initTable();
 
 		include_once 'controller/quiz/record.php';
 		$obj = new quiz_record();
-		$obj->initTable();	
-		
+		$obj->initTable();
+
 		//根据CMS系统的类型做不同的桥接
 		if($obj->cfg->cmstype=='discuz'){
 			include_once 'controller/install/discuz.php';
 			$obj2 = new install_discuz();
-			
+				
 			$obj2->initGroup();
 			$obj2->extendUser();
 			$obj2->initNav();
+			$obj2->rewrite['debug']=0;
 			$this->rewirteConfig($obj2->rewrite);
 		}else if($obj->cfg->cmstype=='discuzx'){
 			include_once 'controller/install/discuzx.php';
 			$obj2 = new install_discuzx();
-			
+				
 			$obj2->extendUser();
 			$obj2->initNav();
+			$obj2->rewrite['debug']=0;
 			$this->rewirteConfig($obj2->rewrite);
-		}		
-		
-		$data = array(
-			'message' =>'数据库表初始化成功',
-			'state'=>'ok',
-		);
-		
-		echo json_encode($data);
+		}
+		echo '
+			<htm><head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			<script language="javascript">
+			alert("数据库表结构初始化结束,开始导入XML数据");
+			window.navigate("wls.php?controller=install&action=importXML");
+			</script>
+			</head><body></body></html>
+			';	
 	}
-	
-	/**
-	 * 插件安装完成之后,导入一些试卷做测试用的
-	 * */
-	public function step3(){
-		
-	}
-	
+
 	/**
 	 * 重写配置文件
 	 * **/
 	public function rewirteConfig($foo=null){
 		if($this->cfg->debug!=1){
 			$this->hackAttack();
-			return;
+			exit();
 		}
 		$file_name = "config.php";
 		if(!$file_handle = fopen($file_name,"w")){
@@ -123,8 +183,8 @@ class install extends wls{
 		$keys = array_keys($cfg);
 		for($i=0;$i<count($keys);$i++){
 			eval('$arr["'.$keys[$i].'"] = $this->cfg->'.$keys[$i].';');
-		}	
-		
+		}
+
 		if($foo!=null){
 			$keys = array_keys($foo);
 			for($i=0;$i<count($foo);$i++){

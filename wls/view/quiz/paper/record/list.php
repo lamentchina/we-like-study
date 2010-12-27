@@ -9,9 +9,9 @@
 					<th width="100">试卷名称</th>
 					<th width="100">科目种类</th>
 					<th >花费时间 </th>
-					<th width="150">题总数/做错</th>
+					<th width="150">题总数/做错/放弃</th>
 					<th width="80" align="center">正确率</th>
-					<th width="80">考试日期</th>
+					<th width="80">记录日期</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,7 +25,7 @@
 					<td>'.$data['rows'][$i]['title_quiz_paper'].'</td>
 					<td>'.$data['rows'][$i]['title_quiz_type'].'</td>
 					<td>'.$this->getTimer($data['rows'][$i]['timer']).'</td>
-					<td>'.$data['rows'][$i]['count_wrong'].'/'.$data['rows'][$i]['count_total'].'</td>
+					<td>'.$data['rows'][$i]['count_total'].'/'.$data['rows'][$i]['count_wrong'].'/'.$data['rows'][$i]['count_giveup'].'</td>
 					<td>'.(int)($data['rows'][$i]['proportion']*100).'%'.'</td>
 					<td>'.substr($data['rows'][$i]['date_created'],0,10).'</td>
 				</tr>

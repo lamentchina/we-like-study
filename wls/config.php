@@ -8,7 +8,7 @@ class wlsconfig{
 			public $db = 'discuz_12_25';
 			public $dbprefix = 'cdb_';
 			public $cmstype = 'discuzx';
-			public $debug = '1';
+			public $debug = '0';
 			public $title = '我们喜欢学习 We Like Study !';
 			public $loginpath = '/member.php?mod=register';
 			public $group_admin = '144';

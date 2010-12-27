@@ -1,3 +1,7 @@
+/**
+ * 测验卷的一种类型
+ * 考试试卷
+ * */
 var wls_quiz_paper = function(){	
 	this.paperId = '';
 	this.paperTitle = '';
@@ -24,7 +28,7 @@ var wls_quiz_paper = function(){
 	        } }); 
 		var thisObj = this;
 		$.ajax({
-			url: thisObj.config.AJAXPATH+"?controller=quiz_paper_paper&action=getAllQues&id="+thisObj.paperId,
+			url: thisObj.config.AJAXPATH+"?controller=quiz_paper&action=getAllQues&id="+thisObj.paperId,
 			success: function(msg){
 				var obj = jQuery.parseJSON(msg);
 				
@@ -66,7 +70,7 @@ var wls_quiz_paper = function(){
 
 		var thisObj = this;
 		$.ajax({
-			url: thisObj.config.AJAXPATH+"?controller=quiz_paper_paper&action=getOne&id="+thisObj.paperId,
+			url: thisObj.config.AJAXPATH+"?controller=quiz_paper&action=getOne&id="+thisObj.paperId,
 			success: function(msg){
 				var obj = jQuery.parseJSON(msg);
 				if(obj.ids.length==0){
@@ -90,7 +94,7 @@ var wls_quiz_paper = function(){
 	this.isMyMoneyEnough = function(nextFunction){
 		var thisObj = this;
 		$.ajax({
-			url: thisObj.config.AJAXPATH+"?controller=quiz_paper_paper&action=isMyMoneyEnough&id="+thisObj.paperId,
+			url: thisObj.config.AJAXPATH+"?controller=quiz_paper&action=isMyMoneyEnough&id="+thisObj.paperId,
 			success: function(msg){
 				var obj = jQuery.parseJSON(msg);
 //				alert(obj);
@@ -202,4 +206,5 @@ var wls_quiz_paper = function(){
 		$('.w_q_p_clock',$('.w_q_sidebar')).css('display','none');
 	}
 }
+//继承自 wls_quiz
 wls_quiz_paper.prototype = new wls_quiz();

@@ -1,5 +1,3 @@
-
-
 var toogleDesc = function(id){
 	$('#w_qs_d_t_'+id,$('#w_qs_'+id)).toggleClass('w_q_d_t_2');
 	$(".w_q_d",$('#w_qs_'+id)).toggleClass('w_q_d_h');
@@ -92,6 +90,9 @@ var wls_quiz = function(){
 		this.questions[index].initDom(nextFunction);
 	}
 	
+	/**
+	 * 在测验卷的右侧标注题目导航
+	 * */
 	this.addSubQuesNav = function(){
 		$(".w_q_sidebar",$('#'+this.quizDomId)).append("<div class='w_q_subQuesNav'><div class='w_q_subQuesNav_title'>题目导航</div></div>");
 		var str = '';
@@ -110,6 +111,10 @@ var wls_quiz = function(){
 		$(".w_q_subQuesNav",$(".w_q_sidebar",$('#'+this.quizDomId))).append(str);
 	}
 	
+	/**
+	 * 点击右侧的题目序号,左侧的试卷会滚动,
+	 * 可以快速定位到相应的题目位置
+	 * */
 	this.scroll = function(id){
 		$(".w_q_container").scrollTop($(".w_q_container").scrollTop()*(-1));
 		var num = $("#w_qs__"+id).offset().top-150;

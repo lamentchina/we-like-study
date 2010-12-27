@@ -31,56 +31,12 @@ class quiz_type extends wls{
 				,description text					comment '描述'
 			) DEFAULT CHARSET=utf8 					comment='考试科目';	
 			";
-		mysql_query($sql,$conn);
-		
-		$sql = "drop table if exists ".$pfx."wls_quiz_type_record;";
-		mysql_query($sql,$conn);
-		$sql = "				
-			create table ".$pfx."wls_quiz_type_record(
-				 id int AUTO_INCREMENT primary key 	comment '自动编号'
-				,id_user int default 0 				comment '用户编号'
-				,id_quiz_type int default 0 		comment '考试科目编号'
-				,username varchar(200) 				comment '用户名'
-				,title_quiz_type varchar(200)		comment '科目名称'
-				,date_created datetime not null 	comment '创建时间'
-				
-			) DEFAULT CHARSET=utf8 					comment='考试科目记录';	
-			";
 		mysql_query($sql,$conn);		
 	}
 	
-	public function initTestData(){
-		$conn = $this->conn();
-		$pfx = $this->cfg->dbprefix;
-		
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,haschild,title,creator,date_created)
-		VALUES ('0','1', '英语', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		$id = mysql_insert_id($conn);
-		
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('".$id."', '公共英语四级', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('".$id."', '大学英语四级', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('".$id."', '大学英语六级', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,haschild,title,creator,date_created)
-		VALUES ('0','1', '公务员', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		$id = mysql_insert_id($conn);		
-		
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('".$id."', '公共基础', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-		$sql = "INSERT INTO ".$pfx."wls_quiz_type(id_parent,title,creator,date_created)
-		VALUES ('".$id."', '行政能力', 'admin', '".date('Y-m-d')."')";
-		mysql_query($sql,$conn);
-	}
-	
+	/**
+	 * 获得具有层级关系的考试科目组
+	 * */
 	public function getListWithLevel(){
 		$data = $this->getList('array');
 		$data = $data['rows'];
@@ -98,6 +54,14 @@ class quiz_type extends wls{
 		return $arr;
 	}
 	
+	/**
+	 * 获得列表
+	 * 
+	 * @param $returnType 可以是 array json xml 等格式
+	 * @param $page 分页序号
+	 * @param $rows 每页大小
+	 * @param $search 查询条件 
+	 * */
 	public function getList($returnType = null,$page=null,$rows=null,$search=null){
 		if($page==null && isset($_REQUEST['page']))$page=$_REQUEST['page'];
 		if($rows==null && isset($_REQUEST['rows']))$rows=$_REQUEST['rows'];
@@ -109,10 +73,6 @@ class quiz_type extends wls{
 
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
-		
-		include_once 'controller/user.php';
-		$user = new user();
-		$userinfo = $user->getUserInfo();
 		
 		$where = " where 1 =1  ";
 		if($search!=null){
@@ -193,60 +153,117 @@ class quiz_type extends wls{
 		include_once 'view/quiz/type/list.php';
 	}		
 	
-	public function getOne(){
-		
-	}
-	
-	public function viewList(){
-		echo "功能未完成";
-	}
-	
-	public function add(){
+	public function add($data=null){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
-		include_once 'controller/user.php';
-		$user = new user();
-		$userinfo = $user->getUserInfo('mine');		
+			
+		if($data==null && isset($_POST))$data = $_POST;			
 		
-		$sql = "select title from ".$pfx."wls_quiz_type where id = ".$_REQUEST['id'];
-		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);
-		
-		$data = array(
-			'id_quiz_type'=>$_REQUEST['id'],
-			'title_quiz_type'=>$temp['title'],
-			'id_user'=>$userinfo['id_user'],
-			'username'=>$userinfo['name'],
-			'date_created'=>date('Y-m-d'),
-		);
 		$keys = array_keys($data);
-		$keys = implode(",",$keys);
-		$values = array_values($data);
-		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_quiz_type_record (".$keys.") values ('".$values."')";
+		$clumns = '';
+		$values = '';
+		for($i=0;$i<count($keys);$i++){
+			$clumns .= $keys[$i].",";
+			$values .= "'".$data[$keys[$i]]."',";
+		}	
+		$clumns = substr($clumns,0,strlen($clumns)-1);
+		$values = substr($values,0,strlen($values)-1);
+		
+		$sql = "insert into ".$pfx."wls_quiz_type ( ".$clumns." ) values (".$values.");";
 		mysql_query($sql,$conn);
-		
-		$this->updateMyquiz();
-		$this->updateType($_REQUEST['id']);
-		
-		header('Location: wls.php?controller=quiz_type&action=getDWZlist');
+		$id = mysql_insert_id($conn);
+		return $id;
 	}
 	
-	public function remove(){
+	public function upate(){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
-		include_once 'controller/user.php';
-		$user = new user();
-		$userinfo = $user->getUserInfo('mine');		
-		$sql = "delete from  ".$pfx."wls_quiz_type_record where id_user = ".$userinfo['id_user']." and id_quiz_type =  ".$_REQUEST['id'];
-		mysql_query($sql,$conn);
 		
-		$this->updateMyquiz();	
-		$this->updateType($_REQUEST['id']);
+		$id = $_POST['id'];
+		unset($_POST['id']);
+		$keys = array_keys($_POST);		
 		
-		header('Location: wls.php?controller=quiz_type&action=getDWZlist');
-//		echo '<div style="padding:15px;"><a class="button" href="#" onclick=>已退出</a></div>';
+		$sql = " update ".$pfx."wls_quiz_type set ";
+		for($i=0;$i<count($keys);$i++){
+			$sql .= $keys[$i]." = '".$_POST[$keys[$i]]."',";
+		}
+		$sql = substr($sql,0,strlen($sql)-1);
+		$sql .= " where id =".$id;
+
+		mysql_query($sql,$conn);	
 	}
+	
+	
+	public function viewUpdateByDWZ(){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "select id,title from ".$pfx."wls_quiz_type ";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		$mydata = array();
+		while($temp = mysql_fetch_assoc($res)){			
+			if($temp['id']==$_REQUEST['id']){
+				$mydata = $temp;
+			}else{
+				$data[] = $temp;
+			}
+		}
+		
+		echo '
+		<div class="pageFormContent" layoutH="56">
+			<p>
+				<label>标题：</label>
+				<input name="id" type="hidden" value="'.$_REQUEST['id'].'" />
+				<input name="title" type="text" size="30" value="'.$mydata['title'].'" />				
+			</p>
+			<p>
+				<label>上级科目：</label>
+				<select style="width:190px;" name="id_parent">
+					<option value="0">无</option>
+				';
+		for($i=0;$i<count($data);$i++){
+			echo '	<option value="'.$data[$i]['id'].'">'.$data[$i]['title'].'</option>';
+		}
+					
+		echo '
+				</select>
+			</p>
+			<p>
+				<button onclick="wls_q_t_save();">提交</button>
+			</p>
+		</div>
+		<script type="text/javascript">
+		var wls_q_t_save = function(){
+			$.ajax({
+				url: "wls.php?controller=quiz_paper&action=upate",
+				data: {
+				id:$("input[name=id]").val(),
+				title:$("input[name=title]").val(),
+				price_money:$("input[name=price_money]").val(),
+				rank:$("input[name=rank]").val()
+				},
+				type: "POST",
+				success: function(msg){			
+					var obj = jQuery.parseJSON(msg);	
+					$.pdialog.closeCurrent();
+					navTab.reload(null,null,"allpaper");
+				}
+			});
+		}
+		</script>
+		';
+	}
+	
+	public function remove($id=null){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		
+		if($id==null && isset($_REQUEST['id']))$id = $_REQUEST['id'];
+		$sql = "delete from ".$pfx."wls_quiz_type where id = ".$id;
+		mysql_query($sql,$conn);
+	}
+	
 	
 	public function updateMyquiz(){
 		$pfx = $this->cfg->dbprefix;

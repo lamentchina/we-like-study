@@ -18,22 +18,31 @@ class quiz_paper_normal extends quiz_paper {
 			'date_created' => date('Y-m-d'),
 			'difficulty'=>trim($currentSheet->getCell('B15')->getValue()),
 		);
-
-		$conn = $this->conn();
-		$pfx = $this->cfg->dbprefix;
-
-		$sql = "select id from ".$pfx."wls_quiz_type where title = '".$data['title_quiz_type']."' ";
-		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);
-
-		$data['id_quiz_type'] = $temp['id'];
-
 		$this->paper = $data;
 	}
 
 	public function savePaper(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
+
+		$sql = "select id from ".$pfx."wls_quiz_type where title = '".$this->paper['title_quiz_type']."' ";
+		$res = mysql_query($sql,$conn);
+		if($temp = mysql_fetch_assoc($res)){
+			$this->paper['id_quiz_type'] = $temp['id'];		
+		}else{
+			$sql = "insert into ".$pfx."wls_quiz_type (
+				 title
+				,creator
+				,date_created
+			) values(
+				'".$this->paper['title_quiz_type']."'
+				,'admin'
+				,'".date('Y-m-d')."'
+			) ";
+			mysql_query($sql,$conn);
+			$this->paper['id_quiz_type'] = mysql_insert_id($conn);
+		}		
+		
 		$data = $this->paper;
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -42,8 +51,10 @@ class quiz_paper_normal extends quiz_paper {
 		$sql = "insert into ".$pfx."wls_quiz_paper (".$keys.") values ('".$values."')";
 		mysql_query($sql,$conn);
 		$this->paper['id'] = mysql_insert_id($conn);
+		
+		$sql = "update ".$pfx."wls_quiz_type set count_paper = count_paper+1 where id = ".$this->paper['id_quiz_type'];
+		mysql_query($sql,$conn);		
 	}
-
 
 	/**
 	 * 从EXCEL文件中读取题目信息并保存到一个数组中
@@ -154,6 +165,8 @@ class quiz_paper_normal extends quiz_paper {
 			if(array_key_exists('details_',$this->ques[$excelids[$i]])){
 				$this->ques[$excelids[$i]]['details'] = json_encode($this->ques[$excelids[$i]]['details_']);
 				$this->ques[$excelids[$i]]['details'] = str_replace("\\u","\\\\u",$this->ques[$excelids[$i]]['details']);
+				$this->ques[$excelids[$i]]['details'] = str_replace("\n","",$this->ques[$excelids[$i]]['details']);
+				$this->ques[$excelids[$i]]['details'] = str_replace("\r","",$this->ques[$excelids[$i]]['details']);
 				unset($this->ques[$excelids[$i]]['details_']);
 			}
 			$sub = false;
@@ -175,7 +188,6 @@ class quiz_paper_normal extends quiz_paper {
 				$this->mainques[] = $this->ques[$excelids[$i]]['id'];
 			}
 		}
-		print_r($this->ques);
 	}
 
 	/**

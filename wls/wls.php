@@ -21,14 +21,16 @@
  * */
 class wls {
 
+	/**
+	 * 配置参数
+	 * */
 	public $cfg ;
 
 	/**
 	 * 初始化配置内容
-	 * 启用了Joomla本身自带的其他性能,因为过于复杂
+	 * 强制规定内容的输出格式都是UTF-8的
 	 * */
 	function wls(){
-//		sleep(1);
 		header('Content-type: text/html; charset=utf-8');
 		require_once 'config.php';
 		$this->cfg = new wlsconfig();	
@@ -52,66 +54,40 @@ class wls {
 	 * @see http://bbs.dwzjs.com/
 	 * */
 	public function headerScripts(){
-		$html = '
-		
+		$html = '		
 <link href="libs/DWZ/themes/default/style.css" rel="stylesheet" type="text/css" />
 <link href="libs/DWZ/themes/css/core.css" rel="stylesheet" type="text/css" />
 <link href="libs/DWZ/uploadify/css/uploadify.css" rel="stylesheet" type="text/css" />
-<link href="view/wls.css" rel="stylesheet" type="text/css" />
 		
-<script  src="libs/DWZ/javascripts/speedup.js" type="text/javascript"></script>
-<script  src="libs/DWZ/javascripts/jquery-1.4.2.js" type="text/javascript"></script>
-
-<script  src="libs/DWZ/javascripts/jquery.cookie.js" type="text/javascript"></script>
-<script  src="libs/DWZ/javascripts/jquery.validate.js" type="text/javascript"></script>
-<script  src="libs/DWZ/javascripts/jquery.bgiframe.js" type="text/javascript"></script>
-<script  src="libs/DWZ/xheditor/xheditor-zh-cn.min.js" type="text/javascript"></script>
-
-<script src="libs/DWZ/javascripts/dwz.core.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.scrollCenter.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.validate.method.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.regional.zh.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.barDrag.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.drag.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.tree.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.accordion.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.ui.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.theme.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.switchEnv.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.alertMsg.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.contextmenu.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/speedup.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/jquery-1.4.2.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/jquery.cookie.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/jquery.validate.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="libs/DWZ/xheditor/xheditor-zh-cn.min.js" type="text/javascript"></script>
+<script src="libs/DWZ/bin/dwz.min.js" type="text/javascript"></script>
 <script src="libs/DWZ/javascripts/dwz.navTab.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.tab.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.resize.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.jDialog.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.dialogDrag.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.cssTable.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.stable.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.taskBar.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.ajax.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.pagination.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.datepicker.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.effects.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.panel.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.checkbox.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.history.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.combox.js" type="text/javascript"></script>
-<!-- 
-<script  src="libs/DWZ/bin/dwz.min.js" type="text/javascript"></script>
--->
-<script  src="libs/DWZ/javascripts/dwz.regional.zh.js" type="text/javascript"></script>
-<script  src="libs/DWZ/uploadify/scripts/swfobject.js" type="text/javascript"></script>
-<script  src="libs/DWZ/uploadify/scripts/jquery.uploadify.v2.1.0.js" type="text/javascript"></script>
-<script  src="view/wls.js" type="text/javascript"></script>
-<script  src="view/quiz/quiz.js" type="text/javascript"></script>
-<script  src="view/user/user.js" type="text/javascript"></script>
-<script  src="libs/jquer.float.js" type="text/javascript"></script>
+<script src="libs/DWZ/javascripts/dwz.regional.zh.js" type="text/javascript"></script>
+<script src="libs/DWZ/uploadify/scripts/swfobject.js" type="text/javascript"></script>
+<script src="libs/DWZ/uploadify/scripts/jquery.uploadify.v2.1.0.js" type="text/javascript"></script>
+
+<!--[if IE]>
+<link href="libs/DWZ/themes/css/ieHack.css" rel="stylesheet" type="text/css" />
+<script src="libs/jquery.flot.excanvas.js" type="text/javascript"></script>
+<![endif]-->
+
+<link href="view/wls.css" rel="stylesheet" type="text/css" />
+<script src="view/wls.js" type="text/javascript"></script>
+<script src="view/quiz/quiz.js" type="text/javascript"></script>
+<script src="view/user/user.js" type="text/javascript"></script>
+<script src="libs/jquery.flot.js" type="text/javascript"></script>
+<script src="libs/jquery.flot.excanvas.js" type="text/javascript"></script>
 		';
 		return $html;
 	}
 	
 	/**
-	 * 根据秒数
+	 * 根据秒数,返回更友好,符合中国人习惯的时间描述
 	 * */
 	public function getTimer($sec){
 		$days = 0;
@@ -131,6 +107,9 @@ class wls {
 		return $str;
 	}
 
+	/**
+	 * 将长的标题切断,以短标题再加3个点号显示
+	 * */
 	public function split_title($title,$num){
 		$str=strlen($title);
 		if($str> $num){
@@ -140,6 +119,9 @@ class wls {
 		return   $title;
 	}
 	
+	/**
+	 * 判断这整个字符串是不是中文的
+	 * */
 	public function isgb($str){
 		if (strlen($str)>=2){
 			$str=strtok($str,"");
@@ -157,23 +139,6 @@ class wls {
 		}
 	}
 	
-	public function format($str){
-		$str = str_replace("'","&acute;",$str);
-		$str = str_replace('"','&quot;',$str);
-		$str = str_replace("\n","<br/>&nbsp;&nbsp;",$str);
-		//TODO excel 特殊空格
-//		$str_ = '';
-//
-//		for($i=0;$i<strlen($str);$i++){
-//			$c = ord(substr($str,$i,1));
-//			if( ($c>=20 && $c<=126 ) || (($c & 0x80) == 128) ){
-//				$str_ .= substr($str,$i,1);
-//			}
-//		}
-
-		return trim($str);
-	}	
-
 	/**
 	 * 处理试卷的批改方式的键值对应关系,如果bool是true,就根据汉字读索引 
 	 *  
@@ -239,59 +204,15 @@ class wls {
 		}
 	}
 	
+	/**
+	 * 发现有人在黑这个系统
+	 * */
 	public function hackAttack(){
 		echo "
-			!老大
-			,我知道你技术牛逼
-			,但别黑我的网站了行不
-			,咱草根站长维护一个网站也不容易啊
-			,有事好商量
-			,但如果你发现了哪个漏洞
-			,欢迎来余姚我请你喝烧酒^_^
+			不允许此操作!请修改配置文件中的 debug = 1 再执行.
 		";
 		//TODO
 	}
-}
-
-/**
- * 统一接口日志记录
- * 日志表中其中必有一项是 时间 ,其中的时间主要按天来存
- *
- * 日志主要有:
- *   题目记录.每个人每做一道题目,都要记录这次做题的详细情况.题目日志是系统所有统计分析功能的基础
- *   试卷记录.每个人每做一篇试卷
- *   每日排名.每天凌晨,系统自动统计昨天的排名,包括 单个科目考试排名,每个科目的题型的排名,某些用户组的排名
- *   知识点掌握度记录.每天凌晨,系统自动统计每个人在所参与科目的知识点掌握程度
- *   对错率记录.每天凌晨,系统自动统计每个人在所参与的科目及题型做题的对错率情况
- * */
-interface record{
-
-	/**
-	 * 创建一张新的日志表
-	 * 由于日志都是数据量非常大的表,因此会每隔一段时间建一张表,
-	 * 通常是每隔一个月
-	 * */
-	public function creatNewTable();
-
-	/**
-	 * 创建一条日志记录
-	 * 由于日志记录一般计算量比较大,详细的算法可能不会写在PHP后台,而是在数据库的存储过程中
-	 * */
-	public function add();
-
-	/**
-	 * 得到一条日志记录
-	 * 日志记录一般都存JSON数据,这种数据拿到前台可以直接使用
-	 * 根据 returnType ,可以返回 JSON 或 ARRAY
-	 * */
-	public function get();
-
-	/**
-	 * 按照时间颗粒来统计某些数值
-	 * 时间颗粒一般有:
-	 *   小时,上下午,天,星期,旬,月,年
-	 * */
-	public function summaryByPeriod();
 }
 
 //控制器有级层关系,以空格分开
