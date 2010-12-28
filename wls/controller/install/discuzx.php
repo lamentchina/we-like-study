@@ -29,6 +29,7 @@ class install_discuzx extends wls {
 		$pfx = $this->cfg->dbprefix;
 
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '参加的考试科目';";
+
 		$res = mysql_query($sql,$conn);
 		if($temp = mysql_fetch_assoc($res)){
 			$sql = "delete from ".$pfx."common_member_profile_setting where title = '参加的考试科目';";	
@@ -43,17 +44,23 @@ class install_discuzx extends wls {
 			,size
 			,title		
 			,formtype
+			,choices
+			,validate
 		) values (
 			 '1'
 			,'myquiz'
-			,200
+			,'200'
 			,'参加的考试科目'
 			,'text'
-		)";
+			,''
+			,''
+		);";
+		echo $sql;
 		mysql_query($sql,$conn);
 		$id = mysql_insert_id($conn);
 		$sql = "alter table ".$pfx."common_member_profile add column myquiz varchar(200) default '无';";
 		mysql_query($sql,$conn);
+		echo $sql;
 
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '错题数';";
 		$res = mysql_query($sql,$conn);
@@ -70,17 +77,23 @@ class install_discuzx extends wls {
 			,size
 			,title	
 			,formtype	
+			,choices
+			,validate			
 		) values (
 			 '1'
 			,'wrongs'
 			,2
 			,'错题数'
 			,'text'
+			,''
+			,''			
 		)";
+		echo $sql;
 		mysql_query($sql,$conn);
 		$id2 = mysql_insert_id($conn);
 		$sql = "alter table ".$pfx."common_member_profile add column wrongs int default 0;";
 		mysql_query($sql,$conn);
+		echo $sql;
 		
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '已做试卷数';";
 		$res = mysql_query($sql,$conn);
@@ -97,17 +110,23 @@ class install_discuzx extends wls {
 			,size
 			,title		
 			,formtype
+			,choices
+			,validate			
 		) values (
 			 '1'
 			,'papers'
 			,2
 			,'已做试卷数'
 			,'text'
+			,''
+			,''			
 		)";
+		echo $sql;
 		mysql_query($sql,$conn);
 		$id3 = mysql_insert_id($conn);
 		$sql = "alter table ".$pfx."common_member_profile add column papers int default 0;";
-		mysql_query($sql,$conn);		
+		mysql_query($sql,$conn);	
+		echo $sql;	
 		
 		$this->rewrite['user_extend_myquiz']='myquiz';
 		$this->rewrite['user_extend_wrongs']='wrongs';
