@@ -6,6 +6,10 @@
  * */
 class install extends wls{
 	
+	public function test(){
+		print_r($_COOKIE);
+	}
+	
 	/**
 	 * 访问主入口,就是打开一个页面
 	 * */

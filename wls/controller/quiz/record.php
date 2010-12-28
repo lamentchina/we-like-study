@@ -1,7 +1,7 @@
 <?php
 /**
  * 记录每次测验的测验结果
- * 测验包括 : 考卷测验 错题本联系 题型训练 多人在线考试等等
+ * 测验包括 : 考卷测验 错题本联系 题型训练 多人在线考试等
  * */
 class quiz_record extends wls {
 
@@ -48,8 +48,8 @@ class quiz_record extends wls {
 
 		include_once 'controller/user.php';
 		$user = new user();
-		$userinfo = $user->getUserInfo('mine');	
-		
+		$userinfo = $user->getUserInfo('mine');
+
 		$sql = "select id_quiz_type , title_quiz_type from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
@@ -91,7 +91,7 @@ class quiz_record extends wls {
 		$sql2 = $sql;
 		mysql_query($sql,$conn);
 		$id = mysql_insert_id($conn);
-		
+
 		if(isset($_REQUEST['type']) && $_REQUEST['type']=='paper'){
 			$sql = "select * from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
 			$res = mysql_query($sql,$conn);
@@ -103,26 +103,26 @@ class quiz_record extends wls {
 				score_top_user = '".$userinfo['id_user']."'
 				";
 			}
-			
-			$sql = "update ".$pfx."wls_quiz_paper set 
+				
+			$sql = "update ".$pfx."wls_quiz_paper set
 			score_avg = ".($temp['score_avg']*$temp['count_used']+$_REQUEST['mycent'])/($temp['count_used']+1).",
 			count_used = ".($temp['count_used']+1)." ".$topstr;			
-			
+				
 			$sql .= " where id = ".$_REQUEST['id'];
-			mysql_query($sql,$conn);	
+			mysql_query($sql,$conn);
 			eval('include_once "controller/install/'.$this->cfg->cmstype.'.php";');
 			eval('$obj = new install_'.$this->cfg->cmstype.'();');
 			eval('$obj->addUpQuiz("mine");');
 		}
 
 		echo json_encode(
-			array(
+		array(
 				'ok'=>1,
 				'id'=>$id,
 				'a'=>$userinfo,
 				'sql'=>$sql,
 				'sql2'=>$sql2,
-			)
+		)
 		);
 	}
 
@@ -179,7 +179,7 @@ class quiz_record extends wls {
 				);
 				unset($arr);
 				echo json_encode($arr2);
-				break;			
+				break;
 			case 'array':
 				$arr2 = array(
 					'page'=>$page,
@@ -190,13 +190,13 @@ class quiz_record extends wls {
 					'pagenum'=>$pagenum,
 				);
 				return $arr2;
-				break;	
+				break;
 			default:
 				echo 'returnType is not defined';
 				break;
 		}
 	}
-	
+
 	/**
 	 * 显示我最近做题的列表
 	 * 前台使用DWZ框架
@@ -209,7 +209,7 @@ class quiz_record extends wls {
 		if($page==null)$page = 1;
 		if($rows==null)$rows = 10;
 		if($returnType==null)$returnType = 'html';
-		
+
 		include_once 'controller/user.php';
 		$obj = new user();
 		$userinfo = $obj->getUserInfo('mine');
@@ -218,16 +218,16 @@ class quiz_record extends wls {
 				'id_user'=>$userinfo['id_user']
 			);
 		}
-		
-		$data = $this->getList('array',$page,$rows,$search);		
+
+		$data = $this->getList('array',$page,$rows,$search);
 		include_once 'view/quiz/paper/record/list.php';
 	}
-	
+
 	/**
 	 * 查看我个人最近的学习成绩变化曲线
 	 * */
 	public function getChart(){
-		$html = '	
+		$html = '
 			<!--		
 			考试科目:
 			<select onchange="foo();">
@@ -238,8 +238,8 @@ class quiz_record extends wls {
 			历次测验正确率<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>知识点掌握度<input type="radio" name="w_q_r_c_r"  onchange="foo();"/>时间投入
 			<div class="divider"></div>
 			-->
-			<b><span title="点击刷新" onclick="user.getMyQuizChart(\'w_q_r_c\');">历次测验学习成绩:</span></b>
-			<div id="w_q_r_c" style="width:98%;height:200px;"></div>
+			<b><span title="点击刷新" onclick="user.getMyQuizChart(\'w_q_r_c\',\'1\');">历次测验学习成绩:</span></b>
+			<img src="wls.php?controller=quiz_record&action=getChartByPChart" id="w_q_r_c" style="width:98%;height:200px;" />
 			<div class="divider"></div>
 			<script type="text/javascript">
 			function foo(){
@@ -252,7 +252,7 @@ class quiz_record extends wls {
 		$html .= $obj->getProfile();
 		echo $html;
 	}
-	
+
 	public function getMyChartData(){
 		include_once 'controller/user.php';
 		$obj = new user();
@@ -261,6 +261,87 @@ class quiz_record extends wls {
 		$this->getList('json',1,100,array(
 			'id_user'=>$userinfo['id_user'],
 		));
+	}
+
+
+	public function getChartByPChart(){
+		include_once 'controller/user.php';
+		$obj = new user();
+		$userinfo = $obj->getUserInfo('mine');
+
+		if(file_exists("file/images/user/chart".$userinfo['id_user'].".png")){
+			if($_REQUEST['rewrite']!="1"){
+				echo json_encode(
+					array(
+						'path'=>"file/images/user/chart".$userinfo['id_user'].".png",
+						'id_user'=>$userinfo['id_user'],
+					)
+				);
+				return;
+			}else{
+				unlink("file/images/user/chart".$userinfo['id_user'].".png");
+			}			
+		}
+
+		$data = $this->getList('array',1,100,array(
+			'id_user'=>$userinfo['id_user'],
+		));
+		$data = $data['rows'];
+		$arr = array();
+		$lables = array();
+		for($i=0;$i<count($data);$i++){
+			$arr[] = floor($data[$i]['proportion']*100);
+			$lables[] = $i+1;
+		}
+		
+		if(count($arr)<3){
+			echo json_encode(
+				array(
+					'path'=>"file/images/user/chart0.png",
+					'id_user'=>$userinfo['id_user'],
+				)
+			);
+			return;
+		}
+		
+		include("libs/pchart/pChart/pData.class");
+		include("libs/pchart/pChart/pChart.class");
+
+		$DataSet = new pData;
+		$DataSet->AddPoint($arr,"Serie1");
+//		$DataSet->AddPoint($lables,"Serie2");
+		//		$DataSet->AddPoint(array(1,4,2,6,2,3,0,1,5,1,2,4,5,2,1,0,6,4,2),"Serie2");
+		$DataSet->AddAllSeries();
+//		$DataSet->SetAbsciseLabelSerie("Serie2");
+		//$DataSet->SetAbsciseLabelSerie();
+//		$DataSet->SetSerieName("成绩曲线","Serie1");
+//		$DataSet->SetSerieName("February","Serie2");
+
+		// Initialise the graph
+		$Test = new pChart(700,230);
+//		$Test->setFixedScale(-2,8);
+		$Test->setFontProperties("libs/pchart/Fonts/tahoma.ttf",8);
+		$Test->setGraphArea(50,30,625,200);
+		$Test->drawFilledRoundedRectangle(7,7,693,223,5,240,240,240);
+		$Test->drawRoundedRectangle(5,5,695,225,5,230,230,230);
+		$Test->drawGraphArea(255,255,255,TRUE);
+		$Test->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),SCALE_NORMAL,150,150,150,TRUE,0,2);
+		$Test->drawGrid(4,TRUE,230,230,230,50);
+
+		// Draw the 0 line
+//		$Test->setFontProperties("libs/pchart/Fonts/tahoma.ttf",6);
+		$Test->drawTreshold(0,143,55,72,TRUE,TRUE);
+//		// Draw the cubic curve graph
+		$Test->drawCubicCurve($DataSet->GetData(),$DataSet->GetDataDescription());
+
+		$Test->Render("file/images/user/chart".$userinfo['id_user'].".png");
+		echo json_encode(
+			array(
+					'path'=>"file/images/user/chart".$userinfo['id_user'].".png?temp=".rand(1,1000),
+					'id_user'=>$userinfo['id_user'],
+					'arr'=>$arr,
+			)
+		);
 	}
 }
 

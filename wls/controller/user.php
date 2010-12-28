@@ -23,6 +23,8 @@ class user extends wls {
 	
 	public function viewProfile($id=null){	
 		$userinfo = $this->getUserInfo('mine');
+//		print_r($userinfo);
+//		exit();
 		if($userinfo['id_user']==0){
 			echo "
 			<html>
