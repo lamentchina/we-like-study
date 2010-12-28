@@ -14,7 +14,7 @@ $(function(){
 		callback:function(){
 			initEnv();
 			$("#themeList").theme({themeBase:"libs/DWZ/themes"});
-			navTab.openTab('main', '我的主页', 'wls.php?controller=quiz_record&action=getChart', 'user.getMyQuizChart("w_q_r_c")');
+			navTab.openTab('main', '我的主页', 'wls.php?controller=quiz_record&action=getChart', 'user.getMyQuizChart("w_q_r_c","0")');
 		}
 	});
 });
@@ -107,6 +107,7 @@ if ($.browser.msie) {
 						<ul class="tree">
 							<li><a href="wls.php?controller=quiz_record&action=getDWZlist" target="navTab" rel="dlg_page">历次考试记录</a></li>
 							<li><a href="wls.php?controller=quiz_wrongs&action=getDWZlist" target="navTab" rel="dlg_page">错题集</a></li>
+							<li><a href="wls.php?controller=quiz&action=viewRandQuizByDWZ" target="navTab" rel="dlg_page">随机试题</a></li>
 						</ul>
 					</div>
 					

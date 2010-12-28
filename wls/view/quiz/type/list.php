@@ -1,9 +1,9 @@
 <form id="pagerForm" method="post" action="wls.php?controller=quiz_type&action=getDWZlist">
-	<input type="hidden" name="status" value="${param.status}">
-	<input type="hidden" name="keywords" value="${param.keywords}" />
+	<input type="hidden" name="status" value="1">
+	<input type="hidden" name="keywords" value="1" />
 	<input type="hidden" name="pageNum" value="<?php echo $data['page'] ?>" />
 	<input type="hidden" name="numPerPage" value="<?php echo $data['pagesize'] ?>" />
-	<input type="hidden" name="orderField" value="${param.orderField}" />
+	<input type="hidden" name="orderField" value="1" />
 </form>		
 <div class="page">
 	<div class="pageContent">

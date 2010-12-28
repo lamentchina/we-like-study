@@ -182,7 +182,7 @@ var wls_quiz = function(){
 		}
 		
 		if(this.submitQuesWay=='onceAll' && this.type=='paper'){
-			this.isMyMoneyEnough(this.naming+".submit3(null)");	
+			this.submit3(null);	
 		}else{
 			this.submit2(0);
 		}		

@@ -33,9 +33,7 @@
 					<th width="50">最高分/平均分</th>
 					<th width="60">题总数/子题数</th>
 					<th width="45" align="center">使用次数</th>
-					<!--
-					<th width="80" title="访问级别/难度级别">级别</th>
-					-->
+
 					<th width="45">加入日期</th>
 					<th width="30">价格</th>
 					<th width="80">操作</th>
@@ -52,9 +50,7 @@
 					<td>'.$data['rows'][$i]['score_top'].'/'.$data['rows'][$i]['score_avg'].'</td>
 					<td>'.$data['rows'][$i]['count_quetions'].'/'.$data['rows'][$i]['count_subquestions'].'</td>
 					<td>'.$data['rows'][$i]['count_used'].'</td>
-					<!--
-					<td>'.$data['rows'][$i]['rank'].'/'.$data['rows'][$i]['difficulty'].'</td>
-					-->
+
 					<td>'.substr($data['rows'][$i]['date_created'],0,10).'</td>
 					<td>'.substr($data['rows'][$i]['price_money'],0,10).'</td>
 					<td><a href="wls.php?controller=quiz_paper&action=viewOneInDWZ&id='.$data['rows'][$i]['id'].'" target="_blank" >做题</a></td>

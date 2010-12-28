@@ -87,37 +87,6 @@ var wls_quiz_paper = function(){
 		});			
 	}
 	
-	/**
-	 * 做这张试卷,你的money够了吗?
-	 * 不够就去充值
-	 * */
-	this.isMyMoneyEnough = function(nextFunction){
-		var thisObj = this;
-		$.ajax({
-			url: thisObj.config.AJAXPATH+"?controller=quiz_paper&action=isMyMoneyEnough&id="+thisObj.paperId,
-			success: function(msg){
-				var obj = jQuery.parseJSON(msg);
-//				alert(obj);
-				if(obj.enough=='yes'){
-					eval(nextFunction);
-				}else{
-					$.blockUI({
-						 message: '你的金额不够<br/>你应该去充值', 
-						 css: { 
-				            border: 'none', 
-				            padding: '15px', 
-				            backgroundColor: '#000', 
-				            '-webkit-border-radius': '10px', 
-				            '-moz-border-radius': '10px', 
-				            opacity: .5, 
-				            color: '#fff' 
-				        } }); 
-					setTimeout($.unblockUI, 2000); 
-				}				
-			}
-		});		
-	}
-	
 	this.get_elapsed_time_string = function(total_seconds){
 		function pretty_time_string(num) {
 			return ( num < 10 ? "0" : "" ) + num;
