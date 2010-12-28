@@ -167,8 +167,8 @@ class install extends wls{
 			<htm><head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 			<script language="javascript">
-			alert("数据库表结构初始化结束,安装结束");
-			//window.navigate("wls.php?controller=install&action=importXML");
+			alert("数据库表结构初始化结束,开始导入数据");
+			window.location.href=("wls.php?controller=quiz_paper_normal&action=viewUploadExcel");
 			</script>
 			</head><body></body></html>
 			';	
@@ -200,8 +200,7 @@ class install extends wls{
 			}
 		}
 
-		$content = "
-<?php
+		$content = "<?php
 class wlsconfig{
 ";
 		$keys = array_keys($arr);
@@ -212,8 +211,7 @@ class wlsconfig{
 		$content.=
 "
 }
-?>
-		";
+?>";
 		fwrite($file_handle,$content);
 		fclose($file_handle);
 	}

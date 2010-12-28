@@ -253,7 +253,7 @@ class quiz_paper_normal extends quiz_paper {
 
 		$this->updatePaper();		
 		
-		echo "OK";
+		echo "<a href='wls.php?controller=quiz_paper_normal&action=viewUploadExcel2'>继续</a>";
 	}
 
 	public function exportExcel($id=null){

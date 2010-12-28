@@ -31,7 +31,7 @@ class user extends wls {
 				<head>
 					<script type='text/javascript'>
 						function loginFirst(){
-							alert('你没有登录!');
+							alert('你没有登录或长时间没有操作!');
 							self.location='".$this->cfg->loginpath."';
 						}
 					</script>
@@ -44,7 +44,8 @@ class user extends wls {
 
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
-		$quiztypeList = $obj->getMyList();		
+		$quiztypeList = $obj->getMyList();	
+//		print_r($quiztypeList);	
 		$profile = $this->getProfile();		
 		$title = $this->cfg->title;
 		$head = $this->headerScripts();

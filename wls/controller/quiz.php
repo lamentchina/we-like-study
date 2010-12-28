@@ -180,6 +180,7 @@ obj_paper.AJAXData(funstr);
 </html>		
 		
 		";
+		echo $html;
 	}
 }
 ?>

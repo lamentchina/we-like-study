@@ -20,6 +20,7 @@ class quiz_type extends wls{
 				,id_parent int default 0			comment '上级编号'
 				,haschild int default 0				comment '是否含有下级科目'
 				,title varchar(200) 				comment '科目名称'
+				,level int default 0 				comment '开放程度,0表示任何人都可以访问'
 				,creator varchar(200) not null		comment '创建者'
 				,ordering int default 0 			comment '排序'
 				,date_created datetime not null 	comment '创建时间'
@@ -104,9 +105,9 @@ class quiz_type extends wls{
 					}
 					if($ids!=''){
 						$ids = substr($ids,0,strlen($ids)-1);
-						$where .= " and id in (".$ids.") ";
+						$where .= " and ( id in (".$ids.") or level = 0 )";
 					}else{
-						$where .= " and 1>2 ";
+						$where .= " and level = 0 ";
 					}
 				}
 				if($keys[$i]=='id_quiz_type'){
@@ -114,10 +115,11 @@ class quiz_type extends wls{
 				}
 			}
 		}
-
+		
 		$sql = "select * from ".$pfx."wls_quiz_type  ".$where;
 
 		$sql .= " limit ".($rows*($page-1)).",".$rows." ";
+//		echo $sql;
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -191,7 +193,7 @@ class quiz_type extends wls{
 		mysql_query($sql,$conn);
 	}
 
-	public function upate(){
+	public function update(){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
 
@@ -209,19 +211,27 @@ class quiz_type extends wls{
 		mysql_query($sql,$conn);
 	}
 
-
-	public function viewUpdateByDWZ(){
+	public function viewEditByDWZ(){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
 
-		$sql = "select id,title,price_money from ".$pfx."wls_quiz_type ";
+		$sql = "select id,title,price_money,level,id_parent from ".$pfx."wls_quiz_type ";
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		$mydata = array();
 		while($temp = mysql_fetch_assoc($res)){
-			if($temp['id']==$_REQUEST['id']){
+			if(isset($_REQUEST['id']) && $temp['id']==$_REQUEST['id']){
 				$mydata = $temp;
 			}else{
+				if(count($mydata)==0){
+					$mydata = array(
+						'id'=>'',
+						'title'=>'',
+						'price_money'=>'',
+						'level'=>'',
+						'id_parent'=>''		
+					);
+				}
 				$data[] = $temp;
 			}
 		}
@@ -230,12 +240,23 @@ class quiz_type extends wls{
 		<div class="pageFormContent" layoutH="56">
 			<p>
 				<label>标题：</label>
-				<input name="id" type="hidden" value="'.$_REQUEST['id'].'" />
+				<input name="id" type="hidden" value="'.$mydata['id'].'" />
 				<input name="title" type="text" size="30" value="'.$mydata['title'].'" />				
 			</p>
 			<p>
 				<label>价格：</label>
 				<input name="price_money" type="text" size="30" value="'.$mydata['price_money'].'" />				
+			</p>
+			<p>
+				<label>访问级别：</label>
+				<select style="width:190px;" name="level">
+					<option value="0">公共</option>
+					<option value="1"';
+		if($mydata['level']==1){
+			echo "selected='selected'";
+		}
+		echo 		'>付费</option>
+				</select>
 			</p>
 			<p>
 				<label>上级科目：</label>
@@ -256,64 +277,12 @@ class quiz_type extends wls{
 		<script type="text/javascript">
 		var wls_q_t_u_save = function(){
 			$.ajax({
-				url: "wls.php?controller=quiz_type&action=upate",
+				url: "wls.php?controller=quiz_type&action='.$_REQUEST['action2'].'",
 				data: {
 					id:$("input[name=id]").val(),
 					title:$("input[name=title]").val(),
 					price_money:$("input[name=price_money]").val(),
-					id_parent:$("select[name=id_parent] option:selected").val()
-				},
-				type: "POST",
-				success: function(msg){			
-					//var obj = jQuery.parseJSON(msg);	
-					$.pdialog.closeCurrent();
-					navTab.reload(null,null,"quiz_type");
-				}
-			});
-		}
-		</script>
-		';
-	}
-
-	public function viewAddByDWZ(){
-		$pfx = $this->cfg->dbprefix;
-		$conn = $this->conn();
-
-		$sql = "select id,title from ".$pfx."wls_quiz_type ";
-		$res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-
-		echo '
-		<div class="pageFormContent" layoutH="56">
-			<p>
-				<label>标题：</label>
-				<input name="title" type="text" size="30" />				
-			</p>
-			<p>
-				<label>上级科目：</label>
-				<select style="width:190px;" name="id_parent">
-					<option value="0">无</option>
-				';
-		for($i=0;$i<count($data);$i++){
-			echo '	<option value="'.$data[$i]['id'].'">'.$data[$i]['title'].'</option>';
-		}
-			
-		echo '
-				</select>
-			</p>
-			<p>
-				<button onclick="wls_q_t_a_save();">提交</button>
-			</p>
-		</div>
-		<script type="text/javascript">
-		var wls_q_t_a_save = function(){
-			$.ajax({
-				url: "wls.php?controller=quiz_type&action=add",
-				data: {
-					title:$("input[name=title]").val(),
+					level:$("select[name=level] option:selected").val(),
 					id_parent:$("select[name=id_parent] option:selected").val()
 				},
 				type: "POST",

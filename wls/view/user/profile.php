@@ -55,7 +55,8 @@ if ($.browser.msie) {
 					</div>
 					<div class="accordionContent">
 						<ul class="tree treeFolder">
-							<li><a href="wls.php?controller=quiz_paper&action=getDWZlist" target="navTab" rel="allpaper">所有试卷</a>
+							<?php if(count($quiztypeList)>0){ ?>
+							<li><a href="#" >可用科目</a>							
 								<ul>
 								<?php 
 									$keys = array_keys($quiztypeList);
@@ -75,7 +76,13 @@ if ($.browser.msie) {
 
 								</ul>
 							</li>
-							
+							<?php 
+							}else{
+							?>
+							<li><a href="#" ><span style="color: red;font-weight: bold">没与参加科目</span></a>
+							<?php
+							}
+							?>
 							<li><a href="wls.php?controller=quiz_type&action=getDWZlist" target="navTab" rel="quiz_type">考试科目</a></li>
 							  <!--
 							<li><a href="wls.php?controller=quiz&action=undo" target="navTab" rel="w_panel">日常练习</a></li>

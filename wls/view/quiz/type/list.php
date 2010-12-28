@@ -13,9 +13,9 @@
 		?>
 		<div class="panelBar">
 			<ul class="toolBar">				
-				<li><a class="add" href="wls.php?controller=quiz_type&action=viewAddByDWZ" target="dialog" rel="dlg_q_t_a" mask="true"><span>添加</span></a></li>				
+				<li><a class="add" href="wls.php?controller=quiz_type&action=viewEditByDWZ&action2=add" target="dialog" rel="dlg_q_t_a" mask="true"><span>添加</span></a></li>				
 				<li><a class="delete" href="wls.php?controller=quiz_type&action=getRemoveByDWZ&id={sid_user}" target="navTabTodo" title="确定要删除吗?"><span>删除</span></a></li>
-				<li><a class="icon" href="wls.php?controller=quiz_type&action=viewUpdateByDWZ&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>修改</span></a></li>
+				<li><a class="icon" href="wls.php?controller=quiz_type&action=viewEditByDWZ&action2=update&id={sid_user}" target="dialog" rel="dlg_upload" mask="true"><span>修改</span></a></li>
 				<li class="line">line</li>
 			</ul>
 		</div>
@@ -29,7 +29,7 @@
 					<th width="120">名称</th>
 					<th width="80">试卷总数</th>
 					<th width="80">题目总数</th>
-					
+					<th width="80">级别</th>
 					<th width="80">参与人数</th>
 					<th width="80">价格</th>
 					<th width="80">状态</th>
@@ -45,18 +45,22 @@
 					<td>'.$data['rows'][$i]['title'].'</td>
 					<td>'.$data['rows'][$i]['count_paper'].'</td>
 					<td>'.$data['rows'][$i]['count_question'].'</td>
-					<td>'.$data['rows'][$i]['count_joined'].'</td>
-					<td>'.$data['rows'][$i]['price_money'].'</td>
+					<td>'.(($data['rows'][$i]['level'])?'付费':'公共').'</td>
 					';
-			
-			if($this->isJoined($userinfo['id_user'],$data['rows'][$i]['id'])){
-				echo '
-				<td>已参加</td>
-				<td><a href="wls.php?controller=quiz_type_record&action=remove&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >退出</a></td>';
+			if($data['rows'][$i]['level']!=0){
+				echo '	<td>'.$data['rows'][$i]['count_joined'].'</td>
+						<td>'.$data['rows'][$i]['price_money'].'</td>';
+				if($this->isJoined($userinfo['id_user'],$data['rows'][$i]['id'])){
+					echo '
+					<td>已参加</td>
+					<td><a href="wls.php?controller=quiz_type_record&action=remove&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >退出</a></td>';
+				}else{
+					echo '
+					<td>未参加</td>
+					<td><a href="wls.php?controller=quiz_type_record&action=add&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >参加</a></td>';
+				}
 			}else{
-				echo '
-				<td>未参加</td>
-				<td><a href="wls.php?controller=quiz_type_record&action=add&id='.$data['rows'][$i]['id'].'" target="navTab" rel="quiz_type"  >参加</a></td>';
+				echo "<td>-</td><td>-</td><td>-</td><td>-</td>";
 			}
 			echo '</tr>';
 		}

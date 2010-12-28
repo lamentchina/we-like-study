@@ -107,9 +107,7 @@ class install_discuzx extends wls {
 		mysql_query($sql,$conn);
 		$id3 = mysql_insert_id($conn);
 		$sql = "alter table ".$pfx."common_member_profile add column papers int default 0;";
-		mysql_query($sql,$conn);
-		
-		
+		mysql_query($sql,$conn);		
 		
 		$this->rewrite['user_extend_myquiz']='myquiz';
 		$this->rewrite['user_extend_wrongs']='wrongs';

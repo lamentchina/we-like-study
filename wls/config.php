@@ -1,4 +1,3 @@
-
 <?php
 class wlsconfig{
 
@@ -9,7 +8,7 @@ class wlsconfig{
 			public $dbprefix = 'cdb_';
 			public $cmstype = 'discuzx';
 			public $debug = '0';
-			public $title = '我们喜欢学习 We Like Study !';
+			public $title = 'We Like Study !';
 			public $loginpath = '/member.php?mod=register';
 			public $group_admin = '144';
 			public $group_teacher = '145';
@@ -20,4 +19,3 @@ class wlsconfig{
 			public $user_cookiepre = 'SE7P_';
 }
 ?>
-		

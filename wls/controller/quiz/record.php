@@ -270,7 +270,7 @@ class quiz_record extends wls {
 		$userinfo = $obj->getUserInfo('mine');
 
 		if(file_exists("file/images/user/chart".$userinfo['id_user'].".png")){
-			if($_REQUEST['rewrite']!="1"){
+			if(!isset($_REQUEST['rewrite']) || $_REQUEST['rewrite']!="1"){
 				echo json_encode(
 					array(
 						'path'=>"file/images/user/chart".$userinfo['id_user'].".png",
