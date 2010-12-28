@@ -27,13 +27,13 @@ class quiz_paper extends wls{
 			create table ".$pfx."wls_quiz_paper(
 				 id int primary key auto_increment	comment '自动编号'
 				,id_quiz_type int not null			comment '考试科目编号'
-				,title_quiz_type varchar(200) default '' comment '考试科目名称'
+				,title_quiz_type varchar(200) default '0' comment '考试科目名称'
 				
 				,title varchar(200) not null		comment '试卷名称'
-				,questions text						comment '题目组成,由一大堆编号组成,这些编号都是主题目编号,不会记录子题目编号'
+				,questions varchar(200) default '0'	comment '题目组成,由一大堆编号组成,这些编号都是主题目编号,不会记录子题目编号'
 				,islisten int default 0				comment '是否包含听力题'
 				
-				,description text					comment '描述'				
+				,description varchar(200) default '0'	comment '描述'				
 				,creator varchar(200) not null		comment '创建者'
 				,publisher varchar(200)				comment '出版者,审核者'
 				,contributor varchar(200)			comment '其他编辑者,修改者'
@@ -45,10 +45,10 @@ class quiz_paper extends wls{
 				,count_quetions int default 0		comment '主题目总数'
 				,count_subquestions int default 0	comment '子题目总数'
 
-				,subquestions text					comment '子题目组成'
+				,subquestions varchar(200) default '0'	comment '子题目组成'
 				,questions_types varchar(200)		comment '试卷中包含的题目类型'
-				,scores text				 		comment '分数组成,题目编号一一对应,比如:[{num:23,cent:45,sub:[{num:24,cent:5}]},]'
-				,sections text 						comment '试卷组成描述,存储JSON数据,比如[{\'类型\':\'听力\',\'描述\':\'听力题描述\',\'题目\':[1,2,3,4,5,6,7]},{\'类型\':阅读理解;阅读理解描述;{8,9,10,12}}]'
+				,scores varchar(200) default '0'	comment '分数组成,题目编号一一对应,比如:[{num:23,cent:45,sub:[{num:24,cent:5}]},]'
+				,sections varchar(200) default '0'	comment '试卷组成描述,存储JSON数据,比如[{\'类型\':\'听力\',\'描述\':\'听力题描述\',\'题目\':[1,2,3,4,5,6,7]},{\'类型\':阅读理解;阅读理解描述;{8,9,10,12}}]'
 				,time_limit int default 3600		comment '时间限制,默认为1小时,1小时后自动提交试卷'
 				,score_top float default 0			comment '最高分'
 				,score_top_user varchar(200) default 0		comment '最高分获得者用户编号'
@@ -202,10 +202,14 @@ class quiz_paper extends wls{
 		if($page==null && isset($_REQUEST['pageNum']))$page=$_REQUEST['pageNum'];
 		if($rows==null && isset($_REQUEST['numPerPage']))$rows=$_REQUEST['numPerPage'];
 		if($returnType==null && isset($_REQUEST['returnType']))$returnType =$_REQUEST['returnType'];
+
 		$search_ = '';
 		if($search==null && isset($_REQUEST['search'])){
 			$search_ = $_REQUEST['search'];
+			//部分PHP环境对以GET传的'识别不同
+			$_REQUEST['search'] = str_replace("\\'","\"",$_REQUEST['search']);
 			$_REQUEST['search'] = str_replace("'","\"",$_REQUEST['search']);
+
 			$search =json_decode($_REQUEST['search'],true);
 		}else{
 			$search = array();

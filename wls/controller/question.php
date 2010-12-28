@@ -27,22 +27,15 @@ class question extends wls {
 				,description text					comment '描述,解题说明'	
 				,cent float default 0				comment '分数.一道题目必然属于一张试卷,必然有自己的分数比例,一道题不可能属于2张试卷'	
 
-				,id_quiz_type int not null			comment '考试科目编号'
+				,id_quiz_type int default 0			comment '考试科目编号'
 				,title_quiz_type varchar(200) default '未知考试科目'		comment '考试科目名称'
-				,id_quiz_paper int not null			comment '试卷编号'
+				,id_quiz_paper int default	0		comment '试卷编号'
 				,title_quiz_paper varchar(200) default '未知试卷名称'	comment '考试试卷名称'
 				,id_parent int default 0			comment '父级题目编号,如果是阅读理解 完形填空 短文听力 填空'
 								
-				,creator varchar(200) not null		comment '创建者'
-				,publisher varchar(200)				comment '出版者,审核者'
-				,contributor varchar(200)			comment '其他编辑者,修改者'
+				,creator varchar(200) default 'admin' comment '创建者'
 
-				,date_created datetime not null 	comment '创建时间'
-				,date_modified datetime				comment '最后一次修改日期'
-				,date_available_start datetime		comment '可获得日期_开始'
-				,date_available_stop datetime		comment '可获得日期_结束'
-				,date_issued datetime				comment '发布日期'
-				
+				,date_created datetime not null 	comment '创建时间'				
 				,rank int default 1					comment '使用级别 1,任何用户都能使用,2,注册用户能够使用,3,付费用户能够使用,4VIP用户能够使用'
 				
 				,count_right int default 0			comment '被做对的次数' 
@@ -61,8 +54,8 @@ class question extends wls {
 
 				,markingmethod int default 0		comment '批改方式:0 自动批改,1教师批改,2用户批改,3多用户批改'
 				,recommended int default 0 			comment '推荐:1 首页推荐,2'
-				,ids_knowledge text					comment '知识点的编号集'
-				,distribute text					comment '知识点的百分比分配'
+				,ids_knowledge varchar(200) default '0'	comment '知识点的编号集'
+				,distribute varchar(200) default '0'	comment '知识点的百分比分配'
 			) DEFAULT CHARSET=utf8 					comment='题目,基本组成单位';
 			";
 		mysql_query($sql,$conn);

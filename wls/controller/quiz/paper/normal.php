@@ -74,6 +74,11 @@ class quiz_paper_normal extends quiz_paper {
 					'title_quiz_type'=>$this->paper['title_quiz_type'],
 					'id_quiz_paper'=>$this->paper['id'],
 					'title_quiz_paper'=>$this->paper['title'],
+					'title'=>'',
+					'details'=>'',
+					'answer'=>'',
+					'description'=>'',
+					'date_created'=>date('Y-m-d'),
 				);
 			}
 

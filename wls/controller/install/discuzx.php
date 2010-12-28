@@ -131,7 +131,7 @@ class install_discuzx extends wls {
 		$this->rewrite['user_extend_myquiz']='myquiz';
 		$this->rewrite['user_extend_wrongs']='wrongs';
 		$this->rewrite['user_extend_papers']='papers';
-		$this->rewrite['loginpath']='/member.php?mod=register';		
+		$this->rewrite['loginpath']='../../../member.php?mod=register';		
 		
 		include_once '../../../config/config_global.php';
 		$this->rewrite['user_cookiepre'] = $_config['cookie']['cookiepre'];		
@@ -216,8 +216,8 @@ class install_discuzx extends wls {
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 		if($id==null || $id=='mine'){
-			if(isset($_COOKIE['SE7P_2132_sid'])){
-				$sid = $_COOKIE['SE7P_2132_sid'];
+			if(isset($_COOKIE[$this->cfg->user_cookiepre."2132_sid"])){
+				$sid = $_COOKIE[$this->cfg->user_cookiepre."2132_sid"];
 				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
 				$res = mysql_query($sql,$conn);
 				$temp = mysql_fetch_assoc($res);
@@ -275,8 +275,8 @@ class install_discuzx extends wls {
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;		
 		if($id==null || $id=='mine'){
-			if(isset($_COOKIE['SE7P_2132_sid'])){
-				$sid = $_COOKIE['SE7P_2132_sid'];
+			if(isset($_COOKIE[$this->cfg->user_cookiepre."2132_sid"])){
+				$sid = $_COOKIE[$this->cfg->user_cookiepre."2132_sid"];
 				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
 
 				$res = mysql_query($sql,$conn);

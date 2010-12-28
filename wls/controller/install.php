@@ -15,55 +15,62 @@ class install extends wls{
 	 * */
 	public function setConfig(){
 		$html = '
-		<form action="wls.php?controller=install&action=saveConfig" method="post">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>		
+	<form action="wls.php?controller=install&action=saveConfig" method="post">
 		<table>
-		<tr>
-			<td>目标程序:</td>
-			<td>
-				<select name="cmstype">
-					<option value="null" selected="selected">请选择</option>
-					<option value="discuzx">DiscuzX 1.5</option>
-					<option value="discuz">Discuz 7.2</option>
-				</select>
-			</td>		
-		</tr>
-		<tr>
-			<td>服务器地址</td>
-			<td>
-				<input name="host" value="localhost" />
-			</td>		
-		</tr>			
-		<tr>
-			<td>数据库名称</td>
-			<td>
-				<input name="db" />
-			</td>		
-		</tr>	
-		<tr>
-			<td>数据库用户名</td>
-			<td>
-				<input name="user" />
-			</td>		
-		</tr>	
-		<tr>
-			<td>数据库密码</td>
-			<td>
-				<input name="password" />
-			</td>		
-		</tr>	
-		<tr>	
-			<td>数据库表前缀</td>
-			<td>
-				<input name="dbprefix" />
-			</td>		
-		</tr>		
-		<tr>	
-			<td colspan="2">
-				<button type="submit" >提交</button>
-			</td>		
-		</tr>								
-	</table>
+			<tr>
+				<td>目标程序:</td>
+				<td>
+					<select name="cmstype">
+						<option value="null" selected="selected">请选择</option>
+						<option value="discuzx">DiscuzX 1.5</option>
+						<option value="discuz">Discuz 7.2</option>
+					</select>
+				</td>		
+			</tr>
+			<tr>
+				<td>服务器地址</td>
+				<td>
+					<input name="host" value="localhost" />
+				</td>		
+			</tr>			
+			<tr>
+				<td>数据库名称</td>
+				<td>
+					<input name="db" />
+				</td>		
+			</tr>	
+			<tr>
+				<td>数据库用户名</td>
+				<td>
+					<input name="user" />
+				</td>		
+			</tr>	
+			<tr>
+				<td>数据库密码</td>
+				<td>
+					<input name="password" />
+				</td>		
+			</tr>	
+			<tr>	
+				<td>数据库表前缀</td>
+				<td>
+					<input name="dbprefix" />
+				</td>		
+			</tr>		
+			<tr>	
+				<td colspan="2">
+					<button type="submit" >提交</button>
+				</td>		
+			</tr>								
+		</table>
 	</form>
+</body>
+</html>
 		';
 		echo $html;
 	}

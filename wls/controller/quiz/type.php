@@ -218,12 +218,12 @@ class quiz_type extends wls{
 		$sql = "select id,title,price_money,level,id_parent from ".$pfx."wls_quiz_type ";
 		$res = mysql_query($sql,$conn);
 		$data = array();
-		$mydata = array();
+		$mydata = null;
 		while($temp = mysql_fetch_assoc($res)){
 			if(isset($_REQUEST['id']) && $temp['id']==$_REQUEST['id']){
 				$mydata = $temp;
 			}else{
-				if(count($mydata)==0){
+				if($mydata==null){
 					$mydata = array(
 						'id'=>'',
 						'title'=>'',
