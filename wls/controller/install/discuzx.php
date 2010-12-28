@@ -126,8 +126,8 @@ class install_discuzx extends wls {
 		$pfx = $this->cfg->dbprefix;
 
 		if($id==null || $id=='mine'){
-			if(isset($_COOKIE[$this->cfg->user_cookiepre])){
-				$sid = $_COOKIE[$this->cfg->user_cookiepre];
+			if(isset($_COOKIE[$this->cfg->user_cookiepre."2132_sid"])){
+				$sid = $_COOKIE[$this->cfg->user_cookiepre."2132_sid"];
 				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
 
 				$res = mysql_query($sql,$conn);
