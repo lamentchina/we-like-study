@@ -1,6 +1,6 @@
 <form id="pagerForm" method="post" action="wls.php?controller=quiz_paper&action=getDWZlist">
 	<input type="hidden" name="status" value="${param.status}">
-	<input type="hidden" name="search" value="<?php echo str_replace("\"","'",$search_) ?>" />
+	<input type="hidden" name="search" value="<?php $search_ = str_replace("\\",'',$search_); echo str_replace("\"","'",$search_); ?>" />
 	<input type="hidden" name="pageNum" value="<?php echo $data['page'] ?>" />
 	<input type="hidden" name="numPerPage" value="<?php echo $data['pagesize'] ?>" />
 	<input type="hidden" name="orderField" value="${param.orderField}" />

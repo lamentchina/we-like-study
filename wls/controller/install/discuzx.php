@@ -31,7 +31,7 @@ class install_discuzx extends wls {
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '参加的考试科目';";
 
 		$res = mysql_query($sql,$conn);
-		if($temp = mysql_fetch_assoc($res)){
+		while($temp = mysql_fetch_assoc($res)){
 			$sql = "delete from ".$pfx."common_member_profile_setting where title = '参加的考试科目';";	
 			mysql_query($sql,$conn);
 			$sql = "alter table ".$pfx."common_member_profile drop column ".$temp['fieldid']." ;";
@@ -64,7 +64,7 @@ class install_discuzx extends wls {
 
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '错题数';";
 		$res = mysql_query($sql,$conn);
-		if($temp = mysql_fetch_assoc($res)){
+		while($temp = mysql_fetch_assoc($res)){
 			$sql = "delete from ".$pfx."common_member_profile_setting where title = '错题数';";	
 			mysql_query($sql,$conn);
 			$sql = "alter table ".$pfx."common_member_profile drop column ".$temp['fieldid']." ;";
@@ -97,7 +97,7 @@ class install_discuzx extends wls {
 		
 		$sql = "select fieldid from ".$pfx."common_member_profile_setting where title = '已做试卷数';";
 		$res = mysql_query($sql,$conn);
-		if($temp = mysql_fetch_assoc($res)){
+		while($temp = mysql_fetch_assoc($res)){
 			$sql = "delete from ".$pfx."common_member_profile_setting where title = '已做试卷数';";	
 			mysql_query($sql,$conn);
 			$sql = "alter table ".$pfx."common_member_profile drop column ".$temp['fieldid']." ;";
