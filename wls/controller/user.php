@@ -1,6 +1,8 @@
 <?php
 class user extends wls {	
 	
+	public $userinfo = null;
+	
 	public function getUserInfo($id=null){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();		
@@ -8,10 +10,14 @@ class user extends wls {
 		$data = null;
 		if($id==null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
 		
-		eval("include_once 'controller/install/".$this->cfg->cmstype.".php';");
-		eval('$obj = new install_'.$this->cfg->cmstype.'();');
-		eval('$data = $obj->getUserInfo($id);');
-
+		if($this->userinfo==null){
+			eval("include_once 'controller/install/".$this->cfg->cmstype.".php';");
+			eval('$obj = new install_'.$this->cfg->cmstype.'();');
+			eval('$data = $obj->getUserInfo($id);');
+			$this->userinfo = $data;
+		}else{
+			$data = $this->userinfo;
+		}
 		return $data;
 	}
 	
@@ -47,6 +53,9 @@ class user extends wls {
 	public function getProfile($id=null){
 		if($id=null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
 		$userinfo = $this->getUserInfo($id);
+		
+		
+		
 		$dom = "
 			<table width='98%' cellpadding='0' cellspacing='0' border='0'>
 				<tr>
@@ -70,10 +79,12 @@ class user extends wls {
 					<td class='w_u_k'>参加的考试科目</td>
 					<td class='w_u_v' colspan='3' style='width:80%'>".$userinfo['myquiz']."</td>
 				</tr>	
+				<!--
 				<tr>
 					<td class='w_u_k'>所在的用户组</td>
 					<td class='w_u_v' colspan='3' style='width:80%'>".$userinfo['title_group']."</td>
-				</tr>															
+				</tr>
+				-->															
 			</table>
 		";
 		return $dom;

@@ -12,6 +12,13 @@
  * */
 class install_discuzx extends wls {
 	
+	public function test(){
+		//include_once '../../../config/config_global.php';
+		
+//		print_r($_config);
+		print_r($GLOBALS);
+	}
+	
 	public $rewrite = array();
 
 	/**
@@ -102,10 +109,16 @@ class install_discuzx extends wls {
 		$sql = "alter table ".$pfx."common_member_profile add column papers int default 0;";
 		mysql_query($sql,$conn);
 		
+		
+		
 		$this->rewrite['user_extend_myquiz']='myquiz';
 		$this->rewrite['user_extend_wrongs']='wrongs';
 		$this->rewrite['user_extend_papers']='papers';
 		$this->rewrite['loginpath']='/member.php?mod=register';		
+		
+		include_once '../../../config/config_global.php';
+		$this->rewrite['user_cookiepre'] = $_config['cookie']['cookiepre'];		
+		
 	}
 
 	public function getUserInfo($id){
@@ -113,8 +126,8 @@ class install_discuzx extends wls {
 		$pfx = $this->cfg->dbprefix;
 
 		if($id==null || $id=='mine'){
-			if(isset($_COOKIE['SE7P_2132_sid'])){
-				$sid = $_COOKIE['SE7P_2132_sid'];
+			if(isset($_COOKIE[$this->cfg->user_cookiepre])){
+				$sid = $_COOKIE[$this->cfg->user_cookiepre];
 				$sql = "select uid from ".$pfx."common_session where sid = '".$sid."'";
 
 				$res = mysql_query($sql,$conn);
@@ -204,7 +217,7 @@ class install_discuzx extends wls {
 		}else{
 			$sql = "update ".$pfx."common_member_count set extcredits2 = ".($temp['extcredits2']-$money)." where uid =".$id;
 			mysql_query($sql,$conn);
-			return true;
+			return true;			
 		}
 	}
 	

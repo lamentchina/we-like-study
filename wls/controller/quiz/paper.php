@@ -227,8 +227,31 @@ class quiz_paper extends wls{
 	}
 
 	public function viewOneInDWZ($id=null){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();		
+		
 		if($id==null && isset($_REQUEST['id']))$id = $_REQUEST['id'];
-		include_once 'view/quiz/paper/viewOne.php';
+		
+		$sql = "select id,price_money from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		
+		eval("include_once 'controller/install/".$this->cfg->cmstype.".php';");
+		eval('$obj = new install_'.$this->cfg->cmstype.'();');
+		eval('$isEnough = $obj->reduceMyMoney("mine",'.$temp['price_money'].');');
+		if(!$isEnough){
+				echo '
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	</head>
+	<body>
+	金钱不足
+	</body>
+</html>';
+		}else{		
+			include_once 'view/quiz/paper/viewOne.php';
+		}
 	}
 
 	/**

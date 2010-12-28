@@ -87,5 +87,99 @@ class quiz extends wls{
 		}
 		echo json_encode($answers);
 	}
+	
+	public function viewRandQuizByDWZ(){
+		include_once 'controller/user.php';
+		$obj = new user();
+		$userinfo = $obj->getUserInfo('mine');
+		
+		$arr = explode(",",$userinfo['id_group']);
+		$search = null;
+		//如果是管理员们
+		if(in_array($this->cfg->group_admin,$arr)){
+				
+		}else{
+			$search = array('id_user'=>$userinfo['id_user']);
+		}
+		
+		include_once 'controller/quiz/type.php';
+		$obj = new quiz_type();
+		$data = $obj->getList('array',1,100,$search);
+		$data = $data['rows'];
+		$html = '
+		<table>
+			<tr>
+				<td>选择科目</td>
+				<td>
+					<select name="quiz_type">
+					';
+		for($i=0;$i<count($data);$i++){
+			$html .= "<option value='".$data[$i]['id']."'>".$data[$i]['title']."</option>";
+		}
+		
+		$html .=	'</select>				
+				</td>
+			</tr>
+			<tr>
+				<td>题目数</td>
+				<td>
+					<input type="text" />							
+				</td>
+			</tr>
+			<tr>
+				<td columns="2">
+					<button onclick="wls_q_r();">提交</button>
+				</td>
+			</tr>
+		</table>
+		<script type="text/javascript">
+		var wls_q_r = function(){	
+			var id = $("select[name=quiz_type] option:selected").val();
+			window.open ("wls.php?controller=quiz&action=viewRandQuizByJquery&id_quiz_type="+id, "newwindow");
+		}
+		</script>
+		';
+		echo $html;
+	}
+	
+	public function viewRandQuizByJquery(){
+		$html = "
+		
+<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\">
+<head>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+<script src=\"libs/DWZ/javascripts/jquery-1.4.2.js\" type=\"text/javascript\"></script>
+<script src=\"libs/jqueryextend.js\" type=\"text/javascript\"></script>
+<script src=\"view/wls.js\" type=\"text/javascript\"></script>
+<script src=\"view/quiz/quiz.js\" type=\"text/javascript\"></script>
+<script src=\"view/quiz/paper.js\" type=\"text/javascript\"></script>
+<script src=\"view/question/question.js\" type=\"text/javascript\"></script>
+
+<script src=\"view/question/choice.js\" type=\"text/javascript\"></script>
+<script src=\"view/question/reading.js\" type=\"text/javascript\"></script>
+<script src=\"view/question/blank.js\" type=\"text/javascript\"></script>
+<link href=\"view/wls.css\" rel=\"stylesheet\" type=\"text/css\" />
+
+</head>
+<body style=\"border: 0px; padding: 0px; margin: 0px;\">
+<div id=\"wls\"><div>
+<script type=\"text/javascript\">
+var obj_paper = new wls_quiz_paper();
+
+obj_paper.naming =\"obj_paper\";
+obj_paper.quizDomId =\"wls\";
+obj_paper.initLayout();
+obj_paper.paperId = 2;
+obj_paper.submitQuesWay = \"onceAll\";
+var funstr = 'obj_paper.AJAXAllQues(\"obj_paper.initButton();obj_paper.addSubQuesNav();obj_paper.getClock();\")';
+
+obj_paper.AJAXData(funstr);
+</script>
+</body>
+</html>		
+		
+		";
+	}
 }
 ?>

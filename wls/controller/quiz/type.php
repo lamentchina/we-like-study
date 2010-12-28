@@ -38,10 +38,11 @@ class quiz_type extends wls{
 	/**
 	 * 获得具有层级关系的考试科目组
 	 * */
-	public function getMyList(){
+	public function getMyList($id=null){
 		include_once 'controller/user.php';
 		$obj = new user();
-		$userinfo = $obj->getUserInfo('mine');
+		if($id==null|| $id=='' || $id==0 )$id='mine';
+		$userinfo = $obj->getUserInfo($id);
 		$arr = explode(",",$userinfo['id_group']);
 		$search = null;
 		//如果是管理员们

@@ -234,6 +234,14 @@ class quiz_paper_normal extends quiz_paper {
 	}
 
 	public function importExcel($path=null){
+		include_once 'controller/user.php';
+		$obj = new user();
+		$userinfo = $obj->getUserInfo('mine');
+		if($userinfo['id_group']!=$this->cfg->group_admin){
+			echo "invild!";
+			exit();
+		}
+		
 		if($path==null && isset($_REQUEST['path']))$path = $_REQUEST['path'];
 		$this->readExcel($path);
 
@@ -244,9 +252,19 @@ class quiz_paper_normal extends quiz_paper {
 		$this->saveQuestion();
 
 		$this->updatePaper();		
+		
+		echo "OK";
 	}
 
 	public function exportExcel($id=null){
+		include_once 'controller/user.php';
+		$obj = new user();
+		$userinfo = $obj->getUserInfo('mine');
+		if($userinfo['id_group']!=$this->cfg->group_admin){
+			echo "invild!";
+			exit();
+		}
+		
 		if($id==null && isset($_REQUEST['id']))$id = $_REQUEST['id'];
 		$this->getQuestions2($id);
 		$this->getPaper2($id);
@@ -255,7 +273,6 @@ class quiz_paper_normal extends quiz_paper {
 		include_once 'libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once 'libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
-
 
 		$objPHPExcel->getProperties()->setCreator("Maarten Balliauw");
 		$objPHPExcel->getProperties()->setLastModifiedBy("Maarten Balliauw");
@@ -338,8 +355,6 @@ class quiz_paper_normal extends quiz_paper {
 		$objPHPExcel->getActiveSheet()->getStyle('C1:C'.$index)->getAlignment()->setWrapText(true);
 		$objPHPExcel->getActiveSheet()->getStyle('A1:C'.$index)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 		$objPHPExcel->getActiveSheet()->getStyle('A1:C'.$index)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		//		$objStyleA5 = $objPHPExcel->getActiveSheet()->getStyle('C1');
-		//		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyleA5, 'C1:C'.$index);
 
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
