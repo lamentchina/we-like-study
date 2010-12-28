@@ -207,6 +207,7 @@ class quiz_paper extends wls{
 		if($search==null && isset($_REQUEST['search'])){
 			$search_ = $_REQUEST['search'];
 			//部分PHP环境对以GET传的'识别不同
+			$_REQUEST['search'] = str_replace("\\\\","",$_REQUEST['search']);
 			$_REQUEST['search'] = str_replace("\\'","\"",$_REQUEST['search']);
 			$_REQUEST['search'] = str_replace("'","\"",$_REQUEST['search']);
 
