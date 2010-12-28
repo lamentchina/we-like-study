@@ -58,30 +58,29 @@ class wls {
 <link href="libs/DWZ/themes/default/style.css" rel="stylesheet" type="text/css" />
 <link href="libs/DWZ/themes/css/core.css" rel="stylesheet" type="text/css" />
 <link href="libs/DWZ/uploadify/css/uploadify.css" rel="stylesheet" type="text/css" />
+<link href="view/wls.css" rel="stylesheet" type="text/css" />
 		
-<script src="libs/DWZ/javascripts/speedup.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/jquery-1.4.2.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/jquery.cookie.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/jquery.validate.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="libs/DWZ/xheditor/xheditor-zh-cn.min.js" type="text/javascript"></script>
-<script src="libs/DWZ/bin/dwz.min.js" type="text/javascript"></script>
+<script  src="libs/DWZ/javascripts/speedup.js" type="text/javascript"></script>
+<script  src="libs/DWZ/javascripts/jquery-1.4.2.js" type="text/javascript"></script>
+
+<script  src="libs/DWZ/javascripts/jquery.cookie.js" type="text/javascript"></script>
+<script  src="libs/DWZ/javascripts/jquery.validate.js" type="text/javascript"></script>
+<script  src="libs/DWZ/javascripts/jquery.bgiframe.js" type="text/javascript"></script>
+<script  src="libs/DWZ/xheditor/xheditor-zh-cn.min.js" type="text/javascript"></script>
+
+<script  src="libs/DWZ/bin/dwz.min.js" type="text/javascript"></script>
 <script src="libs/DWZ/javascripts/dwz.navTab.js" type="text/javascript"></script>
-<script src="libs/DWZ/javascripts/dwz.regional.zh.js" type="text/javascript"></script>
-<script src="libs/DWZ/uploadify/scripts/swfobject.js" type="text/javascript"></script>
-<script src="libs/DWZ/uploadify/scripts/jquery.uploadify.v2.1.0.js" type="text/javascript"></script>
+<script  src="libs/DWZ/javascripts/dwz.regional.zh.js" type="text/javascript"></script>
+
+<script  src="libs/DWZ/uploadify/scripts/swfobject.js" type="text/javascript"></script>
+<script  src="libs/DWZ/uploadify/scripts/jquery.uploadify.v2.1.0.js" type="text/javascript"></script>
+<script  src="view/wls.js" type="text/javascript"></script>
+<script  src="view/quiz/quiz.js" type="text/javascript"></script>
+<script  src="view/user/user.js" type="text/javascript"></script>
 
 <!--[if IE]>
 <link href="libs/DWZ/themes/css/ieHack.css" rel="stylesheet" type="text/css" />
-<script src="libs/jquery.flot.excanvas.js" type="text/javascript"></script>
 <![endif]-->
-
-<link href="view/wls.css" rel="stylesheet" type="text/css" />
-<script src="view/wls.js" type="text/javascript"></script>
-<script src="view/quiz/quiz.js" type="text/javascript"></script>
-<script src="view/user/user.js" type="text/javascript"></script>
-<script src="libs/jquery.flot.js" type="text/javascript"></script>
-<script src="libs/jquery.flot.excanvas.js" type="text/javascript"></script>
 		';
 		return $html;
 	}

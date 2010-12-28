@@ -17,6 +17,7 @@ class wlsconfig{
 			public $user_extend_myquiz = 'myquiz';
 			public $user_extend_wrongs = 'wrongs';
 			public $user_extend_papers = 'papers';
+			public $user_cookiepre = 'SE7P_';
 }
 ?>
 		
