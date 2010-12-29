@@ -6,6 +6,6 @@
 QQ:467480903
 QQ群:127222072
 Email:wei1224hf@gmail.com
-代码库:http://we-like-study.googlecode.com/
+代码库:http://code.google.com/p/we-like-study/
 
 //谁能帮我补充一下代码中的注释？

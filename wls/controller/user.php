@@ -1,30 +1,59 @@
 <?php
+/**
+ * wls本身没有 wls_user 这张表,也没有存储用户相关的信息
+ * wls依赖所依附的CMS系统来读取用户数据
+ * 这需要引用 controller/install/ 中的桥接文件
+ * 
+ * @author wei1224hf
+ * @copyright www.wei1224hf.com
+ * @see 
+ * */
 class user extends wls {	
 	
+	/**
+	 * 为了尽量减少用户数据的重复读取,
+	 * 将用户信息保存在这个变量中,
+	 * 以实现重复使用
+	 * */
 	public $userinfo = null;
 	
-	public function getUserInfo($id=null){
+	/**
+	 * 根据用户编号得到用户信息
+	 * 在这里引入桥接文件
+	 * 前台可以传编号参数过来
+	 * 
+	 * @param $id 用户编号,一般情况下为 int
+	 * @return $data array
+	 * */
+	public function getUser($id=null){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();		
 		
 		$data = null;
 		if($id==null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
 		
+		//如果用户还没有初始化,就需要读取数据库内容了
 		if($this->userinfo==null){
 			eval("include_once 'controller/install/".$this->cfg->cmstype.".php';");
 			eval('$obj = new install_'.$this->cfg->cmstype.'();');
 			eval('$data = $obj->getUserInfo($id);');
 			$this->userinfo = $data;
 		}else{
+			//尽量减少磁盘I/O
 			$data = $this->userinfo;
 		}
 		return $data;
 	}
 	
-	public function viewProfile($id=null){	
+	/**
+	 * 访问WLS的主入口
+	 * 需要先判断用户的在线状态,如果没有登录,
+	 * 就让他先登录
+	 * 
+	 * @param $id 用户编号
+	 * */
+	public function viewWLS($id=null){	
 		$userinfo = $this->getUserInfo('mine');
-//		print_r($userinfo);
-//		exit();
 		if($userinfo['id_user']==0){
 			echo "
 			<html>
@@ -45,7 +74,6 @@ class user extends wls {
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
 		$quiztypeList = $obj->getMyList();	
-//		print_r($quiztypeList);	
 		$profile = $this->getProfile();		
 		$title = $this->cfg->title;
 		$head = $this->headerScripts();
@@ -53,13 +81,18 @@ class user extends wls {
 		include_once 'view/user/profile.php';
 	}
 	
-	public function getProfile($id=null){
+	/**
+	 * 得到用户信息,
+	 * 返回的是一段HTML代码,用于直接引用到前台
+	 * 
+	 * @param $id 用户编号
+	 * @return $html 
+	 * */
+	public function getUserByHTML($id=null){
 		if($id=null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
 		$userinfo = $this->getUserInfo($id);
 		
-		
-		
-		$dom = "
+		$html = "
 			<table width='98%' cellpadding='0' cellspacing='0' border='0'>
 				<tr>
 					<td class='w_u_k'>".$userinfo['name']."</td>
@@ -90,7 +123,7 @@ class user extends wls {
 				-->															
 			</table>
 		";
-		return $dom;
+		return $html;
 	}
 
 	public function getSex($sex){
@@ -99,6 +132,9 @@ class user extends wls {
 		if($sex==2)return '女士';
 	}
 	
+	/**
+	 * 得到多个用户的列表信息
+	 * */
 	public function getList($returnType = null,$page=null,$rows=null,$search=null){
 		if($page==null && isset($_REQUEST['page']))$page=$_REQUEST['page'];
 		if($rows==null && isset($_REQUEST['rows']))$rows=$_REQUEST['rows'];
@@ -108,59 +144,7 @@ class user extends wls {
 		if($rows==null)$rows = 20;
 		if($returnType==null)$returnType = 'json';
 
-		$pfx = $this->cfg->dbprefix;
-		$conn = $this->conn();
-		
-		$where = " where 1 =1  ";
-		if($search!=null){
-			$keys = array_keys($search);
-			for($i=0;$i<count($keys);$i++){
-
-			}
-		}
-		$sql = "select * from ".$pfx."wls_user  ".$where;
-	
-		$sql .= " limit ".($rows*($page-1)).",".$rows." ";
-		$res = mysql_query($sql,$conn);
-		$arr = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$arr[] = $temp;
-		}
-		
-		$sql = "select count(*) as total from ".$pfx."wls_user ".$where;
-		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);
-		$total = $temp['total'];
-				
-		header("Content-type: text/html; charset=utf-8"); 
-		switch($returnType) {
-			case 'json':
-				$arr2 = array(
-					'page'=>$page,
-					'rows'=>$arr,
-					'sql'=>$sql,
-					'total'=>$total,
-					'pagesize'=>$rows,
-				);
-				unset($arr);
-				echo json_encode($arr2);
-			break;
-			case 'xml':
-				//TODO
-			case 'array':
-				$arr2 = array(
-					'page'=>$page,
-					'rows'=>$arr,
-					'sql'=>$sql,
-					'total'=>$total,
-					'pagesize'=>$rows,
-				);
-				return $arr2;
-			break;
-			default:
-				echo 'returnType is not defined';
-			break;
-		}
+		//TODO
 	}
 	
 	public function getDWZlist($returnType = null,$page=null,$rows=null,$search=null){
@@ -180,9 +164,7 @@ class user extends wls {
 		if($rows==null)$rows = 10;
 		if($returnType==null)$returnType = 'html';
 		
-		$data = $this->getList('array',$page,$rows,$search);
-		
-		include_once 'view/user/dwzlist.php';
+		//TODO
 	}
 	
 }

@@ -25,13 +25,15 @@ class question extends wls {
 				,details text not null 				comment '详细的题目配置内容,根据题目类别不同而设置'				
 				,answer text not null				comment '答案,根据题型不同有不同的组织形式'
 				,description text					comment '描述,解题说明'	
-				,cent float default 0				comment '分数.一道题目必然属于一张试卷,必然有自己的分数比例,一道题不可能属于2张试卷'	
+				,cent float default 0				comment '分数.一道题目必然属于一张试卷,必然有自己的分数比例,一道题不可能属于2张试卷'
+					
 
 				,id_quiz_type int default 0			comment '考试科目编号'
 				,title_quiz_type varchar(200) default '未知考试科目'		comment '考试科目名称'
 				,id_quiz_paper int default	0		comment '试卷编号'
 				,title_quiz_paper varchar(200) default '未知试卷名称'	comment '考试试卷名称'
 				,id_parent int default 0			comment '父级题目编号,如果是阅读理解 完形填空 短文听力 填空'
+				,filepath_listen varchar(200) default 'null' comment '如果这道题涉及听力,听力文件地址'
 								
 				,creator varchar(200) default 'admin' comment '创建者'
 

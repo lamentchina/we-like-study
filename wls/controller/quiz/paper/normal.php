@@ -8,7 +8,6 @@ class quiz_paper_normal extends quiz_paper {
 
 	public function getPaper(){
 		$currentSheet = $this->phpexcel->getSheetByName('paper');
-
 		$data = array(
 			'title' => $currentSheet->getCell('B2')->getValue(),
 			'title_quiz_type' => trim($currentSheet->getCell('B1')->getValue()),
@@ -122,18 +121,11 @@ class quiz_paper_normal extends quiz_paper {
 					'title'=>$arr[1],
 				);
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '听力文件'){
-				$data[$index]['details_'] = array(
-					'listen'=>$currentSheet->getCell('C'.$i)->getValue(),
-				);
+				$data[$index]['filepath_listen'] = $currentSheet->getCell('C'.$i)->getValue();
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '选项排列'){
 				$data[$index]['details_']['display'] = 'vertical';
-			}else if($currentSheet->getCell('B'.$i)->getValue() == '批改方式'&&
-				$currentSheet->getCell('C'.$i)->getValue() != '自动批改'
-			){
+			}else if($currentSheet->getCell('B'.$i)->getValue() == '批改方式'&&$currentSheet->getCell('C'.$i)->getValue() != '自动批改'){
 				$data[$index]['markingmethod'] = 1;
-				$data[$index]['details_'] = array(
-					'markingmethod'=>'manual'
-					);
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '基础题型'){				
 				$data[$index]['type'] = $this->formatType($currentSheet->getCell('C'.$i)->getValue());
 			}else if($currentSheet->getCell('B'.$i)->getValue() == '题型'){		

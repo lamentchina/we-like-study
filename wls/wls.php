@@ -1,23 +1,13 @@
 <?php
 /**
- * 在线学习模块
+ * 在线学习插件
  * Wei Like Study
  * 其他后台控制器都继承自这里
  *
- * 主要的分块有:
- *     题目
- *     考试科目
- *     测试卷
- *     知识点
- *     错题本
- *     题目评价
- *
- *     做题记录日志
- *     对错率日志
- *
- *
  * @version 2010-09
- * @copyright www.wei1224hf.com.cn wei1224hf@gmail.com 大菜鸟
+ * @copyright www.wei1224hf.com
+ * @author wei1224hf(大菜鸟)
+ * @see http://code.google.com/p/we-like-study/
  * */
 class wls {
 
@@ -52,6 +42,7 @@ class wls {
 	 * DWZ 是一套国产的,基于JQUERY的RIA,功能强大
 	 * 
 	 * @see http://bbs.dwzjs.com/
+	 * @copyright dwzjs
 	 * */
 	public function headerScripts(){
 		$html = '		
@@ -154,8 +145,7 @@ class wls {
 		
 		if($bool){
 			$config = array_flip($config);
-		}
-		
+		}		
 		return $config[$key];
 	}
 	
@@ -214,16 +204,22 @@ class wls {
 	}
 }
 
+//解析前台传过来的  wls.php?controll=x&action=y 这种格式
 //控制器有级层关系,以空格分开
 //每一个控制器对应一个后台文件
+//每一个动作对应一个函数
 $controller = null;
 if(isset($_REQUEST['controller'])){
 	$arr = explode("_",$_REQUEST['controller']);
 	$dept = count($arr);
 	if($dept==1){
+		//如果 controller 只有一层,比如 controller=x
+		//直接导入这个 controller/x.php 文件,并初始化这个class对象
 		include 'controller/'.$_REQUEST['controller'].'.php';
 		eval('$controller = new '.$_REQUEST['controller'].'();');
 	}else{
+		//如果 controller 不止一层,比如 controller=x_x2_x3 
+		//那么就要导入文件  controller/x/x2/x3.php 
 		$path = '';
 		for($i=0;$i<count($arr);$i++){
 			$path .= "/".$arr[$i];
@@ -243,7 +239,7 @@ if(isset($_REQUEST['controller'])){
 	//echo 'need controller!';
 }
 
-//每个行为对应某个控制器的一个函数,这个函数必定是PUBLIC的
+//捕获前台传来的 action ,引用那个函数
 if(isset($_REQUEST['action'])){
 	eval('$controller->'.$_REQUEST['action'].'();');
 }else{
