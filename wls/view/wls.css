@@ -95,7 +95,7 @@
 	font-weight:bold;
 }
 .w_q_d_t{
-	background:url(/plugins/wls/file/images/systm/accordion.png);
+	background:url("../file/images/systm/accordion.png");
 	background-position:0 -74px;
 	font-size:25px;
 	text-decoration: none;
@@ -104,7 +104,7 @@
 }
 
 .w_q_d_t_2{
-	background:url(/plugins/wls/file/images/systm/accordion.png);
+	background:url("../file/images/systm/accordion.png");
 	background-position:0 -124px;
 	font-size:25px;
 }

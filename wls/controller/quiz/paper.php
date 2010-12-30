@@ -64,15 +64,6 @@ class quiz_paper extends wls{
 		mysql_query($sql,$conn);
 	}
 
-	public function initTestData(){
-		$conn = $this->conn();
-		$pfx = $this->cfg->dbprefix;
-		$sql = "INSERT INTO ".$pfx."wls_quiz_paper (id_quiz_type,title,date_created,questions) VALUES
-		(1,'asf','".date('Y-m-d')."','12,23,28,33,43,53,44,67,77,87,92')
-		;";		
-		mysql_query($sql,$conn);
-	}
-
 	public function getOne(){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
@@ -226,7 +217,7 @@ class quiz_paper extends wls{
 
 		include_once 'controller/user.php';
 		$user = new user();
-		$userinfo = $user->getUserInfo();
+		$userinfo = $user->getUser();
 
 		include_once 'view/quiz/paper/list.php';
 	}

@@ -165,7 +165,7 @@ class question extends wls {
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 		
-		$answer = $this->format($_REQUEST['answer']);
+		$answer = $this->formatTitle($_REQUEST['answer']);
 		$id = $_REQUEST['id'];
 		
 		include 'controller/question/record.php';
@@ -231,6 +231,12 @@ class question extends wls {
 				if($keys[$i]=='id_quiz_paper'){
 					$where .= " and id_quiz_paper in (".$search[$keys[$i]].") ";
 				}	
+				if($keys[$i]=='type'){
+					$where .= " and type in (".$search[$keys[$i]].") ";
+				}					
+				if($keys[$i]=='id_parent'){
+					$where .= " and id_parent in (".$search[$keys[$i]].") ";
+				}				
 				if($keys[$i]=='wrongs_userid'){
 					$where .= " and (
 					id in (
@@ -261,9 +267,12 @@ class question extends wls {
 				,title_quiz_paper
 				,id_parent
 				
-				 from ".$pfx."wls_question  ".$where.$orderby;
-	
-		$sql .= " limit ".($rows*($page-1)).",".$rows." ";
+				 from ".$pfx."wls_question  ".$where." ".$orderby;
+		
+		if($orderby!='order by rand() limit 100'){
+			$sql .= " limit ".($rows*($page-1)).",".$rows." ";
+		}		
+		//echo $sql;
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){

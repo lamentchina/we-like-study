@@ -134,8 +134,7 @@ class install_discuzx extends wls {
 		$this->rewrite['loginpath']='../../../member.php?mod=register';		
 		
 		include_once '../../../config/config_global.php';
-		$this->rewrite['user_cookiepre'] = $_config['cookie']['cookiepre'];		
-		
+		$this->rewrite['user_cookiepre'] = $_config['cookie']['cookiepre'];			
 	}
 
 	public function getUserInfo($id){
@@ -192,6 +191,7 @@ class install_discuzx extends wls {
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$temp['extgroupids'] = str_replace("\t",",",$temp['extgroupids']);
+
 		$data = array(
 			'id_user'=>$id,
 			'title_group'=>'',

@@ -19,7 +19,7 @@ var wls_quiz = function(){
 	this.quesId_parsed = [];
 	this.questions_sub = [];//子题目列表
 	this.quesId_sub = [];//子题目编号
-	this.type = 'paper';
+	
 	
 	this.count_wrong = 0;
 	this.count_total = 0;

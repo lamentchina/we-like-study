@@ -43,7 +43,7 @@ class quiz_type extends wls{
 		include_once 'controller/user.php';
 		$obj = new user();
 		if($id==null|| $id=='' || $id==0 )$id='mine';
-		$userinfo = $obj->getUserInfo($id);
+		$userinfo = $obj->getUser($id);
 		$arr = explode(",",$userinfo['id_group']);
 		$search = null;
 		//如果是管理员们
@@ -326,7 +326,7 @@ class quiz_type extends wls{
 
 		include_once 'controller/user.php';
 		$user = new user();
-		$userinfo = $user->getUserInfo();
+		$userinfo = $user->getUser();
 
 		include_once 'view/quiz/type/list.php';
 	}

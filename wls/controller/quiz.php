@@ -91,7 +91,7 @@ class quiz extends wls{
 	public function viewRandQuizByDWZ(){
 		include_once 'controller/user.php';
 		$obj = new user();
-		$userinfo = $obj->getUserInfo('mine');
+		$userinfo = $obj->getUser('mine');
 		
 		$arr = explode(",",$userinfo['id_group']);
 		$search = null;
@@ -135,7 +135,7 @@ class quiz extends wls{
 		<script type="text/javascript">
 		var wls_q_r = function(){	
 			var id = $("select[name=quiz_type] option:selected").val();
-			window.open ("wls.php?controller=quiz&action=viewRandQuizByJquery&id_quiz_type="+id, "newwindow");
+			window.open ("wls.php?controller=quiz_random&action=viewRandQuizByJquery&id_quiz_type="+id, "newwindow");
 		}
 		</script>
 		';

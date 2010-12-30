@@ -54,7 +54,7 @@ class question_record extends wls {
 		
 		include_once 'controller/user.php';
 		$user = new user();
-		$userinfo = $user->getUserInfo();
+		$userinfo = $user->getUser('mine');
 		
 		$sql = "select id_parent,answer,id,id_quiz_paper from ".$pfx."wls_question where id = ".$id_question;
 		$res = mysql_query($sql,$conn);

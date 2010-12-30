@@ -48,7 +48,7 @@ class quiz_record extends wls {
 
 		include_once 'controller/user.php';
 		$user = new user();
-		$userinfo = $user->getUserInfo('mine');
+		$userinfo = $user->getUser('mine');
 
 		$sql = "select id_quiz_type , title_quiz_type from ".$pfx."wls_quiz_paper where id = ".$_REQUEST['id'];
 		$res = mysql_query($sql,$conn);
@@ -249,7 +249,7 @@ class quiz_record extends wls {
 		';
 		include_once 'controller/user.php';
 		$obj = new user();
-		$html .= $obj->getProfile();
+		$html .= $obj->getUserByHTML();
 		echo $html;
 	}
 
@@ -267,7 +267,7 @@ class quiz_record extends wls {
 	public function getChartByPChart(){
 		include_once 'controller/user.php';
 		$obj = new user();
-		$userinfo = $obj->getUserInfo('mine');
+		$userinfo = $obj->getUser('mine');
 
 		if(file_exists("file/images/user/chart".$userinfo['id_user'].".png")){
 			if(!isset($_REQUEST['rewrite']) || $_REQUEST['rewrite']!="1"){

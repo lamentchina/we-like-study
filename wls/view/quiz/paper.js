@@ -5,6 +5,7 @@
 var wls_quiz_paper = function(){	
 	this.paperId = '';
 	this.paperTitle = '';
+	this.type = 'paper';
 	
 	//TODO
 	this.paperData = null;

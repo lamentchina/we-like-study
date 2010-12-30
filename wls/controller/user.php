@@ -53,7 +53,7 @@ class user extends wls {
 	 * @param $id 用户编号
 	 * */
 	public function viewWLS($id=null){	
-		$userinfo = $this->getUserInfo('mine');
+		$userinfo = $this->getUser('mine');
 		if($userinfo['id_user']==0){
 			echo "
 			<html>
@@ -74,7 +74,7 @@ class user extends wls {
 		include_once 'controller/quiz/type.php';
 		$obj = new quiz_type();
 		$quiztypeList = $obj->getMyList();	
-		$profile = $this->getProfile();		
+		$profile = $this->getUserByHTML();		
 		$title = $this->cfg->title;
 		$head = $this->headerScripts();
 		
@@ -90,7 +90,7 @@ class user extends wls {
 	 * */
 	public function getUserByHTML($id=null){
 		if($id=null && isset($_REQUEST['id']))$id=$_REQUEST['id'];
-		$userinfo = $this->getUserInfo($id);
+		$userinfo = $this->getUser($id);
 		
 		$html = "
 			<table width='98%' cellpadding='0' cellspacing='0' border='0'>
