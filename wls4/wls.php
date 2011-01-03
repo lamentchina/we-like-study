@@ -42,6 +42,15 @@ class wls{
 	public function getUser($id=null){
 
 	}
+	
+	/**
+	 * 错误操作,需要记录下用户的行为
+	 *
+	 * @param $whatHappened 事件描述,可以是数组
+	 * */
+	public function error($whatHappened){
+		
+	}
 
 	/**
 	 * 解析前台传过来的  wls.php?controll=x&action=y 这种格式
@@ -74,7 +83,7 @@ class wls{
 					$controllername .= $arr[$i]."_";
 				}
 				$controllername = substr($controllername,0,strlen($controllername)-1);
-				include 'controller'.$path.'.php';
+				include $this->c->license.'/controller'.$path.'.php';
 				eval('$controller = new '.$controllername.'();');
 			}
 		}else{
