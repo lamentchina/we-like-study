@@ -7,6 +7,6 @@ class wlsconfig{
 	public $dbprefix = '';
 	public $state = 'debug';
 	public $cmstype = '';
-	public $license = 'gnugpl';
+	public $license = 'free';
 }
 ?>
