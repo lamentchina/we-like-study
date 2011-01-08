@@ -1,0 +1,31 @@
+var il8n = {
+	 Import:'导入'
+	,Export:'导出'
+	,Name:'名称'
+	,ID:'编号'
+	,Money:'金币'
+	,Credits:'积分'
+	,PassWord:'密码'
+	,Delete:'删除'
+	,Subject:'科目'
+	,Title:'标题'
+	,Count:{
+		 Used:'使用数'
+		,Right:'做对数'
+		,Wrong:'做错数'
+		,GiveUp:'放弃数'
+	}
+	,Score:{
+		 Top:'最高分'
+		,TopUser:'最高分用户'
+		,AVG:'平均分'
+	}
+	,DoQuiz:'做题'	
+	,Operations:'操作'
+	,Paper:{
+		 Brief:'试卷简要'
+	}
+	,Submit:'提交'
+	,Navigation:'导航'
+	,Clock:'时钟'
+};
