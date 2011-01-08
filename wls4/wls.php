@@ -1,4 +1,7 @@
 <?php
+include_once 'interface.php';
+include_once 'config.php';
+
 /**
  * We Like Study!
  * 我们喜欢学习
@@ -20,7 +23,6 @@ class wls{
 	 * 每次引用这个文件时都会自动运行
 	 * */
 	public function wls(){
-		include_once 'config.php';
 		$this->c = new wlsconfig();
 	}
 
@@ -49,7 +51,11 @@ class wls{
 	 * @param $whatHappened 事件描述,可以是数组
 	 * */
 	public function error($whatHappened){
-		
+		//TODO
+		$fileName = dirname(__FILE__).'/../file/log/error.txt';
+		$handle=fopen($fileName,"a");
+		fwrite($handle,$whatHappened['description']."\n");
+		fclose($handle);
 	}
 
 	/**

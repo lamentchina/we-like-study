@@ -1,9 +1,9 @@
 <?php
 class wlsconfig{
-	public $dbname = '';
-	public $dbhost = '';
-	public $dbuser = '';
-	public $dbpwd = '';
+	public $dbname = 'wls4';
+	public $dbhost = 'localhost';
+	public $dbuser = 'admin';
+	public $dbpwd = 'admin';
 	public $dbprefix = '';
 	public $state = 'debug';
 	public $cmstype = '';

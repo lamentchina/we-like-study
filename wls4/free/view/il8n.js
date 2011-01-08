@@ -28,4 +28,11 @@ var il8n = {
 	,Submit:'提交'
 	,Navigation:'导航'
 	,Clock:'时钟'
+	,User:{
+		 Name:'用户名'
+		,PassWord:'密码'		
+		,Login:'登录'
+	}
+	,CAPTCHA:'验证码'
+	,ReCAPTCHA:'刷新验证码'
 };

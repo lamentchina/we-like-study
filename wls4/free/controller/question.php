@@ -44,8 +44,8 @@ class user extends wls{
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			$this->m->importExcel(dirname(__FILE__)."/../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../file/upload/". $_FILES["file"]["name"]);
+			$this->m->importExcel(dirname(__FILE__)."/../../../file/upload/". $_FILES["file"]["name"]);
 		}
 	}	
 	
@@ -64,14 +64,6 @@ class user extends wls{
 	public function viewExport(){
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>下载</a>";
-	}
-	
-	public function delete(){
-		if($this->m->delete($_POST['id'])){
-			echo '操作成功';
-		}else{
-			echo '操作失败';
-		}
 	}
 }
 ?>

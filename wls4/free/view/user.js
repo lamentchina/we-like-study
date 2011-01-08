@@ -1,6 +1,65 @@
 wls.user = Ext.extend(wls, {
+	/**
+	 * 添加登录框.
+	 * 如果登录成功,页面会重刷新
+	 * 
+	 * @return Ext.form.FormPanel
+	 * */
 	getLogin:function(){
-		
+		var thisObj = this;
+		var form = new Ext.form.FormPanel({
+			id:'wls_user_login_form',
+			labelWidth: 75, // label settings here cascade unless overridden
+	        frame:true,
+	        title: il8n.User.Login,
+	        bodyStyle:'padding:5px 5px 0',
+	        width: 350,
+	        defaults: {width: 100},
+	        defaultType: 'textfield',
+	
+	        items: [{
+	                fieldLabel: il8n.User.Name,
+	                name: 'username',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.User.PassWord,
+	                name: 'password',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.CAPTCHA,
+	                name: 'CAPTCHA'
+	            }, new Ext.BoxComponent({
+	            	fieldLabel: '',
+	                height: 32, // give north and south regions a height
+	                autoEl: {
+	                    tag: 'div',
+	                    html:'<img style="width:100px; height:28px;" id="captcha" src="'+thisObj.config.CAPTCHA+'/securimage_show.php" alt="CAPTCHA Image" />'
+	                }
+	            })
+	        ],
+
+	        buttons: [{
+			    	 text: il8n.User.Login
+			        ,handler:function(){
+			        	var form = Ext.getCmp('wls_user_login_form').getForm();
+			        	if(form.isValid()){
+			        		var obj = form.getValues();
+			        		console.debug(obj);
+			        	}
+			        }
+	        	},{
+			    	 text: il8n.ReCAPTCHA
+			        ,handler:function(){
+			        	var form = Ext.getCmp('wls_user_login_form').getForm();
+			        	if(form.isValid()){
+			        		var obj = form.getValues();
+			        		console.debug(obj);
+			        	}
+			        }
+	        	}
+	        ]
+		});
+		return form;
 	},
 	getList:function(id){
 		var thisObj = this;
@@ -17,22 +76,22 @@ wls.user = Ext.extend(wls, {
 		        sortable: true   
 		    },
 		    columns: [{
-		             header: il8n.name
+		             header: il8n.Name
 		            ,dataIndex: 'username'
 		        }, {
-		             header: il8n.password
+		             header: il8n.PassWord
 		            ,dataIndex: 'password'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })  
 		        }, {
-		             header: il8n.money
+		             header: il8n.Money
 		            ,dataIndex: 'money'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })  
 		        }, {
-		             header: il8n.credits
+		             header: il8n.Credits
 		            ,dataIndex: 'credits'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
@@ -48,7 +107,7 @@ wls.user = Ext.extend(wls, {
 		    height: 300,
 		    clicksToEdit: 1,
 		    tbar: [{
-		        text: il8n.import,
+		        text: il8n.Import,
 		        handler : function(){   
 					var win = new Ext.Window({
 						id:'w_u_l_i',
@@ -60,7 +119,7 @@ wls.user = Ext.extend(wls, {
 					win.show(this);
 				}
 		    },{
-		        text: il8n.export,
+		        text: il8n.Export,
 		        handler : function(){   
 					var win = new Ext.Window({
 						id:'w_u_l_e',
@@ -72,10 +131,8 @@ wls.user = Ext.extend(wls, {
 					win.show(this);
 				}
 		    },{
-		        text: il8n.delete,
+		        text: il8n.Delete,
 		        handler : function(){
-//		        	console.debug(id);
-					console.debug();
 			        Ext.Ajax.request({				
 						method:'POST',				
 						url:thisObj.config.AJAXPATH+"?controller=user&action=delete",				

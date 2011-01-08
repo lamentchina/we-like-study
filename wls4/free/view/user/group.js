@@ -14,7 +14,7 @@ wls.user.group = Ext.extend(wls, {
 		        sortable: true   
 		    },
 		    columns: [{
-		             header: il8n.name
+		             header: il8n.Name
 		            ,dataIndex: 'name'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
@@ -34,7 +34,7 @@ wls.user.group = Ext.extend(wls, {
 		    height: 300,
 		    clicksToEdit: 1,
 		    tbar: [{
-		        text: il8n.import,
+		        text: il8n.Import,
 		        handler : function(){   
 					var win = new Ext.Window({
 						id:'w_u_g_l_i',
@@ -46,7 +46,7 @@ wls.user.group = Ext.extend(wls, {
 					win.show(this);
 				}
 		    },{
-		        text: il8n.export,
+		        text: il8n.Export,
 		        handler : function(){   
 					var win = new Ext.Window({
 						id:'w_u_g_l_e',

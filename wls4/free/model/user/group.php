@@ -1,10 +1,10 @@
 <?php
 /**
- * 用户操作,对应着一张数据库表
+ * 用户组操作,对应着一张数据库表
  * */
-class m_user extends wls implements dbtable{
+class m_user_group extends wls implements dbtable,levelList{
 	
-	public $phpexcel;	
+	public $phpexcel = null;
 	
 	/**
 	 * 插入一条数据
@@ -20,7 +20,7 @@ class m_user extends wls implements dbtable{
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
+		$sql = "insert into ".$pfx."wls_user_group (".$keys.") values ('".$values."')";
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -31,18 +31,7 @@ class m_user extends wls implements dbtable{
 	 * @param $ids 编号,每张表都id这个列,一般为自动递增
 	 * @return bool
 	 * */
-	public function delete($ids){
-		$pfx = $this->c->dbprefix;
-		$conn = $this->conn();
-
-		$sql = "delete from ".$pfx."wls_user where id  in (".$ids.");";
-		try{
-			mysql_query($sql,$conn);
-			return true;
-		}catch (Exception $ex){
-			return false;
-		}	
-	}
+	public function delete($ids){}
 
 	/**
 	 * 更新一条数据
@@ -58,7 +47,7 @@ class m_user extends wls implements dbtable{
 		unset($data['id']);
 		$keys = array_keys($data);
 
-		$sql = "update ".$pfx."wls_user set ";
+		$sql = "update ".$pfx."wls_user_group set ";
 		for($i=0;$i<count($keys);$i++){
 			$sql.= $keys[$i]."='".$data[$keys[$i]]."',";
 		}
@@ -77,7 +66,7 @@ class m_user extends wls implements dbtable{
 	 * 创建过程中,会先尝试删除这张表,然后重新建立.
 	 * 因此在运行之前需要将数据备份
 	 * 如果配置文件中的state不是debug,无法执行这类函数
-	 * 
+	 *
 	 * @return bool
 	 * */
 	public function create(){
@@ -85,18 +74,15 @@ class m_user extends wls implements dbtable{
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 		
-		$sql = "drop table if exists ".$pfx."wls_user;";
+		$sql = "drop table if exists ".$pfx."wls_user_group;";
 		mysql_query($sql,$conn);
 		$sql = "		
-			create table ".$pfx."wls_user(
+			create table ".$pfx."wls_user_group(
 				 id int primary key auto_increment	/*自动编号*/
-				
-				,username varchar(200) unique
-				,password varchar(200) not null
-				,money int 
-				,credits int
-				,id_level_user_group varchar(200) not null
-			
+				,id_level varchar(200) unique		/*级层编号*/
+				,name varchar(200) default '' 		/*用户组名称*/
+				,ordering int default 0				/*排序规则*/
+							
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
@@ -112,9 +98,9 @@ class m_user extends wls implements dbtable{
 	 * @return bool
 	 * */
 	public function importExcel($path){
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -126,15 +112,13 @@ class m_user extends wls implements dbtable{
 		$data = array();
 		$index = 0;
 		for($i=2;$i<=$allRow[0];$i++){
-			$data = array(				
-				'username'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'password'=>$currentSheet->getCell('B'.$i)->getValue(),				
-				'money'=>$currentSheet->getCell('C'.$i)->getValue(),
-				'credits'=>$currentSheet->getCell('D'.$i)->getValue(),
-				'id_level_user_group'=>$currentSheet->getCell('E'.$i)->getValue(),
+			$data = array(
+				'id_level'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'name'=>$currentSheet->getCell('B'.$i)->getValue(),
+				'ordering'=>$currentSheet->getCell('C'.$i)->getValue(),
 			);
 			$this->insert($data);
-		}				
+		}		
 	}
 
 	/**
@@ -144,9 +128,9 @@ class m_user extends wls implements dbtable{
 	 * @return $path
 	 * */
 	public function exportExcel(){
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -154,27 +138,26 @@ class m_user extends wls implements dbtable{
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle('data');	
 	
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', '用户名');
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', '密码');
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', '金币');
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', '积分');
-		$objPHPExcel->getActiveSheet()->setCellValue('E1', '用户组');
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', '序号');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '名称');
+		$objPHPExcel->getActiveSheet()->setCellValue('C1', '排序');
 
 		$index = 1;
 		for($i=0;$i<count($data);$i++){
 			$index ++;
-			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['username']);
-			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['password']);
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['money']);
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['credits']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['id_level_user_group']);
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id_level']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['name']);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['ordering']);
 		}
-		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
+		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('A1');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));   
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));   
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
-		$objWriter->save(dirname(__FILE__)."/../../../".$file);
+		$objWriter->save(dirname(__FILE__)."/../../../../".$file);
 		return $file;
 	}
 
@@ -210,16 +193,16 @@ class m_user extends wls implements dbtable{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select * from ".$pfx."wls_user ".$where." ".$orderby;
+		$sql = "select * from ".$pfx."wls_user_group ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-		
+
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
 		}
 		
-		$sql2 = "select count(*) as total from ".$pfx."wls_user ".$where;
+		$sql2 = "select count(*) as total from ".$pfx."wls_user_group ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
@@ -234,34 +217,13 @@ class m_user extends wls implements dbtable{
 	}
 
 	/**
-	 * 得到用户信息
-	 * 会引用session
-	 * 
-	 * @param $id 如果id为空,则返回当前用户
+	 * 获得具有级层关系的列表
+	 *
+	 * @param $root 根元素
 	 * */
-	public function getUser($id){
-		session_start();
-		if(!isset($_SESSION['wls_user'])){
-			$data = $this->getList(1,1,array('id'=>$id));
-			$data = $data['data'][0];
-			$_SESSION['wls_user'] = $data;
-		}
-		return $_SESSION['wls_user'];
+	public function getLevelList($root){
+		
 	}
-	
-	/**
-	 * 导出某用户的成绩单
-	 * 
-	 * @param $id 如果id为空,则返回当前用户
-	 * */
-	public function exportTranscripts($id){}
-	
-	/**
-	 * 导入某用户的成绩单
-	 * 
-	 * @param $id 如果id为空,则返回当前用户
-	 * */
-	public function importTranscripts($id){}	
 
 }
 ?>

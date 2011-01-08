@@ -58,7 +58,7 @@ interface dbtable{
 	 * 
 	 * @return $path
 	 * */
-	public function exmprtExcel();
+	public function exportExcel();
 	
 	/**
 	 * 累加某个值
@@ -95,6 +95,7 @@ interface levelList{
 	 * @param $root 根元素
 	 * */
 	public function getLevelList($root);
+	
 }
 
 /**
@@ -109,6 +110,7 @@ interface log{
 	 * @param $whatHappend 事件类型
 	 * */
 	public function addLog($whatHappened);
+	
 }
 
 /**
@@ -144,7 +146,7 @@ interface integrate{
  * 测验卷操作
  * 主要有: 试卷,在线多人考试,错题本,知识点练习,随机做试卷,
  * */
-interface quiz{
+interface quizdo{
 	
 	/**
 	 * 导出这张试卷,允许用户下载

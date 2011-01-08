@@ -1,12 +1,12 @@
 <?php
-class user extends wls{
+class user_group extends wls{
 	
 	private $m = null;
 	
-	function user(){
+	function user_group(){
 		parent::wls();
-		include_once $this->c->license.'/model/user.php';
-		$this->m = new m_user();
+		include_once $this->c->license.'/model/user/group.php';
+		$this->m = new m_user_group();
 	}
 	
 	public function jsonList(){
@@ -28,7 +28,7 @@ class user extends wls{
 				</head>
 				<body>
 					导入EXCEL
-					<form action="wls.php?controller=user&action=saveUpload" method="post"
+					<form action="wls.php?controller=user_group&action=saveUpload" method="post"
 					enctype="multipart/form-data">
 						<label for="file">EXCEL文件:</label>
 						<input type="file" name="file" id="file" />
@@ -44,9 +44,11 @@ class user extends wls{
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			$this->m->importExcel(dirname(__FILE__)."/../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$this->m->create();
+			$this->m->importExcel(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
+		echo '已经导入';
 	}	
 	
 	public function saveUpdate(){
@@ -64,14 +66,6 @@ class user extends wls{
 	public function viewExport(){
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>下载</a>";
-	}
-	
-	public function delete(){
-		if($this->m->delete($_POST['id'])){
-			echo '操作成功';
-		}else{
-			echo '操作失败';
-		}
 	}
 }
 ?>
