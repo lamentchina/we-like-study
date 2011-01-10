@@ -41,10 +41,12 @@ class wls{
 	 * 得到当前用户数据
 	 * 需要其权限数据
 	 * */
-	public function getUser($id=null){
-
+	public function getUser(){
+		include_once dirname(__FILE__).$this->c->license."/model/user.php";
+		$m = new m_user();
+		return $m->getUser(null,true);		
 	}
-	
+
 	/**
 	 * 错误操作,需要记录下用户的行为
 	 *
