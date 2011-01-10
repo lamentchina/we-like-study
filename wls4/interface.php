@@ -37,6 +37,7 @@ interface dbtable{
 	 * 创建过程中,会先尝试删除这张表,然后重新建立.
 	 * 因此在运行之前需要将数据备份
 	 * 如果配置文件中的state不是debug,无法执行这类函数
+	 * 每张表中都有字段id,作为主索引
 	 * 
 	 * @return bool
 	 * */
@@ -76,9 +77,11 @@ interface dbtable{
 	 * @param $pagesize 页大小
 	 * @param $search 查询条件
 	 * @param $orderby 排序条件
+	 * @param $columns 列
+	 * 
 	 * @return $array 
 	 * */
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null);
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*");
 	
 }
 
@@ -141,6 +144,7 @@ interface integrate{
 	 * */
 	public function synchroPrivileges();	
 }
+
 
 /**
  * 测验卷操作

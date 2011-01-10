@@ -15,7 +15,7 @@ wls.user = Ext.extend(wls, {
 	        bodyStyle:'padding:5px 5px 0',
 	        width: 350,
 	        defaults: {width: 100},
-	        defaultType: 'textfield',
+	        defaultType: 'textfield',	        
 	
 	        items: [{
 	                fieldLabel: il8n.User.Name,
@@ -24,16 +24,20 @@ wls.user = Ext.extend(wls, {
 	            },{
 	                fieldLabel: il8n.User.PassWord,
 	                name: 'password',
+	                inputType:'password',
 	                allowBlank:false
 	            },{
-	                fieldLabel: il8n.CAPTCHA,
-	                name: 'CAPTCHA'
+	                fieldLabel: il8n.CheckCAPTCHA,
+	                enableKeyEvents:true,
+	                name: 'CAPTCHA',
+	                allowBlank:false,
+	                id:'CAPTCHA'
 	            }, new Ext.BoxComponent({
-	            	fieldLabel: '',
+	            	fieldLabel: il8n.CAPTCHA,
 	                height: 32, // give north and south regions a height
 	                autoEl: {
 	                    tag: 'div',
-	                    html:'<img style="width:100px; height:28px;" id="captcha" src="'+thisObj.config.CAPTCHA+'/securimage_show.php" alt="CAPTCHA Image" />'
+	                    html:'<img style="width:100px; height:28px;" id="captcha" src="'+thisObj.config.CAPTCHA+'securimage_show.php" alt="CAPTCHA Image" />'
 	                }
 	            })
 	        ],
@@ -41,25 +45,55 @@ wls.user = Ext.extend(wls, {
 	        buttons: [{
 			    	 text: il8n.User.Login
 			        ,handler:function(){
-			        	var form = Ext.getCmp('wls_user_login_form').getForm();
-			        	if(form.isValid()){
-			        		var obj = form.getValues();
-			        		console.debug(obj);
-			        	}
+			        	thisObj.login();
 			        }
 	        	},{
 			    	 text: il8n.ReCAPTCHA
 			        ,handler:function(){
-			        	var form = Ext.getCmp('wls_user_login_form').getForm();
-			        	if(form.isValid()){
-			        		var obj = form.getValues();
-			        		console.debug(obj);
-			        	}
+			        	$('#captcha').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
 			        }
 	        	}
 	        ]
 		});
+		Ext.getCmp('CAPTCHA').on('keyup', function(obj,e) {
+			if(e.getKey()=='13'){
+				thisObj.login();
+			}
+		});
 		return form;
+	},
+	login:function(){
+		$.blockUI({
+			message: '<h1>'+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
+		}); 
+		var thisObj = this;
+		var form = Ext.getCmp('wls_user_login_form').getForm();
+    	if(form.isValid()){
+    		var obj = form.getValues();
+    		Ext.Ajax.request({				
+				method:'POST',				
+				url:thisObj.config.AJAXPATH+"?controller=user&action=login",				
+				success:function(response){				
+					var obj = jQuery.parseJSON(response.responseText);
+					if(obj.msg=='ok'){
+						location.reload();
+					}
+					$.blockUI({
+						message: '<h1>'+il8n.Error+'</h1>' 
+					}); 					
+					setTimeout($.unblockUI, 2000); 
+				    //Ext.Msg.alert('success',response.responseText);
+					
+					$('#captcha').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
+				},				
+				failure:function(response){	
+					$.unblockUI();
+				    Ext.Msg.alert('failure',response.responseText);
+				    $('#captcha').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
+				},				
+				params:obj				
+			});
+    	}
 	},
 	getList:function(id){
 		var thisObj = this;
@@ -105,7 +139,7 @@ wls.user = Ext.extend(wls, {
 		    id: id,
 		    width: 600,
 		    height: 300,
-		    clicksToEdit: 1,
+		    clicksToEdit: 2,
 		    tbar: [{
 		        text: il8n.Import,
 		        handler : function(){   

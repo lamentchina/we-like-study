@@ -20,7 +20,7 @@ wls.user.group = Ext.extend(wls, {
 	                    allowBlank: false
 	                })
 		        }, {
-		            header: il8n.id,
+		            header: il8n.ID,
 		            dataIndex: 'id_level'
 		        }
 		    ]

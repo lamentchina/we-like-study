@@ -13,6 +13,12 @@ class m_quiz_log extends wls implements dbtable,log{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
+		
+		include_once dirname(__FILE__).'/../user.php';
+		$obj = new m_user();
+		$user = $obj->getUser();
+		$data['id_user'] = $user['id'];
+		$data['id_level_user_group'] = $user['id_level_user_group'];		
 	
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -37,7 +43,27 @@ class m_quiz_log extends wls implements dbtable,log{
 	 * @param $data 一个数组,其键值与数据库表中的列一一对应,肯定含有$id 
 	 * @return bool
 	 * */
-	public function update($data){}
+	public function update($data){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+		$id = $data['id'];
+		unset($data['id']);
+		$keys = array_keys($data);
+
+		$sql = "update ".$pfx."wls_quiz_log set ";
+		for($i=0;$i<count($keys);$i++){
+			$sql.= $keys[$i]."='".$data[$keys[$i]]."',";
+		}
+		$sql = substr($sql,0,strlen($sql)-1);
+		$sql .= " where id =".$id;
+		try{
+			mysql_query($sql,$conn);
+			return true;
+		}catch (Exception $ex){
+			return false;
+		}	
+	}
 
 	/**
 	 * 创建这张数据库表
@@ -60,15 +86,28 @@ class m_quiz_log extends wls implements dbtable,log{
 				 
 				,date_created datetime 				comment '创建时间'				 
 				,id_user int default 0				comment '用户编号'
-				,id_usergroup int default 0			comment '用户所在用户组的编号'
+				,id_level_user_group varchar(200) default '' comment '用户所在用户组的编号'
 				
-				,id_question int default 0			comment '题目编号'
+				,id_question varchar(200) default '0' comment '题目编号'
 				
-				,id_subject int default 0			comment '考试科目编号'
+				,id_level_subject varchar(200) default '0' comment '考试科目编号'
 				,id_quiz_paper int default 0		comment '试卷编号'
 				
+				,cent float default 0
+				,mycent float default 0
+				
+				,count_right int default 0
+				,count_wrong int default 0
+				,count_giveup int default 0
+				,count_total int default 0 
+				
+				,proportion float default 0			/*做对率*/
+				
+				,time_start datetime default '2011-01-08'
+				,time_stop datetime default '2011-01-08'
+				,time_used int default 0				
 	
-				,application int default 0			comment ' 用途:1随机练习,2题型掌握度练习,3知识点掌握度练习,4试卷练习,5参加在线考试'
+				,application int default 0			comment '0 做测验卷, 1随机练习,2题型掌握度练习,3知识点掌握度练习,4参加在线考试,'
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
@@ -317,7 +356,7 @@ class m_quiz_log extends wls implements dbtable,log{
 	 * @param $orderby 排序条件
 	 * @return $array
 	 * */
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null){
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
@@ -331,7 +370,7 @@ class m_quiz_log extends wls implements dbtable,log{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select * from ".$pfx."wls_quiz_log ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_quiz_log ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 		
 		$res = mysql_query($sql,$conn);

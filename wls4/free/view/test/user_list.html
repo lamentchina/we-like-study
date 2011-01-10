@@ -2,14 +2,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
 <link rel="stylesheet" type="text/css"
 	href="../../../../libs/ext_3_2_1/resources/css/ext-all.css" />
-<link rel="stylesheet" type="text/css"
-	href="../../../../libs/star-rating/jquery.rating.css" />
-<link rel="stylesheet" type="text/css"
-	href="../wls.css" />	
 <script type="text/javascript"
 	src="../../../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript"
+	src="../../../../libs/jqueryextend.js"></script>		
 <script type="text/javascript"
 	src="../../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <!--  
@@ -18,26 +17,29 @@
 -->
 <script type="text/javascript"
 	src="../../../../libs/ext_3_2_1/ext-all.js"></script>
-<script type="text/javascript"
-	src="../../../../libs/star-rating/jquery.rating.pack.js"></script>		
-	
 <script type="text/javascript" src="../il8n.js"></script>
 <script type="text/javascript" src="../wls.js"></script>
-<script type="text/javascript" src="../quiz.js"></script>
-<script type="text/javascript" src="../quiz/paper.js"></script>
-<script type="text/javascript" src="../question.js"></script>
-<script type="text/javascript" src="../question/choice.js"></script>
-
+<script type="text/javascript" src="../user.js"></script>
 
 <script type="text/javascript">
-var quiz_paper;
 Ext.onReady(function(){
-	quiz_paper = new wls.quiz.paper();
-	
-	quiz_paper.id = 1;
-	quiz_paper.naming = 'quiz_paper';
-	quiz_paper.initLayout();
-	quiz_paper.ajaxIds("quiz_paper.ajaxQuestions('quiz_paper.addQuestions()');");
+	var obj = new wls.user();
+	var copoment = obj.getList('domid');
+
+	var window = new Ext.Window({
+        title: 'Resize Me',
+        width: "80%",
+        height: 500,
+        minWidth: 300,
+        minHeight: 200,
+        layout: 'fit',
+        plain:true,
+        bodyStyle:'padding:5px;',
+        buttonAlign:'center',
+        items: [copoment]       
+    });
+
+    window.show();
 });
 </script>
 </head>

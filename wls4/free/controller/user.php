@@ -1,14 +1,14 @@
 <?php
 class user extends wls{
-	
+
 	private $m = null;
-	
+
 	function user(){
 		parent::wls();
 		include_once $this->c->license.'/model/user.php';
 		$this->m = new m_user();
 	}
-	
+
 	public function jsonList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
@@ -18,7 +18,34 @@ class user extends wls{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
-	
+
+	public function login(){
+		include_once dirname(__FILE__)."../../../../libs/securimage/securimage.php";
+		$securimage = new Securimage();
+		if ($securimage->check($_POST['CAPTCHA']) == false) {
+			echo json_encode(array(
+				'msg'=>'CAPTCHA'
+			));
+		}else{
+			if(isset($_SESSION['wls_user'])){
+				unset($_SESSION['wls_user']);
+			}
+			
+			session_destroy();
+//			return;
+			$temp = $this->m->login($_POST['username'],$_POST['password']);
+			if($temp==false){
+				echo json_encode(array(
+					'msg'=>'wrong'
+				));
+			}else{
+				echo json_encode(array(
+					'msg'=>'ok'
+				));				
+			}
+		}		 
+	}
+
 	public function viewUpload(){
 		echo '
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -39,7 +66,7 @@ class user extends wls{
 			</html>		
 		';
 	}
-	
+
 	public function saveUpload(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
@@ -47,12 +74,12 @@ class user extends wls{
 			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 			$this->m->importExcel(dirname(__FILE__)."/../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
-	}	
-	
+	}
+
 	public function saveUpdate(){
 		$data = array(
 			'id'=>$_POST['id'],
-			$_POST['field']=>$_POST['value']
+		$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
 			echo "已经更新";
@@ -60,12 +87,12 @@ class user extends wls{
 			echo "更新失败";			
 		}
 	}
-	
+
 	public function viewExport(){
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>下载</a>";
 	}
-	
+
 	public function delete(){
 		if($this->m->delete($_POST['id'])){
 			echo '操作成功';

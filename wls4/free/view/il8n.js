@@ -24,6 +24,7 @@ var il8n = {
 	,Operations:'操作'
 	,Paper:{
 		 Brief:'试卷简要'
+		,Paper:'试卷'
 	}
 	,Submit:'提交'
 	,Navigation:'导航'
@@ -35,4 +36,23 @@ var il8n = {
 	}
 	,CAPTCHA:'验证码'
 	,ReCAPTCHA:'刷新验证码'
+	,CheckCAPTCHA:'输入验证码'
+	,Loading:'读取中'
+	,Wait:'等待'
+	,Error:'错误'
+	,WhyImWrong:{
+		 Title:'做错原因'
+		,NotGoodEnough:'是我还没学好'
+		,Carelese:'我太粗心了'
+		,IHaveNoIdea:'错的莫名其妙...'
+		,WrongAnswer:'答案错了,我没有错'
+		,Stat:'统计结果'
+	}
+	,Question:'题目'
+	,TimeLimit:'时间限制'
+	,Score:{
+		 Top:'最高分'
+		,TopUser:'最高分得主'
+		,Avg:'平均分'
+	}
 };

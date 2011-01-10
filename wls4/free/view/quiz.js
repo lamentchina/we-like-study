@@ -11,6 +11,17 @@ wls.quiz = Ext.extend(wls, {
 		mannual:0,
 		total:0
 	},
+	/**
+	 * 0 尚未初始化 
+	 * 1已经得到题目编号数据 
+	 * 11已经初始化编号  
+	 * 2已经得到题目数据 
+	 * 21已经初始化题目 
+	 * 3用户提交答案 
+	 * 4得到服务端返回的答案
+	 * 41处理了题目的对错判断
+	 * 42添加了注释
+	 * */
 	state:0,
 	cent:0,
 	mycent:0,	
@@ -18,11 +29,15 @@ wls.quiz = Ext.extend(wls, {
 	
 	addQuestions:function(){
 		var obj = this.questionsData;
+		var index = 1;
 		for(var i=0;i<obj.length;i++){
 			var ques = null;
+			
 			switch(obj[i].type){
 				case '1':
 					ques = new wls.question.choice();
+					ques.index = index;
+					index++;
 					ques.questionData = obj[i];
 					ques.id = obj[i].id;
 					ques.quiz = this;
@@ -36,8 +51,10 @@ wls.quiz = Ext.extend(wls, {
 			}				
 		}
 		this.addNavigation();
+		this.status = 2;
 	},
 	addNavigation:function(){
+		
 		var str = '';
 		for(var i=0;i<this.questions.length;i++){
 			var temp = i+1;
@@ -51,6 +68,7 @@ wls.quiz = Ext.extend(wls, {
 			}	
 		}
 		$("#navigation").append(str);	
+		
 	},
 	wls_quiz_nav:function(id){
 		$("#wls_quiz_main").scrollTop($("#wls_quiz_main").scrollTop()*(-1));
@@ -65,6 +83,7 @@ wls.quiz = Ext.extend(wls, {
 		for(var i=0;i<this.questions.length;i++){
 			this.questions[i].showDescription();
 		}
+		this.state = 42;
 	},
 	addList:function(){
 		
@@ -74,12 +93,19 @@ wls.quiz = Ext.extend(wls, {
 	},
 	ajaxQuestions:function(nextFunction){
 		var thisObj = this;
+		$.blockUI({
+			message: '<h1>'+il8n.Question+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
+		}); 
 		$.ajax({
 			url: thisObj.config.AJAXPATH+"?controller=quiz&action=getQuestions",
 			data: {questionsIds:thisObj.questionsIds},
 			type: "POST",
 			success: function(msg){
 				thisObj.questionsData = jQuery.parseJSON(msg);
+				thisObj.state = 2;
+				$.unblockUI();
+				Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Navigation');
+				
 				eval(nextFunction);
 			}
 		});
@@ -94,6 +120,7 @@ wls.quiz = Ext.extend(wls, {
 		            margins: '5 0 0 0',
 		            html: '<div id="wls_quiz_main" class="w_q_container"></div>'
 		        },{
+		        
 	            title: il8n.Operations,
 	            collapsible: true,		        	
 			    layout: 'border',
@@ -111,11 +138,14 @@ wls.quiz = Ext.extend(wls, {
 			    },	
 	        	items:[	  
 	        		new Ext.Button({
+	        			id:'quiz_submit',
 	        			text:il8n.Submit, region:'south',
 	        			handler:function(){
 	        				thisObj.submit(thisObj.naming+".addDescriptions();");
+	        				Ext.getCmp('quiz_submit').disable();
 	        			}
 	        		}),{
+	        		id:'ext_Operations',
 					collapsible: false,		
 		            region:'center',
 		            floatable: false,
@@ -131,11 +161,13 @@ wls.quiz = Ext.extend(wls, {
 	                    animate: true
 	                },	
 				    items: [{
-				        title: il8n.Paper.Brief,
-				        html: '<div id="paperBrief"></div>'
-				    },{
+				    	id:'ext_Navigation',
 				        title: il8n.Navigation,
 				        html: '<div id="navigation"></div>'
+				    },{
+				    	id:'ext_Brief',
+				        title: il8n.Paper.Brief,
+				        html: '<div id="paperBrief"></div>'
 				    }]
 	
 		        }]

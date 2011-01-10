@@ -6,6 +6,8 @@ class m_question extends wls implements dbtable{
 	
 	public $phpexcel;	
 	
+	public $id;
+	
 	/**
 	 * 插入一条数据
 	 *
@@ -92,9 +94,7 @@ class m_question extends wls implements dbtable{
 				,option4 text
 				,option5 text
 				,option6 text
-				,option7 text
-				
-								
+				,option7 text							
 				
 				,description text					comment '描述,解题说明'	
 				,cent float default 0				comment '分数.一道题目必然属于一张试卷,必然有自己的分数比例,一道题不可能属于2张试卷'
@@ -158,7 +158,18 @@ class m_question extends wls implements dbtable{
 	 * @param $column 列名称
 	 * @return bool
 	 * */
-	public function cumulative($column){}
+	public function cumulative($column){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "update ".$pfx."wls_question set ".$column." = ".$column."+1 where id = ".$this->id;
+		try{
+			mysql_query($sql,$conn);
+			return true;
+		}catch (Exception $ex){
+			return false;
+		}
+	}
 
 	/**
 	 * 得到列表,
@@ -170,7 +181,7 @@ class m_question extends wls implements dbtable{
 	 * @param $orderby 排序条件
 	 * @return $array
 	 * */
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null){
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
@@ -180,11 +191,17 @@ class m_question extends wls implements dbtable{
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+				}	
+				if($keys[$i]=='id'){
+					$where .= " and id in (".$search[$keys[$i]].") ";
+				}		
+				if($keys[$i]=='id_quiz_paper'){
+					$where .= " and id_quiz_paper in (".$search[$keys[$i]].") ";
+				}														
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select * from ".$pfx."wls_question ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_question ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 		
 		$res = mysql_query($sql,$conn);

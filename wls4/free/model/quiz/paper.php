@@ -5,6 +5,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 
 	public $phpexcel;	
 	public $id = null;
+	public $mycent = null;
 	
 	/**
 	 * 插入一条数据
@@ -322,26 +323,86 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
-		$data = $this->getList(1,1000);
-		$data = $data['data'];
+		$data = $this->getList(1,1,array('id'=>$this->id));
+		$data = $data['data'][0];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');	
+		$objPHPExcel->getActiveSheet()->setTitle('paper');	
 	
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', '用户名');
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', '密码');
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', '标题');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '科目');
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', '金币');
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', '积分');
-		$objPHPExcel->getActiveSheet()->setCellValue('E1', '用户组');
+		$objPHPExcel->getActiveSheet()->setCellValue('D1', '作者');
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $data['title']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $data['id_level_subject']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $data['money']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $data['creator']);
+		
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(1);
+		$objPHPExcel->getActiveSheet()->setTitle('questions');
+	
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', '序号');
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', '属于');
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', '题型');
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', '题目');		
+		$objPHPExcel->getActiveSheet()->setCellValue('E2', '答案');
+		$objPHPExcel->getActiveSheet()->setCellValue('F2', '分值');
+		$objPHPExcel->getActiveSheet()->setCellValue('G2', '选项A');
+		$objPHPExcel->getActiveSheet()->setCellValue('H2', '选项B');	
+		$objPHPExcel->getActiveSheet()->setCellValue('I2', '选项C');
+		$objPHPExcel->getActiveSheet()->setCellValue('J2', '选项D');
+		$objPHPExcel->getActiveSheet()->setCellValue('K2', '选项E');
+		$objPHPExcel->getActiveSheet()->setCellValue('L2', '选项F');	
+		$objPHPExcel->getActiveSheet()->setCellValue('M2', '选项G');
+		$objPHPExcel->getActiveSheet()->setCellValue('N2', '选项数');
+		$objPHPExcel->getActiveSheet()->setCellValue('O2', '解题说明');
+		$objPHPExcel->getActiveSheet()->setCellValue('P2', '听力文件');	
+		$objPHPExcel->getActiveSheet()->setCellValue('Q2', '使用次数');
+		$objPHPExcel->getActiveSheet()->setCellValue('R2', '做对');
+		$objPHPExcel->getActiveSheet()->setCellValue('S2', '做错');
+		$objPHPExcel->getActiveSheet()->setCellValue('T2', '放弃');	
+		$objPHPExcel->getActiveSheet()->setCellValue('U2', '难度');
+		$objPHPExcel->getActiveSheet()->setCellValue('V2', '批改');
+		$objPHPExcel->getActiveSheet()->setCellValue('W2', '排列');
+		for($i=1;$i<=23;$i++){
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
+		}
 
-		$index = 1;
-		for($i=0;$i<count($data);$i++){
+		include_once dirname(__FILE__).'/../question.php';
+		$ques = new m_question();
+		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
+		$data = $data['data'];		
+
+		$index = 3;
+		for($i=0;$i<count($data);$i++){			
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['type']);
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['title']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['cent']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option1']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option2']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option3']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option4']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option5']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option6']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option7']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['optionlength']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['description']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_used']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_right']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_wrong']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_giveup']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['difficulty']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['markingmethod']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
 			$index ++;
-			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['username']);
-			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['password']);
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['money']);
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['credits']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['id_level_user_group']);
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
@@ -358,7 +419,40 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	 * @param $column 列名称
 	 * @return bool
 	 * */
-	public function cumulative($column){}
+	public function cumulative($column){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		if($column=='score'){
+			$sql = "select score_top from ".$pfx."wls_quiz_paper where id = ".$this->id;
+			
+			$res = mysql_query($sql,$conn);
+			$temp = mysql_fetch_assoc($res);
+			if($temp['score_top']>=$this->mycent){
+				$user = $this->getMyUser();
+				$sql = "update ".$pfx."wls_quiz_paper set 
+					score_top_user = '".$user['username']."',
+					score_top = '".$this->mycent."' 
+					where id = ".$this->id;
+				try{
+					mysql_query($sql,$conn);
+					return true;
+				}catch (Exception $ex){
+					return false;
+				}
+			}
+			
+			$sql = "update ".$pfx."wls_quiz_paper set score_avg = (score_avg*count_used+".$this->mycent.")/(count_used+1) where id = ".$this->id;
+			
+		}else{
+			$sql = "update ".$pfx."wls_quiz_paper set ".$column." = ".$column."+1 where id = ".$this->id;
+		}
+		try{
+			mysql_query($sql,$conn);
+			return true;
+		}catch (Exception $ex){
+			return false;
+		}
+	}
 
 	/**
 	 * 得到列表,
@@ -370,7 +464,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	 * @param $orderby 排序条件
 	 * @return $array
 	 * */
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null){
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
@@ -380,11 +474,14 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+				}	
+				if($keys[$i]=='id'){
+					$where .= " and id in (".$search[$keys[$i]].") ";
+				}											
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select * from ".$pfx."wls_quiz_paper ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_quiz_paper ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 		
 		$res = mysql_query($sql,$conn);
@@ -455,26 +552,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		return $temp['questions'];
 	}
 	
-	/**
-	 * 处理题目标题,主要处理\n变< br/ >之类的
-	 *  
-	 * @param title 要处理的标题
-	 * @param bool true的话,根据< br/ >转\n
-	 * */
-	public function formatTitle($title,$bool=false){
-		if($bool){
-			$title = str_replace("&acute;","'",$title);
-			$title = str_replace('&quot;','"',$title);
-			$title = str_replace('&nbsp;',' ',$title);
-			$title = str_replace('<br>',"\n",$title);
-			$title = str_replace('<br/>',"\n",$title);
-			return $title;
-		}else{
-			$title = str_replace("'","&acute;",$title);
-			$title = str_replace('"','&quot;',$title);
-			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
-			return $title;
-		}
-	}
+
 }
 ?>

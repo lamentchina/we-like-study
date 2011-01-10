@@ -179,7 +179,7 @@ class m_user_group extends wls implements dbtable,levelList{
 	 * @param $orderby 排序条件
 	 * @return $array
 	 * */
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null){
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
@@ -193,7 +193,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select * from ".$pfx."wls_user_group ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_user_group ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
 		$res = mysql_query($sql,$conn);

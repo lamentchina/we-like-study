@@ -13,7 +13,7 @@ class m_quiz extends wls{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		$sql = "select * from ".$pfx."wls_question where id in (".$ids.") or id_quiz_paper in (".$ids."); ";
+		$sql = "select * from ".$pfx."wls_question where id in (".$ids.") or id_parent in (".$ids."); ";
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -30,14 +30,16 @@ class m_quiz extends wls{
 		$keys = array_keys($myAnswers);
 		$ids = implode(",",$keys);
 		
-		$sql = "select answer,id,description from ".$pfx."wls_question where id in (".$ids.") ; ";
+		$sql = "select answer,id,description,cent from ".$pfx."wls_question where id in (".$ids.") ; ";
 		$res = mysql_query($sql,$conn);
 		$data = array();
+		
+//		$sql = "insert into ".$pfx." ";
 		while($temp = mysql_fetch_assoc($res)){
 			$temp['myAnswer'] = $myAnswers[$temp['id']];
 			$data[] = $temp;
 		}
-		
+				
 		return $data;
 	}	
 }

@@ -157,3 +157,9 @@ A:hover {text-decoration: none}
 	line-height:20px;
 	width:30%;
 }
+.WhyImWrong{
+	font-size:12px;
+	border:2px solid #B8D0D6;
+	padding:1px;
+	background-color: rgb(255,215,123);
+}

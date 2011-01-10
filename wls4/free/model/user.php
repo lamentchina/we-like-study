@@ -93,9 +93,9 @@ class m_user extends wls implements dbtable{
 				
 				,username varchar(200) unique
 				,password varchar(200) not null
-				,money int 
-				,credits int
-				,id_level_user_group varchar(200) not null
+				,money int default 0
+				,credits int default 0
+				,id_level_user_group varchar(200) default '0'
 			
 			) DEFAULT CHARSET=utf8;
 			";
@@ -196,7 +196,7 @@ class m_user extends wls implements dbtable{
 	 * @param $orderby 排序条件
 	 * @return $array
 	 * */
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null){
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
@@ -206,14 +206,23 @@ class m_user extends wls implements dbtable{
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+				}		
+				if($keys[$i]=='id'){
+					$where .= " and id in (".$search[$keys[$i]].") ";
+				}										
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select * from ".$pfx."wls_user ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_user ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-		
-		$res = mysql_query($sql,$conn);
+		try {
+			$res = mysql_query($sql,$conn);
+		}catch (Exception $es){
+			$this->error(array(
+				'description'=>$sql
+			));
+			return false;
+		}
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
@@ -237,16 +246,43 @@ class m_user extends wls implements dbtable{
 	 * 得到用户信息
 	 * 会引用session
 	 * 
-	 * @param $id 如果id为空,则返回当前用户
+	 * @param $id 如果id为空,则返回我的个人信息
+	 * @param $mine 是否提取我自己的个人信息,这就需要session
 	 * */
-	public function getUser($id){
-		session_start();
-		if(!isset($_SESSION['wls_user'])){
+	public function getUser($id=null,$mine=null){
+		if($mine==true){
+			if( (!isset($_SESSION)) || (!isset($_SESSION['wls_user'])))session_start();
+			
+			if(!isset($_SESSION['wls_user'])){//TODO
+				$data = $this->getList(1,1,array('id'=>$id));
+				$data = $data['data'][0];
+				$_SESSION['wls_user'] = $data;
+			}
+			
+			return $_SESSION['wls_user'];
+		}else{
 			$data = $this->getList(1,1,array('id'=>$id));
-			$data = $data['data'][0];
-			$_SESSION['wls_user'] = $data;
+			return $data['data'][0];
 		}
-		return $_SESSION['wls_user'];
+	}
+	
+	public function login($username,$password){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "select * from ".$pfx."wls_user where username = '".$username."';";
+		
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		if($temp==false){
+			return false;
+		}else{
+			if($temp['password']!=$password){
+				return false;
+			}
+		}
+		$this->getUser($temp['id'],true);
+		return $temp;		
 	}
 	
 	/**
