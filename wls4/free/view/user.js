@@ -203,5 +203,6 @@ wls.user = Ext.extend(wls, {
 		store.load({params:{start:0, limit:8}});    
 		return grid;
 	}
-
 });
+
+
