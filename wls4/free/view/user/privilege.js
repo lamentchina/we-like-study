@@ -6,7 +6,7 @@ wls.user.privilege = Ext.extend(wls, {
 		    url: thisObj.config.AJAXPATH+'?controller=user_privilege&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','id_level', 'name']
+		    fields: ['id','id_level', 'name','money']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -22,6 +22,9 @@ wls.user.privilege = Ext.extend(wls, {
 		        }, {
 		            header: il8n.ID,
 		            dataIndex: 'id_level'
+		        }, {
+		            header: il8n.Money,
+		            dataIndex: 'money'
 		        }
 		    ]
 		});
