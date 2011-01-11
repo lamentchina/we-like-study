@@ -67,5 +67,8 @@ class subject extends wls{
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>下载</a>";
 	}
+	
+	
+	
 }
 ?>

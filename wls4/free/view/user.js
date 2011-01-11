@@ -95,7 +95,7 @@ wls.user = Ext.extend(wls, {
 			});
     	}
 	},
-	getList:function(id){
+	getList:function(domid){
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 		    autoDestroy: true,
@@ -136,10 +136,11 @@ wls.user = Ext.extend(wls, {
 		var grid = new Ext.grid.EditorGridPanel({
 		    store: store,
 		    cm: cm,        
-		    id: id,
+		    id: domid,
 		    width: 600,
 		    height: 300,
 		    clicksToEdit: 2,
+		    loadMask:true,
 		    tbar: [{
 		        text: il8n.Import,
 		        handler : function(){   
@@ -176,10 +177,154 @@ wls.user = Ext.extend(wls, {
 						failure:function(response){				
 						    Ext.Msg.alert('failure',response.responseText);
 						},				
-						params:{id:Ext.getCmp(id).getSelectionModel().selection.record.id}				
+						params:{id:Ext.getCmp(domid).getSelectionModel().selection.record.id}				
 					});					
 				}
-		    }],
+		    },{
+		        text: il8n.User.Group,
+		        handler : function(){
+			     	var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
+	
+					var tree = new Ext.tree.TreePanel({
+						id:'u_l_g_t',
+						height : 300,
+						width : 400,
+						useArrows : true,
+						autoScroll : true,
+						animate : true,
+						enableDD : false,
+						containerScroll : true,
+						rootVisible : false,
+						frame : true,
+						root : {
+							nodeType : 'async',
+							expanded : true
+						},
+
+						// auto create TreeLoader
+						dataUrl : thisObj.config.AJAXPATH
+								+ "?controller=user&action=getGroup&username="
+								+ username,
+						buttons : [{
+							text : il8n.Submit,
+							handler : function() {
+								var checkedNodes = tree.getChecked();
+								var s = "";
+								for (var i = 0; i < checkedNodes.length; i++) {
+									s += checkedNodes[i].attributes.id_level + ",";
+								}
+								Ext.getCmp("u_l_g_t").setVisible(false);
+
+								Ext.Ajax.request({
+									method : 'POST',
+									url : thisObj.config.AJAXPATH
+											+ "?controller=user&action=updateGroup",
+									success : function(response) {
+										Ext.getCmp("w_u_l_g_w").close();
+									},
+									failure : function(response) {
+										Ext.Msg.alert('failure',
+												response.responseText);
+										Ext.getCmp("w_u_l_g_w").close();
+									},
+									params : {
+										 username : username
+										,privileges : s.substring(0,s.length-1)
+									}
+								});
+							}
+						}]
+
+					});
+
+					var win = new Ext.Window({
+								id : 'w_u_l_g_w',
+								layout : 'fit',
+								title:username+" "+il8n.User.Group,
+								width : 500,
+								height : 300,
+								modal  :true,
+								items : [tree]
+							});
+					win.show(this);
+				}
+		    }, {
+				text : il8n.Privilege,
+				handler : function() {
+					var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
+					var tree = new Ext.tree.TreePanel({
+						id:'w_u_l_p_t',
+						height : 300,
+						width : 400,
+						useArrows : true,
+						autoScroll : true,
+						animate : true,
+						enableDD : false,
+						containerScroll : true,
+						rootVisible : false,
+						frame : true,
+						root : {
+							nodeType : 'async',
+							expanded : true
+						},
+
+						dataUrl : thisObj.config.AJAXPATH
+								+ "?controller=user&action=getPrivilege&username="
+								+ username
+
+					});
+
+					var win = new Ext.Window({
+								id : 'w_u_l_p_w',
+								layout : 'fit',
+								title:username+" "+il8n.Privilege,
+								width : 500,
+								height : 300,
+								modal  :true,
+								items : [tree]
+							});
+					win.show(this);
+
+				}
+			}, {
+				text : il8n.Subject,
+				handler : function() {
+					var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
+					var tree = new Ext.tree.TreePanel({
+						id:'w_u_l_s_t',
+						height : 300,
+						width : 400,
+						useArrows : true,
+						autoScroll : true,
+						animate : true,
+						enableDD : false,
+						containerScroll : true,
+						rootVisible : false,
+						frame : true,
+						root : {
+							nodeType : 'async',
+							expanded : true
+						},
+
+						dataUrl : thisObj.config.AJAXPATH
+								+ "?controller=user&action=getSubject&username="
+								+ username
+
+					});
+
+					var win = new Ext.Window({
+								id : 'w_u_l_s_w',
+								layout : 'fit',
+								title:username+" "+il8n.Subject,
+								width : 500,
+								height : 300,
+								modal  :true,
+								items : [tree]
+							});
+					win.show(this);
+
+				}
+			}],
 		    bbar : new Ext.PagingToolbar({
 				store : store,
 				pageSize : 8,

@@ -3,9 +3,9 @@
  * 用户组操作,对应着一张数据库表
  * */
 class m_user_group extends wls implements dbtable,levelList{
-	
+
 	public $phpexcel = null;
-	
+
 	/**
 	 * 插入一条数据
 	 *
@@ -15,7 +15,7 @@ class m_user_group extends wls implements dbtable,levelList{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-	
+
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -23,6 +23,70 @@ class m_user_group extends wls implements dbtable,levelList{
 		$sql = "insert into ".$pfx."wls_user_group (".$keys.") values ('".$values."')";
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
+	}
+
+	public function linkUser($data){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "insert into ".$pfx."wls_user_group2user (id_level_group,username) values ('".$data['id_level_group']."','".$data['username']."');";
+		mysql_query($sql,$conn);
+
+		$sql = "update ".$pfx."wls_user_group set count_user = (select count(*) from ".$pfx."wls_user_group2user  where id_level_group = '".$data['id_level_group']."' ) where id_level = '".$data['id_level_group']."'";
+		mysql_query($sql,$conn);
+	}
+
+	public function linkPrivilege($data){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "insert into ".$pfx."wls_user_group2privilege (id_level_group,id_level_privilege) values ('".$data['id_level_group']."','".$data['id_level_privilege']."');";
+		mysql_query($sql,$conn);
+	}
+	
+	public function linkSubject($data){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$keys = array_keys($data);
+		$keys = implode(",",$keys);
+		$values = array_values($data);
+		$values = implode("','",$values);
+		$sql = "insert into ".$pfx."wls_user_group2subject (".$keys.") values ('".$values."');";
+		echo $sql;
+		mysql_query($sql,$conn);
+	}
+	
+	public function updateSubject($id,$ids_subject){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "delete from ".$pfx."wls_user_group2subject where id_level_group = '".$id."' ;";
+		mysql_query($sql,$conn);
+		$arr = explode(",",$ids_subject);
+		for($i=0;$i<count($arr);$i++){
+			$data = array(
+				'id_level_group'=>$id,
+				'id_level_subject'=>$arr[$i]
+			);
+			$this->linkSubject($data);
+		}
+	}
+
+	public function updatePrivilege($id,$ids_privilege){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "delete from ".$pfx."wls_user_group2privilege where id_level_group = '".$id."' ;";
+		mysql_query($sql,$conn);
+		$arr = explode(",",$ids_privilege);
+		for($i=0;$i<count($arr);$i++){
+			$data = array(
+				'id_level_group'=>$id,
+				'id_level_privilege'=>$arr[$i]
+			);
+			$this->linkPrivilege($data);
+		}
 	}
 
 	/**
@@ -42,7 +106,7 @@ class m_user_group extends wls implements dbtable,levelList{
 	public function update($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$id = $data['id'];
 		unset($data['id']);
 		$keys = array_keys($data);
@@ -58,7 +122,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			return true;
 		}catch (Exception $ex){
 			return false;
-		}		
+		}
 	}
 
 	/**
@@ -73,19 +137,62 @@ class m_user_group extends wls implements dbtable,levelList{
 		if($this->c->state!='debug')return false;
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "drop table if exists ".$pfx."wls_user_group;";
 		mysql_query($sql,$conn);
-		$sql = "		
+		$sql = "
 			create table ".$pfx."wls_user_group(
+			
 				 id int primary key auto_increment	/*自动编号*/
 				,id_level varchar(200) unique		/*级层编号*/
 				,name varchar(200) default '' 		/*用户组名称*/
 				,ordering int default 0				/*排序规则*/
+				,count_user int default 0				/*用户数*/
 							
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
+
+
+		$sql = "drop table if exists ".$pfx."wls_user_group2privilege;";
+		mysql_query($sql,$conn);
+		$sql = "
+			create table ".$pfx."wls_user_group2privilege(
+			
+				 id int primary key auto_increment	/*自动编号*/
+				,id_level_group varchar(200) default ''		/*用户组编号*/
+				,id_level_privilege varchar(200) default '' 		/*权限编号*/
+							
+			) DEFAULT CHARSET=utf8;
+			";
+		mysql_query($sql,$conn);
+
+		$sql = "drop table if exists ".$pfx."wls_user_group2user;";
+		mysql_query($sql,$conn);
+		$sql = "
+			create table ".$pfx."wls_user_group2user(
+			
+				 id int primary key auto_increment	/*自动编号*/
+				,id_level_group varchar(200) default ''		/*用户组编号*/
+				,username varchar(200) default '' 		/*用户名*/
+							
+			) DEFAULT CHARSET=utf8;
+			";
+		mysql_query($sql,$conn);
+		
+		$sql = "drop table if exists ".$pfx."wls_user_group2subject;";
+		mysql_query($sql,$conn);
+		$sql = "
+			create table ".$pfx."wls_user_group2subject(
+			
+				 id int primary key auto_increment	/*自动编号*/
+				,id_level_group varchar(200) default ''		/*用户组编号*/
+				,id_level_subject varchar(200) default '' 		/*科目编号*/
+							
+			) DEFAULT CHARSET=utf8;
+			";
+		mysql_query($sql,$conn);
+		
 		return true;
 	}
 
@@ -105,10 +212,9 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		
+
 		$currentSheet = $this->phpexcel->getSheetByName('data');
 		$allRow = array($currentSheet->getHighestRow());
-
 		$data = array();
 		$index = 0;
 		for($i=2;$i<=$allRow[0];$i++){
@@ -118,7 +224,44 @@ class m_user_group extends wls implements dbtable,levelList{
 				'ordering'=>$currentSheet->getCell('C'.$i)->getValue(),
 			);
 			$this->insert($data);
-		}		
+		}
+
+		$currentSheet = $this->phpexcel->getSheetByName('privilege');
+		$allRow = array($currentSheet->getHighestRow());
+		$data = array();
+		$index = 0;
+		for($i=2;$i<=$allRow[0];$i++){
+			$data = array(
+				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'id_level_privilege'=>$currentSheet->getCell('B'.$i)->getValue(),
+			);
+			$this->linkPrivilege($data);
+		}
+
+		$currentSheet = $this->phpexcel->getSheetByName('user');
+		$allRow = array($currentSheet->getHighestRow());
+		$data = array();
+		$index = 0;
+		for($i=2;$i<=$allRow[0];$i++){
+			$data = array(
+				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'username'=>$currentSheet->getCell('B'.$i)->getValue(),
+			);
+			$this->linkUser($data);
+		}
+				
+		$currentSheet = $this->phpexcel->getSheetByName('subject');
+		$allRow = array($currentSheet->getHighestRow());
+		$data = array();
+		$index = 0;
+		for($i=2;$i<=$allRow[0];$i++){
+			$data = array(
+				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'id_level_subject'=>$currentSheet->getCell('B'.$i)->getValue(),
+			);
+			$this->linkSubject($data);
+		}
+		
 	}
 
 	/**
@@ -136,8 +279,8 @@ class m_user_group extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');	
-	
+		$objPHPExcel->getActiveSheet()->setTitle('data');
+
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
@@ -154,7 +297,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('A1');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));   
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
 		$objWriter->save(dirname(__FILE__)."/../../../../".$file);
@@ -182,14 +325,14 @@ class m_user_group extends wls implements dbtable,levelList{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
@@ -201,12 +344,12 @@ class m_user_group extends wls implements dbtable,levelList{
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
 		}
-		
+
 		$sql2 = "select count(*) as total from ".$pfx."wls_user_group ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
-		
+
 		return array(
 			'page'=>$page,
 			'data'=>$arr,
@@ -222,8 +365,28 @@ class m_user_group extends wls implements dbtable,levelList{
 	 * @param $root 根元素
 	 * */
 	public function getLevelList($root){
-		
+
 	}
+
+	public function getListForUser($username){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "
+		SELECT *,(id_level in (
+			select id_level_group from ".$pfx."wls_user_group2user where username = '".$username."' 
+		))as checked FROM ".$pfx."wls_user_group order by id;
+		";
+
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		
+		return $data;
+	}
+
 
 }
 ?>

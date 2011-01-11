@@ -25,25 +25,25 @@ class user extends wls{
 		if ($securimage->check($_POST['CAPTCHA']) == false) {
 			echo json_encode(array(
 				'msg'=>'CAPTCHA'
-			));
+				));
 		}else{
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
 			}
-			
+				
 			session_destroy();
-//			return;
+
 			$temp = $this->m->login($_POST['username'],$_POST['password']);
 			if($temp==false){
 				echo json_encode(array(
 					'msg'=>'wrong'
-				));
+					));
 			}else{
 				echo json_encode(array(
 					'msg'=>'ok'
-				));				
+					));
 			}
-		}		 
+		}
 	}
 
 	public function viewUpload(){
@@ -99,6 +99,52 @@ class user extends wls{
 		}else{
 			echo '操作失败';
 		}
+	}
+
+	public function getPrivilege(){
+		$username = $_REQUEST['username'];
+		include_once dirname(__FILE__).'/../model/user/privilege.php';
+
+		$obj = new m_user_privilege();
+		$data = $obj->getListForUser($username);
+
+		include_once dirname(__FILE__).'/../model/tools.php';
+		$t = new tools();
+		$data = $t->getTreeData(null,$data);
+
+		echo json_encode($data);
+	}
+
+	public function getGroup(){
+		$username = $_REQUEST['username'];
+		include_once dirname(__FILE__).'/../model/user/group.php';
+
+		$obj = new m_user_group();
+		$data = $obj->getListForUser($username);
+
+		include_once dirname(__FILE__).'/../model/tools.php';
+		$t = new tools();
+		$data =  $t->getTreeData(null,$data);
+
+		echo json_encode($data);
+	}
+
+	public function updateGroup(){
+		$this->m->updateGroup($_POST['username'],$_POST['privileges']);
+	}
+
+	public function getSubject(){
+		$username = $_REQUEST['username'];
+		include_once dirname(__FILE__).'/../model/subject.php';
+
+		$obj = new m_subject();
+		$data = $obj->getListForUser($username);
+
+		include_once dirname(__FILE__).'/../model/tools.php';
+		$t = new tools();
+		$data = $t->getTreeData(null,$data);
+
+		echo json_encode($data);
 	}
 }
 ?>

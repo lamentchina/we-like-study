@@ -67,5 +67,41 @@ class user_group extends wls{
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>下载</a>";
 	}
+	
+	public function getPrivilege(){
+		$id = $_REQUEST['id'];
+		include_once dirname(__FILE__).'/../../model/user/privilege.php';
+		
+		$obj = new m_user_privilege();
+		$data = $obj->getListForGroup($id);		
+		
+		include_once dirname(__FILE__).'/../../model/tools.php';
+		$t = new tools();
+		$data =  $t->getTreeData(null,$data);		
+		
+		echo json_encode($data);
+	}
+	
+	public function getSubject(){
+		$id = $_REQUEST['id'];
+		include_once dirname(__FILE__).'/../../model/subject.php';
+		
+		$obj = new m_subject();
+		$data = $obj->getListForGroup($id);
+		
+		include_once dirname(__FILE__).'/../../model/tools.php';
+		$t = new tools();
+		$data =  $t->getTreeData(null,$data);	
+		
+		echo json_encode($data);
+	}
+	
+	public function updatePrivilege(){
+		$this->m->updatePrivilege($_POST['id'],$_POST['ids']);
+	}
+	
+	public function updateSubject(){
+		$this->m->updateSubject($_POST['id'],$_POST['ids']);
+	}
 }
 ?>

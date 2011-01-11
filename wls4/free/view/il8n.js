@@ -14,6 +14,7 @@ var il8n = {
 		,Right:'做对数'
 		,Wrong:'做错数'
 		,GiveUp:'放弃数'
+		,User:'用户数'
 	}
 	,Score:{
 		 Top:'最高分'
@@ -33,6 +34,7 @@ var il8n = {
 		 Name:'用户名'
 		,PassWord:'密码'		
 		,Login:'登录'
+		,Group:'用户组'
 	}
 	,CAPTCHA:'验证码'
 	,ReCAPTCHA:'刷新验证码'
@@ -55,4 +57,10 @@ var il8n = {
 		,TopUser:'最高分得主'
 		,Avg:'平均分'
 	}
+	,Menu:'菜单'
+	,Yes:'是'
+	,No:'不是'
+	,Privilege:'权限'
+	,Subject:'科目'
+	
 };

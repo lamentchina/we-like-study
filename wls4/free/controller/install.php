@@ -54,6 +54,11 @@ class install extends wls {
 		$obj = new m_user();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user.xls");	
 		
+		
+		include_once $this->c->license.'/model/user/privilege.php';
+		$obj = new m_user_privilege();
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user_privilege.xls");		
+		
 		include_once $this->c->license.'/model/quiz/paper.php';
 		$obj = new m_quiz_paper();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wlls_quiz_paper.xls");			

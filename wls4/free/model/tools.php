@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * 一些与系统逻辑关系不大,或者无法判断应该归到那个类的函数
  * 大多数函数都会被引用
  * */
 class tools {
-	
+
 	/**
 	 * 根据秒数,返回更友好,符合中国人习惯的时间描述
 	 * */
@@ -37,7 +37,7 @@ class tools {
 		}
 		return   $title;
 	}
-	
+
 	/**
 	 * 判断这整个字符串是不是中文的
 	 * */
@@ -57,10 +57,10 @@ class tools {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 处理试卷的批改方式的键值对应关系,如果bool是true,就根据汉字读索引 
-	 *  
+	 *
 	 * @param key 可以是str/int,是索引
 	 * @param bool true的话,则根据汉字读索引
 	 * */
@@ -71,7 +71,7 @@ class tools {
 			'2'=>'用户批改',
 			'3'=>'多用户批改',
 		);
-		
+
 		if($bool){
 			$config = array_flip($config);
 		}
@@ -84,10 +84,10 @@ class tools {
 		}
 		return $config[$key];
 	}
-	
+
 	/**
 	 * 处理题目基础类型的对应关系,如果bool是true,就根据汉字读索引 
-	 *  
+	 *
 	 * @param key 可以是str/int,是索引
 	 * @param bool true的话,则根据汉字读索引
 	 * */
@@ -99,19 +99,19 @@ class tools {
 			'4'=>'简答题',
 			'5'=>'短文阅读',
 		);
-		
+
 		if($bool){
 			$config = array_flip($config);
 		}
-		
+
 		return $config[$key];
 	}
-	
+
 	/**
 	 * 处理题目标题,主要处理\n变< br/ >之类的
-	 *  
+	 *
 	 * @param title 要处理的标题
-	 * @param bool true的话,根据< br/ >转\n
+	 * @param bool true的话,根据< br/ >转\
 	 * */
 	public function formatTitle($title,$bool=false){
 		if($bool){
@@ -126,6 +126,57 @@ class tools {
 			$title = str_replace('"','&quot;',$title);
 			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
 			return $title;
+		}
+	}
+
+	public function getTreeData($id=null,$data_all){
+		if($id==null){
+			$len = 2;
+			$data = array();
+			for($i=0;$i<count($data_all);$i++){
+				if(strlen($data_all[$i]['id_level'])==$len){
+					$data_all[$i]['children'] = $this->getTreeData($data_all[$i]['id_level'],$data_all);
+					if(count($data_all[$i]['children'])==0){
+						unset($data_all[$i]['children']);
+						$data_all[$i]['leaf'] = true;
+					}else{
+						$data_all[$i]['expanded'] = true;
+					}
+					$data_all[$i]['text'] = $data_all[$i]['name'];
+					if($data_all[$i]['checked']==0){
+						$data_all[$i]['checked'] = false;
+					}else{
+						$data_all[$i]['checked'] = true;
+					}
+					$data[] = $data_all[$i];
+				}
+			}
+
+			return $data;
+		}else{
+			$data = array();
+			$len = strlen($id)+2;
+			for($i=0;$i<count($data_all);$i++){
+				if(strlen($data_all[$i]['id_level'])==$len && substr($data_all[$i]['id_level'],0,$len-2)==$id){
+					$data_all[$i]['children'] = $this->getTreeData($data_all[$i]['id_level'],$data_all);
+					if(count($data_all[$i]['children'])==0){
+						unset($data_all[$i]['children']);
+						$data_all[$i]['leaf'] = true;
+					}else{
+						$data_all[$i]['expanded'] = true;
+					}
+						
+					$data_all[$i]['text'] = $data_all[$i]['name'];
+					if($data_all[$i]['checked']==0){
+						$data_all[$i]['checked'] = false;
+					}else{
+						$data_all[$i]['checked'] = true;
+					}
+					$data[] = $data_all[$i];
+				}
+			}
+
+			return $data;
 		}
 	}
 }

@@ -6,7 +6,7 @@ wls.user.privilege = Ext.extend(wls, {
 		    url: thisObj.config.AJAXPATH+'?controller=user_privilege&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','id_level', 'name','money']
+		    fields: ['id','id_level', 'name','money','ismenu']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -23,8 +23,21 @@ wls.user.privilege = Ext.extend(wls, {
 		            header: il8n.ID,
 		            dataIndex: 'id_level'
 		        }, {
-		            header: il8n.Money,
-		            dataIndex: 'money'
+		             header: il8n.Money
+		            ,dataIndex: 'money'
+	            	,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
+		        }, {
+		             header: il8n.Menu
+		            ,dataIndex: 'ismenu'
+		            ,renderer:function(value){
+		                if (value == 1) {
+		                    return "是";
+		                } else {
+		                    return "否"
+		                }
+	            	}
 		        }
 		    ]
 		});
@@ -35,7 +48,8 @@ wls.user.privilege = Ext.extend(wls, {
 		    id: id,
 		    width: 600,
 		    height: 300,
-		    clicksToEdit: 1,
+		    clicksToEdit: 2,
+		    loadMask:true,
 		    tbar: [{
 		        text: il8n.Import,
 		        handler : function(){   
@@ -63,7 +77,7 @@ wls.user.privilege = Ext.extend(wls, {
 		    }],
 		    bbar : new Ext.PagingToolbar({
 				store : store,
-				pageSize : 8,
+				pageSize : 15,
 				displayInfo : true
 			})
 		});
@@ -81,7 +95,7 @@ wls.user.privilege = Ext.extend(wls, {
 				params:{field:e.field,value:e.value,id:e.record.data.id}				
 			});
 	    }     
-		store.load({params:{start:0, limit:8}});    
+		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
 });

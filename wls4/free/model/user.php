@@ -256,6 +256,37 @@ class m_user extends wls implements dbtable{
 			if(!isset($_SESSION['wls_user'])){//TODO
 				$data = $this->getList(1,1,array('id'=>$id));
 				$data = $data['data'][0];
+				
+				include_once dirname(__FILE__).'/user/privilege.php';
+				$o = new m_user_privilege();
+				$d = $o->getListForUser($data['username']);
+				$ids = '';
+				for($i=0;$i<count($d);$i++){
+					$ids .= $d[$i]['id_level'].",";
+				}
+				$ids = substr($ids,0,strlen($ids)-1);
+				$data['prvilege'] = $ids;
+				
+				include_once dirname(__FILE__).'/user/group.php';
+				$o = new m_user_group();
+				$d = $o->getListForUser($data['username']);
+				$ids = '';
+				for($i=0;$i<count($d);$i++){
+					$ids .= $d[$i]['id_level'].",";
+				}
+				$ids = substr($ids,0,strlen($ids)-1);
+				$data['group'] = $ids;
+				
+				include_once dirname(__FILE__).'/subject.php';
+				$o = new m_subject();
+				$d = $o->getListForUser($data['username']);
+				$ids = '';
+				for($i=0;$i<count($d);$i++){
+					$ids .= $d[$i]['id_level'].",";
+				}
+				$ids = substr($ids,0,strlen($ids)-1);
+				$data['subject'] = $ids;
+				
 				$_SESSION['wls_user'] = $data;
 			}
 			
@@ -298,6 +329,26 @@ class m_user extends wls implements dbtable{
 	 * @param $id 如果id为空,则返回当前用户
 	 * */
 	public function importTranscripts($id){}	
+	
+	public function updateGroup($username,$ids_group){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "delete from ".$pfx."wls_user_group2user where username = '".$username."' ;";
+		mysql_query($sql,$conn);
+		$arr = explode(",",$ids_group);
+		
+		include_once dirname(__FILE__).'/user/group.php';
+		$g = new m_user_group();		
+		
+		for($i=0;$i<count($arr);$i++){
+			$data = array(
+				'id_level_group'=>$arr[$i],
+				'username'=>$username
+			);
+			$g->linkUser($data);
+		}
+	}
 
 }
 ?>

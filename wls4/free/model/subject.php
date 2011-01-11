@@ -3,9 +3,9 @@
  * 用户组操作,对应着一张数据库表
  * */
 class m_subject extends wls implements dbtable,levelList{
-	
+
 	public $phpexcel = null;
-	
+
 	/**
 	 * 插入一条数据
 	 *
@@ -15,7 +15,7 @@ class m_subject extends wls implements dbtable,levelList{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-	
+
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -42,7 +42,7 @@ class m_subject extends wls implements dbtable,levelList{
 	public function update($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$id = $data['id'];
 		unset($data['id']);
 		$keys = array_keys($data);
@@ -58,7 +58,7 @@ class m_subject extends wls implements dbtable,levelList{
 			return true;
 		}catch (Exception $ex){
 			return false;
-		}		
+		}
 	}
 
 	/**
@@ -73,10 +73,10 @@ class m_subject extends wls implements dbtable,levelList{
 		if($this->c->state!='debug')return false;
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "drop table if exists ".$pfx."wls_subject;";
 		mysql_query($sql,$conn);
-		$sql = "		
+		$sql = "
 			create table ".$pfx."wls_subject(
 				 id int primary key auto_increment	/*自动编号*/
 				,id_level varchar(200) unique		/*级层编号*/
@@ -105,7 +105,7 @@ class m_subject extends wls implements dbtable,levelList{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		
+
 		$currentSheet = $this->phpexcel->getSheetByName('data');
 		$allRow = array($currentSheet->getHighestRow());
 
@@ -118,7 +118,7 @@ class m_subject extends wls implements dbtable,levelList{
 				'ordering'=>$currentSheet->getCell('C'.$i)->getValue(),
 			);
 			$this->insert($data);
-		}		
+		}
 	}
 
 	/**
@@ -136,8 +136,8 @@ class m_subject extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');	
-	
+		$objPHPExcel->getActiveSheet()->setTitle('data');
+
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
@@ -154,7 +154,7 @@ class m_subject extends wls implements dbtable,levelList{
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('A1');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));   
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
 		$objWriter->save(dirname(__FILE__)."/../../../".$file);
@@ -182,14 +182,14 @@ class m_subject extends wls implements dbtable,levelList{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
@@ -201,12 +201,12 @@ class m_subject extends wls implements dbtable,levelList{
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
 		}
-		
+
 		$sql2 = "select count(*) as total from ".$pfx."wls_subject ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
-		
+
 		return array(
 			'page'=>$page,
 			'data'=>$arr,
@@ -222,8 +222,47 @@ class m_subject extends wls implements dbtable,levelList{
 	 * @param $root 根元素
 	 * */
 	public function getLevelList($root){
-		
+
 	}
+
+
+	public function getListForGroup($id_level_group){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "
+		SELECT *,(id_level in (
+			select id_level_subject from ".$pfx."wls_user_group2subject where id_level_group = '".$id_level_group."' 
+		))as checked FROM ".$pfx."wls_subject order by id;
+		";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+
+		return $data;
+	}
+	
+	public function getListForUser($username){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "
+		select *,id_level in ( 
+			select id_level_subject from wls_user_group2subject where id_level_group in ( 
+				select id_level_group from wls_user_group2user where username = '".$username."'
+			)
+		) as checked from wls_subject;";
+
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+
+		return $data;
+	}	
 
 }
 ?>
