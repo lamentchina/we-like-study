@@ -387,6 +387,5 @@ class m_user_group extends wls implements dbtable,levelList{
 		return $data;
 	}
 
-
 }
 ?>

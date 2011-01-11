@@ -30,7 +30,7 @@ class user extends wls{
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
 			}
-				
+
 			session_destroy();
 
 			$temp = $this->m->login($_POST['username'],$_POST['password']);
@@ -115,6 +115,48 @@ class user extends wls{
 		echo json_encode($data);
 	}
 
+	public function getMyMenu(){
+		$username = $_REQUEST['username'];
+
+		include_once dirname(__FILE__).'/../model/user/privilege.php';
+		$obj = new m_user_privilege();
+		$data = $obj->getListForUser($username);
+
+		include_once dirname(__FILE__).'/../model/tools.php';
+		$t = new tools();
+		$data = $t->getTreeData(null,$data);
+
+		for($i=0;$i<count($data);$i++){
+			if($data[$i]['id_level']=='10'){
+				include_once dirname(__FILE__).'/../model/subject.php';
+				$obj = new m_subject();
+				$data_ = $obj->getListForUser($username);
+				$data__ = array();
+				for($ii=0;$ii<count($data_);$ii++){
+					if($data_[$ii]['checked']==1){
+						$data_[$ii]['ismenu'] = 1;
+						$data__[] = $data_[$ii];
+					}
+				}
+				$data[$i]['children'] = $t->getTreeData(null,$data__);
+			}
+			if($data[$i]['id_level']=='13'){
+				include_once dirname(__FILE__).'/../model/user/group.php';
+				$obj = new m_user_group();
+				$data_ = $obj->getListForUser($username);
+				$data__ = array();
+				for($ii=0;$ii<count($data_);$ii++){
+					if($data_[$ii]['checked']==1){
+						$data_[$ii]['ismenu'] = 1;
+						$data__[] = $data_[$ii];
+					}
+				}
+				$data[$i]['children'] = $t->getTreeData(null,$data__);
+			}
+		}
+		echo json_encode($data);
+	}
+
 	public function getGroup(){
 		$username = $_REQUEST['username'];
 		include_once dirname(__FILE__).'/../model/user/group.php';
@@ -146,5 +188,7 @@ class user extends wls{
 
 		echo json_encode($data);
 	}
+
+
 }
 ?>
