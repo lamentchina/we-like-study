@@ -14,9 +14,7 @@ class m_question_log extends wls implements dbtable,log{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		include_once dirname(__FILE__).'/../user.php';
-		$obj = new m_user();
-		$user = $obj->getUser();
+		$user = $this->getMyUser();
 		$data['id_user'] = $user['id'];
 		$data['id_level_user_group'] = $user['id_level_user_group'];		
 	
@@ -31,11 +29,9 @@ class m_question_log extends wls implements dbtable,log{
 	
 	public function insertMany($datas){
 		$pfx = $this->c->dbprefix;
-		$conn = $this->conn();
-		
-		include_once dirname(__FILE__).'/../user.php';
-		$obj = new m_user();
-		$user = $obj->getUser();		
+		$conn = $this->conn();		
+
+		$user = $this->getMyUser();	
 		
 		$keys = null;
 		$sql = '';

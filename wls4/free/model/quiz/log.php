@@ -14,9 +14,8 @@ class m_quiz_log extends wls implements dbtable,log{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		include_once dirname(__FILE__).'/../user.php';
-		$obj = new m_user();
-		$user = $obj->getUser();
+
+		$user = $this->getMyUser();
 		$data['id_user'] = $user['id'];
 		$data['id_level_user_group'] = $user['id_level_user_group'];		
 	

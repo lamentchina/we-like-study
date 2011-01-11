@@ -23,6 +23,7 @@ class wls{
 	 * 每次引用这个文件时都会自动运行
 	 * */
 	public function wls(){
+//		sleep(1);
 		$this->c = new wlsconfig();
 	}
 
@@ -42,7 +43,7 @@ class wls{
 	 * 需要其权限数据
 	 * */
 	public function getMyUser(){
-		include_once dirname(__FILE__).$this->c->license."/model/user.php";
+		include_once dirname(__FILE__)."/".$this->c->license."/model/user.php";
 		$m = new m_user();
 		return $m->getUser(null,true);		
 	}
@@ -52,11 +53,11 @@ class wls{
 	 *
 	 * @param $whatHappened 事件描述,可以是数组
 	 * */
-	public function error($whatHappened){
+	public function error($whatHappened,$arr=null){
 		//TODO
 		$fileName = dirname(__FILE__).'/../file/log/error.txt';
 		$handle=fopen($fileName,"a");
-		fwrite($handle,$whatHappened['description']."\n");
+		fwrite($handle,$whatHappened."\n");
 		fclose($handle);
 	}
 
@@ -95,14 +96,15 @@ class wls{
 				eval('$controller = new '.$controllername.'();');
 			}
 		}else{
-			echo 'need controller!';
+//			echo 'need controller!';
 		}
 
 		//捕获前台传来的 action ,引用那个函
 		if(isset($_REQUEST['action'])){
 			eval('$controller->'.$_REQUEST['action'].'();');
 		}else{
-			echo 'need action!';
+//			echo 'need action!';
+			echo json_encode(array('foo'=>'bar'));
 		}
 	}
 }

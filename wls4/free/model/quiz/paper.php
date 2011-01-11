@@ -427,12 +427,13 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
-			if($temp['score_top']>=$this->mycent){
+			if($temp['score_top']<=$this->mycent){
 				$user = $this->getMyUser();
 				$sql = "update ".$pfx."wls_quiz_paper set 
 					score_top_user = '".$user['username']."',
 					score_top = '".$this->mycent."' 
 					where id = ".$this->id;
+				$this->error($sql);
 				try{
 					mysql_query($sql,$conn);
 					return true;
