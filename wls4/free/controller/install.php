@@ -35,7 +35,11 @@ class install extends wls {
 
 		include_once $this->c->license.'/model/quiz/log.php';
 		$obj = new m_quiz_log();
-		$obj->create();				
+		$obj->create();	
+
+		include_once $this->c->license.'/model/quiz/wrong.php';
+		$obj = new m_quiz_worng();
+		$obj->create();			
 	}
 	
 	/**

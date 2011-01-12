@@ -1,13 +1,13 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
 
-class quiz_paper extends quiz{
+class quiz_wrong extends quiz{
 	private $m = null;
 
-	function quiz_paper(){
+	function quiz_wrong(){
 		parent::wls();
-		include_once $this->c->license.'/model/quiz/paper.php';
-		$this->m = new m_quiz_paper();
+		include_once $this->c->license.'/model/quiz/wrong.php';
+		$this->m = new m_quiz_worng();
 	}
 
 	public function jsonList(){
@@ -29,7 +29,7 @@ class quiz_paper extends quiz{
 				</head>
 				<body>
 					导入EXCEL
-					<form action="wls.php?controller=quiz_paper&action=saveUpload" method="post"
+					<form action="wls.php?controller=quiz_wrong&action=saveUpload" method="post"
 					enctype="multipart/form-data">
 						<label for="file">EXCEL文件:</label>
 						<input type="file" name="file" id="file" />
@@ -105,7 +105,7 @@ class quiz_paper extends quiz{
 			'date_created'=>date('Y-m-d H:i:s'),
 			'id_question'=>$id_question,
 			'id_level_subject'=>$item['id_level_subject'],
-			'id_quiz_paper'=>$id,
+			'id_quiz_wrong'=>$id,
 			'time_start'=>$_POST['time']['start'],
 			'time_stop'=>$_POST['time']['stop'],
 			'time_used'=>$_POST['time']['used'],
@@ -118,11 +118,9 @@ class quiz_paper extends quiz{
 		$cent = 0;
 		$mycent = 0;
 		$count_total = count($answers);
-
+		
 		$user = $this->getMyUser();
-
-		include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
-		$obj_ = new m_quiz_worng();
+		
 		for($i=0;$i<count($answers);$i++){
 			unset($answers[$i]['description']);
 			if($answers[$i]['myAnswer']=='I_DONT_KNOW'){
@@ -133,16 +131,17 @@ class quiz_paper extends quiz{
 				$count_right ++;
 				$mycent += $answers[$i]['cent'];
 			}else{
-				$obj_->ids_question = $answers[$i]['id'];
-				$obj_->id_user = $user['id'];
+				include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
+				$obj_ = new m_quiz_worng();
+
 				$wrong = array(
 					'id_question' => $answers[$i]['id'],
-					'id_quiz_paper' => $id,
+					'id_quiz_wrong' => $id,
 					'id_level_subject' => $item['id_level_subject'],
 					'id_user'=>$user['id'],
 					'date_created'=>date('Y-m-d H:i:s'),
 				);
-				$obj_->insert($wrong);
+				$obj_->insert($wrong);				
 				$answers[$i]['correct'] = 0;
 				$count_wrong ++;
 			}
@@ -151,7 +150,7 @@ class quiz_paper extends quiz{
 			$answers[$i]['date_created'] = date('Y-m-d H:i:s');
 			unset($answers[$i]['id']);
 			$answers[$i]['id_quiz_log'] = $id_quiz_log;
-			$answers[$i]['id_quiz_paper'] = $id;
+			$answers[$i]['id_quiz_wrong'] = $id;
 			$answers[$i]['id_level_subject'] = $item['id_level_subject'];
 		}
 		include_once $this->c->license.'/model/question/log.php';
@@ -209,20 +208,20 @@ class quiz_paper extends quiz{
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/il8n.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz.js\"></script>
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/paper.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/wrong.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/choice.js\"></script>
 
 
 <script type=\"text/javascript\">
-var quiz_paper;
+var quiz_wrong;
 Ext.onReady(function(){
-	quiz_paper = new wls.quiz.paper();
+	quiz_wrong = new wls.quiz.wrong();
 	
-	quiz_paper.id = ".$_REQUEST['id'].";
-	quiz_paper.naming = 'quiz_paper';
-	quiz_paper.initLayout();
-	quiz_paper.ajaxIds(\"quiz_paper.ajaxQuestions('quiz_paper.addQuestions()');\");
+	quiz_wrong.id = ".$_REQUEST['id'].";
+	quiz_wrong.naming = 'quiz_wrong';
+	quiz_wrong.initLayout();
+	quiz_wrong.ajaxIds(\"quiz_wrong.ajaxQuestions('quiz_wrong.addQuestions()');\");
 });
 </script>
 </head>

@@ -22,28 +22,24 @@ var user_ = new wls.user();
 <?php 
 session_start();
 if(isset($_SESSION['wls_user'])){	
-	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['prvilege']."';";
-	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';";
-	echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';";
-	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';";
-	echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';";
-	echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';";
+	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['prvilege']."';\n";
+	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
+	echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
+	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
+	echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
+	echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
 }else{
 	echo "not login!";
 }
 ?>
 
-Ext.onReady(function(){	
-	
+Ext.onReady(function(){		
     var tab = new Ext.TabPanel({
         id:'w_tp',
         activeTab: 0,
         frame:true,
-        region:'center',
-       
-        items:[
-			
-        ]
+        region:'center',       
+        items:[	]
         });
 	var tb_ = new Ext.Toolbar({
 		id:"w_t",
@@ -60,7 +56,7 @@ Ext.onReady(function(){
 
 	Ext.Ajax.request({				
 		method:'POST',				
-		url:wls_.config.AJAXPATH+"?controller=user&action=getMyMenu",				
+		url:user_.config.AJAXPATH+"?controller=user&action=getMyMenu",				
 		success:function(response){				
 			var obj = jQuery.parseJSON(response.responseText);
 			getToolBar(null,obj);
@@ -68,7 +64,7 @@ Ext.onReady(function(){
 		failure:function(response){	
 			
 		},	
-		params:{username:user}				
+		params:{username:user_.myUser.username}				
 	});
 
 	var getToolBar = function(tb,obj){	
@@ -105,7 +101,6 @@ Ext.onReady(function(){
 						handler:menuClick
 					};
 					if(typeof(obj[i].children)!='undefined'){
-
 						var x_ = obj[i].children;
 						var a_ = getToolBar('',x_);
 						if(a_.length>0){
@@ -156,17 +151,14 @@ Ext.onReady(function(){
 		}else if(a.menuType=='subject'){
 			if(a.id_level=='11'){
 				var o = new wls.quiz.paper();
-				var list = o.getList('w_q_p_l');
+				var list = o.getList('w_s_l');
 				list.closable=true;				
 				Ext.getCmp('w_tp').add(list);
-				Ext.getCmp('w_tp').setActiveTab('w_q_p_l');
+				Ext.getCmp('w_tp').setActiveTab('w_s_l');
 			}
 		}	
 	}
 });
-
-
-
 </script>
 </head>
 <body>

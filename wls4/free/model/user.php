@@ -262,7 +262,7 @@ class m_user extends wls implements dbtable{
 				$d = $o->getListForUser($data['username']);
 				$ids = '';
 				for($i=0;$i<count($d);$i++){
-					$ids .= $d[$i]['id_level'].",";
+					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
 				}
 				$ids = substr($ids,0,strlen($ids)-1);
 				$data['prvilege'] = $ids;
@@ -272,7 +272,7 @@ class m_user extends wls implements dbtable{
 				$d = $o->getListForUser($data['username']);
 				$ids = '';
 				for($i=0;$i<count($d);$i++){
-					$ids .= $d[$i]['id_level'].",";
+					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
 				}
 				$ids = substr($ids,0,strlen($ids)-1);
 				$data['group'] = $ids;
@@ -282,7 +282,7 @@ class m_user extends wls implements dbtable{
 				$d = $o->getListForUser($data['username']);
 				$ids = '';
 				for($i=0;$i<count($d);$i++){
-					$ids .= $d[$i]['id_level'].",";
+					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
 				}
 				$ids = substr($ids,0,strlen($ids)-1);
 				$data['subject'] = $ids;

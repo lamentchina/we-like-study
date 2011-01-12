@@ -31,7 +31,18 @@ class m_subject extends wls implements dbtable,levelList{
 	 * @param $ids 编号,每张表都id这个列,一般为自动递增
 	 * @return bool
 	 * */
-	public function delete($ids){}
+	public function delete($ids){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "delete from ".$pfx."wls_subject where id  in (".$ids.");";
+		try{
+			mysql_query($sql,$conn);
+			return true;
+		}catch (Exception $ex){
+			return false;
+		}
+	}
 
 	/**
 	 * 更新一条数据
@@ -243,7 +254,7 @@ class m_subject extends wls implements dbtable,levelList{
 
 		return $data;
 	}
-	
+
 	public function getListForUser($username){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -262,7 +273,7 @@ class m_subject extends wls implements dbtable,levelList{
 		}
 
 		return $data;
-	}	
+	}
 
 }
 ?>

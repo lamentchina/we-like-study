@@ -15,6 +15,7 @@ var il8n = {
 		,Wrong:'做错数'
 		,GiveUp:'放弃数'
 		,User:'用户数'
+		,Total:'总数'
 	}
 	,Score:{
 		 Top:'最高分'
@@ -26,6 +27,7 @@ var il8n = {
 	,Paper:{
 		 Brief:'试卷简要'
 		,Paper:'试卷'
+		,Result:'成绩结果'
 	}
 	,Submit:'提交'
 	,Navigation:'导航'
@@ -57,11 +59,15 @@ var il8n = {
 		 Top:'最高分'
 		,TopUser:'最高分得主'
 		,Avg:'平均分'
+		,Score:'分数'
+		,Total:'总分'
 	}
 	,Menu:'菜单'
 	,Yes:'是'
 	,No:'不是'
 	,Privilege:'权限'
 	,Subject:'科目'
+	,Wrongs:'错题本'
+	,DateCreated:'创建时间'
 	
 };

@@ -23,7 +23,7 @@ class wls{
 	 * 每次引用这个文件时都会自动运行
 	 * */
 	public function wls(){
-//		sleep(1);
+		
 		$this->c = new wlsconfig();
 	}
 

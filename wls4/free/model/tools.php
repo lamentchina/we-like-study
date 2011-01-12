@@ -26,6 +26,29 @@ class tools {
 		return $str;
 	}
 
+	public function getTimeDif($t1,$t2=null){
+		$d1=strtotime($t1);
+		$d2 = null;
+		if($t2==null){
+			$d2=strtotime("now");
+		}
+		
+		$dif = ($d2-$d1);
+		if($dif>2592000){
+			return round($dif/30/3600/24)."月";
+		}
+		if($dif>86400){
+			return round($dif/3600/24)."天";
+		}
+		if($dif>3600){
+			return round($dif/3600)."小时";
+		}
+		if($dif>60){
+			return round($dif/60)."分钟";
+		}
+		return $dif."秒";
+	}
+
 	/**
 	 * 将长的标题切断,以短标题再加3个点号显示
 	 * */
@@ -167,7 +190,7 @@ class tools {
 						$data_all[$i]['leaf'] = true;
 					}else{
 						$data_all[$i]['expanded'] = true;
-					}						
+					}
 					$data_all[$i]['text'] = $data_all[$i]['name'];
 					unset($data_all[$i]['name']);
 					if(isset($data_all[$i]['money']))unset($data_all[$i]['money']);
