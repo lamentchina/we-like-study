@@ -13,15 +13,15 @@ wls.user.privilege = Ext.extend(wls, {
 		    defaults: {
 		        sortable: true   
 		    },
-		    columns: [{
-		             header: il8n.Name
+		    columns: [ {
+		            header: il8n.ID,
+		            dataIndex: 'id_level'
+		        },{
+		        	 header: il8n.Name
 		            ,dataIndex: 'name'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })
-		        }, {
-		            header: il8n.ID,
-		            dataIndex: 'id_level'
 		        }, {
 		             header: il8n.Money
 		            ,dataIndex: 'money'
@@ -43,6 +43,7 @@ wls.user.privilege = Ext.extend(wls, {
 		});
 		
 		var grid = new Ext.grid.EditorGridPanel({
+			title:il8n.Privilege,
 		    store: store,
 		    cm: cm,        
 		    id: id,

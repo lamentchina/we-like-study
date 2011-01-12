@@ -35,6 +35,7 @@ var il8n = {
 		,PassWord:'密码'		
 		,Login:'登录'
 		,Group:'用户组'
+		,User:'用户'
 	}
 	,CAPTCHA:'验证码'
 	,ReCAPTCHA:'刷新验证码'

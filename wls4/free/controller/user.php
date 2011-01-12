@@ -121,39 +121,77 @@ class user extends wls{
 		include_once dirname(__FILE__).'/../model/user/privilege.php';
 		$obj = new m_user_privilege();
 		$data = $obj->getListForUser($username);
+		for($i=0;$i<count($data);$i++){
+			$data[$i]['type'] = 'menu';
+		}
 
 		include_once dirname(__FILE__).'/../model/tools.php';
 		$t = new tools();
 		$data = $t->getTreeData(null,$data);
 
 		for($i=0;$i<count($data);$i++){
-			if($data[$i]['id_level']=='10'){
+				
+			if($data[$i]['id_level']=='11'){
 				include_once dirname(__FILE__).'/../model/subject.php';
 				$obj = new m_subject();
 				$data_ = $obj->getListForUser($username);
-				$data__ = array();
-				for($ii=0;$ii<count($data_);$ii++){
-					if($data_[$ii]['checked']==1){
-						$data_[$ii]['ismenu'] = 1;
-						$data__[] = $data_[$ii];
+				if(count($data)>0){
+					$data__ = array();
+					for($ii=0;$ii<count($data_);$ii++){
+						$data_[$ii]['type'] = 'subject';
+						if($data_[$ii]['checked']==1){
+							$data_[$ii]['ismenu'] = 1;
+							$data__[] = $data_[$ii];
+						}
+					}
+					$subject = $t->getTreeData(null,$data__);
+
+					$arr = array();
+					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
+						$arr = $data[$i]['children'];
+					}
+					$data[$i]['children'] = $subject;
+
+					if(count($arr)>0){
+						$data[$i]['children'][] = array('text'=>'slide');
+						for($ii=0;$ii<count($arr);$ii++){
+							$data[$i]['children'][] = $arr[$ii];
+						}
 					}
 				}
-				$data[$i]['children'] = $t->getTreeData(null,$data__);
 			}
 			if($data[$i]['id_level']=='13'){
 				include_once dirname(__FILE__).'/../model/user/group.php';
 				$obj = new m_user_group();
 				$data_ = $obj->getListForUser($username);
-				$data__ = array();
-				for($ii=0;$ii<count($data_);$ii++){
-					if($data_[$ii]['checked']==1){
-						$data_[$ii]['ismenu'] = 1;
-						$data__[] = $data_[$ii];
+				if(count($data)>0){
+					$data__ = array();
+					for($ii=0;$ii<count($data_);$ii++){
+						$data_[$ii]['type'] = 'subject';
+						if($data_[$ii]['checked']==1){
+							$data_[$ii]['ismenu'] = 1;
+							$data__[] = $data_[$ii];
+						}
+					}
+					$subject = $t->getTreeData(null,$data__);
+
+					$arr = array();
+					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
+						$arr = $data[$i]['children'];
+					}
+					$data[$i]['children'] = $subject;
+
+					if(count($arr)>0){
+						$data[$i]['children'][] = array('text'=>'slide');
+						for($ii=0;$ii<count($arr);$ii++){
+							$data[$i]['children'][] = $arr[$ii];
+						}
 					}
 				}
-				$data[$i]['children'] = $t->getTreeData(null,$data__);
 			}
 		}
+
+		//		print_r($data);
 		echo json_encode($data);
 	}
 

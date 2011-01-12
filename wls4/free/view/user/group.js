@@ -34,6 +34,7 @@ wls.user.group = Ext.extend(wls, {
 				});
 
 		var grid = new Ext.grid.EditorGridPanel({
+			title:il8n.User.Group,
 			store : store,
 			cm : cm,
 			id : domid,
@@ -204,7 +205,7 @@ wls.user.group = Ext.extend(wls, {
 			}],
 			bbar : new Ext.PagingToolbar({
 						store : store,
-						pageSize : 8,
+						pageSize : 15,
 						displayInfo : true
 					})
 		});
@@ -230,7 +231,7 @@ wls.user.group = Ext.extend(wls, {
 		store.load({
 					params : {
 						start : 0,
-						limit : 8
+						limit : 15
 					}
 				});
 		return grid;

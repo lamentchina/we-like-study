@@ -143,6 +143,9 @@ class tools {
 						$data_all[$i]['expanded'] = true;
 					}
 					$data_all[$i]['text'] = $data_all[$i]['name'];
+					unset($data_all[$i]['name']);
+					if(isset($data_all[$i]['money']))unset($data_all[$i]['money']);
+					if(isset($data_all[$i]['id']))unset($data_all[$i]['id']);
 					if($data_all[$i]['checked']==0){
 						$data_all[$i]['checked'] = false;
 					}else{
@@ -164,9 +167,11 @@ class tools {
 						$data_all[$i]['leaf'] = true;
 					}else{
 						$data_all[$i]['expanded'] = true;
-					}
-						
+					}						
 					$data_all[$i]['text'] = $data_all[$i]['name'];
+					unset($data_all[$i]['name']);
+					if(isset($data_all[$i]['money']))unset($data_all[$i]['money']);
+					if(isset($data_all[$i]['id']))unset($data_all[$i]['id']);
 					if($data_all[$i]['checked']==0){
 						$data_all[$i]['checked'] = false;
 					}else{

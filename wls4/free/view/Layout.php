@@ -11,73 +11,38 @@
 <script type="text/javascript" src="il8n.js"></script>
 <script type="text/javascript" src="wls.js"></script>
 <script type="text/javascript" src="user.js"></script>
-
+<script type="text/javascript" src="user/group.js"></script>
+<script type="text/javascript" src="user/privilege.js"></script>
+<script type="text/javascript" src="quiz.js"></script>
+<script type="text/javascript" src="quiz/paper.js"></script>
+<script type="text/javascript" src="subject.js"></script>
 
 <script type="text/javascript">
-
+var user_ = new wls.user();
 <?php 
 session_start();
-echo "var user = '".$_SESSION['wls_user']['username']."';";
+if(isset($_SESSION['wls_user'])){	
+	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['prvilege']."';";
+	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';";
+	echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';";
+	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';";
+	echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';";
+	echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';";
+}else{
+	echo "not login!";
+}
 ?>
 
 Ext.onReady(function(){	
-	var tb = new Ext.Toolbar({
-		region: 'north',
-		split: false,
-        height: 28,
-        collapsible: true,
-        title: 'South'
-	});
-	tb.add( {
-        text: 'Users',
-        iconCls: 'user',
-        menu: {
-            xtype: 'menu',
-            plain: true,
-            items: {
-                xtype: 'buttongroup',
-                title: 'User options',
-                autoWidth: true,
-                columns: 2,
-                defaults: {
-                    xtype: 'button',
-                    scale: 'large',
-                    width: '100%',
-                    iconAlign: 'left'
-                },
-                items: [{
-                    text: 'User<br/>manager',
-                    iconCls: 'edit'
-                },{
-                    iconCls: 'add',
-                    width: 'auto',
-                    tooltip: 'Add user'
-                },{
-                    colspan: 2,
-                    text: 'Import',
-                    scale: 'small'
-                },{
-                    colspan: 2,
-                    text: 'Who is online?',
-                    scale: 'small'
-                }]
-            }
-        }
-    });
-
-
-
-	var l = new wls.user();
-	var l2 = l.getList('w_u_l');
-	l2.title = '用户列表';
+	
     var tab = new Ext.TabPanel({
-        
+        id:'w_tp',
         activeTab: 0,
         frame:true,
         region:'center',
        
         items:[
-			l2
+			
         ]
         });
 	var tb_ = new Ext.Toolbar({
@@ -95,7 +60,7 @@ Ext.onReady(function(){
 
 	Ext.Ajax.request({				
 		method:'POST',				
-		url:l.config.AJAXPATH+"?controller=user&action=getMyMenu",				
+		url:wls_.config.AJAXPATH+"?controller=user&action=getMyMenu",				
 		success:function(response){				
 			var obj = jQuery.parseJSON(response.responseText);
 			getToolBar(null,obj);
@@ -109,6 +74,7 @@ Ext.onReady(function(){
 	var getToolBar = function(tb,obj){	
 		if(tb==null){
 			for(var i=0;i<obj.length;i++){
+				
 				var obj_ = {
 					text:obj[i].text				
 				};			
@@ -121,20 +87,23 @@ Ext.onReady(function(){
 						obj_.menu.items = a;
 					}				
 				}
-
 				Ext.getCmp('w_t').add(obj_);
 			}
 			Ext.getCmp('w_t').doLayout();
 		}else{
 			var a = [];
 			for(var i=0;i<obj.length;i++){
-
-				if(obj[i].ismenu == true){
-
-					var obj_ = {
-						text:obj[i].text
+				var obj_ = null;
+				if(obj[i].text=='slide'){						
+					obj_ = '-';
+					a.push(obj_);	
+				}else if(obj[i].ismenu == true){
+					obj_ = {
+						menuType:obj[i].type,
+						id_level:obj[i].id_level,
+						text:obj[i].text,
+						handler:menuClick
 					};
-					
 					if(typeof(obj[i].children)!='undefined'){
 
 						var x_ = obj[i].children;
@@ -144,11 +113,54 @@ Ext.onReady(function(){
 							obj_.menu.items = a_;
 						}				
 					}
-					
-					a.push(obj_);
-				}			
+					a.push(obj_);	
+				}					
 			}
 			return a;
+		}	
+	}
+
+	var menuClick = function(a){		
+		if(a.menuType=='menu'){			
+			if(a.id_level=='1150'){
+				var o = new wls.quiz.paper();
+				var list = o.getList('w_q_p_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_q_p_l');
+			}else if(a.id_level=='1450'){
+				var o = new wls.user();
+				var list = o.getList('w_u_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_u_l');				
+			}else if(a.id_level=='1350'){
+				var o = new wls.user.group();
+				var list = o.getList('w_u_g_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_u_g_l');	
+			}else if(a.id_level=='1050'){
+				var o = new wls.subject();
+				var list = o.getList('w_s_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_s_l');	
+			}else if(a.id_level=='1550'){
+				var o = new wls.user.privilege();
+				var list = o.getList('w_u_p_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_u_p_l');	
+			}				
+		}else if(a.menuType=='subject'){
+			if(a.id_level=='11'){
+				var o = new wls.quiz.paper();
+				var list = o.getList('w_q_p_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_q_p_l');
+			}
 		}	
 	}
 });

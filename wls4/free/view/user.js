@@ -1,4 +1,16 @@
 wls.user = Ext.extend(wls, {
+	
+	myUser:{
+		privilege:null,
+		group:null,
+		subject:null,
+		username:null,
+		id:null,
+		money:null,
+		credits:null	
+	},
+
+	
 	/**
 	 * 添加登录框.
 	 * 如果登录成功,页面会重刷新
@@ -135,6 +147,7 @@ wls.user = Ext.extend(wls, {
 		});
 		var grid = new Ext.grid.EditorGridPanel({
 		    store: store,
+		    title:il8n.User.User,
 		    cm: cm,        
 		    id: domid,
 		    width: 600,

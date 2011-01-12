@@ -13,20 +13,21 @@ wls.subject = Ext.extend(wls, {
 		    defaults: {
 		        sortable: true   
 		    },
-		    columns: [{
+		    columns: [ {
+		            header: il8n.ID,
+		            dataIndex: 'id_level'
+		        },{
 		             header: il8n.Name
 		            ,dataIndex: 'name'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })
-		        }, {
-		            header: il8n.ID,
-		            dataIndex: 'id_level'
 		        }
 		    ]
 		});
 		
 		var grid = new Ext.grid.EditorGridPanel({
+			title:il8n.Subject,
 		    store: store,
 		    cm: cm,        
 		    id: id,
@@ -60,7 +61,7 @@ wls.subject = Ext.extend(wls, {
 		    }],
 		    bbar : new Ext.PagingToolbar({
 				store : store,
-				pageSize : 8,
+				pageSize : 15,
 				displayInfo : true
 			})
 		});
@@ -78,7 +79,7 @@ wls.subject = Ext.extend(wls, {
 				params:{field:e.field,value:e.value,id:e.record.data.id}				
 			});
 	    }     
-		store.load({params:{start:0, limit:8}});    
+		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
 });

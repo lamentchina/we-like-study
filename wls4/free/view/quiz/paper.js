@@ -175,12 +175,13 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		    ]
 		});
 		var grid = new Ext.grid.EditorGridPanel({
+			title:il8n.Paper.Paper,
 		    store: store,
 		    cm: cm,        
 		    id: id,
 		    width: 600,
 		    height: 300,
-		    clicksToEdit: 1,
+		    clicksToEdit: 2,
 		    tbar: [{
 		        text: il8n.Import,
 		        handler : function(){   
