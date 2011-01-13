@@ -12,5 +12,32 @@ class m_quiz_paper_yf extends m_quiz_paper{
 	public function saveImages(){}
 	
 	public function getMp3ListForXunlei(){}
+	
+	public function viewPaper(){
+		$html = 
+'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>m_quiz_paper_yf</title>
+</head>
+<body>';
+		$html .= $this->paperHtmlContent;
+		$html .= 
+'</body>
+</html>';
+		
+		echo $html;
+	}
+}
+
+interface yfActions {
+	
+	public function getPaper();
+	public function getQuestions();
+	public function savePathListForXunlei();
+	public function readFile();
+	public function import();
+	
 }
 ?>

@@ -244,16 +244,19 @@ class m_question extends wls implements dbtable{
 			unset($data['belongto']);
 			$data['markingmethod'] = $t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
 			$data['type'] = $t->formatQuesType($questions[$indexs[$i]]['type'],true);
-			$data['date_created'] = date('Y-m-d i:m:s');
+			$data['date_created'] = date('Y-m-d H:i:s');
 			if($questions[$indexs[$i]]['belongto']=='0'){
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = 0;
 			}else{
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = $questions[$questions[$indexs[$i]]['belongto']]['id'];
 			}
-			if($questions[$indexs[$i]]['id'] = $this->insert($data)){
-				continue;
-			}else{
+			$id =  $this->insert($data);
+			if($id===false){
+				print_r($data);
 				return false;
+			}else{
+				$questions[$indexs[$i]]['id'] = $id;
+				continue;
 			}
 		}
 		return $questions;

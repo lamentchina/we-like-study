@@ -106,10 +106,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				,name_subject varchar(200) default '0' comment '考试科目名称'
 				
 				,title varchar(200) not null		comment '试卷名称'
-				,questions varchar(200) default '0'	comment '题目组成,由一大堆编号组成,这些编号都是主题目编号,不会记录子题目编号'
+				,questions text	comment '题目组成,由一大堆编号组成,这些编号都是主题目编号,不会记录子题目编号'
 				
 				,description varchar(200) default '0'	comment '描述'				
-				,creator varchar(200) not null		comment '创建者'
+				,creator varchar(200) default 'admin'		comment '创建者'
 				,date_created datetime not null 	comment '创建时间'
 				
 				,time_limit int default 3600		comment '时间限制,默认为1小时,1小时后自动提交试卷'

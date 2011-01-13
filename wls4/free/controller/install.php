@@ -52,11 +52,10 @@ class install extends wls {
 	public function insertData4Test(){
 		include_once $this->c->license.'/model/subject.php';
 		$obj = new m_subject();
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_subject_highschool.xls");	
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_subject_chinaoffical.xls");	
 		
 		include_once $this->c->license.'/model/knowledge.php';
 		$obj = new m_knowledge();
-//		echo 241242134213;
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_knowledge.xls");			
 				
 		include_once $this->c->license.'/model/user/group.php';
@@ -72,9 +71,9 @@ class install extends wls {
 		$obj = new m_user_privilege();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user_privilege.xls");		
 		
-		include_once $this->c->license.'/model/quiz/paper.php';
-		$obj = new m_quiz_paper();
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wlls_quiz_paper.xls");			
+//		include_once $this->c->license.'/model/quiz/paper.php';
+//		$obj = new m_quiz_paper();
+//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wlls_quiz_paper.xls");			
 	}
 }
 ?>

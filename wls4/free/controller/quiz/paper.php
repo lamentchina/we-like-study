@@ -91,7 +91,7 @@ class quiz_paper extends quiz{
 		}
 
 		$answers = $this->m->getAnswers($ques_);
-		echo json_encode($answers);
+		$json = json_encode($answers);
 
 		$id_question = substr($id_question,0,strlen($id_question)-1);
 
@@ -177,6 +177,8 @@ class quiz_paper extends quiz{
 		$this->m->cumulative('count_used');
 		$this->m->mycent = $mycent;
 		$this->m->cumulative('score');
+		
+		echo $json;
 	}
 
 	public function viewOne(){
