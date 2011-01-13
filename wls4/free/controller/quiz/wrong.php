@@ -46,7 +46,6 @@ class quiz_wrong extends quiz{
 			$this->error(array('description'=>'文件上传错误'));
 		}else{
 			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			//			$this->m->create();
 			$this->m->importExcel(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
 
@@ -71,8 +70,21 @@ class quiz_wrong extends quiz{
 	}
 
 	public function getOne(){
-		$id = $_POST['id'];
-		echo json_encode($this->m->getList(1,1,array('id'=>$id)));
+		$id_level_subject = $_POST['id_level_subject'];
+		$user = $this->getMyUser();
+
+		$data = $this->m->getList(1,100,array(
+			'id_level_subject'=>$id_level_subject,
+			'id_user'=>$user['id'],
+		)," Order by RAND() ");
+		$data = $data['data'];
+		$ids = '';
+		for($i=0;$i<count($data);$i++){
+			$ids .= $data[$i]['id_question'].",";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+
+		echo $ids;
 	}
 
 	public function delete(){
@@ -83,32 +95,30 @@ class quiz_wrong extends quiz{
 		sleep(2);
 
 		$ques = $_POST['answersData'];
+
+
+		//累加题目编号,并整理题目数据
 		$ques_ = array();
 		$id_question = '';
 		for($i=0;$i<count($ques);$i++){
 			$ques_[$ques[$i]['id']] = $ques[$i]['answer'];
 			$id_question .= $ques[$i]['id'].",";
 		}
+		$id_question = substr($id_question,0,strlen($id_question)-1);
 
+		//得到答案并直接输出,没有任何的数据库写入
 		$answers = $this->m->getAnswers($ques_);
 		echo json_encode($answers);
 
-		$id_question = substr($id_question,0,strlen($id_question)-1);
 
-		$id = $_POST['id'];
-		$item = $this->m->getList(1,1,array('id'=>$id),null,'id,id_level_subject');
-		$item = $item['data'][0];
-
+		//写入测验卷日志
 		include_once $this->c->license.'/model/quiz/log.php';
 		$obj = new m_quiz_log();
 		$data = array(
 			'date_created'=>date('Y-m-d H:i:s'),
 			'id_question'=>$id_question,
-			'id_level_subject'=>$item['id_level_subject'],
-			'id_quiz_wrong'=>$id,
-			'time_start'=>$_POST['time']['start'],
-			'time_stop'=>$_POST['time']['stop'],
-			'time_used'=>$_POST['time']['used'],
+			'id_level_subject'=>$_POST['id_level_subject'],
+			'application'=>5,
 		);
 		$id_quiz_log = $obj->insert($data);
 
@@ -118,9 +128,12 @@ class quiz_wrong extends quiz{
 		$cent = 0;
 		$mycent = 0;
 		$count_total = count($answers);
-		
+
 		$user = $this->getMyUser();
-		
+
+		include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
+		$wrongObj = new m_quiz_worng();
+
 		for($i=0;$i<count($answers);$i++){
 			unset($answers[$i]['description']);
 			if($answers[$i]['myAnswer']=='I_DONT_KNOW'){
@@ -131,17 +144,16 @@ class quiz_wrong extends quiz{
 				$count_right ++;
 				$mycent += $answers[$i]['cent'];
 			}else{
-				include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
-				$obj_ = new m_quiz_worng();
 
+				$wrongObj->id_question = $answers[$i]['id'];
+				$wrongObj->id_user = $user['id'];
 				$wrong = array(
 					'id_question' => $answers[$i]['id'],
-					'id_quiz_wrong' => $id,
-					'id_level_subject' => $item['id_level_subject'],
+					'id_level_subject' => $_POST['id_level_subject'],
 					'id_user'=>$user['id'],
 					'date_created'=>date('Y-m-d H:i:s'),
 				);
-				$obj_->insert($wrong);				
+				$wrongObj->insert($wrong);
 				$answers[$i]['correct'] = 0;
 				$count_wrong ++;
 			}
@@ -150,8 +162,9 @@ class quiz_wrong extends quiz{
 			$answers[$i]['date_created'] = date('Y-m-d H:i:s');
 			unset($answers[$i]['id']);
 			$answers[$i]['id_quiz_log'] = $id_quiz_log;
-			$answers[$i]['id_quiz_wrong'] = $id;
-			$answers[$i]['id_level_subject'] = $item['id_level_subject'];
+			$answers[$i]['id_level_subject'] = $_POST['id_level_subject'];
+			$answers[$i]['application'] = 5;
+				
 		}
 		include_once $this->c->license.'/model/question/log.php';
 		$obj_ = new m_question_log();
@@ -171,11 +184,6 @@ class quiz_wrong extends quiz{
 			$data['proportion'] = $count_right/($count_right+$count_wrong);
 		}
 		$obj->update($data);
-
-		$this->m->id = $id;
-		$this->m->cumulative('count_used');
-		$this->m->mycent = $mycent;
-		$this->m->cumulative('score');
 	}
 
 	public function viewOne(){
@@ -218,7 +226,7 @@ var quiz_wrong;
 Ext.onReady(function(){
 	quiz_wrong = new wls.quiz.wrong();
 	
-	quiz_wrong.id = ".$_REQUEST['id'].";
+	quiz_wrong.id_level_subject = ".$_REQUEST['id_level_subject'].";
 	quiz_wrong.naming = 'quiz_wrong';
 	quiz_wrong.initLayout();
 	quiz_wrong.ajaxIds(\"quiz_wrong.ajaxQuestions('quiz_wrong.addQuestions()');\");

@@ -106,7 +106,7 @@ class m_quiz_log extends wls implements dbtable,log{
 				,time_stop datetime default '2011-01-08'
 				,time_used int default 0				
 	
-				,application int default 0			comment '0 做测验卷, 1随机练习,2题型掌握度练习,3知识点掌握度练习,4参加在线考试,'
+				,application int default 0			/* 0 做测验卷, 1随机练习,2题型掌握度练习,3知识点掌握度练习,4参加在线考试,5错题本练习*/
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);

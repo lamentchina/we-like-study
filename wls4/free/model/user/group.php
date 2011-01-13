@@ -53,7 +53,6 @@ class m_user_group extends wls implements dbtable,levelList{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_user_group2subject (".$keys.") values ('".$values."');";
-		echo $sql;
 		mysql_query($sql,$conn);
 	}
 	

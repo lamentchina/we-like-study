@@ -11,6 +11,7 @@ wls.quiz = Ext.extend(wls, {
 		mannual:0,
 		total:0
 	},
+	
 	/**
 	 * 0 尚未初始化 
 	 * 1已经得到题目编号数据 
@@ -80,6 +81,7 @@ wls.quiz = Ext.extend(wls, {
 	},
 	addDescriptions:function(){
 		this.count.giveup = 0;
+		this.count.total = 0;
 		for(var i=0;i<this.questions.length;i++){
 			this.questions[i].showDescription();
 		}

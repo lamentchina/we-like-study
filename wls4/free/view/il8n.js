@@ -69,5 +69,7 @@ var il8n = {
 	,Subject:'科目'
 	,Wrongs:'错题本'
 	,DateCreated:'创建时间'
+	,Weight:'权重'
+	,Description:'说明'
 	
 };

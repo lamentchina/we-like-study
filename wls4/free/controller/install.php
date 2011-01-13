@@ -7,6 +7,10 @@ class install extends wls {
 	public function createTables(){
 		include_once $this->c->license.'/model/subject.php';
 		$obj = new m_subject();
+		$obj->create();		
+
+		include_once $this->c->license.'/model/knowledge.php';
+		$obj = new m_knowledge();
 		$obj->create();				
 				
 		include_once $this->c->license.'/model/user/group.php';
@@ -48,7 +52,12 @@ class install extends wls {
 	public function insertData4Test(){
 		include_once $this->c->license.'/model/subject.php';
 		$obj = new m_subject();
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_subject.xls");	
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_subject_highschool.xls");	
+		
+		include_once $this->c->license.'/model/knowledge.php';
+		$obj = new m_knowledge();
+//		echo 241242134213;
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_knowledge.xls");			
 				
 		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();

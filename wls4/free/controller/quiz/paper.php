@@ -133,7 +133,7 @@ class quiz_paper extends quiz{
 				$count_right ++;
 				$mycent += $answers[$i]['cent'];
 			}else{
-				$obj_->ids_question = $answers[$i]['id'];
+				$obj_->id_question = $answers[$i]['id'];
 				$obj_->id_user = $user['id'];
 				$wrong = array(
 					'id_question' => $answers[$i]['id'],

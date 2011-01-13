@@ -23,13 +23,14 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_quiz_worng (".$keys.") values ('".$values."')";
-		try{
-			mysql_query($sql,$conn);
-			return mysql_insert_id($conn);
-		}catch (Exception $ex){
+
+		$temp = mysql_query($sql,$conn);
+		if ( $temp === false ){
 			$this->cumulative('count');
 			return false;
 		}
+		return mysql_insert_id($conn);
+
 	}
 
 	/**
@@ -84,7 +85,7 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 			mysql_query($sql,$conn);
 			return true;
 		}catch (Exception $ex){
-			
+
 		}
 	}
 
@@ -112,7 +113,7 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 				,id_quiz_paper int default 0		/*所属试卷编号*/
 				,id_level_subject varchar(200) default '0' /*科目编号*/
 				,date_created datetime not null 	/*创建时间*/
-				,count int default 0				/*错误次数*/
+				,count int default 1				/*错误次数*/
 			
 				,CONSTRAINT ".$pfx."wls_quiz_worng_u UNIQUE (id_user,id_question)
 			) DEFAULT CHARSET=utf8;
@@ -130,7 +131,7 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 	 * @return bool
 	 * */
 	public function importExcel($path){
-		
+
 	}
 
 	/**
@@ -140,7 +141,7 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 	 * @return $path
 	 * */
 	public function exportExcel(){
-		
+
 	}
 
 	/**
@@ -153,10 +154,10 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		if($column=='count'){
-			$sql = "update ".$pfx."wls_quiz_worng 
+			$sql = "update ".$pfx."wls_quiz_worng
 				set count = count + 1 
-				where id_user = '".$this->id_user."' and 
-						id_question = '".$this->id_question."';";  
+				where id_user = ".$this->id_user." and 
+						id_question = ".$this->id_question.";";  
 
 		}else{
 			$sql = "update ".$pfx."wls_quiz_worng set ".$column." = ".$column."+1 where id = ".$this->id;
@@ -187,20 +188,23 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
-				if($keys[$i]=='type'){
-					$where .= " and type in (".$search[$keys[$i]].") ";
+				if($keys[$i]=='id_level_subject'){
+					$where .= " and id_level_subject in ('".$search[$keys[$i]]."') ";
 				}
 				if($keys[$i]=='id'){
 					$where .= " and id in (".$search[$keys[$i]].") ";
+				}
+				if($keys[$i]=='id_user'){
+					$where .= " and id_user in (".$search[$keys[$i]].") ";
 				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_quiz_worng ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-
+//		echo $sql;
 		$res = mysql_query($sql,$conn);
-		
+
 
 		include_once dirname(__FILE__).'/../subject.php';
 		$obj = new m_subject();
@@ -209,7 +213,7 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 		$keys = array();
 		for($i=0;$i<count($data);$i++){
 			$keys[$data[$i]['id_level']] = $data[$i]['name'];
-		}		
+		}
 
 		include_once dirname(__FILE__).'/../tools.php';
 		$t = new tools();

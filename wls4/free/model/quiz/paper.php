@@ -3,10 +3,12 @@ include_once dirname(__FILE__).'/../quiz.php';
 
 class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 
-	public $phpexcel;	
+	public $phpexcel;
 	public $id = null;
 	public $mycent = null;
-	
+	public $questions = null;
+	public $paper = null;	
+
 	/**
 	 * 插入一条数据
 	 *
@@ -16,7 +18,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-	
+
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -35,10 +37,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public function delete($ids){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$sql = "delete from ".$pfx."wls_quiz_paper where id in (".$ids.") ";
 		try {
-			mysql_query($sql,$conn);			
+			mysql_query($sql,$conn);
 			$sql = "delete from ".$pfx."wls_question where id_quiz_paper in (".$ids.") ";
 			try{
 				mysql_query($sql,$conn);
@@ -47,7 +49,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			catch (Exception $ex2){
 				return false;
 			}
-			
+
 		}
 		catch (Exception $ex){
 			return false;
@@ -63,7 +65,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public function update($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$id = $data['id'];
 		unset($data['id']);
 		$keys = array_keys($data);
@@ -79,7 +81,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			return true;
 		}catch (Exception $ex){
 			return false;
-		}		
+		}
 	}
 
 	/**
@@ -87,17 +89,17 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	 * 创建过程中,会先尝试删除这张表,然后重新建立.
 	 * 因此在运行之前需要将数据备份
 	 * 如果配置文件中的state不是debug,无法执行这类函数
-	 * 
+	 *
 	 * @return bool
 	 * */
 	public function create(){
 		if($this->c->state!='debug')return false;
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "drop table if exists ".$pfx."wls_quiz_paper;";
 		mysql_query($sql,$conn);
-		$sql = "		
+		$sql = "
 			create table ".$pfx."wls_quiz_paper(
 				 id int primary key auto_increment	comment '自动编号'
 				,id_level_subject int default 0		comment '考试科目编号,级别编号'
@@ -136,7 +138,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	 * */
 	public function importExcel($path){
 		$conn = $this->conn();
-		$pfx = $this->c->dbprefix;	
+		$pfx = $this->c->dbprefix;
 
 		include_once dirname(__FILE__).'/../subject.php';
 		$obj = new m_subject();
@@ -146,7 +148,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 			return false;
 		}
-		
+
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -154,11 +156,11 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		
+
 		$currentSheet = $this->phpexcel->getSheetByName('paper');
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
-		
+
 		$paper = array();
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."1")->getValue()=='标题'){
@@ -166,25 +168,27 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 			if($currentSheet->getCell($i."1")->getValue()=='金币'){
 				$paper['money'] = $currentSheet->getCell($i."2")->getValue();
-			}	
+			}
 			if($currentSheet->getCell($i."1")->getValue()=='作者'){
 				$paper['creator'] = $currentSheet->getCell($i."2")->getValue();
-			}					
+			}
 			if($currentSheet->getCell($i."1")->getValue()=='科目'){
 				$paper['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$paper['id_level_subject']."'; ";
 				$res = mysql_query($sql_,$conn);
 				$temp = mysql_fetch_assoc($res);
 				$paper['name_subject'] = $temp['name'];
-			}		
-		}	
+			}
+		}
 		$paper['date_created'] = date('Y-m-d i:m:s');
-		$paper['id'] = $this->insert($paper);		
-		
+		$paper['id'] = $this->insert($paper);
+		$this->id = $paper['id'];
+		$this->paper = $paper;
+
 		$currentSheet = $this->phpexcel->getSheetByName('questions');
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
-		
+
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."2")->getValue()=='序号'){
@@ -192,43 +196,43 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 			if($currentSheet->getCell($i."2")->getValue()=='属于'){
 				$keys['belongto'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='题型'){
 				$keys['type'] = $i;
-			}				
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='题目'){
 				$keys['title'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='答案'){
 				$keys['answer'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='分值'){
 				$keys['cent'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项A'){
 				$keys['option1'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项B'){
 				$keys['option2'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项C'){
 				$keys['option3'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项D'){
 				$keys['option4'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项E'){
 				$keys['option5'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项F'){
 				$keys['option6'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项G'){
 				$keys['option7'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='解题说明'){
 				$keys['description'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='听力文件'){
 				$keys['path_listen'] = $i;
 			}
@@ -246,20 +250,18 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 			if($currentSheet->getCell($i."2")->getValue()=='难度'){
 				$keys['difficulty'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='批改'){
 				$keys['markingmethod'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项数'){
 				$keys['optionlength'] = $i;
-			}																					
+			}
 		}
-		
+
 		include_once dirname(__FILE__).'/../tools.php';
 		$t = new tools();
-		
-		include_once dirname(__FILE__).'/../question.php';
-		$quesObj = new m_question();
+
 		$index = 0;
 		$questions = array();
 		for($i=3;$i<=$allRow;$i++){
@@ -291,7 +293,16 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				'id_quiz_paper'=>$paper['id'],
 				'title_quiz_paper'=>$paper['title'],
 			);
-		}	
+		}
+		
+		$this->questions = $questions;
+		$this->saveQuestions();
+	}
+
+	public function saveQuestions(){
+		include_once dirname(__FILE__).'/../question.php';
+		$quesObj = new m_question();
+		$questions = $this->questions;
 		$ques = $quesObj->insertMany($questions);
 		if($ques==false){
 			return false;
@@ -301,48 +312,44 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			for($i=0;$i<count($values);$i++){
 				if($values[$i]['id_parent']==0){
 					$ids .= $values[$i]['id'].",";
-				}						
+				}
 			}
-			$ids = substr($ids,0,strlen($ids)-1);	
+			$ids = substr($ids,0,strlen($ids)-1);
 			$data = array(
-				'id'=>$paper['id'],
+				'id'=>$this->id,
 				'questions'=>$ids
 			);
-			return $this->update($data);			
+			return $this->update($data);
 		}
 	}
 
-	/**
-	 * 导出一张EXCEL文件,
-	 * 提供下载,实现数据的多处同步,并让这个EXCEL文件形成标准
-	 *
-	 * @return $path
-	 * */
-	public function exportExcel(){
+	public function paperToExcel($paper,$questions){
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
-		$data = $this->getList(1,1,array('id'=>$this->id));
-		$data = $data['data'][0];
+		$data = $paper;
 
+		//处理试卷数据
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('paper');	
-	
+		$objPHPExcel->getActiveSheet()->setTitle('paper');
+
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', '标题');
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', '科目');
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', '金币');
 		$objPHPExcel->getActiveSheet()->setCellValue('D1', '作者');
-		
+
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $data['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $data['id_level_subject']);
 		$objPHPExcel->getActiveSheet()->setCellValue('C2', $data['money']);
 		$objPHPExcel->getActiveSheet()->setCellValue('D2', $data['creator']);
-		
+
+		$data = $questions;		
+		//处理题目
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
 		$objPHPExcel->getActiveSheet()->setTitle('questions');
-	
+
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', '序号');
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', '属于');
 		$objPHPExcel->getActiveSheet()->setCellValue('C2', '题型');
@@ -370,13 +377,8 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
 		}
 
-		include_once dirname(__FILE__).'/../question.php';
-		$ques = new m_question();
-		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
-		$data = $data['data'];		
-
 		$index = 3;
-		for($i=0;$i<count($data);$i++){			
+		for($i=0;$i<count($data);$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['type']);
@@ -406,11 +408,32 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));   
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));
+
+		//保存EXCEL
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
 		$objWriter->save(dirname(__FILE__)."/../../../".$file);
-		return $file;
+		return $file;		
+	}
+
+	/**
+	 * 导出一张EXCEL文件,
+	 * 提供下载,实现数据的多处同步,并让这个EXCEL文件形成标准
+	 *
+	 * @return $path
+	 * */
+	public function exportExcel(){
+		$data = $this->getList(1,1,array('id'=>$this->id));
+		$paper = $data['data'][0];
+
+		//处理题目数据
+		include_once dirname(__FILE__).'/../question.php';
+		$ques = new m_question();
+		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
+		$questions = $data['data'];
+		
+		$this->paperToExcel($paper,$questions);
 	}
 
 	/**
@@ -424,12 +447,12 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$conn = $this->conn();
 		if($column=='score'){
 			$sql = "select score_top from ".$pfx."wls_quiz_paper where id = ".$this->id;
-			
+
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
 			if($temp['score_top']<=$this->mycent){
 				$user = $this->getMyUser();
-				$sql = "update ".$pfx."wls_quiz_paper set 
+				$sql = "update ".$pfx."wls_quiz_paper set
 					score_top_user = '".$user['username']."',
 					score_top = '".$this->mycent."' 
 					where id = ".$this->id;
@@ -441,9 +464,9 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 					return false;
 				}
 			}
-			
+
 			$sql = "update ".$pfx."wls_quiz_paper set score_avg = (score_avg*count_used+".$this->mycent.")/(count_used+1) where id = ".$this->id;
-			
+
 		}else{
 			$sql = "update ".$pfx."wls_quiz_paper set ".$column." = ".$column."+1 where id = ".$this->id;
 		}
@@ -468,34 +491,34 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}	
+				}
 				if($keys[$i]=='id'){
 					$where .= " and id in (".$search[$keys[$i]].") ";
-				}											
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_quiz_paper ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-		
+
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
 		}
-		
+
 		$sql2 = "select count(*) as total from ".$pfx."wls_quiz_paper ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
-		
+
 		return array(
 			'page'=>$page,
 			'data'=>$arr,
@@ -504,55 +527,53 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			'pagesize'=>$pagesize,
 		);
 	}
-	
-	
+
+
 	/**
 	 * 导出这张试卷,允许用户下载
-	 * 
+	 *
 	 * @param $type 类型,可以是 WORD,PDF,EXCEL等
-	 * @return $path 
+	 * @return $path
 	 * */
 	public function exportQuiz($type){}
-	
+
 	/**
 	 * 得到我个人的已做的列表
-	 * 
+	 *
 	 * @param $page 页码,为整数
 	 * @param $pagesize 页大小
 	 * @param $search 查询条件
 	 * @param $orderby 排序条件
-	 * @return $array 
+	 * @return $array
 	 * */
 	public function getMyDoneList($page=null,$pagesize=null,$search=null,$orderby=null){}
-	
+
 	/**
 	 * 得到已经被做过了的列表,
 	 * 一般为管理员操作,支持查询
-	 * 
+	 *
 	 * @param $page 页码,为整数
 	 * @param $pagesize 页大小
 	 * @param $search 查询条件
 	 * @param $orderby 排序条件
-	 * @return $array 
+	 * @return $array
 	 * */
 	public function getDoneList($page=null,$pagesize=null,$search=null,$orderby=null){}
-	
+
 	/**
 	 * 得到题编号
-	 * 
+	 *
 	 * @param $id 试卷编号
 	 * @return $ids 一组题目编号
 	 * */
 	public function getQuizIds(){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$sql = "select questions,id from ".$pfx."wls_quiz_paper where id = ".$this->id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		return $temp['questions'];
 	}
-	
-
 }
 ?>

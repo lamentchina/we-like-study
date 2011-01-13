@@ -122,7 +122,9 @@ class m_question extends wls implements dbtable{
 				,difficulty int default 0			comment '难度值,最大100,最小0'		
 
 				,markingmethod int default 0		comment '批改方式:0 自动批改,1教师批改,2用户批改,3多用户批改'
-
+				
+				,ids_knowledge varchar(200) default '0' /*知识点编号*/
+				,weight_knowledge varchar(200) default '0' /*权重*/
 			
 			) DEFAULT CHARSET=utf8;
 			";

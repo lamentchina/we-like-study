@@ -115,7 +115,7 @@ class m_question_log extends wls implements dbtable,log{
 				,id_question int default 0			comment '题目编号'
 				,id_question_parent int default 0	comment '上级题目所在编号'	
 	
-				,application int default 0			comment ' 用途:1随机练习,2题型掌握度练习,3知识点掌握度练习,4试卷练习,5参加在线考试'
+				,application int default 0			/* 0 做测验卷, 1随机练习,2题型掌握度练习,3知识点掌握度练习,4参加在线考试,5错题本练习*/
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);

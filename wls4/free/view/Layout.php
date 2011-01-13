@@ -15,6 +15,7 @@
 <script type="text/javascript" src="user/privilege.js"></script>
 <script type="text/javascript" src="quiz.js"></script>
 <script type="text/javascript" src="quiz/paper.js"></script>
+<script type="text/javascript" src="quiz/wrong.js"></script>
 <script type="text/javascript" src="subject.js"></script>
 
 <script type="text/javascript">
@@ -147,7 +148,14 @@ Ext.onReady(function(){
 				list.closable=true;				
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_u_p_l');	
-			}				
+			}else if(a.id_level=='1250'){
+				var o = new wls.quiz.wrong();
+				var list = o.getList('w_q_w_l');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_q_w_l');	
+			}
+						
 		}else if(a.menuType=='subject'){
 			if(a.id_level=='11'){
 				var o = new wls.quiz.paper();
