@@ -7,7 +7,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public $id = null;
 	public $mycent = null;
 	public $questions = null;
-	public $paper = null;	
+	public $paper = null;
 
 	/**
 	 * 插入一条数据
@@ -294,7 +294,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				'title_quiz_paper'=>$paper['title'],
 			);
 		}
-		
+
 		$this->questions = $questions;
 		$this->saveQuestions();
 	}
@@ -310,9 +310,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			$values = array_values($ques);
 			$ids = '';
 			for($i=0;$i<count($values);$i++){
-				if($values[$i]['id_parent']==0){
-					$ids .= $values[$i]['id'].",";
-				}
+				$ids .= $values[$i]['id'].",";				
 			}
 			$ids = substr($ids,0,strlen($ids)-1);
 			$data = array(
@@ -344,7 +342,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$objPHPExcel->getActiveSheet()->setCellValue('C2', $data['money']);
 		$objPHPExcel->getActiveSheet()->setCellValue('D2', $data['creator']);
 
-		$data = $questions;		
+		$data = $questions;
 		//处理题目
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
@@ -414,7 +412,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
 		$objWriter->save(dirname(__FILE__)."/../../../".$file);
-		return $file;		
+		return $file;
 	}
 
 	/**
@@ -432,7 +430,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$ques = new m_question();
 		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
 		$questions = $data['data'];
-		
+
 		$this->paperToExcel($paper,$questions);
 	}
 
@@ -502,6 +500,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				if($keys[$i]=='id'){
 					$where .= " and id in (".$search[$keys[$i]].") ";
 				}
+				if($keys[$i]=='id_level_subject'){
+					$where .= " and id_level_subject in (".$search[$keys[$i]].") ";
+				}
+				
 			}
 		}
 		if($orderby==null)$orderby = " order by id";

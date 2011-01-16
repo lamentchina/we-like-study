@@ -75,5 +75,18 @@ class subject extends wls{
 			echo '操作失败';
 		}
 	}
+	
+	public function getPaperList(){
+		include_once dirname(__FILE__).'/../model/quiz/paper.php';		
+		$paper = new m_quiz_paper();
+				
+		$page = 1;
+		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
+		$pagesize = 15;
+		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
+		$data = $paper->getList($page,$pagesize,array('id_level_subject'=>"'".$_REQUEST['id_level_subject']."'"));
+		$data['totalCount'] = $data['total'];
+		echo json_encode($data);
+	}
 }
 ?>

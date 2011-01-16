@@ -21,8 +21,8 @@ class m_knowledge extends wls implements dbtable,levelList{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_knowledge (".$keys.") values ('".$values."')";
-		echo $sql;
-		echo "<br/>";
+//		echo $sql;
+//		echo "<br/>";
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}

@@ -1,7 +1,7 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
 
-class m_quiz_worng extends m_quiz implements dbtable,quizdo{
+class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 
 	public $phpexcel;
 	public $id = null;
@@ -46,15 +46,7 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 		$sql = "delete from ".$pfx."wls_quiz_worng where id in (".$ids.") ";
 		try {
 			mysql_query($sql,$conn);
-			$sql = "delete from ".$pfx."wls_question where id_quiz_worng in (".$ids.") ";
-			try{
-				mysql_query($sql,$conn);
-				return true;
-			}
-			catch (Exception $ex2){
-				return false;
-			}
-
+			return true;
 		}
 		catch (Exception $ex){
 			return false;
@@ -202,7 +194,6 @@ class m_quiz_worng extends m_quiz implements dbtable,quizdo{
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_quiz_worng ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-//		echo $sql;
 		$res = mysql_query($sql,$conn);
 
 

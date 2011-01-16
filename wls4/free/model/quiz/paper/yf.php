@@ -26,7 +26,7 @@ class m_quiz_paper_yf extends m_quiz_paper{
 		$html .= 
 '</body>
 </html>';
-		
+		$html = str_replace("src=\"","src=\"../file/images/",$html);
 		echo $html;
 	}
 }

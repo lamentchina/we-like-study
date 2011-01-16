@@ -20,7 +20,9 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_user_privilege (".$keys.") values ('".$values."')";
+		$sql = "insert into ".$pfx."wls_user_privilege (".$keys.") values ('".$values."');";
+		echo $sql;
+		echo '<br/>';
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}

@@ -32,8 +32,7 @@ wls.quiz = Ext.extend(wls, {
 		var obj = this.questionsData;
 		var index = 1;
 		for(var i=0;i<obj.length;i++){
-			var ques = null;
-			
+			var ques = null;			
 			switch(obj[i].type){
 				case '1':
 					ques = new wls.question.choice();
@@ -42,7 +41,14 @@ wls.quiz = Ext.extend(wls, {
 					ques.questionData = obj[i];
 					ques.id = obj[i].id;
 					ques.quiz = this;
-					break;								
+					break;	
+				case '5':
+					ques = new wls.question.big();
+					ques.index = '';
+					ques.questionData = obj[i];
+					ques.id = obj[i].id;
+					ques.quiz = this;
+					break;												
 				default :
 					break;
 			}
@@ -57,8 +63,10 @@ wls.quiz = Ext.extend(wls, {
 	addNavigation:function(){
 		
 		var str = '';
+		var index = 0;
 		for(var i=0;i<this.questions.length;i++){
-			var temp = i+1;
+			if(this.questions[i].index=='')continue;
+			var temp = index+1;
 			if(temp<10){
 				temp = '0'+temp;
 				str += "<div class='w_q_subQuesNav_i' id='w_q_subQuesNav_"+this.questions[i].id+"' onclick='"+this.naming+".wls_quiz_nav("+this.questions[i].id+")'><a href='#' style='border:0px;'>"+temp+"</a></div>";
@@ -67,6 +75,7 @@ wls.quiz = Ext.extend(wls, {
 			}else{
 				str += "<div class='w_q_subQuesNav_i' id='w_q_subQuesNav_"+this.questions[i].id+"' onclick='"+this.naming+".wls_quiz_nav("+this.questions[i].id+")' style='height:18px;'><a href='#' style='border:0px;font-size:10px;margin-top:2px;' >"+temp+"</a></div>";
 			}	
+			index++;
 		}
 		$("#navigation").append(str);	
 		

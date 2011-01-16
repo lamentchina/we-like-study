@@ -71,5 +71,10 @@ var il8n = {
 	,DateCreated:'创建时间'
 	,Weight:'权重'
 	,Description:'说明'
+	,WeLikeStudy:'我们喜欢学习!'
+	,Log:'日志'
+	,Review:'查看'
+	,Proportion:'对错率'
+	,Application:'应用'
 	
 };

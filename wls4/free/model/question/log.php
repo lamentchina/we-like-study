@@ -1,9 +1,9 @@
 <?php
 class m_question_log extends wls implements dbtable,log{
 
-	public $phpexcel;	
+	public $phpexcel;
 	public $id = null;
-	
+
 	/**
 	 * 插入一条数据
 	 *
@@ -13,11 +13,13 @@ class m_question_log extends wls implements dbtable,log{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
-		$user = $this->getMyUser();
-		$data['id_user'] = $user['id'];
-		$data['id_level_user_group'] = $user['id_level_user_group'];		
-	
+
+		if(!isset($data['id_user'])){
+			$user = $this->getMyUser();
+			$data['id_user'] = $user['id'];
+			$data['id_level_user_group'] = $user['id_level_user_group'];
+		}
+
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -26,13 +28,13 @@ class m_question_log extends wls implements dbtable,log{
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
-	
+
 	public function insertMany($datas){
 		$pfx = $this->c->dbprefix;
-		$conn = $this->conn();		
+		$conn = $this->conn();
 
-		$user = $this->getMyUser();	
-		
+		$user = $this->getMyUser();
+
 		$keys = null;
 		$sql = '';
 		for($i=0;$i<count($datas);$i++){
@@ -51,7 +53,7 @@ class m_question_log extends wls implements dbtable,log{
 			$sql .= "('".$values."'),";
 		}
 		$sql = substr($sql,0,strlen($sql)-1);
-		
+
 		try{
 			mysql_query($sql,$conn);
 			return true;
@@ -59,7 +61,7 @@ class m_question_log extends wls implements dbtable,log{
 			$this->error(array('description'=>$sql));
 			return false;
 		}
-		
+
 	}
 
 	/**
@@ -83,17 +85,17 @@ class m_question_log extends wls implements dbtable,log{
 	 * 创建过程中,会先尝试删除这张表,然后重新建立.
 	 * 因此在运行之前需要将数据备份
 	 * 如果配置文件中的state不是debug,无法执行这类函数
-	 * 
+	 *
 	 * @return bool
 	 * */
 	public function create(){
 		if($this->c->state!='debug')return false;
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "drop table if exists ".$pfx."wls_question_log;";
 		mysql_query($sql,$conn);
-		$sql = "		
+		$sql = "
 			create table ".$pfx."wls_question_log(
 				 id int primary key auto_increment	/*自动编号*/
 				 
@@ -132,7 +134,7 @@ class m_question_log extends wls implements dbtable,log{
 	 * */
 	public function importExcel($path){
 		$conn = $this->conn();
-		$pfx = $this->c->dbprefix;	
+		$pfx = $this->c->dbprefix;
 
 		include_once dirname(__FILE__).'/../subject.php';
 		$obj = new m_subject();
@@ -142,7 +144,7 @@ class m_question_log extends wls implements dbtable,log{
 			include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 			return false;
 		}
-		
+
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -150,11 +152,11 @@ class m_question_log extends wls implements dbtable,log{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		
+
 		$currentSheet = $this->phpexcel->getSheetByName('paper');
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
-		
+
 		$paper = array();
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."1")->getValue()=='标题'){
@@ -162,25 +164,25 @@ class m_question_log extends wls implements dbtable,log{
 			}
 			if($currentSheet->getCell($i."1")->getValue()=='金币'){
 				$paper['money'] = $currentSheet->getCell($i."2")->getValue();
-			}	
+			}
 			if($currentSheet->getCell($i."1")->getValue()=='作者'){
 				$paper['creator'] = $currentSheet->getCell($i."2")->getValue();
-			}					
+			}
 			if($currentSheet->getCell($i."1")->getValue()=='科目'){
 				$paper['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$paper['id_level_subject']."'; ";
 				$res = mysql_query($sql_,$conn);
 				$temp = mysql_fetch_assoc($res);
 				$paper['name_subject'] = $temp['name'];
-			}		
-		}	
+			}
+		}
 		$paper['date_created'] = date('Y-m-d i:m:s');
-		$paper['id'] = $this->insert($paper);		
-		
+		$paper['id'] = $this->insert($paper);
+
 		$currentSheet = $this->phpexcel->getSheetByName('questions');
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
-		
+
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."2")->getValue()=='序号'){
@@ -188,43 +190,43 @@ class m_question_log extends wls implements dbtable,log{
 			}
 			if($currentSheet->getCell($i."2")->getValue()=='属于'){
 				$keys['belongto'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='题型'){
 				$keys['type'] = $i;
-			}				
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='题目'){
 				$keys['title'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='答案'){
 				$keys['answer'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='分值'){
 				$keys['cent'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项A'){
 				$keys['option1'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项B'){
 				$keys['option2'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项C'){
 				$keys['option3'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项D'){
 				$keys['option4'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项E'){
 				$keys['option5'] = $i;
-			}		
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项F'){
 				$keys['option6'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项G'){
 				$keys['option7'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='解题说明'){
 				$keys['description'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='听力文件'){
 				$keys['path_listen'] = $i;
 			}
@@ -242,15 +244,15 @@ class m_question_log extends wls implements dbtable,log{
 			}
 			if($currentSheet->getCell($i."2")->getValue()=='难度'){
 				$keys['difficulty'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='批改'){
 				$keys['markingmethod'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()=='选项数'){
 				$keys['optionlength'] = $i;
-			}																					
+			}
 		}
-		
+
 		include_once dirname(__FILE__).'/../question.php';
 		$quesObj = new m_question();
 		$index = 0;
@@ -284,7 +286,7 @@ class m_question_log extends wls implements dbtable,log{
 				'id_quiz_paper'=>$paper['id'],
 				'title_quiz_paper'=>$paper['title'],
 			);
-		}	
+		}
 		$ques = $quesObj->insertMany($questions);
 		if($ques==false){
 			return false;
@@ -295,13 +297,13 @@ class m_question_log extends wls implements dbtable,log{
 				if($values[$i]['id_parent']==0){
 					$ids .= $values[$i]['id'].",";
 				}
-				$ids = substr($ids,0,strlen($ids)-1);				
+				$ids = substr($ids,0,strlen($ids)-1);
 			}
 			$data = array(
 				'id'=>$paper['id'],
 				'questions'=>$ids
 			);
-			return $this->update($data);			
+			return $this->update($data);
 		}
 	}
 
@@ -320,8 +322,8 @@ class m_question_log extends wls implements dbtable,log{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');	
-	
+		$objPHPExcel->getActiveSheet()->setTitle('data');
+
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', '用户名');
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', '密码');
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', '金币');
@@ -339,7 +341,7 @@ class m_question_log extends wls implements dbtable,log{
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));   
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
 		$objWriter->save(dirname(__FILE__)."/../../../".$file);
@@ -367,31 +369,31 @@ class m_question_log extends wls implements dbtable,log{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_question_log ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-		
+
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
 		}
-		
+
 		$sql2 = "select count(*) as total from ".$pfx."wls_question_log ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
-		
+
 		return array(
 			'page'=>$page,
 			'data'=>$arr,
@@ -400,14 +402,14 @@ class m_question_log extends wls implements dbtable,log{
 			'pagesize'=>$pagesize,
 		);
 	}
-	
+
 	/**
 	 * 创建一条日志
-	 * 
+	 *
 	 * @param $whatHappend 事件类型
 	 * */
 	public function addLog($whatHappened){
-		
+
 	}
 }
 ?>

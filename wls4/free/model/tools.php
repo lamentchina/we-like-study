@@ -32,7 +32,7 @@ class tools {
 		if($t2==null){
 			$d2=strtotime("now");
 		}
-		
+
 		$dif = ($d2-$d1);
 		if($dif>2592000){
 			return round($dif/30/3600/24)."月";
@@ -120,7 +120,7 @@ class tools {
 			'2'=>'多项选择题',
 			'3'=>'判断题',
 			'4'=>'简答题',
-			'5'=>'短文阅读',
+			'5'=>'组合题',
 		);
 
 		if($bool){
@@ -129,6 +129,23 @@ class tools {
 
 		return $config[$key];
 	}
+	
+	public function formatApplicationType($key,$bool=false){
+		$config = array(
+			'0'=>'做测验卷',
+			'1'=>'随机练习',
+			'2'=>'题型掌握度练习',
+			'3'=>'知识点掌握度练习题',
+			'4'=>'参加在线考试',
+			'5'=>'错题本练习',
+		);
+
+		if($bool){
+			$config = array_flip($config);
+		}
+
+		return $config[$key];
+	}	
 
 	/**
 	 * 处理题目标题,主要处理\n变< br/ >之类的
@@ -206,6 +223,20 @@ class tools {
 
 			return $data;
 		}
+	}
+
+	public function excelTime($date, $time=false){
+		if(is_numeric($date)){
+			$jd = GregorianToJD(1, 1, 1970);
+			$gregorian = JDToGregorian($jd+intval($date)-25569);
+			$date = explode('/',$gregorian);
+			$date_str = str_pad($date[2],4,'0', STR_PAD_LEFT)
+			."-".str_pad($date[0],2,'0', STR_PAD_LEFT)
+			."-".str_pad($date[1],2,'0', STR_PAD_LEFT)
+			.($time?" 00:00:00":'');
+			return $date_str;
+		}
+		return $date;
 	}
 }
 ?>

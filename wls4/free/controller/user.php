@@ -45,6 +45,17 @@ class user extends wls{
 			}
 		}
 	}
+	
+	public function logout(){
+		session_start();
+		unset($_SESSION['wls_user']);
+		session_destroy();
+		echo '
+	<script language="javascript" type="text/javascript">
+           window.location.href="free/view/Layout.php"; 
+    </script>
+		';
+	}
 
 	public function viewUpload(){
 		echo '
@@ -167,7 +178,7 @@ class user extends wls{
 				if(count($data)>0){
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
-						$data_[$ii]['type'] = 'subject';
+						$data_[$ii]['type'] = 'group';
 						if($data_[$ii]['checked']==1){
 							$data_[$ii]['ismenu'] = 1;
 							$data__[] = $data_[$ii];

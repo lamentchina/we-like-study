@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css"
 	href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
 <script type="text/javascript" src="../../../libs/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="../../../libs/jqueryextend.js"></script>	
 <script type="text/javascript"
 	src="../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="../../../libs/ext_3_2_1/ext-all.js"></script>
@@ -16,22 +17,22 @@
 <script type="text/javascript" src="quiz.js"></script>
 <script type="text/javascript" src="quiz/paper.js"></script>
 <script type="text/javascript" src="quiz/wrong.js"></script>
+<script type="text/javascript" src="quiz/log.js"></script>
 <script type="text/javascript" src="subject.js"></script>
 
 <script type="text/javascript">
 var user_ = new wls.user();
 <?php 
 session_start();
-if(isset($_SESSION['wls_user'])){	
+if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){	
+	
 	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['prvilege']."';\n";
 	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
 	echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
 	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
 	echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
 	echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
-}else{
-	echo "not login!";
-}
+	
 ?>
 
 Ext.onReady(function(){		
@@ -117,7 +118,8 @@ Ext.onReady(function(){
 	}
 
 	var menuClick = function(a){		
-		if(a.menuType=='menu'){			
+		if(a.menuType=='menu'){	
+//			console.debug(a.id_level);		
 			if(a.id_level=='1150'){
 				var o = new wls.quiz.paper();
 				var list = o.getList('w_q_p_l');
@@ -154,19 +156,52 @@ Ext.onReady(function(){
 				list.closable=true;				
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_q_w_l');	
-			}
-						
-		}else if(a.menuType=='subject'){
-			if(a.id_level=='11'){
-				var o = new wls.quiz.paper();
-				var list = o.getList('w_s_l');
-				list.closable=true;				
+			}else if(a.id_level=='1252'){
+				user_.logOut();
+			}else if(a.id_level=='1151'){				
+				var o = new wls.quiz.log();
+				var list = o.getList('w_q_lg_l');
+				list.closable=true;		
+				list.title = il8n.Log;		
 				Ext.getCmp('w_tp').add(list);
-				Ext.getCmp('w_tp').setActiveTab('w_s_l');
-			}
+				Ext.getCmp('w_tp').setActiveTab('w_q_lg_l');	
+			}								
+		}else if(a.menuType=='subject'){
+			var obj = new wls.subject();
+			obj.id_level = a.id_level;
+			
+			var copoment = obj.getSubjectCenter('w_s_c'+obj.id_level);
+			copoment.closable=true;			
+			copoment.title = il8n.Subject+' '+a.text;	
+			Ext.getCmp('w_tp').add(copoment);
+			Ext.getCmp('w_tp').setActiveTab('w_s_c'+obj.id_level);	
 		}	
 	}
 });
+
+<?php 
+}else{
+	?>
+	Ext.onReady(function(){
+
+		var copoment = user_.getLogin();
+	
+		var window = new Ext.Window({
+			title:il8n.WeLikeStudy,
+	        width: 250,
+	        height: 300,
+	        layout: 'fit',
+	        plain:true,
+	        bodyStyle:'padding:5px;',
+	        buttonAlign:'center',
+	        items: [copoment]       
+	    });
+	
+	    window.show();
+	});
+<?php 
+}
+?>
 </script>
 </head>
 <body>

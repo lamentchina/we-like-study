@@ -1,7 +1,7 @@
 wls.question.choice = Ext.extend(wls.question, {
 	initDom:function(){
 		$("#wls_quiz_main").append("<div id='w_qs_"+this.id+"'></div>");
-		$("#w_qs_"+this.id).append("<div class='w_qw_title'>"+this.index+"<span class='w_qw_tool'></span>"+this.questionData.title+"</div>");
+		$("#w_qs_"+this.id).append("<div class='w_qw_title'>"+this.index+"&nbsp;<span class='w_qw_tool'></span>"+this.questionData.title+"</div>");
 		$("#w_qs_"+this.id).append("<span class='w_qw_options'></span>");
 		for(var i=0;i<parseInt(this.questionData.optionlength);i++){
 			eval("var title = this.questionData.option"+(i+1));
@@ -39,7 +39,7 @@ wls.question.choice = Ext.extend(wls.question, {
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_w');
 			$('#w_q_subQuesNav_'+this.id).attr('title','做错\n分值:'+(this.cent));
-			this.addWhyImWrong();
+			if(this.quiz.type=='paper')this.addWhyImWrong();
 		}
 
 		obj = null;
@@ -54,5 +54,11 @@ wls.question.choice = Ext.extend(wls.question, {
 			answer = value;
 		}
 		return answer;
+	}
+	,setMyAnser:function(){
+		var myAnswer = this.answerData.myAnswer;
+		var temp = {A:0,B:1,C:2,D:3};
+		var c = $("input[name=w_qs_"+this.id+"]");
+		eval("c[temp."+myAnswer+"].checked = true");
 	}
 });

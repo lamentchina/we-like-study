@@ -7,7 +7,7 @@ class quiz_wrong extends quiz{
 	function quiz_wrong(){
 		parent::wls();
 		include_once $this->c->license.'/model/quiz/wrong.php';
-		$this->m = new m_quiz_worng();
+		$this->m = new m_quiz_wrong();
 	}
 
 	public function jsonList(){
@@ -88,7 +88,7 @@ class quiz_wrong extends quiz{
 	}
 
 	public function delete(){
-		$this->m->delete($_POST['id']);
+		$this->m->delete($_POST['ids']);
 	}
 
 	public function getAnswers(){

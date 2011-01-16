@@ -1,6 +1,7 @@
 <?php
 include_once 'interface.php';
 include_once 'config.php';
+include_once 'free/model/tools.php';
 
 /**
  * We Like Study!
@@ -17,14 +18,16 @@ class wls{
 	 * 需要引用外部文件 config.php
 	 * */
 	public $c = null;
+	
+	public $t = null;
 
 	/**
 	 * 构造函数
 	 * 每次引用这个文件时都会自动运行
 	 * */
 	public function wls(){
-		
 		$this->c = new wlsconfig();
+		$this->t = new tools();
 	}
 
 	/**

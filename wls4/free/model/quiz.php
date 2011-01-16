@@ -13,7 +13,8 @@ class m_quiz extends wls{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		$sql = "select * from ".$pfx."wls_question where id in (".$ids.") or id_parent in (".$ids."); ";
+		$sql = "select * from ".$pfx."wls_question where id in (".$ids.") or (id_parent !=0 and id_parent in (".$ids.")); ";
+//		echo $sql;
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){

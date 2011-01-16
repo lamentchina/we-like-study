@@ -107,6 +107,9 @@ wls.user = Ext.extend(wls, {
 			});
     	}
 	},
+	logOut:function(){
+		window.location.href=this.config.AJAXPATH+"?controller=user&action=logout";
+	},
 	getList:function(domid){
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
