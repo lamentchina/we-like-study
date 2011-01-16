@@ -95,6 +95,7 @@ class m_subject extends wls implements dbtable,levelList{
 				,name varchar(200) default '' 		/*用户组名称*/
 				,ordering int default 0				/*排序规则*/
 				,cach text 							/*缓存内容*/
+				,ids_level_knowledge varchar(200) default '0' /*知识点组成*/
 							
 			) DEFAULT CHARSET=utf8;
 			";
@@ -129,6 +130,7 @@ class m_subject extends wls implements dbtable,levelList{
 				'id_level'=>$currentSheet->getCell('A'.$i)->getValue(),
 				'name'=>$currentSheet->getCell('B'.$i)->getValue(),
 				'ordering'=>$currentSheet->getCell('C'.$i)->getValue(),
+				'ids_level_knowledge'=>$currentSheet->getCell('D'.$i)->getValue(),
 			);
 			$this->insert($data);
 		}

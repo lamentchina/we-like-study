@@ -110,31 +110,31 @@ class m_quiz_paper_yf_xznlcs extends m_quiz_paper_yf implements yfActions{
 			}
 			if($i<=25){
 //				$data['extype']='言语理解与表达';
-				$data['ids_knowledge']='1001';
+				$data['ids_level_knowledge']='1001';
 			}else if($i>=26 && $i<=35){				
 //				$data['extype']='数学推理';
-				$data['ids_knowledge']='100201';
+				$data['ids_level_knowledge']='1002,100201';
 			}else if($i>=36 && $i<=50){
 //				$data['extype']='数学运算';
-				$data['ids_knowledge']='100202';
+				$data['ids_level_knowledge']='1002,100202';
 			}else if($i>=51 && $i<=60){
 //				$data['extype']='图形推理'; 
-				$data['ids_knowledge']='100301';
+				$data['ids_level_knowledge']='1003,100301';
 			}else if($i>=61 && $i<=70){
 //				$data['extype']='定义判断';
-				$data['ids_knowledge']='100302';
+				$data['ids_level_knowledge']='1003,100302';
 			}else if($i>=71 && $i<=80){
 //				$data['extype']='类比推理';
-				$data['ids_knowledge']='100303';
+				$data['ids_level_knowledge']='1003,100303';
 			}else if($i>=81 && $i<=95){
 //				$data['extype']='演绎推理';
-				$data['ids_knowledge']='100304';
+				$data['ids_level_knowledge']='1003,100304';
 			}else if($i>=96 && $i<=115){
 //				$data['extype']='常识判断';
-				$data['ids_knowledge']='1005';
+				$data['ids_level_knowledge']='1005';
 			}else if($i>=116 && $i<=135){
 //				$data['extype']='资料分析';
-				$data['ids_knowledge']='1004';
+				$data['ids_level_knowledge']='1004';
 				if($i>=116 && $i<=120){
 					$data['belongto'] = '1160';
 				}

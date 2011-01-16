@@ -38,7 +38,13 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	 * @param $ids 编号,每张表都id这个列,一般为自动递增
 	 * @return bool
 	 * */
-	public function delete($ids){}
+	public function delete($ids){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "delete from ".$pfx."wls_quiz_log where id  in (".$ids.");";
+		mysql_query($sql,$conn);
+	}
 
 	/**
 	 * 更新一条数据
@@ -197,8 +203,10 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$id_question = '';
 		include_once dirname(__FILE__).'/wrong.php';
 		$wrongObj = new m_quiz_wrong();
+		include_once dirname(__FILE__).'/../knowledge/log.php';
+		$knowledgeLog = new m_knowledge_log();		
 		for($i=3;$i<=$allRow;$i++){
-			$sql = "select id,answer,cent,id_parent from ".$pfx."wls_question where id = ".$currentSheet->getCell($keys['id_question'].$i)->getValue();
+			$sql = "select id,answer,cent,id_parent,ids_level_knowledge from ".$pfx."wls_question where id = ".$currentSheet->getCell($keys['id_question'].$i)->getValue();
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
 			$id_question .= $temp['id'].',';
@@ -316,6 +324,12 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				if($keys[$i]=='id'){
 					$where .= " and id in (".$search[$keys[$i]].") ";
 				}
+				if($keys[$i]=='id_user'){
+					$where .= " and id_user in (".$search[$keys[$i]].") ";
+				}
+				if($keys[$i]=='id_level_subject'){
+					$where .= " and id_level_subject in ('".$search[$keys[$i]]."') ";
+				}				
 			}
 		}
 		if($orderby==null)$orderby = " order by id";

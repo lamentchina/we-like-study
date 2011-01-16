@@ -218,9 +218,7 @@ class user extends wls{
 		$obj = new m_user_group();
 		$data = $obj->getListForUser($username);
 
-		include_once dirname(__FILE__).'/../model/tools.php';
-		$t = new tools();
-		$data =  $t->getTreeData(null,$data);
+		$data =  $this->t->getTreeData(null,$data);
 
 		echo json_encode($data);
 	}
@@ -242,7 +240,7 @@ class user extends wls{
 
 		echo json_encode($data);
 	}
-
+	
 
 }
 ?>

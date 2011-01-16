@@ -12,6 +12,10 @@ class install extends wls {
 		include_once $this->c->license.'/model/knowledge.php';
 		$obj = new m_knowledge();
 		$obj->create();
+		
+		include_once $this->c->license.'/model/knowledge/log.php';
+		$obj = new m_knowledge_log();
+		$obj->create();		
 
 		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();

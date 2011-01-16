@@ -27,7 +27,7 @@ var user_ = new wls.user();
 session_start();
 if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){	
 	
-	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['prvilege']."';\n";
+	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['privilege']."';\n";
 	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
 	echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
 	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
@@ -42,8 +42,8 @@ Ext.onReady(function(){
         activeTab: 0,
         frame:true,
         region:'center',       
-        items:[	]
-        });
+        items:[]
+    });
 	var tb_ = new Ext.Toolbar({
 		id:"w_t",
 		region: 'north',

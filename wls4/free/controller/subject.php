@@ -90,5 +90,17 @@ class subject extends wls{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
+	
+	public function getMyQuizLine(){
+		include_once dirname(__FILE__).'/../model/quiz/log.php';		
+		$log = new m_quiz_log();
+		$user = $this->getMyUser();
+		$data = $log->getList(1,100,array('id_level_subject'=>$_REQUEST['id_level_subject'],'id_user'=>$user['id']));
+		for($i=0;$i<count($data['data']);$i++){
+			$data['data'][$i]['index'] = $i+1;
+			$data['data'][$i]['proportion'] *=100;
+		}
+		echo json_encode($data);		
+	}
 }
 ?>

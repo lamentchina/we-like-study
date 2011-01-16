@@ -82,7 +82,7 @@ class quiz_log extends quiz{
 	}
 
 	public function delete(){
-		$this->m->delete($_POST['ids']);
+		$this->m->delete($_POST['id']);
 	}
 
 	public function getAnswers(){

@@ -249,51 +249,43 @@ wls.subject = Ext.extend(wls, {
 		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
-	,getSubjectCenter:function(domid){
-		var store = new Ext.data.JsonStore({
-	        fields:['name', 'visits', 'views'],
-	        data: [
-	            {name:'Jul 07', visits: 245000, views: 3000000},
-	            {name:'Aug 07', visits: 240000, views: 3500000},
-	            {name:'Sep 07', visits: 355000, views: 4000000},
-	            {name:'Oct 07', visits: 375000, views: 4200000},
-	            {name:'Nov 07', visits: 490000, views: 4500000},
-	            {name:'Dec 07', visits: 495000, views: 5800000},
-	            {name:'Jan 08', visits: 520000, views: 6000000},
-	            {name:'Feb 08', visits: 620000, views: 7500000}
-	        ]
-	    });
-		
-		
+	,getSubjectCenter:function(domid){		
 		var grid = this.getPaperList(domid+'_paperList');
-		grid.region = 'center';
-		var leftSide = new Ext.Panel({
-			region:'east',
-			width:300,
-			layout: 'border',
-	        items: [{
-	        	region:'center',
-	            xtype: 'linechart',
-	            store: store,
-	            xField: 'name',
-	            yField: 'visits',
-				listeners: {
-					itemclick: function(o){
-						var rec = store.getAt(o.index);
-					}
-				}
-	        },new Ext.Button({text:'sadf',region:'north'})]
-
+		grid.region = 'center';		
+		
+		var leftSide = new Ext.TabPanel({
+			 id:domid+'_left'
+	        ,activeTab: 0
+	        ,width:400
+	        ,frame:true
+	        ,items:[]
+	        ,region:'east'
     	});
 		var layout = new Ext.Panel({
 			 layout: 'border'
 			,id:domid
 			,items: [grid,leftSide]			
 		});
-		
-
-
-
+		var quizLine = this.getMyQuizLine();
+		quizLine.title = '对错率曲线';		
+		leftSide.add(quizLine);
 		return layout;
+	}
+	,getMyQuizLine:function(){
+		var thisObj = this;
+		var store = new Ext.data.JsonStore({
+		    autoDestroy: true,
+		    url: thisObj.config.AJAXPATH+'?controller=subject&action=getMyQuizLine&id_level_subject='+thisObj.id_level,
+		    root: 'data',
+		    idProperty: 'id',
+		    fields: ['id','proportion','index']
+		});
+		var chart = new Ext.chart.LineChart({
+			 store:store
+			,xField:'index'
+			,yField:'proportion'
+		});
+		store.load();
+		return chart;
 	}
 });

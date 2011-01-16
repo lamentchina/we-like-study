@@ -5,6 +5,7 @@
 class m_user extends wls implements dbtable{
 	
 	public $phpexcel;	
+	public $id = null;
 	
 	/**
 	 * 插入一条数据
@@ -261,11 +262,16 @@ class m_user extends wls implements dbtable{
 				$o = new m_user_privilege();
 				$d = $o->getListForUser($data['username']);
 				$ids = '';
+				$privileges = array();
 				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+					if($d[$i]['checked']=='1'){
+						$ids .= $d[$i]['id_level'].",";
+						$privileges[$d[$i]['id_level']] = $d[$i]['money'];
+					}
 				}
 				$ids = substr($ids,0,strlen($ids)-1);
-				$data['prvilege'] = $ids;
+				$data['privilege'] = $ids;
+				$data['privileges'] = $privileges;
 				
 				include_once dirname(__FILE__).'/user/group.php';
 				$o = new m_user_group();
@@ -288,8 +294,10 @@ class m_user extends wls implements dbtable{
 				$data['subject'] = $ids;
 				
 				$_SESSION['wls_user'] = $data;
+				
+				
 			}
-			
+//			print_r($_SESSION['wls_user']);
 			return $_SESSION['wls_user'];
 		}else{
 			$data = $this->getList(1,1,array('id'=>$id));
@@ -349,6 +357,29 @@ class m_user extends wls implements dbtable{
 			$g->linkUser($data);
 		}
 	}
+	
+	public function checkMyPrivilege($privilege){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+				
+		$user = $this->getUser(null,true);		
+//		print_r($user);
+		$privileges = $user['privilege'];
+		
+		$privileges = explode(",",$privileges);
+		if(in_array($privilege,$privileges)){
+			if($user['money']>$user['privileges'][$privilege]){
+				$sql = "update ".$pfx."wls_user set money = money - ".$user['privileges'][$privilege]." where id = ".$user['id'];
+				mysql_query($sql,$conn);
+				$_SESSION['wls_user']['money'] -= $user['privileges'][$privilege];
+				return true;				
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}	
 
 }
 ?>

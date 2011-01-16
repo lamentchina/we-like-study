@@ -12,8 +12,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 	 * */
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
-		$conn = $this->conn();
-		
+		$conn = $this->conn();		
 
 		$user = $this->getMyUser();
 		$data['id_user'] = $user['id'];
@@ -24,8 +23,24 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_knowledge_log (".$keys.") values ('".$values."')";
-		mysql_query($sql,$conn);
-		return mysql_insert_id($conn);
+		try{
+			mysql_query($sql,$conn);
+		}catch (Exception $ex){
+			if($data['count_wrong']==1){
+				$sql2 = "update ".$pfx."wls_knowledge_log set count_wrong = count_wrong +1 where 
+				 date_created = '".$data['date_created']."' and
+				 date_slide = '".$data['date_slide']."' and
+				 id_level_knowledge = '".$data['id_level_knowledge']."'
+				"; 
+			}else{
+				$sql2 = "update ".$pfx."wls_knowledge_log set count_right = count_right +1 where 
+				 date_created = '".$data['date_created']."' and
+				 date_slide = '".$data['date_slide']."' and
+				 id_level_knowledge = '".$data['id_level_knowledge']."'
+				"; 
+			}
+			mysql_query($sql2,$conn);			
+		}
 	}
 
 	/**
@@ -83,15 +98,15 @@ class m_knowledge_log extends wls implements dbtable,log{
 			create table ".$pfx."wls_knowledge_log(
 				 id int primary key auto_increment	/*自动编号*/
 				 
-				,date_created datetime 				comment '创建时间'	
+				,date_created datetime 				/*创建时间*/	
 				,date_slide int default 86400		/*时间间隔,默认一天*/			 
-				,id_user int default 0				comment '用户编号'
-				,id_level_knowledge varchar(200) default '0' /*知识点编号*/
-				,count int default 0 				/*累计次数*/
-				,cent int default 0 				/*分数*/
-				
-	
-				,application int default 0			/* 0 做测验卷, 1随机练习,2题型掌握度练习,3知识点掌握度练习,4参加在线考试,5错题本练习*/
+				,id_user int default 0				/*用户编号*/
+				,id_level_user_group varchar(200) default '0' 	/*用户组编号*/
+				,id_level_knowledge varchar(200) default '0' 	/*知识点编号*/
+				,count_right int default 0			
+				,count_wrong int default 0
+
+				,CONSTRAINT ".$pfx."wls_quiz_worng_u UNIQUE (id_user,id_level_knowledge,date_created,date_slide)
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);

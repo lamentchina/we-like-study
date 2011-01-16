@@ -182,6 +182,18 @@ class quiz_paper extends quiz{
 	}
 
 	public function viewOne(){
+		include_once $this->c->license.'/model/user.php';
+		$obj_ = new m_user();
+		if($obj_->checkMyPrivilege('1107')==false){
+			echo "error";
+			exit();
+		}else{
+			if($this->m->checkMoney($_REQUEST['id'])==false){
+				echo "error";
+				exit();
+			}
+		}
+		
 		$html = "
 <!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
 <html>

@@ -577,5 +577,24 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$temp = mysql_fetch_assoc($res);
 		return $temp['questions'];
 	}
+	
+	public function checkMoney($id){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "select money,id from ".$pfx."wls_quiz_paper where id= ".$id;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		
+		$user = $this->getMyUser();
+		if($user['money']>$temp['money']){
+			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
+			$_SESSION['wls_user']['money'] -= $temp['money'];
+			mysql_query($sql,$conn);
+			return true;
+		}else{
+			return false;
+		}
+	}
 }
 ?>
