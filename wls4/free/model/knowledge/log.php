@@ -14,32 +14,34 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();		
 
-		$user = $this->getMyUser();
-		$data['id_user'] = $user['id'];
-		$data['id_level_user_group'] = $user['id_level_user_group'];		
+		if(!isset($data['id_user'])){
+			$user = $this->getMyUser();
+			$data['id_user'] = $user['id'];
+			$data['id_level_user_group'] = $user['id_level_user_group'];
+		}
 	
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_knowledge_log (".$keys.") values ('".$values."')";
-		try{
-			mysql_query($sql,$conn);
-		}catch (Exception $ex){
-			if($data['count_wrong']==1){
-				$sql2 = "update ".$pfx."wls_knowledge_log set count_wrong = count_wrong +1 where 
-				 date_created = '".$data['date_created']."' and
-				 date_slide = '".$data['date_slide']."' and
-				 id_level_knowledge = '".$data['id_level_knowledge']."'
-				"; 
-			}else{
+		$done = mysql_query($sql,$conn);
+		if($done===false){
+			if(isset($data['count_right'])){
 				$sql2 = "update ".$pfx."wls_knowledge_log set count_right = count_right +1 where 
 				 date_created = '".$data['date_created']."' and
 				 date_slide = '".$data['date_slide']."' and
 				 id_level_knowledge = '".$data['id_level_knowledge']."'
 				"; 
+			}else{
+				$sql2 = "update ".$pfx."wls_knowledge_log set count_wrong = count_wrong +1 where 
+				 date_created = '".$data['date_created']."' and
+				 date_slide = '".$data['date_slide']."' and
+				 id_level_knowledge = '".$data['id_level_knowledge']."'
+				"; 
 			}
-			mysql_query($sql2,$conn);			
+//			echo $sql2;
+			mysql_query($sql2,$conn);
 		}
 	}
 

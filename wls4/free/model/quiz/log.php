@@ -204,7 +204,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		include_once dirname(__FILE__).'/wrong.php';
 		$wrongObj = new m_quiz_wrong();
 		include_once dirname(__FILE__).'/../knowledge/log.php';
-		$knowledgeLog = new m_knowledge_log();		
+		$knowledgeLogObj = new m_knowledge_log();		
 		for($i=3;$i<=$allRow;$i++){
 			$sql = "select id,answer,cent,id_parent,ids_level_knowledge from ".$pfx."wls_question where id = ".$currentSheet->getCell($keys['id_question'].$i)->getValue();
 			$res = mysql_query($sql,$conn);
@@ -238,18 +238,39 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				);
 				$wrongObj->insert($wrong);				
 			}
+			$knowledges = explode(",",$temp['ids_level_knowledge']);
+			for($ii=0;$ii<count($knowledges);$ii++){
+				if($queslog['correct']==1){				
+					$knowledgeLog = array(
+						 'date_created'=>date('Y-m-d',strtotime($quizlog['date_created']))
+						,'id_user'=>$quizlog['id_user']
+						,'id_level_knowledge'=>$knowledges[$ii]
+						,'count_right'=>1
+						,'date_slide'=>86400
+					);
+				}else{
+					$knowledgeLog = array(
+						 'date_created'=>date('Y-m-d',strtotime($quizlog['date_created']))
+						,'id_user'=>$quizlog['id_user']
+						,'id_level_knowledge'=>$knowledges[$ii]
+						,'count_wrong'=>1
+						,'date_slide'=>86400
+					);
+				}
+				$knowledgeLogObj->insert($knowledgeLog);
+			}
+
 			$queslog['id'] = $quesObj->insert($queslog);
 			$queslogs[] = $queslog;
 		}
 		$id_question = substr($id_question,0,strlen($id_question)-1);
 		$quizlog_update = array(
 			 'id'=>$quizlog['id']
-		,'mycent'=>$quizlog_cent
-		,'id_question'=>$id_question
-		,'count_right'=>$count_right
-		,'count_wrong'=>$count_wrong
-		,'proportion'=>$count_right/($count_wrong+$count_right)
-			
+			,'mycent'=>$quizlog_cent
+			,'id_question'=>$id_question
+			,'count_right'=>$count_right
+			,'count_wrong'=>$count_wrong
+			,'proportion'=>$count_right/($count_wrong+$count_right)			
 		);
 		$this->update($quizlog_update);
 	}
