@@ -5,6 +5,7 @@
 class m_subject extends wls implements dbtable,levelList{
 
 	public $phpexcel = null;
+	public $id_level = null;
 
 	/**
 	 * 插入一条数据
@@ -93,6 +94,7 @@ class m_subject extends wls implements dbtable,levelList{
 				,id_level varchar(200) unique		/*级层编号*/
 				,name varchar(200) default '' 		/*用户组名称*/
 				,ordering int default 0				/*排序规则*/
+				,cach text 							/*缓存内容*/
 							
 			) DEFAULT CHARSET=utf8;
 			";
@@ -171,6 +173,10 @@ class m_subject extends wls implements dbtable,levelList{
 		$objWriter->save(dirname(__FILE__)."/../../../".$file);
 		return $file;
 	}
+	
+
+	
+
 
 	/**
 	 * 累加某个值

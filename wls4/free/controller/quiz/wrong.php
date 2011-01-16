@@ -20,6 +20,17 @@ class quiz_wrong extends quiz{
 		echo json_encode($data);
 	}
 
+	public function myList(){
+		$page = 1;
+		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
+		$pagesize = 15;
+		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
+		$user = $this->getMyUser();
+		$data = $this->m->getList($page,$pagesize,array('id_user'=>$user['id']));
+		$data['totalCount'] = $data['total'];
+		echo json_encode($data);
+	}	
+	
 	public function viewUpload(){
 		echo '
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -108,7 +119,7 @@ class quiz_wrong extends quiz{
 
 		//得到答案并直接输出,没有任何的数据库写入
 		$answers = $this->m->getAnswers($ques_);
-		echo json_encode($answers);
+		$json = json_encode($answers);
 
 
 		//写入测验卷日志
@@ -131,8 +142,8 @@ class quiz_wrong extends quiz{
 
 		$user = $this->getMyUser();
 
-		include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
-		$wrongObj = new m_quiz_worng();
+
+		$wrongObj = $this->m;
 
 		for($i=0;$i<count($answers);$i++){
 			unset($answers[$i]['description']);
@@ -184,6 +195,8 @@ class quiz_wrong extends quiz{
 			$data['proportion'] = $count_right/($count_right+$count_wrong);
 		}
 		$obj->update($data);
+		
+		echo $json;
 	}
 
 	public function viewOne(){

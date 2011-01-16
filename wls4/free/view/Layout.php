@@ -9,6 +9,7 @@
 <script type="text/javascript"
 	src="../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../../../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
 <script type="text/javascript" src="il8n.js"></script>
 <script type="text/javascript" src="wls.js"></script>
 <script type="text/javascript" src="user.js"></script>
@@ -150,12 +151,18 @@ Ext.onReady(function(){
 				list.closable=true;				
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_u_p_l');	
-			}else if(a.id_level=='1250'){
+			}else if(a.id_level=='1153'){
 				var o = new wls.quiz.wrong();
 				var list = o.getList('w_q_w_l');
 				list.closable=true;				
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_q_w_l');	
+			}else if(a.id_level=='1250'){
+				var o = new wls.quiz.wrong();
+				var list = o.getMyList('w_q_w_ml');
+				list.closable=true;				
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_q_w_ml');	
 			}else if(a.id_level=='1252'){
 				user_.logOut();
 			}else if(a.id_level=='1151'){				

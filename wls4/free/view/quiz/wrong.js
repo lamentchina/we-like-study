@@ -116,6 +116,93 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		    url: thisObj.config.AJAXPATH+'?controller=quiz_wrong&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
+		    fields: ['id','id_level_subject','id_quiz_paper','date_created','timedif','subject_name','count','id_user']
+		});
+		
+		var cm = new Ext.grid.ColumnModel({
+		    defaults: {
+		        sortable: true   
+		    },
+		    columns: [{
+		             header: il8n.ID
+		            ,dataIndex: 'id'
+		        },{
+		             header: il8n.Subject
+		            ,dataIndex: 'id_level_subject'
+		            ,hidden:true
+		        },{
+		             header: il8n.Paper.Paper
+		            ,dataIndex: 'id_quiz_paper'
+		            ,hidden:true
+		        },{
+		             header: il8n.DateCreated
+			        ,dataIndex: 'date_created'
+			        ,hidden:true
+			    },{
+		             header: il8n.DateCreated
+			        ,dataIndex: 'timedif'
+			    },{
+		             header: il8n.Subject
+			        ,dataIndex: 'subject_name'
+			    },{
+		             header: il8n.Count.Wrong
+			        ,dataIndex: 'count'
+			    },{
+		             header: il8n.User.User
+			        ,dataIndex: 'id_user'
+			    }
+		    ]
+		});
+		
+		var tb = new Ext.Toolbar({
+			id:"w_q_w_l_tb"
+		});	
+		
+		var grid = new Ext.grid.GridPanel({
+			title:il8n.Wrongs,
+		    store:store,
+		    cm: cm,        
+		    id: domid,
+		    width: 600,
+		    height: 300,
+		    tbar: tb,
+		    bbar : new Ext.PagingToolbar({
+				store : store,
+				pageSize : 15,
+				displayInfo : true
+			})
+		});
+		var privilege = user_.myUser.privilege.split(",");
+		for(var i=0;i<privilege.length;i++){
+			if(privilege[i]=='115303'){
+				tb.add({
+					text: il8n.Delete,
+			        handler : function(){   
+						Ext.Ajax.request({				
+							method:'POST',				
+							url:thisObj.config.AJAXPATH+"?controller=quiz_paper&action=delete",				
+							success:function(response){				
+							    store.load();
+							},				
+							failure:function(response){				
+							    Ext.Msg.alert('failure',response.responseText);
+							},				
+							params:{id:Ext.getCmp(domid).getSelectionModel().selection.record.id}				
+						});		
+					}
+				});
+			}
+		}		   
+		store.load({params:{start:0, limit:15}});    
+		return grid;
+	}
+	,getMyList:function(domid){
+		var thisObj = this;
+		var store = new Ext.data.JsonStore({
+		    autoDestroy: true,
+		    url: thisObj.config.AJAXPATH+'?controller=quiz_wrong&action=myList',
+		    root: 'data',
+		    idProperty: 'id',
 		    fields: ['id','id_level_subject','id_quiz_paper','date_created','timedif','subject_name','count']
 		});
 		
@@ -152,7 +239,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		});
 		
 		var tb = new Ext.Toolbar({
-			id:"w_s_l_tb"
+			id:"w_q_w_ml_tb"
 		});	
 		
 		var grid = new Ext.grid.GridPanel({
@@ -163,112 +250,41 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		    width: 600,
 		    height: 300,
 		    tbar: tb,
-		    tbar: [
-		    {
-		        text: il8n.Export,
-		        handler : function(){   
-					var win = new Ext.Window({
-						id:'w_q_w_l_e',
-						layout:'fit',
-						width:500,
-						height:300,	
-						html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=viewExport&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id+"&temp="+Math.random()+"' width='100%' height='250' />"
-					});
-					win.show(this);
-				}
-		    },{
-		        text: il8n.Delete,
-		        handler : function(){
-		        	var ids = '';
-		        	var arr = Ext.getCmp(domid).getSelectionModel().selections.keys;
-		        	for(var i=0;i<arr.length;i++){
-		        		ids += arr[i]+',';
-		        	}
-		        	ids = ids.substring(0,ids.length-1);
-			        Ext.Ajax.request({				
-						method:'POST',				
-						url:thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=delete",				
-						success:function(response){				
-						    store.load();
-						},				
-						failure:function(response){				
-						    Ext.Msg.alert('failure',response.responseText);
-						},				
-						params:{ids:ids}				
-					});					
-				}
-		    },{
-		        text: il8n.DoQuiz,
-		        handler : function(){
-		        	var id_level_subject = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject;
-		        	console.debug(id_level_subject);
-					window.open(thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=viewOne&id_level_subject="+id_level_subject);
-				}
-		    }],
 		    bbar : new Ext.PagingToolbar({
 				store : store,
-				pageSize : 8,
+				pageSize : 15,
 				displayInfo : true
 			})
 		});
 		var privilege = user_.myUser.privilege.split(",");
 		for(var i=0;i<privilege.length;i++){
-			if(privilege[i]=='1101'){
-				tb.add({
-					text: il8n.Import,
-			        handler : function(){   
-						var win = new Ext.Window({
-							id:'w_q_p_l_i',
-							layout:'fit',
-							width:500,
-							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewUpload' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			}else if(privilege[i]=='1102'){
-				tb.add({
-					text: il8n.Export,
-			        handler : function(){   
-						var win = new Ext.Window({
-							id:'w_q_p_l_e',
-							layout:'fit',
-							width:500,
-							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			}else if(privilege[i]=='1103'){
+			if(privilege[i]=='125003'){
 				tb.add({
 					text: il8n.Delete,
 			        handler : function(){   
 						Ext.Ajax.request({				
 							method:'POST',				
-							url:thisObj.config.AJAXPATH+"?controller=quiz_paper&action=delete",				
+							url:thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=delete",				
 							success:function(response){				
 							    store.load();
 							},				
 							failure:function(response){				
 							    Ext.Msg.alert('failure',response.responseText);
 							},				
-							params:{id:Ext.getCmp(domid).getSelectionModel().selection.record.id}				
+							params:{id:Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id}				
 						});		
 					}
 				});
-			}else if(privilege[i]=='1107'){
+			}else if(privilege[i]=='125007'){
 				tb.add({
 			        text: il8n.DoQuiz,
 			        handler : function(){
-						window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id);
+						window.open(thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=viewOne&id_level_subject="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject);
 					}
 			    });   
 			}
-		}
-		   
-		store.load({params:{start:0, limit:8}});    
+		}		   
+		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
 

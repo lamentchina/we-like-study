@@ -67,6 +67,8 @@ class subject extends wls{
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>下载</a>";
 	}
+	
+
 
 	public function delete(){
 		if($this->m->delete($_POST['id'])){

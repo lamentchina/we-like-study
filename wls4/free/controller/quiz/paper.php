@@ -122,7 +122,7 @@ class quiz_paper extends quiz{
 		$user = $this->getMyUser();
 
 		include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
-		$obj_ = new m_quiz_worng();
+		$obj_ = new m_quiz_wrong();
 		for($i=0;$i<count($answers);$i++){
 			unset($answers[$i]['description']);
 			if($answers[$i]['myAnswer']=='I_DONT_KNOW'){

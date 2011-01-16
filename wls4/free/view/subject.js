@@ -130,7 +130,7 @@ wls.subject = Ext.extend(wls, {
 		    url: thisObj.config.AJAXPATH+'?controller=subject&action=getPaperList&id_level_subject='+thisObj.id_level,
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','title', 'questions']
+		    fields: ['id','title', 'questions','count_used','money','score_avg','score_top','score_top_user','time_limit']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -139,10 +139,23 @@ wls.subject = Ext.extend(wls, {
 		    },
 		    columns: [ {
 		             header: il8n.ID
+		            ,dataIndex: 'id'
+		            ,width:50
+		        },{
+		             header: '标题'
 		            ,dataIndex: 'title'
 		        },{
-		             header: il8n.ID
-		            ,dataIndex: 'id'
+		             header: '使用次数'
+		            ,dataIndex: 'count_used'
+		        },{
+		             header: '金币'
+		            ,dataIndex: 'money'
+		        },{
+		             header: '平均分'
+		            ,dataIndex: 'score_avg'
+		        },{
+		             header: '最高分'
+		            ,dataIndex: 'score_top'
 		            ,hidden:true
 		        }, {
 		             header: il8n.Count.Total
@@ -269,7 +282,7 @@ wls.subject = Ext.extend(wls, {
 						var rec = store.getAt(o.index);
 					}
 				}
-	        },new Ext.Button({text:'sadf',region:'south'})]
+	        },new Ext.Button({text:'sadf',region:'north'})]
 
     	});
 		var layout = new Ext.Panel({

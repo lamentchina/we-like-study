@@ -164,7 +164,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							failure:function(response){				
 							    Ext.Msg.alert('failure',response.responseText);
 							},				
-							params:{id:Ext.getCmp(domid).getSelectionModel().selection.record.id}				
+							params:{id:Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id}				
 						});		
 					}
 				});

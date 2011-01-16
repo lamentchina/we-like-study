@@ -63,6 +63,8 @@ class install extends wls {
 		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user_group.xls");
+		$obj->importExcelOne(dirname(__FILE__)."../../../../file/test/wls_user_group_one.xls");
+		$obj->importExcelOne(dirname(__FILE__)."../../../../file/test/wls_user_group_one2.xls");
 
 		include_once $this->c->license.'/model/user.php';
 		$obj = new m_user();
@@ -82,6 +84,7 @@ class install extends wls {
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log.xls");
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log2.xls");
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log3.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log4.xls");
 		//		include_once $this->c->license.'/model/quiz/paper.php';
 		//		$obj = new m_quiz_paper();
 		//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wlls_quiz_paper.xls");

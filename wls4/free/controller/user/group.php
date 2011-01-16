@@ -40,6 +40,27 @@ class user_group extends wls{
 		';
 	}
 	
+	public function viewUploadOne(){
+		echo '
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+				<html xmlns="http://www.w3.org/1999/xhtml">		
+				<head>
+					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				</head>
+				<body>
+					导入EXCEL
+					<form action="wls.php?controller=user_group&action=saveUploadOne" method="post"
+					enctype="multipart/form-data">
+						<label for="file">EXCEL文件:</label>
+						<input type="file" name="file" id="file" />
+						<br />
+						<input type="submit" name="submit" value="提交" />
+					</form>
+				</body>
+			</html>		
+		';
+	}	
+	
 	public function saveUpload(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
@@ -49,7 +70,18 @@ class user_group extends wls{
 			$this->m->importExcel(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
 		echo '已经导入';
-	}	
+	}
+
+	public function saveUploadOne(){
+		if ($_FILES["file"]["error"] > 0){
+			echo "Error: " . $_FILES["file"]["error"] . "<br />";
+		}else{
+			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+//			$this->m->create();
+			$this->m->importExcelOne(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+		}
+		echo '已经导入';
+	}		
 	
 	public function saveUpdate(){
 		$data = array(
@@ -65,6 +97,13 @@ class user_group extends wls{
 	
 	public function viewExport(){
 		$file = $this->m->exportExcel();
+		echo "<a href='/".$file."'>下载</a>";
+	}
+	
+	public function viewExportOne(){
+		$id_level = $_REQUEST['id_level'];
+		$this->m->id_level = $id_level;
+		$file = $this->m->exportExcelOne();
 		echo "<a href='/".$file."'>下载</a>";
 	}
 	

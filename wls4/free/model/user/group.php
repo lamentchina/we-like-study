@@ -5,6 +5,7 @@
 class m_user_group extends wls implements dbtable,levelList{
 
 	public $phpexcel = null;
+	public $id_level = null;
 
 	/**
 	 * 插入一条数据
@@ -212,7 +213,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('data');
+		$currentSheet = $this->phpexcel->getSheetByName('group');
 		$allRow = array($currentSheet->getHighestRow());
 		$data = array();
 		$index = 0;
@@ -225,41 +226,41 @@ class m_user_group extends wls implements dbtable,levelList{
 			$this->insert($data);
 		}
 
-		$currentSheet = $this->phpexcel->getSheetByName('privilege');
-		$allRow = array($currentSheet->getHighestRow());
-		$data = array();
-		$index = 0;
-		for($i=2;$i<=$allRow[0];$i++){
-			$data = array(
-				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'id_level_privilege'=>$currentSheet->getCell('B'.$i)->getValue(),
-			);
-			$this->linkPrivilege($data);
-		}
-
-		$currentSheet = $this->phpexcel->getSheetByName('user');
-		$allRow = array($currentSheet->getHighestRow());
-		$data = array();
-		$index = 0;
-		for($i=2;$i<=$allRow[0];$i++){
-			$data = array(
-				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'username'=>$currentSheet->getCell('B'.$i)->getValue(),
-			);
-			$this->linkUser($data);
-		}
-				
-		$currentSheet = $this->phpexcel->getSheetByName('subject');
-		$allRow = array($currentSheet->getHighestRow());
-		$data = array();
-		$index = 0;
-		for($i=2;$i<=$allRow[0];$i++){
-			$data = array(
-				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'id_level_subject'=>$currentSheet->getCell('B'.$i)->getValue(),
-			);
-			$this->linkSubject($data);
-		}
+//		$currentSheet = $this->phpexcel->getSheetByName('privilege');
+//		$allRow = array($currentSheet->getHighestRow());
+//		$data = array();
+//		$index = 0;
+//		for($i=2;$i<=$allRow[0];$i++){
+//			$data = array(
+//				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+//				'id_level_privilege'=>$currentSheet->getCell('B'.$i)->getValue(),
+//			);
+//			$this->linkPrivilege($data);
+//		}
+//
+//		$currentSheet = $this->phpexcel->getSheetByName('user');
+//		$allRow = array($currentSheet->getHighestRow());
+//		$data = array();
+//		$index = 0;
+//		for($i=2;$i<=$allRow[0];$i++){
+//			$data = array(
+//				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+//				'username'=>$currentSheet->getCell('B'.$i)->getValue(),
+//			);
+//			$this->linkUser($data);
+//		}
+//				
+//		$currentSheet = $this->phpexcel->getSheetByName('subject');
+//		$allRow = array($currentSheet->getHighestRow());
+//		$data = array();
+//		$index = 0;
+//		for($i=2;$i<=$allRow[0];$i++){
+//			$data = array(
+//				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+//				'id_level_subject'=>$currentSheet->getCell('B'.$i)->getValue(),
+//			);
+//			$this->linkSubject($data);
+//		}
 		
 	}
 
@@ -303,6 +304,157 @@ class m_user_group extends wls implements dbtable,levelList{
 		return $file;
 	}
 
+	/**
+	 * 导出单条记录
+	 * 包括: 这个用户组的详细内容,
+	 * 这个用户组的权限
+	 * 这个用户组的科目分配
+	 * 所拥有的用户
+	 * 依赖 id_level
+	 * 
+	 * @return $file 路径
+	 * */
+	public function exportExcelOne(){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+		
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		$objPHPExcel = new PHPExcel();
+
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objPHPExcel->getActiveSheet()->setTitle('group');
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', '编号');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '名称');
+		$sql = "select * from ".$pfx."wls_user_group where id_level = '".$this->id_level."' ";
+//		echo $sql;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $temp['id_level']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $temp['name']);
+
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(1);
+		$objPHPExcel->getActiveSheet()->setTitle('privilege');
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', '组编号');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '权限编号');			
+		$sql = "select * from ".$pfx."wls_user_group2privilege where id_level_group = '".$this->id_level."' ";
+		$res = mysql_query($sql,$conn);
+		$index = 2;
+		while($temp = mysql_fetch_assoc($res)){
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $temp['id_level_group']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['id_level_privilege']);
+			$index ++;
+		}
+		
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(2);
+		$objPHPExcel->getActiveSheet()->setTitle('user');
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', '组编号');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '用户名');			
+		$sql = "select * from ".$pfx."wls_user_group2user where id_level_group = '".$this->id_level."' ";
+		$res = mysql_query($sql,$conn);
+		$index = 2;
+		while($temp = mysql_fetch_assoc($res)){
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $temp['id_level_group']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['username']);
+			$index ++;
+		}
+		
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(3);
+		$objPHPExcel->getActiveSheet()->setTitle('subject');
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', '组编号');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '科目编号');			
+		$sql = "select * from ".$pfx."wls_user_group2subject where id_level_group = '".$this->id_level."' ";
+		$res = mysql_query($sql,$conn);
+		$index = 2;
+		while($temp = mysql_fetch_assoc($res)){
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $temp['id_level_group']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['id_level_subject']);
+			$index ++;
+		}
+		
+		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+		$file =  "file/download/".date('YmdHis').".xls";
+		$objWriter->save(dirname(__FILE__)."/../../../../".$file);
+		return $file;
+	}
+	
+	public function importExcelOne($path){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;		
+		
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		$objPHPExcel = new PHPExcel();
+		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+		$PHPReader->setReadDataOnly(true);
+		$this->phpexcel = $PHPReader->load($path);
+
+		$currentSheet = $this->phpexcel->getSheetByName('group');
+		$this->id_level = $currentSheet->getCell('A2')->getValue();
+		
+		$currentSheet = $this->phpexcel->getSheetByName('privilege');
+		$sql = "delete from ".$pfx."wls_user_group2privilege where id_level_group = '".$this->id_level."' ";
+		mysql_query($sql,$conn);		
+		$allRow = array($currentSheet->getHighestRow());
+		$data = array();
+		$index = 0;
+		for($i=2;$i<=$allRow[0];$i++){
+			$data = array(
+				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'id_level_privilege'=>$currentSheet->getCell('B'.$i)->getValue(),
+			);
+			$keys = array_keys($data);
+			$keys = implode(",",$keys);
+			$values = array_values($data);
+			$values = implode("','",$values);
+			$sql = "insert into ".$pfx."wls_user_group2privilege (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+		}
+
+		$currentSheet = $this->phpexcel->getSheetByName('user');
+		$sql = "delete from ".$pfx."wls_user_group2user where id_level_group = '".$this->id_level."' ";
+		mysql_query($sql,$conn);		
+		$allRow = array($currentSheet->getHighestRow());
+		$data = array();
+		$index = 0;
+		for($i=2;$i<=$allRow[0];$i++){
+			$data = array(
+				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'username'=>$currentSheet->getCell('B'.$i)->getValue(),
+			);
+			$keys = array_keys($data);
+			$keys = implode(",",$keys);
+			$values = array_values($data);
+			$values = implode("','",$values);
+			$sql = "insert into ".$pfx."wls_user_group2user (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+		}
+		
+		$currentSheet = $this->phpexcel->getSheetByName('subject');
+		$sql = "delete from ".$pfx."wls_user_group2subject where id_level_group = '".$this->id_level."' ";
+		mysql_query($sql,$conn);		
+		$allRow = array($currentSheet->getHighestRow());
+		$data = array();
+		$index = 0;
+		for($i=2;$i<=$allRow[0];$i++){
+			$data = array(
+				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
+				'id_level_subject'=>$currentSheet->getCell('B'.$i)->getValue(),
+			);
+			$keys = array_keys($data);
+			$keys = implode(",",$keys);
+			$values = array_values($data);
+			$values = implode("','",$values);
+			$sql = "insert into ".$pfx."wls_user_group2subject (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+		}
+	}	
+	
 	/**
 	 * 累加某个值
 	 *

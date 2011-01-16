@@ -132,13 +132,18 @@ class user extends wls{
 		include_once dirname(__FILE__).'/../model/user/privilege.php';
 		$obj = new m_user_privilege();
 		$data = $obj->getListForUser($username);
+		$data2 = array();
 		for($i=0;$i<count($data);$i++){
-			$data[$i]['type'] = 'menu';
+			
+			if($data[$i]['checked']==true || $data[$i]['checked']=='true' || $data[$i]['checked']==1){
+				$data[$i]['type'] = 'menu';
+				$data2[] = $data[$i];
+			}
 		}
-
+		
 		include_once dirname(__FILE__).'/../model/tools.php';
 		$t = new tools();
-		$data = $t->getTreeData(null,$data);
+		$data = $t->getTreeData(null,$data2);
 
 		for($i=0;$i<count($data);$i++){
 				
@@ -202,7 +207,7 @@ class user extends wls{
 			}
 		}
 
-		//		print_r($data);
+//				print_r($data);
 		echo json_encode($data);
 	}
 

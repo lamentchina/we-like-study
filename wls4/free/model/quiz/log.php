@@ -13,7 +13,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	 * @return bool
 	 * */
 	public function insert($data){
-		print_r($data);
+//		print_r($data);
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
@@ -195,6 +195,8 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$count_right = 0;
 		$quizlog_cent = 0;
 		$id_question = '';
+		include_once dirname(__FILE__).'/wrong.php';
+		$wrongObj = new m_quiz_wrong();
 		for($i=3;$i<=$allRow;$i++){
 			$sql = "select id,answer,cent,id_parent from ".$pfx."wls_question where id = ".$currentSheet->getCell($keys['id_question'].$i)->getValue();
 			$res = mysql_query($sql,$conn);
@@ -219,6 +221,14 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 			}else{
 				$queslog['correct'] = 0;
 				$count_wrong ++;
+				$wrong = array(
+					 'id_question' => $temp['id']
+					,'id_quiz_paper' => $quizlog['id_quiz_paper']
+					,'id_level_subject' => $quizlog['id_level_subject']
+					,'id_user'=>$quizlog['id_user']
+					,'date_created'=>$quizlog['date_created']
+				);
+				$wrongObj->insert($wrong);				
 			}
 			$queslog['id'] = $quesObj->insert($queslog);
 			$queslogs[] = $queslog;
@@ -345,12 +355,12 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		$sql = "select id,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id;
+		$sql = "select id,id_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
 		
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
-			$arr[$temp['id']] = $temp['myanswer'];
+			$arr[$temp['id_question']] = $temp['myanswer'];
 		}
 		return $arr;
 	}

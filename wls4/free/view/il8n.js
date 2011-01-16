@@ -1,6 +1,8 @@
 var il8n = {
 	 Import:'导入'
+	,ImportOne:'导入单条记录'
 	,Export:'导出'
+	,ExportOne:'导出单条记录'
 	,Name:'名称'
 	,ID:'编号'
 	,Money:'金币'
