@@ -42,6 +42,22 @@ wls.quiz = Ext.extend(wls, {
 					ques.id = obj[i].id;
 					ques.quiz = this;
 					break;	
+				case '2':
+					ques = new wls.question.multichoice();
+					ques.index = index;
+					index++;
+					ques.questionData = obj[i];
+					ques.id = obj[i].id;
+					ques.quiz = this;
+					break;	
+				case '3':
+					ques = new wls.question.check();
+					ques.index = index;
+					index++;
+					ques.questionData = obj[i];
+					ques.id = obj[i].id;
+					ques.quiz = this;
+					break;					
 				case '5':
 					ques = new wls.question.big();
 					ques.index = '';

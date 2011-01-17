@@ -79,16 +79,16 @@ class install extends wls {
 		$obj = new m_user_privilege();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user_privilege.xls");
 
-		include_once dirname(__FILE__)."/install/yf.php";
-		$obj = new install_yf();
-		$obj->xznlcs();
+//		include_once dirname(__FILE__)."/install/yf.php";
+//		$obj = new install_yf();
+//		$obj->xznlcs();
 
-		include_once $this->c->license.'/model/quiz/log.php';
-		$obj = new m_quiz_log();
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log.xls");
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log2.xls");
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log3.xls");
-		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log4.xls");
+//		include_once $this->c->license.'/model/quiz/log.php';
+//		$obj = new m_quiz_log();
+//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log.xls");
+//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log2.xls");
+//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log3.xls");
+//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log4.xls");
 		//		include_once $this->c->license.'/model/quiz/paper.php';
 		//		$obj = new m_quiz_paper();
 		//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wlls_quiz_paper.xls");

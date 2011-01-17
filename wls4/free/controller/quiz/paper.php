@@ -226,6 +226,8 @@ class quiz_paper extends quiz{
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/paper.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/choice.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/check.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/multichoice.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/big.js\"></script>
 
 <script type=\"text/javascript\">

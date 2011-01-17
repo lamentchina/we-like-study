@@ -40,7 +40,6 @@ class m_knowledge_log extends wls implements dbtable,log{
 				 id_level_knowledge = '".$data['id_level_knowledge']."'
 				"; 
 			}
-//			echo $sql2;
 			mysql_query($sql2,$conn);
 		}
 	}

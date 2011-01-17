@@ -1,11 +1,18 @@
-wls.question.check = Ext.extend(wls.question, {
-	initDom:function(){
+wls.question.multichoice = Ext.extend(wls.question, {
+	optionLength:null
+	,initDom:function(){
 		$("#wls_quiz_main").append("<div id='w_qs_"+this.id+"'></div>");
 		$("#w_qs_"+this.id).append("<div class='w_qw_title'>"+this.index+"&nbsp;<span class='w_qw_tool'></span>"+this.questionData.title+"</div>");
-		$("#w_qs_"+this.id).append("<div class='w_qw_options'></div>");
-		$(".w_qw_options","#w_qs_"+this.id).append("<input type='radio' name='w_qs_"+this.id+"' value='A' />&nbsp;对");
-		$(".w_qw_options","#w_qs_"+this.id).append("<input type='radio' name='w_qs_"+this.id+"' value='B' />&nbsp;错");
-
+		$("#w_qs_"+this.id).append("<span class='w_qw_options'></span>");
+		this.optionLength = parseInt(this.questionData.optionlength);
+		for(var i=0;i<parseInt(this.questionData.optionlength);i++){
+			eval("var title = this.questionData.option"+(i+1));
+			var str = "<div>"+String.fromCharCode(i+65)+":&nbsp;<input type='checkbox' name='w_qs_"+this.id+"_"+i+"' value='"+String.fromCharCode(i+65)+"' />&nbsp;"+title;
+			if(i!=parseInt(this.questionData.optionlength)-1){
+				str += "</div>";
+			}
+			$(".w_qw_options","#w_qs_"+this.id).append(str);
+		}
 		this.cent = this.questionData.cent;
 		this.questionData = null;
 	}
@@ -19,7 +26,7 @@ wls.question.check = Ext.extend(wls.question, {
 
 		if(obj.myAnswer=='I_DONT_KNOW'){//放弃
 			this.quiz.count.giveup ++;
-			$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
+			//$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_g');
 			$('#w_q_subQuesNav_'+this.id).attr('title','放弃\n分值:'+(this.cent));
@@ -30,7 +37,7 @@ wls.question.check = Ext.extend(wls.question, {
 			wls_question_toogle(this.id);
 		}else{//做错了			
 			this.quiz.count.wrong ++;
-			$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
+			//$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_w');
 			$('#w_q_subQuesNav_'+this.id).attr('title','做错\n分值:'+(this.cent));
@@ -41,19 +48,30 @@ wls.question.check = Ext.extend(wls.question, {
 	}
 	,getMyAnswer:function(){
 		var answer = '';
-		var value = $('input[name=w_qs_'+this.id+']:checked').val();
-		if(typeof(value)=='undefined'){
+		
+		var valueList = [];
+		for(var i=0;i<this.optionLength;i++){
+			var value = $('input[name=w_qs_'+this.id+"_"+i+']:checked').val();
+			if(typeof(value)=='undefined'){
+				
+			}else{
+				valueList.push(value);
+			}
+		}		
+		
+		if(valueList.length==0){
 			answer = 'I_DONT_KNOW';
 			this.quiz.count.giveup ++;
 		}else{
-			answer = value;
+			answer = valueList.join(',');
 		}
 		return answer;
 	}
 	,setMyAnser:function(){
-		var myAnswer = this.answerData.myAnswer;
-		var temp = {A:0,B:1};
-		var c = $("input[name=w_qs_"+this.id+"]");
-		eval("c[temp."+myAnswer+"].checked = true");
+		return;
+//		var myAnswer = this.answerData.myAnswer;
+//		var temp = {A:0,B:1,C:2,D:3};
+//		var c = $("input[name=w_qs_"+this.id+"]");
+//		eval("c[temp."+myAnswer+"].checked = true");
 	}
 });

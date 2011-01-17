@@ -23,8 +23,11 @@ class m_question extends wls implements dbtable{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_question (".$keys.") values ('".$values."')";
+
 		mysql_query($sql,$conn);
-		return mysql_insert_id($conn);
+		$id = mysql_insert_id($conn);
+//		echo $id;
+		return $id;
 	}
 
 	/**
@@ -87,7 +90,7 @@ class m_question extends wls implements dbtable{
 				,type int default 1					comment '类别(1单项选择题,2多项选择题,3判断题,4简答题,5大题)'
 				,title text not null				comment '题目标题'
 				,answer text not null				comment '答案,根据题型不同有不同的组织形式'
-				,optionlength int default 2			comment '选项个数.2个,对应判断题,多个对应选择题.最多7个选项'
+				,optionlength int default 0			comment '选项个数.2个,对应判断题,多个对应选择题.最多7个选项'
 				,option1 text						comment '选项1'
 				,option2 text
 				,option3 text
@@ -232,30 +235,33 @@ class m_question extends wls implements dbtable{
 	 * 
 	 * @param $questions array
 	 * */
-	public function insertMany($questions){
-		include_once dirname(__FILE__).'/tools.php';
-		$t = new tools();
-		
+	public function insertMany($questions){		
 		$indexs = array_keys($questions);
 		$mainIds = '';
 		for($i=0;$i<count($indexs);$i++){
 			$data = $questions[$indexs[$i]];
 			unset($data['index']);
 			unset($data['belongto']);
-			$data['markingmethod'] = $t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
-			$data['type'] = $t->formatQuesType($questions[$indexs[$i]]['type'],true);
+			$data['markingmethod'] = $this->t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
+			$data['type'] = $this->t->formatQuesType($questions[$indexs[$i]]['type'],true);
 			$data['date_created'] = date('Y-m-d H:i:s');
 			if($questions[$indexs[$i]]['belongto']=='0'){
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = 0;
 			}else{
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = $questions[$questions[$indexs[$i]]['belongto']]['id'];
 			}
-			$id =  $this->insert($data);
+			
+			$id = $this->insert($data);
+//			echo $id;
 			if($id===false){
 				print_r($data);
 				return false;
 			}else{
-				$questions[$indexs[$i]]['id'] = $id;
+//				if($id==0 || $id==false){
+//					
+//				}else{
+					$questions[$indexs[$i]]['id'] = $id;
+//				}				
 				continue;
 			}
 		}

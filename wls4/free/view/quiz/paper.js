@@ -252,7 +252,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		    tbar: tb,
 		    bbar : new Ext.PagingToolbar({
 				store : store,
-				pageSize : 8,
+				pageSize : 15,
 				displayInfo : true
 			})
 		});
@@ -330,7 +330,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				params:{field:e.field,value:e.value,id:e.record.data.id}				
 			});
 	    }     
-		store.load({params:{start:0, limit:8}});    
+		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
 

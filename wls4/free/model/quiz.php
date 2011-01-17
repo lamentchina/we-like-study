@@ -13,8 +13,12 @@ class m_quiz extends wls{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		$sql = "select * from ".$pfx."wls_question where id in (".$ids.") or (id_parent !=0 and id_parent in (".$ids.")); ";
-//		echo $sql;
+		$sql = "select 
+			id,type,title,optionlength,
+			option1,option2,option3,option4,option5,option6,option7,
+			description,cent,id_quiz_paper,id_parent
+			 from ".$pfx."wls_question where id in (".$ids.") or (id_parent !=0 and id_parent in (".$ids.")); ";
+
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -31,11 +35,10 @@ class m_quiz extends wls{
 		$keys = array_keys($myAnswers);
 		$ids = implode(",",$keys);
 		
-		$sql = "select answer,id,description,cent from ".$pfx."wls_question where id in (".$ids.") ; ";
+		$sql = "select answer,id,description,cent,type from ".$pfx."wls_question where id in (".$ids.") ; ";
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		
-//		$sql = "insert into ".$pfx." ";
 		while($temp = mysql_fetch_assoc($res)){
 			$temp['myAnswer'] = $myAnswers[$temp['id']];
 			$data[] = $temp;
