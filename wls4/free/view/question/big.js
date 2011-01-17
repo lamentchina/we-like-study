@@ -11,4 +11,7 @@ wls.question.big = Ext.extend(wls.question, {
 	,getMyAnswer:function(){
 		return '';
 	}
+	,setMyAnser:function(){
+
+	}	
 });

@@ -26,7 +26,10 @@ wls.question.multichoice = Ext.extend(wls.question, {
 
 		if(obj.myAnswer=='I_DONT_KNOW'){//放弃
 			this.quiz.count.giveup ++;
-			//$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
+			var answerList = obj.answer.split(',');
+			for(var i=0;i<answerList.length;i++){
+				$(":checkbox[value='"+answerList[i]+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
+			}
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_g');
 			$('#w_q_subQuesNav_'+this.id).attr('title','放弃\n分值:'+(this.cent));
@@ -37,7 +40,11 @@ wls.question.multichoice = Ext.extend(wls.question, {
 			wls_question_toogle(this.id);
 		}else{//做错了			
 			this.quiz.count.wrong ++;
-			//$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
+			
+			var answerList = obj.answer.split(',');
+			for(var i=0;i<answerList.length;i++){
+				$(":checkbox[value='"+answerList[i]+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
+			}
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_w');
 			$('#w_q_subQuesNav_'+this.id).attr('title','做错\n分值:'+(this.cent));
@@ -68,10 +75,12 @@ wls.question.multichoice = Ext.extend(wls.question, {
 		return answer;
 	}
 	,setMyAnser:function(){
-		return;
-//		var myAnswer = this.answerData.myAnswer;
-//		var temp = {A:0,B:1,C:2,D:3};
-//		var c = $("input[name=w_qs_"+this.id+"]");
-//		eval("c[temp."+myAnswer+"].checked = true");
+		var myAnswer = this.answerData.myAnswer;
+		if(myAnswer!='I_DONT_KNOW'){
+			var answerList = this.answerData.myAnswer.split(',');
+			for(var i=0;i<answerList.length;i++){
+				$(":checkbox[value='"+answerList[i]+"']", $("#w_qs_"+this.id)).attr('checked','checked');;
+			}		
+		}
 	}
 });

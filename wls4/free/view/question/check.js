@@ -3,8 +3,8 @@ wls.question.check = Ext.extend(wls.question, {
 		$("#wls_quiz_main").append("<div id='w_qs_"+this.id+"'></div>");
 		$("#w_qs_"+this.id).append("<div class='w_qw_title'>"+this.index+"&nbsp;<span class='w_qw_tool'></span>"+this.questionData.title+"</div>");
 		$("#w_qs_"+this.id).append("<div class='w_qw_options'></div>");
-		$(".w_qw_options","#w_qs_"+this.id).append("<input type='radio' name='w_qs_"+this.id+"' value='A' />&nbsp;对");
-		$(".w_qw_options","#w_qs_"+this.id).append("<input type='radio' name='w_qs_"+this.id+"' value='B' />&nbsp;错");
+		$(".w_qw_options","#w_qs_"+this.id).append("<span><input type='radio' name='w_qs_"+this.id+"' value='A' />&nbsp;对</span>");
+		$(".w_qw_options","#w_qs_"+this.id).append("<span><input type='radio' name='w_qs_"+this.id+"' value='B' />&nbsp;错</span>");
 
 		this.cent = this.questionData.cent;
 		this.questionData = null;
@@ -52,8 +52,10 @@ wls.question.check = Ext.extend(wls.question, {
 	}
 	,setMyAnser:function(){
 		var myAnswer = this.answerData.myAnswer;
-		var temp = {A:0,B:1};
-		var c = $("input[name=w_qs_"+this.id+"]");
-		eval("c[temp."+myAnswer+"].checked = true");
+		if(myAnswer!='I_DONT_KNOW'){
+			var temp = {A:0,B:1};
+			var c = $("input[name=w_qs_"+this.id+"]");
+			eval("c[temp."+myAnswer+"].checked = true");
+		}
 	}
 });

@@ -133,18 +133,20 @@ class quiz_paper extends quiz{
 				$count_right ++;
 				$mycent += $answers[$i]['cent'];
 			}else{
-				$obj_->id_question = $answers[$i]['id'];
-				$obj_->id_user = $user['id'];
-				$wrong = array(
-					'id_question' => $answers[$i]['id'],
-					'id_quiz_paper' => $id,
-					'id_level_subject' => $item['id_level_subject'],
-					'id_user'=>$user['id'],
-					'date_created'=>date('Y-m-d H:i:s'),
-				);
-				$obj_->insert($wrong);
-				$answers[$i]['correct'] = 0;
-				$count_wrong ++;
+				if($answers[$i]['type']!=5){
+					$obj_->id_question = $answers[$i]['id'];
+					$obj_->id_user = $user['id'];
+					$wrong = array(
+						'id_question' => $answers[$i]['id'],
+						'id_quiz_paper' => $id,
+						'id_level_subject' => $item['id_level_subject'],
+						'id_user'=>$user['id'],
+						'date_created'=>date('Y-m-d H:i:s'),
+					);
+					$obj_->insert($wrong);
+					$answers[$i]['correct'] = 0;
+					$count_wrong ++;
+				}
 			}
 			$cent += $answers[$i]['cent'];
 			$answers[$i]['id_question'] = $answers[$i]['id'];

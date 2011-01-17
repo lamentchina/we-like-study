@@ -172,6 +172,13 @@ Ext.onReady(function(){
 				list.title = il8n.Log;		
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_q_lg_l');	
+			}else if(a.id_level=='1253'){				
+				var o = new wls.quiz.log();
+				var list = o.getMyList('w_q_lg_ml');
+				list.closable=true;		
+				list.title = il8n.Log;		
+				Ext.getCmp('w_tp').add(list);
+				Ext.getCmp('w_tp').setActiveTab('w_q_lg_ml');	
 			}								
 		}else if(a.menuType=='subject'){
 			var obj = new wls.subject();

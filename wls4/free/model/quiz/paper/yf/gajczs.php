@@ -62,6 +62,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 				,'type'=>'判断题'
 				,'belongto'=>0
 				,'index' =>"1".$i	
+				,'cent'=>1
 
 				,'id_level_subject'=>$this->paper['id_level_subject']
 				,'name_subject'=>$this->paper['name_subject']
@@ -133,7 +134,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 				,'id_quiz_paper'=>$this->paper['id']
 				,'title_quiz_paper'=>$this->paper['title']
 				,'title'=>$title
-				,'cent'=>1
+				,'cent'=>2
 				,'option1'=>$A
 				,'option2'=>$B
 				,'option3'=>$C
@@ -220,7 +221,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 				,'id_quiz_paper'=>$this->paper['id']
 				,'title_quiz_paper'=>$this->paper['title']
 				,'title'=>$title
-				,'cent'=>1
+				,'cent'=>4
 				,'option1'=>$A
 				,'option2'=>$B
 				,'option3'=>$C

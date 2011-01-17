@@ -60,7 +60,8 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		$("#paperBrief").append(str);
 	}	
 	,submit:function(nextFunction){
-		if(this.state==4)return;
+		if(this.state==4||this.state==42)return;
+
 		var thisObj = this;
 		$.ajax({
 			url: thisObj.config.AJAXPATH+"?controller=quiz_log&action=getAnswers",
@@ -78,17 +79,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 			}
 		});
 	}
-	
-	,getList:function(domid){
-		var thisObj = this;
-		var store = new Ext.data.JsonStore({
-		    autoDestroy: true,
-		    url: thisObj.config.AJAXPATH+'?controller=quiz_log&action=jsonList',
-		    root: 'data',
-		    idProperty: 'id',
-		    fields: ['id','date_created','id_level_subject','id_user', 'cent','mycent','count_right','count_wrong','count_giveup','count_total']
-		});
-		
+	,getListStuff:function(){
 		var cm = new Ext.grid.ColumnModel({
 		    defaults: {
 		        sortable: true   
@@ -97,10 +88,50 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		             header: il8n.ID
 		            ,dataIndex: 'id'
 		        },{
-		             header: il8n.Subject
+		             header: "科目编号"
 		            ,dataIndex: 'id_level_subject'
+		            ,hidden:true
+		        },{
+		             header: il8n.Subject
+		            ,dataIndex: 'name_subject'
+		        },{
+		             header: "题目数量"
+		            ,dataIndex: 'count_questions'
+		        },{
+		             header: "做对数"
+		            ,dataIndex: 'count_right'
+		        },{
+		             header: "做错数"
+		            ,dataIndex: 'count_wrong'
+		        },{
+		             header: "对错率"
+		            ,dataIndex: 'proportion'
+		            ,hidden:true
+		        },{
+		             header: "得分"
+		            ,dataIndex: 'mycent'
+		        },{
+		             header: "总分"
+		            ,dataIndex: 'cent'
+		        },{
+		             header: "来源"
+		            ,dataIndex: 'name_application'
 		        }
+		        
 		    ]
+		});
+		
+		return {cm:cm,fields:['id','date_created','id_level_subject','id_user', 'cent','mycent','count_right','count_wrong','count_giveup','count_total','name_subject','count_questions','name_application']};
+	}
+	,getList:function(domid){
+		var listStuff = this.getListStuff();
+		var thisObj = this;
+		var store = new Ext.data.JsonStore({
+		    autoDestroy: true,
+		    url: thisObj.config.AJAXPATH+'?controller=quiz_log&action=jsonList',
+		    root: 'data',
+		    idProperty: 'id',
+		    fields: listStuff.fields
 		});
 		
 		var tb = new Ext.Toolbar({
@@ -109,7 +140,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		
 		var grid = new Ext.grid.GridPanel({
 		    store: store,
-		    cm: cm,        
+		    cm: listStuff.cm,     
 		    id: domid,
 		    width: 600,
 		    height: 300,
@@ -179,6 +210,50 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		}
   
 		store.load({params:{start:0, limit:8}});    
+		return grid;
+	}
+	,getMyList:function(domid){
+		var listStuff = this.getListStuff();
+		var thisObj = this;
+		var store = new Ext.data.JsonStore({
+		    autoDestroy: true,
+		    url: thisObj.config.AJAXPATH+'?controller=quiz_log&action=getMyList',
+		    root: 'data',
+		    idProperty: 'id',
+		    fields: listStuff.fields
+		});
+		
+		var tb = new Ext.Toolbar({
+			id:"w_q_lg_ml_tb"
+		});	
+		
+		var grid = new Ext.grid.GridPanel({
+		    store: store,
+		    cm: listStuff.cm,     
+		    id: domid,
+		    width: 600,
+		    height: 300,
+		    tbar: tb,
+		    bbar : new Ext.PagingToolbar({
+				store : store,
+				pageSize : 15,
+				displayInfo : true
+			})
+		});
+		
+		var privilege = user_.myUser.privilege.split(",");
+		for(var i=0;i<privilege.length;i++){
+			if(privilege[i]=='115107'){
+				tb.add({
+			        text: il8n.Review+il8n.Log,
+			        handler : function(){
+						window.open(thisObj.config.AJAXPATH+"?controller=quiz_log&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
+					}
+			    });   
+			}
+		}
+  
+		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
 

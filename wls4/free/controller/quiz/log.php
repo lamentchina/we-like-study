@@ -19,6 +19,19 @@ class quiz_log extends quiz{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
+	
+	public function getMyList(){
+		$page = 1;
+		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
+		$pagesize = 15;
+		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
+		
+		$user = $this->getMyUser();		
+		$data = $this->m->getList($page,$pagesize,array('id_user'=>$user['id']));
+		
+		$data['totalCount'] = $data['total'];
+		echo json_encode($data);
+	}
 
 	public function viewUpload(){
 		echo '
@@ -130,6 +143,9 @@ class quiz_log extends quiz{
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/log.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/choice.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/check.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/multichoice.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/big.js\"></script>
 
 
 <script type=\"text/javascript\">

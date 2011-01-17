@@ -365,5 +365,3 @@ wls.user = Ext.extend(wls, {
 		return grid;
 	}
 });
-
-

@@ -337,6 +337,15 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
+		
+		include_once dirname(__FILE__).'/../subject.php';
+		$subjectObj = new m_subject();
+		$data = $subjectObj->getList(1,1000);
+		$list = $data['data'];
+		$subjects = array();
+		for($i=0;$i<count($list);$i++){
+			$subjects[$list[$i]['id_level']] = $list[$i]['name'];
+		}
 
 		$where = " where 1 =1  ";
 		if($search!=null){
@@ -360,6 +369,9 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
+			$temp['name_subject'] = $subjects[$temp['id_level_subject']];
+			$temp['name_application'] = $this->t->formatApplicationType($temp['application']);
+			$temp['count_questions'] = count(explode(",", $temp['id_question']));
 			$arr[] = $temp;
 		}
 
@@ -390,11 +402,29 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		
-		$sql = "select id,id_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
-		
+		$sql = "select application,id,id_question from ".$pfx."wls_quiz_log where id = ".$this->id;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		if($temp['application']==0){
+			$sql = "select 
+			
+			".$pfx."wls_question.id as id_question,
+			".$pfx."wls_question_log.myanswer
+			 from ".$pfx."wls_question
+			LEFT JOIN  
+			".$pfx."wls_question_log
+				ON ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
+			
+			where ".$pfx."wls_question.id in (".$temp['id_question'].")
+			 order by wls_question.id
+			  ";					
+		}else{		
+			$sql = "select id,id_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
+		}
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
+			if($temp['myanswer']==''||$temp['myanswer']==null)$temp['myanswer'] = 'I_DONT_KNOW';
 			$arr[$temp['id_question']] = $temp['myanswer'];
 		}
 		return $arr;

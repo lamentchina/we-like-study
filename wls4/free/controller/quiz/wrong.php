@@ -232,6 +232,9 @@ class quiz_wrong extends quiz{
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/wrong.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/choice.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/check.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/multichoice.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/question/big.js\"></script>
 
 
 <script type=\"text/javascript\">

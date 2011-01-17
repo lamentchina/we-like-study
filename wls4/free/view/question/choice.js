@@ -55,10 +55,12 @@ wls.question.choice = Ext.extend(wls.question, {
 		}
 		return answer;
 	}
-	,setMyAnser:function(){
+	,setMyAnser:function(){		
 		var myAnswer = this.answerData.myAnswer;
-		var temp = {A:0,B:1,C:2,D:3};
-		var c = $("input[name=w_qs_"+this.id+"]");
-		eval("c[temp."+myAnswer+"].checked = true");
+		if(myAnswer!='I_DONT_KNOW'){
+			var temp = {A:0,B:1,C:2,D:3};
+			var c = $("input[name=w_qs_"+this.id+"]");
+			eval("c[temp."+myAnswer+"].checked = true");
+		}
 	}
 });
