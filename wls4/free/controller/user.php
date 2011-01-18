@@ -241,6 +241,49 @@ class user extends wls{
 		echo json_encode($data);
 	}
 	
-
+	public function getUserInfo(){
+		echo json_encode(array(
+			 'photo'=>'u1.jpeg'
+			,'money'=>100
+			,'groups'=>'用户组1,用户组2'
+		));
+	}
+	
+	public function getMyQuizLineData(){
+		echo json_encode(array(
+			'data'=>array(
+				array(
+					'id'=>1,
+					'index'=>1,
+					'proportion'=>rand(1,100)
+				),
+				array(
+					'id'=>2,
+					'index'=>2,
+					'proportion'=>rand(1,100)
+				),
+				array(
+					'id'=>3,
+					'index'=>3,
+					'proportion'=>rand(1,100)
+				),
+				array(
+					'id'=>4,
+					'index'=>4,
+					'proportion'=>rand(1,100)
+				),
+				array(
+					'id'=>5,
+					'index'=>5,
+					'proportion'=>rand(1,100)
+				),
+				array(
+					'id'=>6,
+					'index'=>6,
+					'proportion'=>rand(1,100)
+				)
+			)
+		));
+	}
 }
 ?>

@@ -33,7 +33,7 @@ wls.subject = Ext.extend(wls, {
 		});		
 
 		var tb = new Ext.Toolbar({
-			id:"w_s_l_tb"
+			id:"w_s_l_tb"+domid
 		});		
 		
 		var grid = new Ext.grid.EditorGridPanel({
@@ -170,7 +170,7 @@ wls.subject = Ext.extend(wls, {
 		});		
 
 		var tb = new Ext.Toolbar({
-			id:"w_s_gp_l_tb"
+			id:"w_s_gp_l_tb"+domid
 		});		
 		
 		var grid = new Ext.grid.EditorGridPanel({
@@ -188,7 +188,7 @@ wls.subject = Ext.extend(wls, {
 				displayInfo : true
 			})
 		});		
-		
+				
 		var privilege = user_.myUser.privilege.split(",");
 		for(var i=0;i<privilege.length;i++){
 			if(privilege[i]=='1102'){

@@ -364,4 +364,80 @@ wls.user = Ext.extend(wls, {
 		store.load({params:{start:0, limit:8}});    
 		return grid;
 	}
+	,getMyCenter:function(domid){
+		
+		var thisObj = this;
+
+		
+		var border = new Ext.Panel({
+			 id:domid
+			,layout: 'border'
+			,items:[
+				new Ext.Panel({
+					region:'east'
+					,width:250						
+					,html:'<div id="'+domid+'_uc"></div>'
+				})
+				,new Ext.Panel({
+					 region:'center'
+					
+					,html:'<div id="chart1"></div><div id="chart2"></div>'
+				})
+								
+			]
+		});
+		var thisObj = this;
+		Ext.Ajax.request({				
+			method:'POST',				
+			url:thisObj.config.AJAXPATH+"?controller=user&action=getUserInfo",				
+			success:function(response){		
+				var obj = jQuery.parseJSON(response.responseText);
+				var str = "<div><img src='"+thisObj.config.ImagePath+obj.photo+"' /></div>" +
+						"<div>金币:"+obj.money+"</div>" +
+						"<div>用户组:"+obj.groups+"</div>";
+				
+			    $('#'+domid+'_uc').append(str);
+			    
+				var store = new Ext.data.JsonStore({
+				    autoDestroy: true,
+				    url: thisObj.config.AJAXPATH+'?controller=user&action=getMyQuizLineData&rand='+Math.random(),
+				    root: 'data',
+				    idProperty: 'id',
+				    fields: ['id','proportion','index']
+				});
+				store.load();	
+				var chart = new Ext.chart.LineChart({
+					 store:store
+					,title:'个人成绩图'		
+					,height:'200px'
+					,renderTo:'chart1'
+					,xField:'index'
+					,yField:'proportion'
+				});
+				
+				var store2 = new Ext.data.JsonStore({
+				    autoDestroy: true,
+				    url: thisObj.config.AJAXPATH+'?controller=user&action=getMyQuizLineData&rand='+Math.random(),
+				    root: 'data',
+				    idProperty: 'id',
+				    fields: ['id','proportion','index']
+				});
+				store2.load();	
+				var chart2 = new Ext.chart.LineChart({
+					 store:store
+					,title:'个人成绩图'		
+					,height:'200px'
+					,renderTo:'chart2'
+					,xField:'index'
+					,yField:'proportion'
+				});				
+						    
+			},				
+			failure:function(response){				
+			    Ext.Msg.alert('failure',response.responseText);
+			},				
+			params:{id:thisObj.myUser.id}				
+		});
+		return border;
+	}
 });

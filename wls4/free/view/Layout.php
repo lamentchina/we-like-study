@@ -63,6 +63,11 @@ Ext.onReady(function(){
 		success:function(response){				
 			var obj = jQuery.parseJSON(response.responseText);
 			getToolBar(null,obj);
+			var cmp = user_.getMyCenter('w_u_c');
+			cmp.title = '个人统计中心';
+			cmp.closable = true;
+			Ext.getCmp('w_tp').add(cmp);
+			Ext.getCmp('w_tp').setActiveTab('w_u_c');	
 		},				
 		failure:function(response){	
 			
@@ -179,6 +184,12 @@ Ext.onReady(function(){
 				list.title = il8n.Log;		
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_q_lg_ml');	
+			}else if(a.id_level=='1251'){				
+				var cmp = user_.getMyCenter('w_u_c');
+				cmp.title = '个人统计中心';
+				cmp.closable = true;
+				Ext.getCmp('w_tp').add(cmp);
+				Ext.getCmp('w_tp').setActiveTab('w_u_c');	
 			}								
 		}else if(a.menuType=='subject'){
 			var obj = new wls.subject();

@@ -96,6 +96,7 @@ class m_user extends wls implements dbtable{
 				,password varchar(200) not null
 				,money int default 0
 				,credits int default 0
+				,photo text 
 				,id_level_user_group varchar(200) default '0'
 			
 			) DEFAULT CHARSET=utf8;
@@ -133,6 +134,7 @@ class m_user extends wls implements dbtable{
 				'money'=>$currentSheet->getCell('C'.$i)->getValue(),
 				'credits'=>$currentSheet->getCell('D'.$i)->getValue(),
 				'id_level_user_group'=>$currentSheet->getCell('E'.$i)->getValue(),
+				'photo'=>$currentSheet->getCell('F'.$i)->getValue(),
 			);
 			$this->insert($data);
 		}				
@@ -160,6 +162,7 @@ class m_user extends wls implements dbtable{
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', '金币');
 		$objPHPExcel->getActiveSheet()->setCellValue('D1', '积分');
 		$objPHPExcel->getActiveSheet()->setCellValue('E1', '用户组');
+		$objPHPExcel->getActiveSheet()->setCellValue('F1', '照片');
 
 		$index = 1;
 		for($i=0;$i<count($data);$i++){
@@ -169,6 +172,7 @@ class m_user extends wls implements dbtable{
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['money']);
 			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['credits']);
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['id_level_user_group']);
+			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['photo']);
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
