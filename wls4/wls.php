@@ -5,10 +5,11 @@ include_once 'free/model/tools.php';
 
 /**
  * We Like Study!
- * 我们喜欢学习
+ * 
+ * This is an open-source project
  *
  * @see www.welikestudy.com
- * @copyright www.wei1224hf.com
+ * @copyright www.wei1224hf.com 
  * @version 1.0
  * */
 class wls{
