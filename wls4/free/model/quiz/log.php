@@ -176,7 +176,20 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				$quizlog['id_level_subject'] = $temp['id_level_subject'];
 			}
 		}
+		$sql = "select questions from ".$pfx."wls_quiz_paper where id = ".$quizlog['id_quiz_paper'];
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);	
+		$paperQuestions = $temp['questions'];
+		$quizlog['id_question'] = $paperQuestions;
+				
 		$quizlog['id'] = $this->insert($quizlog);
+		
+		//获得题目最小编号
+		$sql = "select min(id) as minid from ".$pfx."wls_question where id_quiz_paper = ".$quizlog['id_quiz_paper'];
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);	
+		$minQuesId = $temp['minid'];
+		
 		//		exit();
 
 		$currentSheet = $this->phpexcel->getSheetByName('questions');
@@ -204,9 +217,14 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		include_once dirname(__FILE__).'/wrong.php';
 		$wrongObj = new m_quiz_wrong();
 		include_once dirname(__FILE__).'/../knowledge/log.php';
+		
+		
+
+		
 		$knowledgeLogObj = new m_knowledge_log();		
 		for($i=3;$i<=$allRow;$i++){
-			$sql = "select id,answer,cent,id_parent,ids_level_knowledge from ".$pfx."wls_question where id = ".$currentSheet->getCell($keys['id_question'].$i)->getValue();
+			$sql = "select id,answer,cent,id_parent,ids_level_knowledge from ".$pfx."wls_question where id = ".($currentSheet->getCell($keys['id_question'].$i)->getValue()+($minQuesId-1));
+//			echo $sql;
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
 			$id_question .= $temp['id'].',';
@@ -267,7 +285,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$quizlog_update = array(
 			 'id'=>$quizlog['id']
 			,'mycent'=>$quizlog_cent
-			,'id_question'=>$id_question
+//			,'id_question'=>$id_question
 			,'count_right'=>$count_right
 			,'count_wrong'=>$count_wrong
 			,'proportion'=>$count_right/($count_wrong+$count_right)			
@@ -337,6 +355,8 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
+		if($page==null)$page = 1;
+		if($pagesize==null)$pagesize = 100;
 		
 		include_once dirname(__FILE__).'/../subject.php';
 		$subjectObj = new m_subject();
@@ -359,7 +379,11 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				}
 				if($keys[$i]=='id_level_subject'){
 					$where .= " and id_level_subject in ('".$search[$keys[$i]]."') ";
+				}	
+				if($keys[$i]=='id_level_subject_'){
+					$where .= " and id_level_subject like '".$search[$keys[$i]]."%' ";
 				}				
+							
 			}
 		}
 		if($orderby==null)$orderby = " order by id";

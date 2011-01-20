@@ -95,12 +95,102 @@ class subject extends wls{
 		include_once dirname(__FILE__).'/../model/quiz/log.php';		
 		$log = new m_quiz_log();
 		$user = $this->getMyUser();
-		$data = $log->getList(1,100,array('id_level_subject'=>$_REQUEST['id_level_subject'],'id_user'=>$user['id']));
-		for($i=0;$i<count($data['data']);$i++){
-			$data['data'][$i]['index'] = $i+1;
-			$data['data'][$i]['proportion'] *=100;
+		$search = array('id_user'=>$user['id']);
+		if(isset($_REQUEST['id_level_subject_']) && $_REQUEST['id_level_subject_']!=''){
+			$search['id_level_subject_'] = $_REQUEST['id_level_subject_'];
 		}
-		echo json_encode($data);		
+		$data = $log->getList(1,100,$search);
+		$data = $data['data'];
+		$arr = array();
+		for($i=0;$i<count($data);$i++){
+			$arr [] = array(
+				'index' => $i+1,
+				'proportion'=>floor((100*$data[$i]['count_right']) /($data[$i]['count_right'] + $data[$i]['count_wrong'])) 
+			);
+		}
+
+		$xml = '
+<?xml version="1.0" encoding="UTF-8"?>
+<settings> 
+	
+
+
+  <background>
+    <color>#EEEEEE</color>
+    <alpha>100</alpha>
+    <border_color>#999999</border_color>
+    <border_alpha>90</border_alpha>
+  </background>	
+  
+  <values>
+  	<y_left> 
+  		<max>100</max>
+  	</y_left>  
+  </values>
+  
+   <plot_area>  
+	<margins>                                                
+      <left>30</left>                                          
+      <top>10</top>                                             
+      <right>0</right>                                        
+      <bottom>0</bottom>                                       
+    </margins>
+ <legend>
+ <enabled>false</enabled>
+   </legend> 
+   </plot_area>  
+
+
+   
+	<graphs>
+		<graph gid="1">   
+		 	<axis>left</axis>                                      
+			                 
+			<color>#999999</color>                                                            
+			<fill_alpha>50</fill_alpha>    
+                         
+     	</graph>  	
+     </graphs>   
+	<data> 
+	<chart>
+	<series>';
+	for($i=0;$i<count($arr);$i++){
+		$xml .= '<value xid="'.$i.'">'.$arr[$i]['index'].'</value>';	
+	}
+	$xml .='
+	</series>
+
+	<graphs>
+		<graph gid="1">';
+	for($i=0;$i<count($arr);$i++){
+		$xml .= '<value xid="'.$i.'">'.$arr[$i]['proportion'].'</value>';	
+	}
+	$xml .= '
+
+		</graph>
+
+		
+
+	</graphs>
+	<guides>	                                   
+	 <guide>                                     
+	   <start_value>60</start_value>               
+	   <title>及格线60</title>                           
+	   <color>#00CC00</color>                             
+	   <inside>true</inside>                         
+	 </guide>  
+	</guides>	
+</chart>
+	
+	</data>
+		';
+		
+		echo $xml;		
+		
+
+
+		
+		
 	}
 }
 ?>

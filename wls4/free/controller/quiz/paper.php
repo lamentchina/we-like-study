@@ -98,9 +98,10 @@ class quiz_paper extends quiz{
 		$id = $_POST['id'];
 		$item = $this->m->getList(1,1,array('id'=>$id),null,'id,id_level_subject');
 		$item = $item['data'][0];
-
+		
+		//插入试卷日志
 		include_once $this->c->license.'/model/quiz/log.php';
-		$obj = new m_quiz_log();
+		$quizLogObj = new m_quiz_log();
 		$data = array(
 			'date_created'=>date('Y-m-d H:i:s'),
 			'id_question'=>$id_question,
@@ -110,7 +111,7 @@ class quiz_paper extends quiz{
 			'time_stop'=>$_POST['time']['stop'],
 			'time_used'=>$_POST['time']['used'],
 		);
-		$id_quiz_log = $obj->insert($data);
+		$id_quiz_log = $quizLogObj->insert($data);
 
 		$count_right = 0;
 		$count_wrong = 0;
@@ -118,13 +119,25 @@ class quiz_paper extends quiz{
 		$cent = 0;
 		$mycent = 0;
 		$count_total = count($answers);
-
 		$user = $this->getMyUser();
 
 		include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
-		$obj_ = new m_quiz_wrong();
+		$wrongObj = new m_quiz_wrong();
+		include_once $this->c->license.'/model/question/log.php';
+		$quesLogObj = new m_question_log();		
+		include_once $this->c->license.'/model/knowledge/log.php';
+		$knowledgeLogObj = new m_knowledge_log();				
 		for($i=0;$i<count($answers);$i++){
 			unset($answers[$i]['description']);
+			$knowledgeLog = array(
+				 'date_created'=>date('Y-m-d H:i:s')
+				,'date_slide'=>3600
+				,'id_user'=>$user['id']
+				,'id_level_user_group'=>1
+				,'id_question'=>$answers[$i]['id']
+			);
+
+			
 			if($answers[$i]['myAnswer']=='I_DONT_KNOW'){
 				$answers[$i]['correct'] = 2;
 				$count_giveup ++;
@@ -132,6 +145,10 @@ class quiz_paper extends quiz{
 				$answers[$i]['correct'] = 1;
 				$count_right ++;
 				$mycent += $answers[$i]['cent'];
+				
+				$knowledgeLog['count_right'] = 1;
+				//写入知识点记录
+				$knowledgeLogObj->insert($knowledgeLog);				
 			}else{
 				if($answers[$i]['type']!=5){
 					$obj_->id_question = $answers[$i]['id'];
@@ -143,11 +160,17 @@ class quiz_paper extends quiz{
 						'id_user'=>$user['id'],
 						'date_created'=>date('Y-m-d H:i:s'),
 					);
-					$obj_->insert($wrong);
+					//写入错题本
+					$wrongObj->insert($wrong);
 					$answers[$i]['correct'] = 0;
 					$count_wrong ++;
+					
+					$knowledgeLog['count_wrong'] = 1;
+					//写入知识点记录
+					$knowledgeLogObj->insert($knowledgeLog);
 				}
-			}
+			}		
+			
 			$cent += $answers[$i]['cent'];
 			$answers[$i]['id_question'] = $answers[$i]['id'];
 			$answers[$i]['date_created'] = date('Y-m-d H:i:s');
@@ -155,10 +178,10 @@ class quiz_paper extends quiz{
 			$answers[$i]['id_quiz_log'] = $id_quiz_log;
 			$answers[$i]['id_quiz_paper'] = $id;
 			$answers[$i]['id_level_subject'] = $item['id_level_subject'];
+					
+			//写入题目日志
+			$quesLogObj->insert($answers[$i]);
 		}
-		include_once $this->c->license.'/model/question/log.php';
-		$obj_ = new m_question_log();
-		$obj_->insertMany($answers);
 
 		$data = array(
 			'id'=>$id_quiz_log,
@@ -173,11 +196,14 @@ class quiz_paper extends quiz{
 		if(($count_right+$count_wrong)>0){
 			$data['proportion'] = $count_right/($count_right+$count_wrong);
 		}
-		$obj->update($data);
+		
+		//跟新测验日志
+		$quizLogObj->update($data);
 
 		$this->m->id = $id;
 		$this->m->cumulative('count_used');
 		$this->m->mycent = $mycent;
+		//更新卷子的最高分情况
 		$this->m->cumulative('score');
 		
 		echo $json;

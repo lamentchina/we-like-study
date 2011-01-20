@@ -364,80 +364,94 @@ wls.user = Ext.extend(wls, {
 		store.load({params:{start:0, limit:8}});    
 		return grid;
 	}
-	,getMyCenter:function(domid){
-		
-		var thisObj = this;
-
-		
+	,getMyCenter:function(domid){		
 		var border = new Ext.Panel({
 			 id:domid
 			,layout: 'border'
 			,items:[
 				new Ext.Panel({
 					region:'east'
-					,width:250						
-					,html:'<div id="'+domid+'_uc"></div>'
+					,width:200						
+					,html:'<div id="'+domid+'_subjects"></div><div id="'+domid+'_uc"></div>'
 				})
 				,new Ext.Panel({
 					 region:'center'
 					
-					,html:'<div id="chart1"></div><div id="chart2"></div>'
+					,html:'成绩曲线:<div id="chart1"></div><table width="100%" height="200px"><tr><td width="50%">知识点掌握:<br/>' +
+							'<div id="flashcontent"><strong>You need to upgrade your Flash Player</strong></div>' +
+							'</div></td><td>&nbsp;</td</tr></table>'
 				})
 								
 			]
 		});
-		var thisObj = this;
-		Ext.Ajax.request({				
-			method:'POST',				
-			url:thisObj.config.AJAXPATH+"?controller=user&action=getUserInfo",				
-			success:function(response){		
-				var obj = jQuery.parseJSON(response.responseText);
-				var str = "<div><img src='"+thisObj.config.ImagePath+obj.photo+"' /></div>" +
-						"<div>金币:"+obj.money+"</div>" +
-						"<div>用户组:"+obj.groups+"</div>";
-				
-			    $('#'+domid+'_uc').append(str);
-			    
-				var store = new Ext.data.JsonStore({
-				    autoDestroy: true,
-				    url: thisObj.config.AJAXPATH+'?controller=user&action=getMyQuizLineData&rand='+Math.random(),
-				    root: 'data',
-				    idProperty: 'id',
-				    fields: ['id','proportion','index']
-				});
-				store.load();	
-				var chart = new Ext.chart.LineChart({
-					 store:store
-					,title:'个人成绩图'		
-					,height:'200px'
-					,renderTo:'chart1'
-					,xField:'index'
-					,yField:'proportion'
-				});
-				
-				var store2 = new Ext.data.JsonStore({
-				    autoDestroy: true,
-				    url: thisObj.config.AJAXPATH+'?controller=user&action=getMyQuizLineData&rand='+Math.random(),
-				    root: 'data',
-				    idProperty: 'id',
-				    fields: ['id','proportion','index']
-				});
-				store2.load();	
-				var chart2 = new Ext.chart.LineChart({
-					 store:store
-					,title:'个人成绩图'		
-					,height:'200px'
-					,renderTo:'chart2'
-					,xField:'index'
-					,yField:'proportion'
-				});				
-						    
-			},				
-			failure:function(response){				
-			    Ext.Msg.alert('failure',response.responseText);
-			},				
-			params:{id:thisObj.myUser.id}				
-		});
 		return border;
+	}
+	,afterMyCenterAdded:function(domid){		
+		var str = "<div><img style='border:2px;' src='"+this.config.ImagePath+'/user/'+user_.myUser.photo+"' height='200' width='150' /></div>" +
+				"<div>"+user_.myUser.money+"金币</div>" +
+				"<div>参加科目数:"+user_.myUser.subject.split(',').length +"</div>" +
+				"<div>权限操作数:"+user_.myUser.privilege.split(',').length+"</div>";				
+		
+	    $('#'+domid+'_uc').append(str);	    
+
+	
+		this.getMySubjectList(domid+'_subjects');					
+		
+		var so = new SWFObject(this.config.AmChart+"amradar/amradar.swf", user_.myUser.id+"amradar", "320", "300", "8", "#FFFFFF");
+		so.addVariable("path", this.config.AmChart+"amradar/");
+		so.addVariable("chart_id", user_.myUser.id+"amradar");
+		so.addVariable("settings_file", encodeURIComponent(this.config.AJAXPATH+"?controller=knowledge_log&action=getMyRaderSetting"));
+		so.write("flashcontent");
+		
+		var so = new SWFObject(this.config.AmChart+"amline/amline.swf", user_.myUser.id+"amline", "100%", "200", "8", "#FFFFFF");
+		so.addVariable("path", this.config.AmChart+"amline/");
+		so.addVariable("settings_file", encodeURIComponent(this.config.AJAXPATH+"?controller=subject&action=getMyQuizLine"));	
+		so.write("chart1");		
+	}
+
+	,getMySubjectList:function(domid){
+		var thisObj = this;
+		var store = new Ext.data.JsonStore({
+		    autoDestroy: true,
+		    url: thisObj.config.AJAXPATH+'?controller=user&action=getSubject&username='+user_.myUser.username,
+		    root: 'data',
+		    idProperty: 'id',
+		    fields: ['id','name','id_level', 'ids_level_knowledge']
+		});
+		store.load();
+		
+		var cm = new Ext.grid.ColumnModel({
+		    defaults: {
+		        sortable: true   
+		    },
+		    columns: [{
+		             header: '名称'
+		            ,dataIndex: 'name'
+		            ,width:150
+		        }, {
+		             header: '编号 '
+		            ,dataIndex: 'id_level'
+		            ,hidden:true
+		        }
+		    ]
+		});
+		var grid = new Ext.grid.GridPanel({
+		    store: store,
+		    title: "我的科目",
+		    cm: cm,        
+		    renderTo: domid,
+		   // width: '90%',
+		    height: 250,
+		    loadMask:true
+		});
+		grid.addListener('rowdblclick',function(t,r,e){			
+			var id_k = t.store.data.items[r].data.ids_level_knowledge;
+			var obj = document.getElementById(user_.myUser.id+"amradar");
+			obj.reloadSettings(thisObj.config.AJAXPATH+"?controller=knowledge_log&action=getMyRaderSetting&id="+id_k);
+			
+			var id_s = t.store.data.items[r].data.id_level;
+			var objs = document.getElementById(user_.myUser.id+"amline");
+			objs.reloadSettings(thisObj.config.AJAXPATH+"?controller=subject&action=getMyQuizLine&id_level_subject_="+id_s);				
+		}); 
 	}
 });

@@ -67,8 +67,8 @@ class install extends wls {
 		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user_group.xls");
-		$obj->importExcelOne(dirname(__FILE__)."../../../../file/test/wls_user_group_one.xls");
-		$obj->importExcelOne(dirname(__FILE__)."../../../../file/test/wls_user_group_one2.xls");
+		$obj->importExcelOne(dirname(__FILE__)."../../../../file/test/wls_user_group_admin.xls");
+		$obj->importExcelOne(dirname(__FILE__)."../../../../file/test/wls_user_group_user.xls");
 
 		include_once $this->c->license.'/model/user.php';
 		$obj = new m_user();
@@ -79,19 +79,86 @@ class install extends wls {
 		$obj = new m_user_privilege();
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_user_privilege.xls");
 
-//		include_once dirname(__FILE__)."/install/yf.php";
-//		$obj = new install_yf();
-//		$obj->xznlcs();
-
-//		include_once $this->c->license.'/model/quiz/log.php';
-//		$obj = new m_quiz_log();
-//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log.xls");
-//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log2.xls");
-//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log3.xls");
-//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wls_quiz_log4.xls");
 		//		include_once $this->c->license.'/model/quiz/paper.php';
 		//		$obj = new m_quiz_paper();
 		//		$obj->importExcel(dirname(__FILE__)."../../../../file/test/wlls_quiz_paper.xls");
 	}
+	
+	public function insertData4TestLog(){
+		include_once $this->c->license.'/model/quiz/log.php';
+		$obj = new m_quiz_log();
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log2.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log3.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log4.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log5.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log6.xls");	
+
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log2_.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log3_.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log4_.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log5_.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log6_.xls");	
+
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log__.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log2__.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log3__.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log4__.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log5__.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log6__.xls");		
+	}
+	
+	public function insertData4TestLogAdmin(){
+		include_once $this->c->license.'/model/quiz/log.php';
+		$obj = new m_quiz_log();
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_x_1.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_x_2.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_x_3.xls");		
+		
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_1.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_2.xls");	
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_3.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_4.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_5.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_6.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_7.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_ga_8.xls");	
+
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_1.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_2.xls");	
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_3.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_4.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_5.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_6.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_7.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_admin_gg_8.xls");		
+	}	
+	
+	public function insertData4TestLogUser1(){
+		include_once $this->c->license.'/model/quiz/log.php';
+		$obj = new m_quiz_log();
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_x_1.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_x_2.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_x_3.xls");		
+		
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_1.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_2.xls");	
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_3.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_4.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_5.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_6.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_7.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_ga_8.xls");	
+
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_1.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_2.xls");	
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_3.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_4.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_5.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_6.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_7.xls");
+		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_8.xls");		
+	}	
 }
 ?>

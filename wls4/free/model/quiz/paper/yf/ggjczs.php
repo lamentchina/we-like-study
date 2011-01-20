@@ -81,6 +81,8 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 				,'name_subject'=>$this->paper['name_subject']
 				,'id_quiz_paper'=>$this->paper['id']
 				,'title_quiz_paper'=>$this->paper['title']
+				
+				,'ids_level_knowledge'=>rand(1101,1105).",11"
 			);
 		}
 	}
@@ -167,6 +169,8 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 				
 				,'belongto'=>0
 				,'index' =>"2".$i
+				
+				,'ids_level_knowledge'=>rand(1101,1105).",11"
 			);
 			
 			$this->questions[] = $question;
@@ -259,6 +263,8 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 				
 				,'belongto'=>0
 				,'index' =>"3".$i
+				
+				,'ids_level_knowledge'=>rand(1101,1105).",11"
 			);
 			
 			$this->questions[] = $question;

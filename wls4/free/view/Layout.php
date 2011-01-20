@@ -10,6 +10,7 @@
 	src="../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="../../../libs/ext_3_2_1/ext-all.js"></script>
 <script type="text/javascript" src="../../../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../../../libs/swfobject.js"></script>
 <script type="text/javascript" src="il8n.js"></script>
 <script type="text/javascript" src="wls.js"></script>
 <script type="text/javascript" src="user.js"></script>
@@ -33,6 +34,7 @@ if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){
 	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
 	echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
 	echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
+	echo "user_.myUser.photo = '".$_SESSION['wls_user']['photo']."';\n";
 	
 ?>
 
@@ -47,14 +49,15 @@ Ext.onReady(function(){
 	var tb_ = new Ext.Toolbar({
 		id:"w_t",
 		region: 'north',
-		margins:'0 0 5 0',
-        height: 28
+		 height: 28,
+		margins:'0 0 5 0'
 	});
 
 	var viewport = new Ext.Viewport({
 		id:"w_v",
         layout: 'border',
-        items: [tab,tb_]
+        autoDestroy :true,
+        items: [tab,tb_]         
 	});
 
 	Ext.Ajax.request({				
@@ -68,6 +71,7 @@ Ext.onReady(function(){
 			cmp.closable = true;
 			Ext.getCmp('w_tp').add(cmp);
 			Ext.getCmp('w_tp').setActiveTab('w_u_c');	
+			user_.afterMyCenterAdded('w_u_c');
 		},				
 		failure:function(response){	
 			
@@ -184,12 +188,27 @@ Ext.onReady(function(){
 				list.title = il8n.Log;		
 				Ext.getCmp('w_tp').add(list);
 				Ext.getCmp('w_tp').setActiveTab('w_q_lg_ml');	
-			}else if(a.id_level=='1251'){				
-				var cmp = user_.getMyCenter('w_u_c');
-				cmp.title = '个人统计中心';
-				cmp.closable = true;
-				Ext.getCmp('w_tp').add(cmp);
-				Ext.getCmp('w_tp').setActiveTab('w_u_c');	
+			}else if(a.id_level=='1251'){	
+				var cmp = Ext.getCmp('w_u_c');
+				//console.debug();
+				if(!cmp){
+					var cmp = user_.getMyCenter('w_u_c');
+					cmp.title = '个人统计中心';
+					cmp.closable = true;
+					Ext.getCmp('w_tp').add(cmp);
+					Ext.getCmp('w_tp').setActiveTab('w_u_c');	
+					user_.afterMyCenterAdded('w_u_c');
+				}else{
+					Ext.getCmp('w_tp').setActiveTab('w_u_c');	
+				}	
+				
+//				if(!cmp){
+//					
+//				}else{
+//					Ext.getCmp('w_tp').add(cmp);
+//				}
+//				console.debug(cmp);
+				
 			}								
 		}else if(a.menuType=='subject'){
 			var obj = new wls.subject();
@@ -200,6 +219,7 @@ Ext.onReady(function(){
 			copoment.title = il8n.Subject+' '+a.text;	
 			Ext.getCmp('w_tp').add(copoment);
 			Ext.getCmp('w_tp').setActiveTab('w_s_c'+obj.id_level);	
+			obj.getMyQuizLine('w_s_c'+obj.id_level+'chart');
 		}	
 	}
 });

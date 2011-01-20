@@ -258,7 +258,10 @@ wls.subject = Ext.extend(wls, {
 	        ,activeTab: 0
 	        ,width:400
 	        ,frame:true
-	        ,items:[]
+	        ,items:[{
+	        	title:'对错率曲线'
+	        	,html:'<div id="'+domid+'chart"></div>'	
+	        }]
 	        ,region:'east'
     	});
 		var layout = new Ext.Panel({
@@ -266,26 +269,14 @@ wls.subject = Ext.extend(wls, {
 			,id:domid
 			,items: [grid,leftSide]			
 		});
-		var quizLine = this.getMyQuizLine();
-		quizLine.title = '对错率曲线';		
-		leftSide.add(quizLine);
+		//this.getMyQuizLine();
+
 		return layout;
 	}
-	,getMyQuizLine:function(){
-		var thisObj = this;
-		var store = new Ext.data.JsonStore({
-		    autoDestroy: true,
-		    url: thisObj.config.AJAXPATH+'?controller=subject&action=getMyQuizLine&id_level_subject='+thisObj.id_level,
-		    root: 'data',
-		    idProperty: 'id',
-		    fields: ['id','proportion','index']
-		});
-		var chart = new Ext.chart.LineChart({
-			 store:store
-			,xField:'index'
-			,yField:'proportion'
-		});
-		store.load();
-		return chart;
+	,getMyQuizLine:function(chartid){	
+		var so = new SWFObject(this.config.AmChart+"amline/amline.swf", user_.myUser.id+"amline", "100%", "100%", "8", "#FFFFFF");
+		so.addVariable("path", this.config.AmChart+"amline/");
+		so.addVariable("settings_file", encodeURIComponent(this.config.AJAXPATH+"?controller=subject&action=getMyQuizLine&id_level_subject_="+this.id_level));	
+		so.write(chartid);		
 	}
 });

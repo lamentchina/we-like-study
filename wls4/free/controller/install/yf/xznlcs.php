@@ -22,7 +22,7 @@ class install_yf_xznlcs extends install_yf{
 		$m->viewPaper();
 		
 		$m->getQuestions();
-		print_r($m->questions);
+//		print_r($m->questions);
 		$m->saveQuestions();
 	}	
 }

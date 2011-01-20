@@ -19,6 +19,23 @@ class m_knowledge_log extends wls implements dbtable,log{
 			$data['id_user'] = $user['id'];
 			$data['id_level_user_group'] = $user['id_level_user_group'];
 		}
+		if(isset($data['id_question'])){
+			$sql = "select ids_level_knowledge from ".$pfx."wls_question where id = ".$data['id_question'];
+			$res = mysql_query($sql,$conn);
+			$temp = mysql_fetch_assoc($res);
+//			print_r($temp);
+			$arr = explode(",",$temp['ids_level_knowledge']);
+			for($i=0;$i<count($arr);$i++){
+				$data2 = $data;
+				unset($data2['id_question']);
+				$data2['id_level_knowledge'] = $arr[$i];
+//				print_r($data2);
+				$this->insert($data2);
+			}
+			return;
+		}
+		
+		if($data['id_level_knowledge']==0)return;
 	
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -164,14 +181,27 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
-			for($i=0;$i<count($keys);$i++){
-				if($keys[$i]=='type'){
-					$where .= " and type in (".$search[$keys[$i]].") ";
-				}							
+			for($i=0;$i<count($keys);$i++){	
+				if($keys[$i]=='id_user'){
+					$where .= " and id_user in (".$search[$keys[$i]].") ";
+				}
+				if($keys[$i]=='date_created'){
+					$where .= " and date_created = '".$search[$keys[$i]]."' ";
+				}	
+				if($keys[$i]=='id_level_knowledge_'){
+					$where .= " and id_level_knowledge like '".$search[$keys[$i]]."__' ";
+				}	
+				if($keys[$i]=='lastDate'){
+					$sql = "select max(date_created) as date_created_max from ".$pfx."wls_knowledge_log where id_user = ".$search['id_user'];
+					$res = mysql_query($sql,$conn);
+					$temp = mysql_fetch_assoc($res);					
+					
+					$where .= " and date_created = '".$temp['date_created_max']."' ";
+				}																		
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select ".$columns." from ".$pfx."wls_knowledge_log ".$where." ".$orderby;
+		$sql = "select ".$columns.",((count_right*100)/(count_right+count_wrong)) as proportion from ".$pfx."wls_knowledge_log ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 		
 		$res = mysql_query($sql,$conn);
@@ -201,6 +231,35 @@ class m_knowledge_log extends wls implements dbtable,log{
 	 * */
 	public function addLog($whatHappened){
 		
+	}
+	
+	public function getMyRecent($id){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+				
+		$user = $this->getMyUser();
+		$sql = "select id_level_knowledge from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and id_level_knowledge like '".$id."__' group by id_level_knowledge ";
+//		echo $sql;
+		$res = mysql_query($sql,$conn);
+		$arr = array();
+		$ids = "";
+		while ($temp = mysql_fetch_assoc($res)) {
+			
+			$sql_ = "select * from ".$pfx."wls_knowledge_log where id_user= ".$user['id']." and id_level_knowledge = '".$temp['id_level_knowledge']."' order by date_created desc  ";
+			$res_ = mysql_query($sql_,$conn);
+			$temp_ = mysql_fetch_assoc($res_);
+			$arr[$temp_['id_level_knowledge']] = $temp_;
+			$ids.= "'".$temp['id_level_knowledge']."',";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		
+		$sql = "select * from ".$pfx."wls_knowledge where id_level in (".$ids."); ";
+//		echo $sql;
+		$res = mysql_query($sql,$conn);
+		while($temp = mysql_fetch_assoc($res)){
+			$arr[$temp['id_level']]['name'] = $temp['name'];
+		}
+		return $arr;		
 	}
 }
 ?>

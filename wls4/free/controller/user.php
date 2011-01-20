@@ -234,11 +234,12 @@ class user extends wls{
 		$obj = new m_subject();
 		$data = $obj->getListForUser($username);
 
-		include_once dirname(__FILE__).'/../model/tools.php';
-		$t = new tools();
-		$data = $t->getTreeData(null,$data);
-
-		echo json_encode($data);
+		for($i=0;$i<count($data);$i++){
+			if($data[$i]['checked']!=1)unset($data[$i]);
+		}
+		echo json_encode(array(
+			'data'=>$data
+		));
 	}
 	
 	public function getUserInfo(){
@@ -250,40 +251,88 @@ class user extends wls{
 	}
 	
 	public function getMyQuizLineData(){
+		include_once dirname(__FILE__).'/../model/quiz/log.php';
+
+		$user = $this->getMyUser();
+		
+		$obj = new m_quiz_log();
+		$search = array(
+			'id_user'=>$user['id']
+		);
+		if(isset($_REQUEST['id_level_subject'])){
+			$search['id_level_subject'] = $_REQUEST['id_level_subject'];
+		}
+		$data = $obj->getList(null,null,$search);
+		$data = $data['data'];
+		$arr = array();
+		for($i=0;$i<count($data);$i++){
+			$arr[] = array(
+				 'index' =>$i+1
+				,'proportion'=>$data[$i]['proportion']*100
+				,'id'=>$data[$i]['id']
+			);
+		}
+
 		echo json_encode(array(
-			'data'=>array(
-				array(
-					'id'=>1,
-					'index'=>1,
-					'proportion'=>rand(1,100)
-				),
-				array(
-					'id'=>2,
-					'index'=>2,
-					'proportion'=>rand(1,100)
-				),
-				array(
-					'id'=>3,
-					'index'=>3,
-					'proportion'=>rand(1,100)
-				),
-				array(
-					'id'=>4,
-					'index'=>4,
-					'proportion'=>rand(1,100)
-				),
-				array(
-					'id'=>5,
-					'index'=>5,
-					'proportion'=>rand(1,100)
-				),
-				array(
-					'id'=>6,
-					'index'=>6,
-					'proportion'=>rand(1,100)
-				)
-			)
+			'data'=>$arr
 		));
+	}
+	
+	public function getMyKnowledgeRader(){
+		$user = $this->getMyUser();
+		
+		$fielname = "f".$user['id']."_".$_REQUEST['id'].".png";
+		$path = dirname(__FILE__).'/../../../file/images/pchart/';
+		
+		$path2 = $path.$fielname;
+		
+		if(!file_exists($path.$fielname)){
+//		if(2>1){
+			
+		
+		
+			include_once dirname(__FILE__).'/../model/knowledge/log.php';
+			$knowledgeLogObj = new m_knowledge_log();
+			$data = $knowledgeLogObj->getMyRecent($_REQUEST['id']);
+			
+			include_once dirname(__FILE__).'/../../../libs/pchart/pChart/pData.class';
+			include_once dirname(__FILE__).'/../../../libs/pchart/pChart/pChart.php';
+	
+			$DataSet = new pData;
+			$lables = array();
+			$nums = array();
+	
+			$keys = array_keys($data);
+			for($i=0;$i<count($data);$i++){
+				$nums[] = floor(($data[$keys[$i]]['count_right']*100)/($data[$keys[$i]]['count_right']+$data[$keys[$i]]['count_wrong']));
+				$lables[] = $data[$keys[$i]]['name']." ".$nums[$i];			
+			}
+	
+			$DataSet->AddPoint($lables,"Label");
+			$DataSet->AddPoint($nums,"Serie1");
+	
+			$DataSet->AddSerie("Serie1");
+	
+			$DataSet->SetAbsciseLabelSerie("Label");
+	
+	
+			$DataSet->SetSerieName("Serie1","Serie1");
+	
+			$Test = new pChart(350,350);
+			$Test->setFontProperties(dirname(__FILE__)."/../../../libs/pchart/Fonts/simsun.ttc",8);
+			$Test->drawFilledRoundedRectangle(7,7,393,393,5,240,240,240);
+			$Test->drawRoundedRectangle(5,5,395,395,5,230,230,230);
+			$Test->setGraphArea(0,0,350,350);
+			$Test->drawFilledRoundedRectangle(30,30,370,370,5,255,255,255);
+			$Test->drawRoundedRectangle(30,30,370,370,5,220,220,220);
+	
+			$Test->drawRadarAxis($DataSet->GetData(),$DataSet->GetDataDescription(),TRUE,20,120,120,100,100,100,230,100);
+			$Test->drawFilledRadar($DataSet->GetData(),$DataSet->GetDataDescription(),50,20,100);
+	
+			$Test->Render($path2);
+		}		
+		
+		header("location:/file/images/pchart/".$fielname); 	 
 	}
 }
 ?>

@@ -155,11 +155,11 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		});
 		
 		var tb = new Ext.Toolbar({
-			id:"w_q_w_l_tb"
+			id:"w_q_w_l_tb"+domid
 		});	
 		
 		var grid = new Ext.grid.GridPanel({
-			title:il8n.Wrongs,
+			title:'随机错题复习',
 		    store:store,
 		    cm: cm,        
 		    id: domid,
@@ -239,7 +239,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		});
 		
 		var tb = new Ext.Toolbar({
-			id:"w_q_w_ml_tb"
+			id:"w_q_w_ml_tb"+domid
 		});	
 		
 		var grid = new Ext.grid.GridPanel({
