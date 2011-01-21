@@ -160,5 +160,92 @@ class install extends wls {
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_7.xls");
 		$obj->importExcel(dirname(__FILE__)."../../../../file/test/quizlog/wls_quiz_log_user1_gg_8.xls");		
 	}	
+	
+	public function main(){
+		$html = "
+			<form method='post' action='wls.php?controller=install&action=saveconfig'>
+			<table>
+				<tr>
+					<td>dbhost</td>
+					<td><input name = 'dbhost' value='localhost' /></td>
+				</tr>
+				<tr>
+					<td>dbname</td>
+					<td><input name = 'dbname' value='wls4' /></td>
+				</tr>
+				<tr>
+					<td>dbuser</td>
+					<td><input name = 'dbuser' value='admin' /></td>
+				</tr>
+				<tr>
+					<td>dbpwd</td>
+					<td><input name = 'dbpwd' value='admin' /></td>
+				</tr>
+				<tr>
+					<td>dbprefix</td>
+					<td><input name = 'dbprefix' value='' /></td>
+				</tr>																			
+			</table>
+			<input type='submit' />
+			</form>
+		";
+		echo $html;
+	}
+	
+	public function saveconfig(){
+		$_POST['debug']= 0;
+		$this->rewirteConfig($_POST);
+		
+		$this->insertData4Test();
+			echo '
+		<htm><head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script language="javascript">
+		alert("安装结束");
+		window.navigate("wls.php");
+		</script>
+		</head><body></body></html>
+		';
+	}
+	
+	
+
+	/**
+	 * 重写配置文件
+	 * **/
+	public function rewirteConfig($foo=null){
+		$file_name = "config.php";
+		if(!$file_handle = fopen($file_name,"w")){
+			die("config.php cant write");
+		}
+		$arr = array();
+		$cfg = (array)$this->c;
+		$keys = array_keys($cfg);
+		for($i=0;$i<count($keys);$i++){
+			eval('$arr["'.$keys[$i].'"] = $this->c->'.$keys[$i].';');
+		}
+
+		if($foo!=null){
+			$keys = array_keys($foo);
+			for($i=0;$i<count($foo);$i++){
+				$arr[$keys[$i]] = $foo[$keys[$i]];
+			}
+		}
+
+		$content = "<?php
+class wlsconfig{
+";
+		$keys = array_keys($arr);
+		for($i=0;$i<count($arr);$i++){
+			$content .= "
+			public \$".$keys[$i]." = '".$arr[$keys[$i]]."';";
+		}
+		$content.=
+"
+}
+?>";
+		fwrite($file_handle,$content);
+		fclose($file_handle);
+	}
 }
 ?>

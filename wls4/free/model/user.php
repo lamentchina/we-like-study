@@ -220,14 +220,19 @@ class m_user extends wls implements dbtable{
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_user ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-		try {
+//		try {
+//		echo $sql;
 			$res = mysql_query($sql,$conn);
-		}catch (Exception $es){
-			$this->error(array(
-				'description'=>$sql
-			));
-			return false;
+		if($res==false){
+			echo $sql;
+			return;
 		}
+//		}catch (Exception $es){
+//			$this->error(array(
+//				'description'=>$sql
+//			));
+//			return false;
+//		}
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
@@ -256,9 +261,16 @@ class m_user extends wls implements dbtable{
 	 * */
 	public function getUser($id=null,$mine=null){
 		if($mine==true){
-			if( (!isset($_SESSION)) || (!isset($_SESSION['wls_user'])))session_start();
 			
-			if(!isset($_SESSION['wls_user'])){//TODO
+			if( (isset($_SESSION)) && (isset($_SESSION['wls_user'])) && $_SESSION['wls_user']!=''){
+				
+			}else{
+
+				session_start();
+			}
+			
+			if(!isset($_SESSION['wls_user']) || $_SESSION['wls_user']['privilege']==''){//TODO
+
 				$data = $this->getList(1,1,array('id'=>$id));
 				$data = $data['data'][0];
 				
@@ -298,10 +310,8 @@ class m_user extends wls implements dbtable{
 				$data['subject'] = $ids;
 				
 				$_SESSION['wls_user'] = $data;
-				
-				
+						
 			}
-//			print_r($_SESSION['wls_user']);
 			return $_SESSION['wls_user'];
 		}else{
 			$data = $this->getList(1,1,array('id'=>$id));
@@ -366,7 +376,7 @@ class m_user extends wls implements dbtable{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 				
-		$user = $this->getUser(null,true);		
+		$user = $this->getUser($this->id,true);		
 //		print_r($user);
 		$privileges = $user['privilege'];
 		

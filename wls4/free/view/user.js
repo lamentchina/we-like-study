@@ -31,15 +31,18 @@ wls.user = Ext.extend(wls, {
 	
 	        items: [{
 	                fieldLabel: il8n.User.Name,
+	                width:150,
 	                name: 'username',
 	                allowBlank:false
 	            },{
 	                fieldLabel: il8n.User.PassWord,
+	                width:150,
 	                name: 'password',
 	                inputType:'password',
 	                allowBlank:false
 	            },{
 	                fieldLabel: il8n.CheckCAPTCHA,
+	                width:150,
 	                enableKeyEvents:true,
 	                name: 'CAPTCHA',
 	                allowBlank:false,
@@ -64,7 +67,13 @@ wls.user = Ext.extend(wls, {
 			        ,handler:function(){
 			        	$('#captcha').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
 			        }
+	        	},{
+	        		text:'注册'
+	        		,handler:function(){
+	        			thisObj.register();
+	        		}
 	        	}
+	        	
 	        ]
 		});
 		Ext.getCmp('CAPTCHA').on('keyup', function(obj,e) {
@@ -74,6 +83,94 @@ wls.user = Ext.extend(wls, {
 		});
 		return form;
 	},
+	register:function(){
+		var thisObj = this;
+		var form = new Ext.form.FormPanel({
+			id:'wls_user_register_form',
+			labelWidth: 75, // label settings here cascade unless overridden
+	        frame:true,
+	        bodyStyle:'padding:5px 5px 0',
+	        width: 350,
+	        defaults: {width: 100},
+	        defaultType: 'textfield',	        
+	
+	        items: [{
+	                fieldLabel: il8n.User.Name,
+	                name: 'username',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.User.PassWord,
+	                name: 'password',
+	                inputType:'password',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.CheckCAPTCHA,
+	                name: 'CAPTCHA',
+	                allowBlank:false,
+	                id:'CAPTCHA_reg'
+	            }, new Ext.BoxComponent({
+	            	fieldLabel: il8n.CAPTCHA,
+	                height: 32, // give north and south regions a height
+	                autoEl: {
+	                    tag: 'div',
+	                    html:'<img style="width:100px; height:28px;" id="captcha_reg" src="'+thisObj.config.CAPTCHA+'securimage_show.php" alt="CAPTCHA Image" />'
+	                }
+	            })
+	        ],
+
+	        buttons: [{
+			    	 text: '注册'
+			        ,handler:function(){
+			        	var obj = form.getForm().getValues();
+			    		Ext.Ajax.request({				
+							method:'POST',				
+							url:thisObj.config.AJAXPATH+"?controller=user&action=register",				
+							success:function(response){				
+								var obj = jQuery.parseJSON(response.responseText);
+								if(obj.msg=='ok'){
+									location.reload();
+								}
+								$.blockUI({
+									message: '<h1>'+il8n.Error+'</h1>' 
+								}); 					
+								setTimeout($.unblockUI, 2000); 
+								
+								$('#captcha_reg').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
+							},				
+							failure:function(response){	
+
+							},				
+							params:obj				
+						});
+			        }
+	        	},{
+			    	 text: il8n.ReCAPTCHA
+			        ,handler:function(){
+			        	$('#captcha_reg').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
+			        }
+	        	}
+	        ]
+		});
+		Ext.getCmp('CAPTCHA').on('keyup', function(obj,e) {
+			if(e.getKey()=='13'){
+				thisObj.login();
+			}
+		});
+		
+		var window_l = new Ext.Window({
+			title:'注册',
+	        width: 250,
+	        height: 200,
+	        layout: 'fit',
+	        plain:true,
+	        bodyStyle:'padding:5px;',
+	        buttonAlign:'center',
+	        items: [form],       
+	        modal:true
+	    });
+		
+		window_l.show();
+	},	
 	login:function(){
 		$.blockUI({
 			message: '<h1>'+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
@@ -91,7 +188,7 @@ wls.user = Ext.extend(wls, {
 						location.reload();
 					}
 					$.blockUI({
-						message: '<h1>'+il8n.Error+'</h1>' 
+						message: '<h1>'+obj.msg+'</h1>' 
 					}); 					
 					setTimeout($.unblockUI, 2000); 
 				    //Ext.Msg.alert('success',response.responseText);

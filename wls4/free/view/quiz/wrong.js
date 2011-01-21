@@ -262,6 +262,12 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				tb.add({
 					text: il8n.Delete,
 			        handler : function(){   
+			        	var ids = '';
+			        	var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+			        	for(var i=0;i<items.length;i++){
+			        		ids += items[i].data.id + ',';
+			        	}
+			        	ids = ids.substring(0,ids.length-1);
 						Ext.Ajax.request({				
 							method:'POST',				
 							url:thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=delete",				
@@ -271,7 +277,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							failure:function(response){				
 							    Ext.Msg.alert('failure',response.responseText);
 							},				
-							params:{id:Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id}				
+							params:{ids:ids}				
 						});		
 					}
 				});

@@ -101,6 +101,11 @@ class wls{
 			}
 		}else{
 //			echo 'need controller!';
+			if($this->c->debug==1){
+				header("location:wls.php?controller=install&action=main"); 	
+			}else{
+				include_once "free/view/Layout.php"; 	
+			}
 		}
 
 		//捕获前台传来的 action ,引用那个函
@@ -108,7 +113,7 @@ class wls{
 			eval('$controller->'.$_REQUEST['action'].'();');
 		}else{
 //			echo 'need action!';
-			echo json_encode(array('foo'=>'bar'));
+//			echo json_encode(array('foo'=>'bar'));
 		}
 	}
 }

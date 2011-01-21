@@ -46,13 +46,53 @@ class user extends wls{
 		}
 	}
 	
+	public function register(){
+		include_once dirname(__FILE__)."../../../../libs/securimage/securimage.php";
+		$securimage = new Securimage();
+		if ($securimage->check($_POST['CAPTCHA']) == false) {
+			echo json_encode(array(
+				'msg'=>'CAPTCHA'
+				));
+		}else{
+			if(isset($_SESSION['wls_user'])){
+				unset($_SESSION['wls_user']);
+			}
+
+			session_destroy();
+			
+			$data = $_POST;
+			unset($data['CAPTCHA']);
+			$data['money'] = 30;
+			
+			$id = $this->m->insert($data);
+			if($id==0){
+				echo json_encode(array(
+					'msg'=>'username'
+				));
+			}else{
+				$data = array(
+					'id_level_group'=>12
+					,'username'=>$_POST['username']
+				);
+				include_once dirname(__FILE__).'/../model/user/group.php';
+				$user_group = new m_user_group();
+				$user_group->linkUser($data);
+				
+				$this->m->login($_POST['username'],$_POST['password']);
+				echo json_encode(array(
+					'msg'=>'ok'
+				));
+			}
+		}
+	}
+	
 	public function logout(){
 		session_start();
 		unset($_SESSION['wls_user']);
 		session_destroy();
 		echo '
 	<script language="javascript" type="text/javascript">
-           window.location.href="free/view/Layout.php"; 
+           window.location.href="wls.php"; 
     </script>
 		';
 	}

@@ -1,31 +1,34 @@
+<?php 
+session_start();
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" type="text/css"
-	href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
-<script type="text/javascript" src="../../../libs/jquery-1.4.2.js"></script>
-<script type="text/javascript" src="../../../libs/jqueryextend.js"></script>	
+	href="../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript" src="../libs/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="../libs/jqueryextend.js"></script>	
 <script type="text/javascript"
-	src="../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
-<script type="text/javascript" src="../../../libs/ext_3_2_1/ext-all.js"></script>
-<script type="text/javascript" src="../../../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
-<script type="text/javascript" src="../../../libs/swfobject.js"></script>
-<script type="text/javascript" src="il8n.js"></script>
-<script type="text/javascript" src="wls.js"></script>
-<script type="text/javascript" src="user.js"></script>
-<script type="text/javascript" src="user/group.js"></script>
-<script type="text/javascript" src="user/privilege.js"></script>
-<script type="text/javascript" src="quiz.js"></script>
-<script type="text/javascript" src="quiz/paper.js"></script>
-<script type="text/javascript" src="quiz/wrong.js"></script>
-<script type="text/javascript" src="quiz/log.js"></script>
-<script type="text/javascript" src="subject.js"></script>
+	src="../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../libs/swfobject.js"></script>
+<script type="text/javascript" src="free/view/il8n.js"></script>
+<script type="text/javascript" src="free/view/wls.js"></script>
+<script type="text/javascript" src="free/view/user.js"></script>
+<script type="text/javascript" src="free/view/user/group.js"></script>
+<script type="text/javascript" src="free/view/user/privilege.js"></script>
+<script type="text/javascript" src="free/view/quiz.js"></script>
+<script type="text/javascript" src="free/view/quiz/paper.js"></script>
+<script type="text/javascript" src="free/view/quiz/wrong.js"></script>
+<script type="text/javascript" src="free/view/quiz/log.js"></script>
+<script type="text/javascript" src="free/view/subject.js"></script>
 
 <script type="text/javascript">
 var user_ = new wls.user();
 <?php 
-session_start();
+
 if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){	
 	
 	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['privilege']."';\n";
@@ -53,6 +56,7 @@ Ext.onReady(function(){
 		margins:'0 0 5 0'
 	});
 
+
 	var viewport = new Ext.Viewport({
 		id:"w_v",
         layout: 'border',
@@ -66,12 +70,19 @@ Ext.onReady(function(){
 		success:function(response){				
 			var obj = jQuery.parseJSON(response.responseText);
 			getToolBar(null,obj);
+			/*
 			var cmp = user_.getMyCenter('w_u_c');
 			cmp.title = '个人统计中心';
 			cmp.closable = true;
 			Ext.getCmp('w_tp').add(cmp);
 			Ext.getCmp('w_tp').setActiveTab('w_u_c');	
 			user_.afterMyCenterAdded('w_u_c');
+			*/
+			var o = new wls.quiz.paper();
+			var list = o.getList('w_q_p_l');
+			list.closable=true;				
+			Ext.getCmp('w_tp').add(list);
+			Ext.getCmp('w_tp').setActiveTab('w_q_p_l');			
 		},				
 		failure:function(response){	
 			
@@ -227,13 +238,14 @@ Ext.onReady(function(){
 <?php 
 }else{
 	?>
+	
 	Ext.onReady(function(){
 
 		var copoment = user_.getLogin();
 	
 		var window = new Ext.Window({
 			title:il8n.WeLikeStudy,
-	        width: 250,
+	        width: 300,
 	        height: 300,
 	        layout: 'fit',
 	        plain:true,
@@ -250,6 +262,5 @@ Ext.onReady(function(){
 </script>
 </head>
 <body>
-
 </body>
 </html>

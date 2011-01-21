@@ -308,7 +308,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				tb.add({
 			        text: il8n.DoQuiz,
 			        handler : function(){
-						window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id);
+			        	window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id+"&uid="+user_.myUser.id);
 					}
 			    });   
 			}else if(privilege[i]=='1104'){
