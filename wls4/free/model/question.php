@@ -237,9 +237,11 @@ class m_question extends wls implements dbtable{
 	 * */
 	public function insertMany($questions){		
 		$indexs = array_keys($questions);
+//		print_r($indexs);
 		$mainIds = '';
 		for($i=0;$i<count($indexs);$i++){
 			$data = $questions[$indexs[$i]];
+			
 			unset($data['index']);
 			unset($data['belongto']);
 			$data['markingmethod'] = $this->t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
@@ -252,7 +254,8 @@ class m_question extends wls implements dbtable{
 			}
 			
 			$id = $this->insert($data);
-//			echo $id;
+			print_r($questions[$indexs[$i]]);
+			print_r($data);
 			if($id===false){
 				print_r($data);
 				return false;

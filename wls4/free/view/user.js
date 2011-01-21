@@ -191,7 +191,6 @@ wls.user = Ext.extend(wls, {
 						message: '<h1>'+obj.msg+'</h1>' 
 					}); 					
 					setTimeout($.unblockUI, 2000); 
-				    //Ext.Msg.alert('success',response.responseText);
 					
 					$('#captcha').attr("src",thisObj.config.CAPTCHA+'securimage_show.php?wlstemp='+Math.random());
 				},				

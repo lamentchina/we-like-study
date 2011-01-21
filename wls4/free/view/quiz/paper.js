@@ -277,12 +277,13 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				tb.add({
 					text: il8n.Export,
 			        handler : function(){   
+			        	var pid= Ext.getCmp(domid).getSelectionModel().selection.record.id;
 						var win = new Ext.Window({
 							id:'w_q_p_l_e',
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport' width='100%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport&id="+pid+"' width='100%' height='250' />"
 						});
 						win.show(this);
 					}

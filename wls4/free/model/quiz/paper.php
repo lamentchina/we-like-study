@@ -257,29 +257,29 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			if($currentSheet->getCell($i."2")->getValue()=='选项数'){
 				$keys['optionlength'] = $i;
 			}
+			if($currentSheet->getCell($i."2")->getValue()=='知识点'){
+				$keys['ids_level_knowledge'] = $i;
+			}			
 		}
 
-		include_once dirname(__FILE__).'/../tools.php';
-		$t = new tools();
-
 		$index = 0;
-		$questions = array();
+
 		for($i=3;$i<=$allRow;$i++){
-			$questions[$currentSheet->getCell($keys['index'].$i)->getValue()] = array(
+			$question = array(
 				'index'=>$currentSheet->getCell($keys['index'].$i)->getValue(),
 				'belongto'=>$currentSheet->getCell($keys['belongto'].$i)->getValue(),
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
-				'title'=>$t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue()),
+				'title'=>$this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue()),
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),
 				'cent'=>$currentSheet->getCell($keys['cent'].$i)->getValue(),
-				'option1'=>$t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
-				'option2'=>$t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue()),
-				'option3'=>$t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue()),
-				'option4'=>$t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue()),
-				'option5'=>$t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue()),
-				'option6'=>$t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue()),
-				'option7'=>$t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue()),
-				'description'=>$t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue()),
+				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
+				'option2'=>$this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue()),
+				'option3'=>$this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue()),
+				'option4'=>$this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue()),
+				'option5'=>$this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue()),
+				'option6'=>$this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue()),
+				'option7'=>$this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue()),
+				'description'=>$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue()),
 				'path_listen'=>$currentSheet->getCell($keys['path_listen'].$i)->getValue(),
 				'count_used'=>$currentSheet->getCell($keys['count_used'].$i)->getValue(),
 				'count_right'=>$currentSheet->getCell($keys['count_right'].$i)->getValue(),
@@ -292,7 +292,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				'name_subject'=>$paper['name_subject'],
 				'id_quiz_paper'=>$paper['id'],
 				'title_quiz_paper'=>$paper['title'],
+				'ids_level_knowledge'=>$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue(),
 			);
+			$this->questions[$currentSheet->getCell($keys['index'].$i)->getValue()] = $question;
+			
 		}
 
 		$this->questions = $questions;
@@ -322,6 +325,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	}
 
 	public function paperToExcel($paper,$questions){
+//		print_r($paper);
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -370,38 +374,37 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$objPHPExcel->getActiveSheet()->setCellValue('T2', '放弃');	
 		$objPHPExcel->getActiveSheet()->setCellValue('U2', '难度');
 		$objPHPExcel->getActiveSheet()->setCellValue('V2', '批改');
-		$objPHPExcel->getActiveSheet()->setCellValue('W2', '排列');
+		$objPHPExcel->getActiveSheet()->setCellValue('W2', '知识点');
 		for($i=1;$i<=23;$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
 		}
-
+//		print_r($data);
 		$index = 3;
 		for($i=0;$i<count($data);$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['type']);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));
 			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['title']);
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['cent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option1']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option2']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option3']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option4']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option5']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option6']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['option7']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['optionlength']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['description']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_used']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_right']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_wrong']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['count_giveup']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['difficulty']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['markingmethod']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['path_listen']);
+			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $data[$i]['option1']);
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $data[$i]['option2']);
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $data[$i]['option3']);
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $data[$i]['option4']);
+			$objPHPExcel->getActiveSheet()->setCellValue('K'.$index, $data[$i]['option5']);
+			$objPHPExcel->getActiveSheet()->setCellValue('L'.$index, $data[$i]['option6']);
+			$objPHPExcel->getActiveSheet()->setCellValue('M'.$index, $data[$i]['option7']);
+			$objPHPExcel->getActiveSheet()->setCellValue('N'.$index, $data[$i]['optionlength']);
+			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $data[$i]['description']);
+			$objPHPExcel->getActiveSheet()->setCellValue('P'.$index, $data[$i]['path_listen']);
+			$objPHPExcel->getActiveSheet()->setCellValue('Q'.$index, $data[$i]['count_used']);
+			$objPHPExcel->getActiveSheet()->setCellValue('R'.$index, $data[$i]['count_right']);
+			$objPHPExcel->getActiveSheet()->setCellValue('S'.$index, $data[$i]['count_wrong']);
+			$objPHPExcel->getActiveSheet()->setCellValue('T'.$index, $data[$i]['count_giveup']);
+			$objPHPExcel->getActiveSheet()->setCellValue('U'.$index, $data[$i]['difficulty']);
+			$objPHPExcel->getActiveSheet()->setCellValue('V'.$index,$this->t->formatMarkingMethod($data[$i]['markingmethod']));
+			$objPHPExcel->getActiveSheet()->setCellValue('W'.$index, $data[$i]['ids_level_knowledge']);
+
 			$index ++;
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
@@ -411,7 +414,9 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		//保存EXCEL
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
-		$objWriter->save(dirname(__FILE__)."/../../../".$file);
+		$path = dirname(__FILE__)."/../../../../".$file;
+//		echo $path;
+		$objWriter->save($path);
 		return $file;
 	}
 
@@ -430,8 +435,8 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$ques = new m_question();
 		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
 		$questions = $data['data'];
-
-		$this->paperToExcel($paper,$questions);
+//		print_r($questions);
+		return $this->paperToExcel($paper,$questions);
 	}
 
 	/**
