@@ -298,7 +298,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			
 		}
 
-		$this->questions = $questions;
+//		$this->questions = $questions;
 		$this->saveQuestions();
 	}
 
@@ -517,7 +517,11 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 
 		$res = mysql_query($sql,$conn);
 		$arr = array();
+		$index = 1;
 		while($temp = mysql_fetch_assoc($res)){
+			$temp['index'] = $index;
+			$index ++;
+			$temp['date_created2'] = $this->t->getTimeDif($temp['date_created']).'前';
 			$arr[] = $temp;
 		}
 

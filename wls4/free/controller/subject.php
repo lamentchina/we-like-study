@@ -125,6 +125,7 @@ class subject extends wls{
   <values>
   	<y_left> 
   		<max>100</max>
+  		<min>0</min>
   	</y_left>  
   </values>
   

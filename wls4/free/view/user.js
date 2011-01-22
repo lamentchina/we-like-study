@@ -468,14 +468,14 @@ wls.user = Ext.extend(wls, {
 				new Ext.Panel({
 					region:'east'
 					,width:200						
-					,html:'<div id="'+domid+'_subjects"></div><div id="'+domid+'_uc"></div>'
+					,html:'<div id="'+domid+'_subjects"></div>'
 				})
 				,new Ext.Panel({
 					 region:'center'
 					
-					,html:'成绩曲线:<div id="chart1"></div><table width="100%" height="200px"><tr><td width="50%">知识点掌握:<br/>' +
+					,html:'成绩曲线:<div id="chart1"></div><table width="100%" height="200px"><tr><td><div id="'+domid+'_uc"></div></td><td width="50%">知识点掌握:<br/>' +
 							'<div id="flashcontent"><strong>You need to upgrade your Flash Player</strong></div>' +
-							'</div></td><td>&nbsp;</td</tr></table>'
+							'</div></td></tr></table>'
 				})
 								
 			]
@@ -533,14 +533,15 @@ wls.user = Ext.extend(wls, {
 		});
 		var grid = new Ext.grid.GridPanel({
 		    store: store,
+		    frame:true,
 		    title: "我的科目",
 		    cm: cm,        
 		    renderTo: domid,
 		   // width: '90%',
-		    height: 250,
+		    height: 500,
 		    loadMask:true
 		});
-		grid.addListener('rowdblclick',function(t,r,e){			
+		grid.addListener('rowclick',function(t,r,e){			
 			var id_k = t.store.data.items[r].data.ids_level_knowledge;
 			var obj = document.getElementById(user_.myUser.id+"amradar");
 			obj.reloadSettings(thisObj.config.AJAXPATH+"?controller=knowledge_log&action=getMyRaderSetting&id="+id_k);

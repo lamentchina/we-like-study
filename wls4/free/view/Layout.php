@@ -223,7 +223,8 @@ Ext.onReady(function(){
 			}								
 		}else if(a.menuType=='subject'){
 			var obj = new wls.subject();
-			obj.id_level = a.id_level;
+			if(a.id_level==10)return;
+			obj.id_level = a.id_level;			
 			
 			var copoment = obj.getSubjectCenter('w_s_c'+obj.id_level);
 			copoment.closable=true;			

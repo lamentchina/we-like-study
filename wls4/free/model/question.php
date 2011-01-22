@@ -254,10 +254,10 @@ class m_question extends wls implements dbtable{
 			}
 			
 			$id = $this->insert($data);
-			print_r($questions[$indexs[$i]]);
-			print_r($data);
+//			print_r($questions[$indexs[$i]]);
+//			print_r($data);
 			if($id===false){
-				print_r($data);
+//				print_r($data);
 				return false;
 			}else{
 //				if($id==0 || $id==false){

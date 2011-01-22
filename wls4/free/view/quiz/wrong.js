@@ -283,7 +283,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				});
 			}else if(privilege[i]=='125007'){
 				tb.add({
-			        text: il8n.DoQuiz,
+			        text: '所选科目错题练习',
 			        handler : function(){
 						window.open(thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=viewOne&id_level_subject="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject);
 					}

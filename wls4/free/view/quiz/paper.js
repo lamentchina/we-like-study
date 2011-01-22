@@ -197,7 +197,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		    url: thisObj.config.AJAXPATH+'?controller=quiz_paper&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','name_subject','title', 'money','questions','count_used']
+		    fields: ['id','index','name_subject','title', 'money','questions','count_used','date_created2']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -205,8 +205,13 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		        sortable: true   
 		    },
 		    columns: [{
+		             header:' '
+		            ,width:40
+		            ,dataIndex: 'index'
+		        },{
 		             header: il8n.ID
 		            ,dataIndex: 'id'
+		            ,hidden:true
 		        },{
 		             header: il8n.Subject
 		            ,dataIndex: 'name_subject'
@@ -233,6 +238,9 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		        }, {
 		             header: il8n.Count.Used
 		            ,dataIndex: 'count_used'
+		        }, {
+		             header: '时间'
+		            ,dataIndex: 'date_created2'
 		        }
 		    ]
 		});
