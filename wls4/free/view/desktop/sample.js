@@ -4,11 +4,22 @@
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
-
+Ext.BLANK_IMAGE_URL = '/libs/ext_3_2_1/resources/images/default/s.gif';
 // Sample desktop configuration
 MyDesktop = new Ext.app.App({
 	init :function(){
+		if(Ext.isIE6){
+			new Ext.Window({
+				title:il8n.YouAreIE6,
+				width: 500,
+				height : 250,
+				modal  :true,
+				html:il8n.WhyNotIE6
+			}).show();
+		}
+		return;
 		Ext.QuickTips.init();
+		
 	},
 
 	getModules : function(){
@@ -59,6 +70,7 @@ MyDesktop.GridWindow = Ext.extend(Ext.app.Module, {
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow('grid-win');
         if(!win){
+        	var me = new wls.user();
             win = desktop.createWindow({
                 id: 'grid-win',
                 title:'Grid Window',
@@ -70,45 +82,8 @@ MyDesktop.GridWindow = Ext.extend(Ext.app.Module, {
                 constrainHeader:true,
 
                 layout: 'fit',
-                items:
-                    new Ext.grid.GridPanel({
-                        border:false,
-                        ds: new Ext.data.Store({
-                            reader: new Ext.data.ArrayReader({}, [
-                               {name: 'company'},
-                               {name: 'price', type: 'float'},
-                               {name: 'change', type: 'float'},
-                               {name: 'pctChange', type: 'float'}
-                            ]),
-                            data: Ext.grid.dummyData
-                        }),
-                        cm: new Ext.grid.ColumnModel([
-                            new Ext.grid.RowNumberer(),
-                            {header: "Company", width: 120, sortable: true, dataIndex: 'company'},
-                            {header: "Price", width: 70, sortable: true, renderer: Ext.util.Format.usMoney, dataIndex: 'price'},
-                            {header: "Change", width: 70, sortable: true, dataIndex: 'change'},
-                            {header: "% Change", width: 70, sortable: true, dataIndex: 'pctChange'}
-                        ]),
+                items:[me.getList()]
 
-                        viewConfig: {
-                            forceFit:true
-                        },
-                        //autoExpandColumn:'company',
-
-                        tbar:[{
-                            text:'Add Something',
-                            tooltip:'Add a new row',
-                            iconCls:'add'
-                        }, '-', {
-                            text:'Options',
-                            tooltip:'Blah blah blah blaht',
-                            iconCls:'option'
-                        },'-',{
-                            text:'Remove Something',
-                            tooltip:'Remove the selected item',
-                            iconCls:'remove'
-                        }]
-                    })
             });
         }
         win.show();

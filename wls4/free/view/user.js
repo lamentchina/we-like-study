@@ -439,7 +439,7 @@ wls.user = Ext.extend(wls, {
 			}],
 		    bbar : new Ext.PagingToolbar({
 				store : store,
-				pageSize : 8,
+				pageSize : 15,
 				displayInfo : true
 			})
 		});
@@ -457,7 +457,7 @@ wls.user = Ext.extend(wls, {
 				params:{field:e.field,value:e.value,id:e.record.data.id}				
 			});
 	    }     
-		store.load({params:{start:0, limit:8}});    
+		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}
 	,getMyCenter:function(domid){		

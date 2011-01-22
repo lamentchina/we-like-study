@@ -191,8 +191,10 @@ Ext.Desktop = function(app){
     if(shortcuts){
         shortcuts.on('click', function(e, t){
             if(t = e.getTarget('dt', shortcuts)){
+            	//console.debug(t);
                 e.stopEvent();
                 var module = app.getModule(t.id.replace('-shortcut', ''));
+                
                 if(module){
                     module.createWindow();
                 }

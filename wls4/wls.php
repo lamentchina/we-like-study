@@ -100,20 +100,19 @@ class wls{
 				eval('$controller = new '.$controllername.'();');
 			}
 		}else{
-//			echo 'need controller!';
-			if($this->c->debug==1){
+			if($this->c->debug==1){//系统还未安装
 				header("location:wls.php?controller=install&action=main"); 	
 			}else{
-				include_once "free/view/Layout.php"; 	
+//				include_once "free/view/Layout.php";
+				include_once "free/view/desktop/desktop.html"; 	 	
 			}
 		}
 
-		//捕获前台传来的 action ,引用那个函
+		//捕获前台传来的 action ,引用对应函数
 		if(isset($_REQUEST['action'])){
 			eval('$controller->'.$_REQUEST['action'].'();');
 		}else{
-//			echo 'need action!';
-//			echo json_encode(array('foo'=>'bar'));
+//			echo 'need action!'; //TODO
 		}
 	}
 }
