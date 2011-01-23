@@ -514,14 +514,16 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_quiz_paper ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-
+//		echo $sql;
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		$index = 1;
 		while($temp = mysql_fetch_assoc($res)){
 			$temp['index'] = $index;
 			$index ++;
-			$temp['date_created2'] = $this->t->getTimeDif($temp['date_created']).'前';
+			if(isset($temp['date_created'])){
+				$temp['date_created2'] = $this->t->getTimeDif($temp['date_created']).'前';
+			}
 			$arr[] = $temp;
 		}
 

@@ -1,7 +1,5 @@
 <?php 
-switch ($_REQUEST['moduleId']){
-	case '1':
-		break;
-	default:break;
-}
+$actionid = explode("_",$_REQUEST['moduleId']);
+$actionid = $actionid[1];
+include_once 'getjs/'.$actionid.".js";
 ?>

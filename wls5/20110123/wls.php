@@ -104,7 +104,42 @@ class wls{
 				header("location:wls.php?controller=install&action=main"); 	
 			}else{
 //				include_once "free/view/Layout.php";
-//				include_once "free/view/desktop/desktop.html"; 	 	
+//				include_once "free/view/desktop/desktop.html"; 	 
+				include_once 'free/model/user.php';
+				$m_user = new m_user();
+				$menus = $m_user->getMyMenuForDesktop();
+//				print_r($menus);
+//				exit();
+				
+				$modules = array();
+				for($i=0;$i<count($menus);$i++){
+					$modules[] = array(
+						'id'=>"id_".$menus[$i]['id_level'],
+						'className'=>"class_".$menus[$i]['id_level'],
+		          		"launcher"=>array(
+		          			"iconCls"=>"qo-pref-icon",
+		          			"shortcutIconCls"=>"qo-pref-shortcut-icon",
+		          			"text"=>$menus[$i]['text'],
+		          			"tooltip"=>"<b>Accordion Window<\/b><br \/>A window with an accordion layout"
+		          		),
+		          		"launcherPaths"=>array(
+		          			"startmenu"=>$menus[$i]['startmenu']
+		          		),
+					);
+				}
+				
+				$shortcut = array(
+					"id_".$menus[0]['id_level'],
+					"id_".$menus[1]['id_level'],
+					"id_".$menus[2]['id_level'],
+				);
+				
+				$quickstart = array(
+					"id_".$menus[0]['id_level'],
+					"id_".$menus[1]['id_level'],
+				);
+//				print_r($menus);
+//				exit();	
 				include_once "free/view/qWikiOffice/qDeskTop.php";
 			}
 		}

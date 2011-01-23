@@ -1,7 +1,10 @@
+<?php 
+session_start();
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="PRAGMA" content="NO-CACHE">
 <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
 <meta http-equiv="EXPIRES" content="-1">
@@ -26,18 +29,74 @@
 
 <!-- MODULES CSS -->
 <!-- Dynamically generated based on the modules the member has access to -->
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/demo/acc-win/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/demo/bogus-win/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/demo/grid-win/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/demo/layout-win/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/demo/tab-win/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/common/libraries/column-tree/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/qwiki/admin/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/common/libraries/color-picker/resources/styles.css' />
+<style type="text/css">
 
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/common/libraries/explorer-view/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/qwiki/preferences/client/resources/styles.css' />
-<link rel='stylesheet' type='text/css' href='free/view/qWikiOffice/modules/qwiki/profile/client/resources/styles.css' />
+.acc-icon { background-image: url(free/view/qWikiOffice/modules/demo/acc-win/client/resources/images/accordion16x16.gif) !important; }
+.x-btn-medium .acc-icon { background-image: url(free/view/qWikiOffice/modules/demo/acc-win/client/resources/images/accordion24x24.gif) !important; }
+.x-btn-large .acc-icon { background-image: url(free/view/qWikiOffice/modules/demo/acc-win/client/resources/images/accordion32x32.gif) !important; }
+
+
+.qo-profile-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/profile/client/resources/images/icon16x16.png) !important; }
+.x-btn-medium .qo-profile-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/profile/client/resources/images/icon24x24.png) !important; }
+.x-btn-large .qo-profile-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/profile/client/resources/images/icon32x32.png) !important; }
+.qo-profile-shortcut-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/profile/client/resources/images/icon48x48.png) !important; }
+#qo-profile .x-panel-footer { background-color:transparent; border-top:0 none; }
+#qo-profile .x-statusbar .x-status-error { background:transparent url(free/view/qWikiOffice/modules/qwiki/profile/client/resources/images/exclamation16x16.gif) no-repeat left center; color:#cc3333; cursor:pointer; padding-left:20px; }
+
+
+/*
+ * qWikiOffice Desktop 1.0
+ * Copyright(c) 2007-2010, Murdock Technologies, Inc.
+ * licensing@qwikioffice.com
+ * 
+ * http://www.qwikioffice.com/license
+ */
+
+.qo-pref-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/images/qo-pref-icon16x16.gif) !important; }
+.x-btn-medium .qo-pref-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/images/qo-pref-icon24x24.gif) !important; }
+.x-btn-large .qo-pref-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/images/qo-pref-icon32x32.gif) !important; }
+.qo-pref-shortcut-icon { background-image: url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/images/qo-pref-icon48x48.png) !important; }
+
+.prev-link-item-icon { float: left; }
+.prev-link-item-txt { float: left; padding-top:10px; }
+.pref-percent-field { background:#ffffff url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/images/percent-icon.gif) no-repeat right center; }
+#qo-preferences .x-window-mc { color:#000 !important; }
+#qo-preferences .x-border-layout-ct { background:transparent none; }
+#qo-preferences .x-panel-header { background:transparent none; border-bottom:0px none; }
+#qo-preferences .pref-card .x-panel-header { color:#000; }
+#qo-preferences .pref-card-subpanel .x-panel-header { color:#000; }
+#qo-preferences .x-grid-group-hd div { background:transparent url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesform-collapse-icon.gif) no-repeat scroll 3px 2px; padding:4px 4px 4px 23px; }
+#qo-preferences .x-grid-group-collapsed .x-grid-group-hd div { background-position: 3px -33px; }
+#pref-win-card-1 .x-panel-body li { margin:3px 3px 15px 3px; }
+#pref-win-card-1 .x-panel-body li img { width:65px; height:55px; vertical-align:middle; margin-right:7px; margin-bottom:2px; }
+#pref-win-card-1 .x-panel-body li a { text-decoration:none; color:#336699; font-weight:bold; }
+#pref-win-card-1 .x-panel-body li span { padding-left:34px; }
+#pref-win-card-1 .x-panel-body { padding:10px }
+/*.pref-check-tree ul li { margin:0 3px; padding:3px 0; }
+.pref-check-tree .x-tree-node .x-tree-selected { background-color:#c0c0c0; }
+.pref-check-tree .x-tree-icon, .pref-check-tree .x-tree-ec-icon, .pref-check-tree .x-tree-elbow-line, .pref-check-tree .x-tree-elbow, .pref-check-tree .x-tree-elbow-end, .pref-check-tree .x-tree-elbow-plus, .pref-check-tree .x-tree-elbow-minus, .pref-check-tree .x-tree-elbow-end-plus, .pref-check-tree .x-tree-elbow-end-minus { width:3px; }
+.pref-check-tree input.x-tree-node-cb { margin-left:5px; vertical-align:middle; }
+.pref-check-tree .x-tree-node a span, .pref-check-tree .x-dd-drag-ghost a span { padding:1px 3px 1px 6px; }
+*/
+.pref-check-tree .x-tree-elbow, .pref-check-tree .x-tree-elbow-end { width:1px; }
+.pref-check-tree .complete .x-tree-node-anchor span { color:#777; text-decoration:line-through; }
+.icon-pref-shortcut { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesshortcut-icon.gif); }
+.icon-pref-autorun { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesautorun-icon.gif); }
+.icon-pref-quickstart { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesquickstart-icon.gif); }
+.icon-pref-appearance { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesappearance-icon.gif); }
+.icon-pref-wallpaper { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imageswallpaper-icon.gif); }
+.pref-theme-groups .ux-explorerview-large-item { cursor:pointer; height:100px; margin:5px 0 0 5px; -moz-user-select:none; width:127px; }
+.pref-theme-groups .ux-explorerview-large-item .ux-explorerview-icon { height:75px; width:127px; }
+.pref-theme-groups .x-grid-group-hd, .pref-wallpaper-groups .x-grid-group-hd { border-bottom:1px solid #ccc; }
+.pref-wallpaper-groups .ux-explorerview-large-item { cursor:pointer; height:100px; margin:5px 0 0 5px; -moz-user-select:none; width:127px; }
+.pref-wallpaper-groups .ux-explorerview-large-item .ux-explorerview-icon { height: 75px; width: 127px; }
+.pref-bg-pos-center { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesbg-center-icon.png); }
+.pref-bg-pos-tile { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesbg-tile-icon.png); }
+.pref-bg-color-icon { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesbg-color-icon.gif) !important; }
+.pref-font-color-icon { background-image:url(free/view/qWikiOffice/modules/qwiki/preferences/client/resources/imagesfont-color-icon.gif) !important; }
+
+
+</style>
 
 <!-- CORE -->
 <!-- In a production environment these would be minified into one file -->
@@ -49,7 +108,18 @@
 <script type="text/javascript" src="free/view/qWikiOffice/client/StartMenu.js"></script>
 <script type="text/javascript" src="free/view/qWikiOffice/client/TaskBar.js"></script>
 
+<script type="text/javascript" src="free/view/il8n.js"></script>
+<script type="text/javascript" src="free/view/wls.js"></script>
+<script type="text/javascript" src="free/view/user.js"></script>
+<script type="text/javascript" src="free/view/user/group.js"></script>
+<script type="text/javascript" src="free/view/user/privilege.js"></script>
+<script type="text/javascript" src="free/view/quiz.js"></script>
+<script type="text/javascript" src="free/view/quiz/paper.js"></script>
+<script type="text/javascript" src="free/view/quiz/wrong.js"></script>
+<script type="text/javascript" src="free/view/quiz/log.js"></script>
+<script type="text/javascript" src="free/view/subject.js"></script>
 
+<script type="text/javascript" src="../libs/swfobject.js"></script>
 
 <!-- QoDesk -->
 <!-- This dynamic file will load all the modules the member has access to and setup the desktop -->
@@ -62,14 +132,20 @@
  * http://www.qwikioffice.com/license
  */
 
-var qtest = {
-	createWindow:function(){
-		
-	}	
-	,launcher:function(){
-		return true;
-	}
-};
+ var user_ = new wls.user();
+ <?php 
+
+ if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){	
+ 	
+ 	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['privilege']."';\n";
+ 	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
+ 	echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
+ 	echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
+ 	echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
+ 	echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
+ 	echo "user_.myUser.photo = '".$_SESSION['wls_user']['photo']."';\n";
+ 	
+ ?>
  
 Ext.namespace('Ext.ux','QoDesk');
 
@@ -91,118 +167,8 @@ QoDesk.App = new Ext.app.App({
     * An array of the module definitions.
     * The definitions are used until the module is loaded on demand.
     */
-    modules: [ 
-          	{
-          		"id":"qtest",
-          		"type":"demo/accordion",
-          		"className":"qtest",
-          		"launcher":{
-          			"iconCls":"acc-icon",
-          			"shortcutIconCls":"demo-acc-shortcut",
-          			"text":"Accordion Window",
-          			"tooltip":"<b>Accordion Window<\/b><br \/>A window with an accordion layout"
-          		},
-          		"launcherPaths":{
-          			"startmenu":"\/"
-          		},
-          		"loaded":"true"
-          	},
-          	{
-          		"id":"demo-bogus",
-          		"type":"demo/bogus",
-          		"className":"QoDesk.BogusWindow"
-          		,"launcher":{
-          			"iconCls":"bogus-icon",
-          			"shortcutIconCls":"demo-bogus-shortcut",
-          			"text":"Bogus Window",
-          			"tooltip":"<b>Bogus Window<\/b><br \/>A bogus window"
-          		},
-          		"launcherPaths":{
-          			"startmenu":"\/Bogus Menu\/Bogus Sub Menu"
-          		}
-          	},
-          	{
-          		"id":"demo-grid",
-          		"type":"demo/grid",
-          		"className":"QoDesk.GridWindow",
-          		"launcher":{
-          			"iconCls":"grid-icon",
-          			"shortcutIconCls":"demo-grid-shortcut",
-          			"text":"Grid Window",
-          			"tooltip":"<b>Grid Window<\/b><br \/>A grid window"
-          		},
-          		"launcherPaths":{
-          			"startmenu":"\/"
-          		}
-          	},
-          	{
-          		"id":"demo-layout",
-          		"type":"demo/layout",
-          		"className":"QoDesk.LayoutWindow",
-          		"launcher":{
-          			"iconCls":"layout-icon",
-          			"shortcutIconCls":"demo-layout-shortcut",
-          			"text":"Layout Window",
-          			"tooltip":"<b>Layout Window<\/b><br \/>A layout window"
-          		},
-          		"launcherPaths":{
-          			"startmenu":"\/"
-          		}
-          	},{
-          		"id":"demo-tab",
-          		"type":"demo/tab",
-          		"className":"QoDesk.TabWindow",
-          		"launcher":{
-          			"iconCls":"tab-icon",
-          			"shortcutIconCls":"demo-tab-shortcut",
-          			"text":"Tab Window",
-          			"tooltip":"<b>Tab Window<\/b><br \/>A tab window"
-          		},
-          		"launcherPaths":{
-          			"startmenu":"\/"
-          		}
-          	},{
-          		"id":"qo-admin",
-          		"type":"system/administration",
-          		"className":"QoDesk.QoAdmin",
-          		"launcher":{
-          			"iconCls":"qo-admin-icon",
-          			"shortcutIconCls":"qo-admin-shortcut-icon",
-          			"text":"QO Admin"
-          			,"tooltip":"<b>QO Admin<\/b><br \/>Allows system administration"
-          		},
-          		"launcherPaths":{
-          			"startmenu":"\/Admin"
-          		}
-          	},{
-          		"id":"qo-preferences",
-          		"type":"system/preferences",
-          		"className":"QoDesk.QoPreferences",
-          		"launcher":{
-          			"iconCls":"qo-pref-icon",
-          			"shortcutIconCls":"qo-pref-shortcut-icon",
-          			"text":"QO Preferences",
-          			"tooltip":"<b>QO Preferences<\/b><br \/>Allows you to modify your desktop"
-          		},
-          		"launcherPaths":{
-          			"contextmenu":"\/","startmenutool":"\/"
-          		}
-          	},{
-          		"id":"qo-profile",
-          		"type":"user/profile",
-          		"className":"QoDesk.QoProfile",
-          		"launcher":{
-          			"iconCls":"qo-profile-icon",
-          			"shortcutIconCls":"qo-profile-shortcut-icon",
-          			"text":"Profile",
-          			"tooltip":"<b>Profile<\/b><br \/>Allows user profile administration"
-          		},
-          		"launcherPaths":{
-          			"contextmenu":"\/",
-          			"startmenutool":"\/"
-          		}
-          	} 
-          	],
+    modules: <?php echo json_encode($modules) ?> ,
+          	
 
 
    /**
@@ -228,18 +194,8 @@ QoDesk.App = new Ext.app.App({
 		   }
 	   },
       launchers: {
-		  "shortcut":[
-		      "qo-preferences",
-		      "qo-admin",
-		      "demo-accordion",
-		      "demo-tab",
-		      "demo-bogus"
-		  ],
-		  "quickstart":[
-		      "qo-preferences",
-		      "qo-admin",
-		      "demo-tab"
-		  ]
+		  "shortcut":<?php echo json_encode($shortcut)?>,
+		  "quickstart":<?php echo json_encode($shortcut)?>
 	 },
       taskbarConfig: {
          buttonScale: 'large',
@@ -259,7 +215,30 @@ QoDesk.App = new Ext.app.App({
       }
    }
 });
+<?php 
+ }else{
+ 	?>
+ 	
+ 	Ext.onReady(function(){
 
+ 		var copoment = user_.getLogin();
+ 	
+ 		var window = new Ext.Window({
+ 			title:il8n.WeLikeStudy,
+ 	        width: 300,
+ 	        height: 300,
+ 	        layout: 'fit',
+ 	        plain:true,
+ 	        bodyStyle:'padding:5px;',
+ 	        buttonAlign:'center',
+ 	        items: [copoment]       
+ 	    });
+ 	
+ 	    window.show();
+ 	});
+ <?php 
+ }
+ ?>
 </script>
 </head>
 <body scroll="no"></body>

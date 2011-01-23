@@ -250,7 +250,6 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		});	
 		
 		var grid = new Ext.grid.EditorGridPanel({
-			title:il8n.Paper.Paper,
 		    store: store,
 		    cm: cm,        
 		    id: domid,

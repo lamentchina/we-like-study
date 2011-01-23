@@ -109,7 +109,8 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
     *	});
     */
 //   connection: 'services.php',
-     connection: 'wls.php?controller=QoDesk&action=getJS',
+//     connection: 'wls.php?controller=QoDesk&action=getJS',
+     connection: 'free/view/qWikiOffice/getjs.php',
    /**
     * Read-only. The queue of requests to run once a module is loaded
     */
@@ -204,7 +205,7 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
 				notifyWin = null;
 		
     			if(o.responseText !== ''){
-               eval(o.responseText);
+               		eval(o.responseText);
     				this.loadModuleComplete(true, id);
     			}else{
     				alert('An error occured on the server.');

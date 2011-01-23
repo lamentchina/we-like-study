@@ -170,6 +170,48 @@ class tools {
 			return $title;
 		}
 	}
+	
+	public $desktopMenu = array();
+	public function treeMenuToDesktopMenu($id=null,$data_all){
+		if($id==null){
+			$len = 2;
+			for($i=0;$i<count($data_all);$i++){
+				if(strlen($data_all[$i]['id_level'])==$len){
+					if(isset($data_all[$i]['children'])){
+						$data_all[$i]['startmenu'] = '/';
+						for($i2=0;$i2<count($data_all[$i]['children']);$i2++){
+							$data_all[$i]['children'][$i2]['startmenu'] = $data_all[$i]['startmenu'].$data_all[$i]['text']."/";
+						}
+						$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
+
+					}else{
+						$this->desktopMenu[] = $data_all[$i];
+					}
+				}
+			}
+		}else{
+			$len = strlen($id)+2;
+			for($i=0;$i<count($data_all);$i++){
+				if(!isset($data_all[$i]['id_level'])){
+//					print_r($data_all[$i]);
+//					exit();
+				}else{
+					if(strlen($data_all[$i]['id_level'])==$len){
+						if(isset($data_all[$i]['children'])){
+							
+							for($i2=0;$i2<count($data_all[$i]['children']);$i2++){
+								$data_all[$i]['children'][$i2]['startmenu'] =  $data_all[$i]['startmenu'].$data_all[$i]['text']."/";
+							}
+							$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
+	
+						}else{
+							$this->desktopMenu[] = $data_all[$i];
+						}
+					}
+				}
+			}
+		}
+	}
 
 	public function getTreeData($id=null,$data_all){
 		if($id==null){

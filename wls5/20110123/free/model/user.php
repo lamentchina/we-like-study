@@ -394,7 +394,106 @@ class m_user extends wls implements dbtable{
 			return false;
 		}
 	}	
+	
+	public function getMyMenu(){
+//		$me = $this->getMyUser();
+//		$username = $me['username'];
+		
+		$username = 'user1';//TODO
+		include_once dirname(__FILE__).'/user/privilege.php';
+		$obj = new m_user_privilege();
+		$data = $obj->getListForUser($username);
+		$data2 = array();
+		for($i=0;$i<count($data);$i++){
+			if($data[$i]['ismenu']==1){
+				if($data[$i]['checked']==true || $data[$i]['checked']=='true' || $data[$i]['checked']==1){
+					$data[$i]['type'] = 'menu';
+					$data2[] = $data[$i];
+				}
+			}
+		}
+		
+		$data = $this->t->getTreeData(null,$data2);
 
+		for($i=0;$i<count($data);$i++){
+				
+			if($data[$i]['id_level']=='11'){
+				include_once dirname(__FILE__).'/subject.php';
+				$obj = new m_subject();
+				$data_ = $obj->getListForUser($username);
+				if(count($data)>0){
+					$data__ = array();
+					for($ii=0;$ii<count($data_);$ii++){
+						$data_[$ii]['type'] = 'subject';
+						if($data_[$ii]['checked']==1){
+							$data_[$ii]['ismenu'] = 1;
+							$data__[] = $data_[$ii];
+						}
+					}
+					$subject = $this->t->getTreeData(null,$data__);
+
+					$arr = array();
+					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
+						$arr = $data[$i]['children'];
+					}
+					$data[$i]['children'] = $subject;
+
+					if(count($arr)>0){
+						$data[$i]['children'][] = array('text'=>'slide');
+						for($ii=0;$ii<count($arr);$ii++){
+							$data[$i]['children'][] = $arr[$ii];
+						}
+					}
+				}
+			}
+			if($data[$i]['id_level']=='13'){
+				include_once dirname(__FILE__).'/user/group.php';
+				$obj = new m_user_group();
+				$data_ = $obj->getListForUser($username);
+				if(count($data)>0){
+					$data__ = array();
+					for($ii=0;$ii<count($data_);$ii++){
+						$data_[$ii]['type'] = 'group';
+						if($data_[$ii]['checked']==1){
+							$data_[$ii]['ismenu'] = 1;
+							$data__[] = $data_[$ii];
+						}
+					}
+					$subject = $this->t->getTreeData(null,$data__);
+
+					$arr = array();
+					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
+						$arr = $data[$i]['children'];
+					}
+					$data[$i]['children'] = $subject;
+
+					if(count($arr)>0){
+						$data[$i]['children'][] = array('text'=>'slide');
+						for($ii=0;$ii<count($arr);$ii++){
+							$data[$i]['children'][] = $arr[$ii];
+						}
+					}
+				}
+			}
+		}
+		
+		return $data;
+	}
+	
+	public function getMyMenuForDesktop(){
+
+		$data = $this->getMyMenu();
+		
+		$this->t->treeMenuToDesktopMenu(null,$data);
+		
+//		return $this
+//		header("Content-type: text/html; charset=utf-8");
+		return $this->t->desktopMenu;
+	}
+	
+	public function formatMenu(){
+		
+	}
 	
 }
 ?>
