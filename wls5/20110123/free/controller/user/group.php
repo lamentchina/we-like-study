@@ -142,5 +142,8 @@ class user_group extends wls{
 	public function updateSubject(){
 		$this->m->updateSubject($_POST['id'],$_POST['ids']);
 	}
+	
+	
+
 }
 ?>

@@ -44,9 +44,11 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
     * @cfg {Object} The logout button config.
     */
    logoutConfig: {
-      handler: function(){window.location = "logout.php";},
+      handler: function(){
+      	window.location = "wls.php?controller=user&action=logout";
+      },
       iconCls: 'icon-logout',
-      text: 'Logout'
+      text: '退出'
    },
    /**
     * @cfg {Function} Function that handles sorting of the Start Menu.  Return true to swap a and b.
@@ -144,21 +146,33 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
          this.taskbar = new Ext.ux.TaskBar(taskbarConfig);
       }
       this.taskbar.desktop = this;
-
+	//TODO
       this.contextMenu = new Ext.menu.Menu({
          items: [
+         	{
+               text: '刷新',
+               handler: function(){
+				location.reload();
+               },
+               scope: this
+            },
             {
-               text: 'Close All',
+               text: '属性',
                handler: this.closeWindows,
                scope: this
             },
             '-',
             {
-               text: 'Minimize All',
-               handler: this.minimizeWindows,
+               text: '窗口全关',
+               handler: this.closeWindows,
                scope: this
             },
-            '-',
+            {
+               text: '窗口全收',
+               handler: this.minimizeWindows,
+               scope: this
+            }
+            /*
             {
                text: 'Tile',
                handler: this.tileWindows,
@@ -185,6 +199,7 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
                scope: this
             },
             '-'
+            */
          ]
       });
 
@@ -768,8 +783,8 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
       if(o && o.id && o.name && o.file){
 
          var notifyWin = this.showNotification({
-            html: 'Loading wallpaper...',
-            title: 'Please wait'
+            html: '正在导入墙纸...',//TODO
+            title: '请等待'
          });
 
          var wp = new Image();
@@ -786,8 +801,8 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
             task.cancel();
 
             notifyWin.setIconClass('icon-done');
-            notifyWin.setTitle('Finished');
-            notifyWin.setMessage('Wallpaper loaded.');
+            notifyWin.setTitle('通信完成');//TODO
+            notifyWin.setMessage('背景图导入');
             this.hideNotification(notifyWin);
 
             document.body.background = wp.src;

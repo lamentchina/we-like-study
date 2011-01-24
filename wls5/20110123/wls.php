@@ -108,8 +108,6 @@ class wls{
 				include_once 'free/model/user.php';
 				$m_user = new m_user();
 				$menus = $m_user->getMyMenuForDesktop();
-//				print_r($menus);
-//				exit();
 				
 				$modules = array();
 				for($i=0;$i<count($menus);$i++){
@@ -120,7 +118,7 @@ class wls{
 		          			"iconCls"=>"qo-pref-icon",
 		          			"shortcutIconCls"=>"qo-pref-shortcut-icon",
 		          			"text"=>$menus[$i]['text'],
-		          			"tooltip"=>"<b>Accordion Window<\/b><br \/>A window with an accordion layout"
+		          			"tooltip"=>$menus[$i]['text']
 		          		),
 		          		"launcherPaths"=>array(
 		          			"startmenu"=>$menus[$i]['startmenu']

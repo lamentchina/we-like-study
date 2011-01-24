@@ -199,8 +199,8 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
     		},
     		success: function(o){
     			notifyWin.setIconClass('icon-done');
-				notifyWin.setTitle('Finished');
-				notifyWin.setMessage(moduleName + ' loaded.');
+				notifyWin.setTitle('通信完成');//TODO
+				notifyWin.setMessage(moduleName + ' 导入');
 				this.desktop.hideNotification(notifyWin);
 				notifyWin = null;
 		

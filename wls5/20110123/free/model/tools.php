@@ -193,8 +193,7 @@ class tools {
 			$len = strlen($id)+2;
 			for($i=0;$i<count($data_all);$i++){
 				if(!isset($data_all[$i]['id_level'])){
-//					print_r($data_all[$i]);
-//					exit();
+
 				}else{
 					if(strlen($data_all[$i]['id_level'])==$len){
 						if(isset($data_all[$i]['children'])){

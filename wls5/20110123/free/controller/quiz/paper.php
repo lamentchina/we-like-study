@@ -15,7 +15,13 @@ class quiz_paper extends quiz{
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
 		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
-		$data = $this->m->getList($page,$pagesize,null,' order by date_created ');
+		$search = null;
+		if(isset($_REQUEST['search']) && $_REQUEST['search']!=''){
+			$search = array(
+				'title'=>$_REQUEST['search']
+			);
+		}
+		$data = $this->m->getList($page,$pagesize,$search,' order by date_created ');
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}

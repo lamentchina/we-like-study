@@ -35,6 +35,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				var second = objDate.getSeconds();
 				
 				thisObj.time.start = year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second;
+				//console.debug(thisObj);
 				eval(nextFunction);				
 			}
 		});
@@ -245,8 +246,27 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		    ]
 		});
 		
+		var search = new Ext.form.TextField({
+			id:domid+'_search',
+			width:135,
+			enableKeyEvents: true
+		});
+		search.on('keyup', function(a,b,c) {
+			if(b.button==12){
+				store.load({params:{start:0, limit:15, search:Ext.getCmp(domid+'_search').getValue()}});    
+			}
+		});
 		var tb = new Ext.Toolbar({
-			id:"w_s_l_tb"
+			 id:"w_s_l_tb"
+			,items:[search,
+				    {
+				    	text: '查询',
+				        handler : function(){  
+				        	store.load({params:{start:0, limit:15}});    
+				        }
+				    },
+				    '-'
+			]
 		});	
 		
 		var grid = new Ext.grid.EditorGridPanel({
@@ -259,70 +279,98 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		    tbar: tb,
 		    bbar : new Ext.PagingToolbar({
 				store : store,
-				pageSize : 15,
+				pageSize : 15,				
 				displayInfo : true
 			})
 		});
 		
-		var privilege = user_.myUser.privilege.split(",");
-		for(var i=0;i<privilege.length;i++){
-			if(privilege[i]=='1101'){
-				tb.add({
-					text: il8n.Import,
-			        handler : function(){   
-						var win = new Ext.Window({
-							id:'w_q_p_l_i',
-							layout:'fit',
-							width:500,
-							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewUpload' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			}else if(privilege[i]=='1102'){
-				tb.add({
-					text: il8n.Export,
-			        handler : function(){   
-			        	var pid= Ext.getCmp(domid).getSelectionModel().selection.record.id;
-						var win = new Ext.Window({
-							id:'w_q_p_l_e',
-							layout:'fit',
-							width:500,
-							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport&id="+pid+"' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			}else if(privilege[i]=='1103'){
-				tb.add({
-					text: il8n.Delete,
-			        handler : function(){   
-						Ext.Ajax.request({				
-							method:'POST',				
-							url:thisObj.config.AJAXPATH+"?controller=quiz_paper&action=delete",				
-							success:function(response){				
-							    store.load();
-							},				
-							failure:function(response){				
-							    Ext.Msg.alert('failure',response.responseText);
-							},				
-							params:{id:Ext.getCmp(domid).getSelectionModel().selection.record.id}				
-						});		
-					}
-				});
-			}else if(privilege[i]=='1107'){
-				tb.add({
-			        text: il8n.DoQuiz,
-			        handler : function(){
-			        	window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id+"&uid="+user_.myUser.id);
-					}
-			    });   
-			}else if(privilege[i]=='1104'){
-				grid.on("afteredit", afteredit, grid);    
-			}else if(privilege[i]=='1105'){
-				//TODO
+		if(typeof(user_)=="undefined"){
+			alert('user_不存在');
+		}else{
+		
+			var privilege = user_.myUser.privilege.split(",");
+			for(var i=0;i<privilege.length;i++){
+				if(privilege[i]=='1101'){
+					tb.add({
+						text: il8n.Import,
+				        handler : function(){   
+							var win = new Ext.Window({
+								id:'w_q_p_l_i',
+								layout:'fit',
+								width:500,
+								height:300,	
+								html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewUpload' width='100%' height='250' />"
+							});
+							win.show(this);
+						}
+					});
+				}else if(privilege[i]=='1102'){
+					tb.add({
+						text: il8n.Export,
+				        handler : function(){   
+				        	var pid= Ext.getCmp(domid).getSelectionModel().selection.record.id;
+							var win = new Ext.Window({
+								id:'w_q_p_l_e',
+								layout:'fit',
+								width:500,
+								height:300,	
+								html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport&id="+pid+"' width='100%' height='250' />"
+							});
+							win.show(this);
+						}
+					});
+				}else if(privilege[i]=='1103'){
+					tb.add({
+						text: il8n.Delete,
+				        handler : function(){   
+							Ext.Ajax.request({				
+								method:'POST',				
+								url:thisObj.config.AJAXPATH+"?controller=quiz_paper&action=delete",				
+								success:function(response){				
+								    store.load();
+								},				
+								failure:function(response){				
+								    Ext.Msg.alert('failure',response.responseText);
+								},				
+								params:{id:Ext.getCmp(domid).getSelectionModel().selection.record.id}				
+							});		
+						}
+					});
+				}else if(privilege[i]=='1107'){
+					tb.add('-',{
+				        text: il8n.DoQuiz,
+				        handler : function(){
+				        	//TODO QoDesk JS required
+							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
+							var uid = user_.myUser.id;
+							
+					        var desktop = QoDesk.App.modules[0].app.getDesktop();
+					        
+					        var win = desktop.getWindow(pid+'_qdesk');							
+				        	var winWidth = desktop.getWinWidth() ;/// 1.1;
+							var winHeight = desktop.getWinHeight();// / 1.1;
+
+							 if(!win){
+							 win = desktop.createWindow({
+								id:pid+'_qdesk',
+						        title: Ext.getCmp(domid).getSelectionModel().selection.record.data.title,
+				                width: winWidth,
+				                height: winHeight,
+						        layout: 'fit',
+						        plain:false,
+						        html:'<iframe src="'+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+pid+"&uid="+uid+'&temp='+Math.random()+'" style="width:100%; height:100%;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+						    });
+							 }
+						    win.show();	
+						    
+				        	//window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id+"&uid="+user_.myUser.id);
+						}
+				    });   
+				}else if(privilege[i]=='1104'){
+					grid.on("afteredit", afteredit, grid);    
+				}else if(privilege[i]=='1105'){
+					//TODO
+				}
 			}
 		}
 		function afteredit(e){    
@@ -338,6 +386,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				params:{field:e.field,value:e.value,id:e.record.data.id}				
 			});
 	    }     
+	    store.on('beforeload', function(){
+	        Ext.apply(this.baseParams, {
+	        	search:Ext.getCmp(domid+'_search').getValue()
+	        });
+	    });	    
 		store.load({params:{start:0, limit:15}});    
 		return grid;
 	}

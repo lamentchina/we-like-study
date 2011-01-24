@@ -152,7 +152,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
-		$objPHPExcel = new PHPExcel();
+
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
@@ -508,6 +508,9 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				if($keys[$i]=='id_level_subject'){
 					$where .= " and id_level_subject in (".$search[$keys[$i]].") ";
 				}
+				if($keys[$i]=='title'){
+					$where .= " and title like '%".$search[$keys[$i]]."%' ";
+				}				
 				
 			}
 		}

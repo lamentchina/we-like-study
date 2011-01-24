@@ -96,8 +96,9 @@ class m_user extends wls implements dbtable{
 				,password varchar(200) not null
 				,money int default 0
 				,credits int default 0
+				
+				,name varchar(200) /*姓名*/
 				,photo text 
-				,id_level_user_group varchar(200) default '0'
 			
 			) DEFAULT CHARSET=utf8;
 			";
@@ -396,10 +397,10 @@ class m_user extends wls implements dbtable{
 	}	
 	
 	public function getMyMenu(){
-//		$me = $this->getMyUser();
-//		$username = $me['username'];
+		$me = $this->getMyUser();
+		$username = $me['username'];
 		
-		$username = 'user1';//TODO
+//		$username = 'user1';//TODO
 		include_once dirname(__FILE__).'/user/privilege.php';
 		$obj = new m_user_privilege();
 		$data = $obj->getListForUser($username);

@@ -1,6 +1,3 @@
-<?php 
-session_start();
-?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
@@ -8,15 +5,9 @@ session_start();
 <meta http-equiv="PRAGMA" content="NO-CACHE">
 <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
 <meta http-equiv="EXPIRES" content="-1">
-
 <title>A qWikiOffice Desktop</title>
-
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>ExtTop - Desktop Sample App</title>
 <link rel="stylesheet" type="text/css"
-	href="../libs/ext_3_2_1/resources/css/ext-all-notheme.css" />
-
-    
+	href="../libs/ext_3_2_1/resources/css/ext-all-notheme.css" />   
 
 <script type="text/javascript" src="../libs/jquery-1.4.2.js"></script>
 <script type="text/javascript" src="../libs/jqueryextend.js"></script>	
@@ -124,18 +115,15 @@ session_start();
 <!-- QoDesk -->
 <!-- This dynamic file will load all the modules the member has access to and setup the desktop -->
 <script type="text/javascript">
-/*
- * qWikiOffice Desktop 1.0
- * Copyright(c) 2007-2010, Murdock Technologies, Inc.
- * licensing@qwikioffice.com
- *
- * http://www.qwikioffice.com/license
- */
 
  var user_ = new wls.user();
+ </script>
  <?php 
 
  if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){	
+ ?>
+ <script type="text/javascript">
+ <?php 
  	
  	echo "user_.myUser.privilege = '".$_SESSION['wls_user']['privilege']."';\n";
  	echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
@@ -215,10 +203,15 @@ QoDesk.App = new Ext.app.App({
       }
    }
 });
+
+
+
 <?php 
  }else{
  	?>
- 	
+<link rel="stylesheet" type="text/css"
+	href="../libs/ext_3_2_1/resources/css/xtheme-blue.css" />
+<script type="text/javascript">
  	Ext.onReady(function(){
 
  		var copoment = user_.getLogin();
@@ -236,10 +229,11 @@ QoDesk.App = new Ext.app.App({
  	
  	    window.show();
  	});
+
  <?php 
  }
  ?>
-</script>
+ </script>
 </head>
 <body scroll="no"></body>
 </html>
