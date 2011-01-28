@@ -1,5 +1,5 @@
-class_23 = Ext.extend(Ext.app.Module, {
-   id: 'id_23',
+class_1110 = Ext.extend(Ext.app.Module, {
+   id: 'id_1110',
 
    init : function(){
 
@@ -12,16 +12,15 @@ class_23 = Ext.extend(Ext.app.Module, {
         if(!win){			
             win = desktop.createWindow({
                 id: this.id,
-                title: '用户登录',
+                title: '无数据',
                 width: 300,
-                height: 250,
-                iconCls: 'tab-icon',
-                shim: false,
-                constrainHeader: true,
+                height: 300,
+
                 layout: 'fit',
                 modal:true,
-                items:[user_.getLogin()],
-                taskbuttonTooltip: '<b>用户登录</b>'
+                items:[ new Ext.BoxComponent({
+	                    html:'没有数据'
+	            })]
             });
         }
         win.show();

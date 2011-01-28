@@ -381,6 +381,7 @@ class m_user extends wls implements dbtable{
 		$conn = $this->conn();
 //						return true;
 		$user = $this->getUser($this->id,true);		
+		
 		$privileges = $user['privilege'];
 
 		$privileges = explode(",",$privileges);

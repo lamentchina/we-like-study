@@ -340,8 +340,17 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					tb.add('-',{
 				        text: il8n.DoQuiz,
 				        handler : function(){
-
+							//console.debug(Ext.getCmp(domid).getSelectionModel().selection);
+							if(Ext.getCmp(domid).getSelectionModel().selection==null){
+//								console.debug();
+								QoDesk.App.getDesktop().showNotification({
+						            html: '请点击列表中的任何一个单元格',
+						            title: '错误'
+						         });
+								return;
+							}
 							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
+							
 							var uid = user_.myUser.id;
 					        var desktop = QoDesk.App.getDesktop();
 					        

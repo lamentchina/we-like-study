@@ -36,7 +36,6 @@ wls.user.group = Ext.extend(wls, {
 			id:"w_u_g_tb"
 		});	
 		var grid = new Ext.grid.EditorGridPanel({
-			title:il8n.User.Group,
 			store : store,
 			cm : cm,
 			id : domid,

@@ -252,7 +252,6 @@ wls.user = Ext.extend(wls, {
 		});
 		var grid = new Ext.grid.EditorGridPanel({
 		    store: store,
-		    title:il8n.User.User,
 		    cm: cm,        
 		    id: domid,
 		    width: 600,

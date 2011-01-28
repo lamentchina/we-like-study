@@ -1,12 +1,5 @@
-<?php 
-$actionid = explode("_",$_REQUEST['moduleId']);
-$actionid = $actionid[1];
-if(file_exists('getjs/'.$actionid.".js")){
-	include_once 'getjs/'.$actionid.".js";
-}else{
-	$str = "
-class_".$actionid." = Ext.extend(Ext.app.Module, {
-   id: 'id_".$actionid."',
+class_15 = Ext.extend(Ext.app.Module, {
+   id: 'id_15',
 
    init : function(){
 
@@ -18,26 +11,19 @@ class_".$actionid." = Ext.extend(Ext.app.Module, {
     	var winWidth = desktop.getWinWidth() / 1.1;
 		var winHeight = desktop.getWinHeight() / 1.1;
         
-		var obj = new wls.user.group();
+		var obj = new wls.user.privilege();
 		
         if(!win){			
             win = desktop.createWindow({
                 id: this.id,
-                title: '尚未完成',
+                title: '权限',
                 width: winWidth,
                 height: winHeight,
 
                 layout: 'fit',
-                items:[ new Ext.BoxComponent({
-	                    html:'//TODO 此功能尚未完成'
-	            })]
+                items:[obj.getList('qd_w_u_p_l')]
             });
         }
         win.show();
     }
-});	
-	";
-	echo $str;
-}
-
-?>
+});

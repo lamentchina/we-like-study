@@ -16,15 +16,9 @@
 <script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
 <script type="text/javascript" src="../libs/ext_3_2_1/ext-lang-zh_CN.js"></script>
 
-<!-- DESKTOP CSS -->
 <link rel="stylesheet" type="text/css" href="free/view/qWikiOffice/resources/css/desktop.css" />
 
-<!-- MODULES CSS -->
-<!-- Dynamically generated based on the modules the member has access to -->
 <style type="text/css">
-
-
-
 .icon_user_48_48{
 	background-image:url(free/view/images/user48x48.png) !important;
 }

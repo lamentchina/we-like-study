@@ -43,7 +43,6 @@ wls.user.privilege = Ext.extend(wls, {
 		});
 		
 		var grid = new Ext.grid.EditorGridPanel({
-			title:il8n.Privilege,
 		    store: store,
 		    cm: cm,        
 		    id: id,
