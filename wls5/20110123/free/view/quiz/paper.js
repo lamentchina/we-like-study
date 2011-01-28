@@ -343,12 +343,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				        	//TODO QoDesk JS required
 							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
 							var uid = user_.myUser.id;
-							
-					        var desktop = QoDesk.App.modules[0].app.getDesktop();
+					        var desktop = QoDesk.App.getDesktop();
 					        
 					        var win = desktop.getWindow(pid+'_qdesk');							
-				        	var winWidth = desktop.getWinWidth() ;/// 1.1;
-							var winHeight = desktop.getWinHeight();// / 1.1;
+				        	var winWidth = desktop.getWinWidth();
+							var winHeight = desktop.getWinHeight();
 
 							 if(!win){
 							 win = desktop.createWindow({

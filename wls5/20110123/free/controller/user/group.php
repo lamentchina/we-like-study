@@ -143,7 +143,15 @@ class user_group extends wls{
 		$this->m->updateSubject($_POST['id'],$_POST['ids']);
 	}
 	
+	public function saveP2P(){
+		$path =  'E:/Projects/WEBS/PHP/wls4/file/test/group2privilege.xls';
+		$this->m->importExcelWithP($path);
+	}
 	
+	public function saveP2S(){
+		$path =  'E:/Projects/WEBS/PHP/wls4/file/test/group2privilege.xls';
+		$this->m->importExcelWithS($path);
+	}	
 
 }
 ?>

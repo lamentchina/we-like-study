@@ -49,7 +49,9 @@ class wls{
 	public function getMyUser(){
 		include_once dirname(__FILE__)."/".$this->c->license."/model/user.php";
 		$m = new m_user();
-		return $m->getUser(null,true);		
+		$myuser = $m->getUser(null,true);
+		print_r($myuser);		
+		return $myuser;
 	}
 
 	/**
@@ -100,44 +102,38 @@ class wls{
 				eval('$controller = new '.$controllername.'();');
 			}
 		}else{
-			if($this->c->debug==1){//系统还未安装
+			if($this->c->state=='install'){//系统还未安装
 				header("location:wls.php?controller=install&action=main"); 	
-			}else{
-//				include_once "free/view/Layout.php";
-//				include_once "free/view/desktop/desktop.html"; 	 
+			}else{ 
 				include_once 'free/model/user.php';
 				$m_user = new m_user();
 				$menus = $m_user->getMyMenuForDesktop();
 				
 				$modules = array();
+				$shortcut = array();
+				$quickstart = array();
 				for($i=0;$i<count($menus);$i++){
 					$modules[] = array(
 						'id'=>"id_".$menus[$i]['id_level'],
 						'className'=>"class_".$menus[$i]['id_level'],
 		          		"launcher"=>array(
-		          			"iconCls"=>"qo-pref-icon",
-		          			"shortcutIconCls"=>"qo-pref-shortcut-icon",
+		          			"iconCls"=>'icon_'.$menus[$i]['icon'].'_16_16',
+		          			"shortcutIconCls"=>'icon_'.$menus[$i]['icon'].'_48_48',
 		          			"text"=>$menus[$i]['text'],
-		          			"tooltip"=>$menus[$i]['text']
+		          			"tooltip"=>'单击启动  <b>'.$menus[$i]['description'].'</b>',
 		          		),
 		          		"launcherPaths"=>array(
 		          			"startmenu"=>$menus[$i]['startmenu']
 		          		),
 					);
+					if($menus[$i]['isshortcut']==1){
+						$shortcut[] = "id_".$menus[$i]['id_level'];
+					}
+					if($menus[$i]['isquickstart']==1){
+						$quickstart[] = "id_".$menus[$i]['id_level'];
+					}					
 				}
 				
-				$shortcut = array(
-					"id_".$menus[0]['id_level'],
-					"id_".$menus[1]['id_level'],
-					"id_".$menus[2]['id_level'],
-				);
-				
-				$quickstart = array(
-					"id_".$menus[0]['id_level'],
-					"id_".$menus[1]['id_level'],
-				);
-//				print_r($menus);
-//				exit();	
 				include_once "free/view/qWikiOffice/qDeskTop.php";
 			}
 		}

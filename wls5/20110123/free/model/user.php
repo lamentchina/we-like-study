@@ -207,6 +207,7 @@ class m_user extends wls implements dbtable{
 		$conn = $this->conn();
 		
 		$where = " where 1 =1  ";
+
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
@@ -215,25 +216,22 @@ class m_user extends wls implements dbtable{
 				}		
 				if($keys[$i]=='id'){
 					$where .= " and id in (".$search[$keys[$i]].") ";
-				}										
+				}	
+				if($keys[$i]=='username'){									
+					$where .= " and username = '".$search[$keys[$i]]."' ";
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
 		$sql = "select ".$columns." from ".$pfx."wls_user ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-//		try {
-//		echo $sql;
-			$res = mysql_query($sql,$conn);
+
+		$res = mysql_query($sql,$conn);
 		if($res==false){
-			echo $sql;
+
 			return;
 		}
-//		}catch (Exception $es){
-//			$this->error(array(
-//				'description'=>$sql
-//			));
-//			return false;
-//		}
+
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
@@ -266,15 +264,18 @@ class m_user extends wls implements dbtable{
 			if( (isset($_SESSION)) && (isset($_SESSION['wls_user'])) && $_SESSION['wls_user']!=''){
 				
 			}else{
-
+//				
 				session_start();
 			}
 			
 			if(!isset($_SESSION['wls_user']) || $_SESSION['wls_user']['privilege']==''){//TODO
-
-				$data = $this->getList(1,1,array('id'=>$id));
-				$data = $data['data'][0];
-				
+				if($id==null){//访客
+					$data = $this->getList(1,1,array('username'=>'guest'));
+					$data = $data['data'][0];
+				}else{		
+					$data = $this->getList(1,1,array('id'=>$id));
+					$data = $data['data'][0];
+				}
 				include_once dirname(__FILE__).'/user/privilege.php';
 				$o = new m_user_privilege();
 				$d = $o->getListForUser($data['username']);
@@ -310,13 +311,14 @@ class m_user extends wls implements dbtable{
 				$ids = substr($ids,0,strlen($ids)-1);
 				$data['subject'] = $ids;
 				
-				$_SESSION['wls_user'] = $data;
-						
+				$_SESSION['wls_user'] = $data;						
 			}
 			return $_SESSION['wls_user'];
 		}else{
+
 			$data = $this->getList(1,1,array('id'=>$id));
 			return $data['data'][0];
+
 		}
 	}
 	
@@ -378,7 +380,6 @@ class m_user extends wls implements dbtable{
 		$conn = $this->conn();
 				
 		$user = $this->getUser($this->id,true);		
-//		print_r($user);
 		$privileges = $user['privilege'];
 		
 		$privileges = explode(",",$privileges);
@@ -397,13 +398,13 @@ class m_user extends wls implements dbtable{
 	}	
 	
 	public function getMyMenu(){
-		$me = $this->getMyUser();
+		$me = $this->getUser(null,true);
+
 		$username = $me['username'];
-		
-//		$username = 'user1';//TODO
 		include_once dirname(__FILE__).'/user/privilege.php';
 		$obj = new m_user_privilege();
 		$data = $obj->getListForUser($username);
+
 		$data2 = array();
 		for($i=0;$i<count($data);$i++){
 			if($data[$i]['ismenu']==1){
@@ -422,7 +423,8 @@ class m_user extends wls implements dbtable{
 				include_once dirname(__FILE__).'/subject.php';
 				$obj = new m_subject();
 				$data_ = $obj->getListForUser($username);
-				if(count($data)>0){
+				
+				if(count($data_)>0){
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
 						$data_[$ii]['type'] = 'subject';
@@ -451,12 +453,13 @@ class m_user extends wls implements dbtable{
 				include_once dirname(__FILE__).'/user/group.php';
 				$obj = new m_user_group();
 				$data_ = $obj->getListForUser($username);
-				if(count($data)>0){
+				if(count($data_)>0){
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
 						$data_[$ii]['type'] = 'group';
 						if($data_[$ii]['checked']==1){
 							$data_[$ii]['ismenu'] = 1;
+//							$data_[$ii]['ismenu'] = 1;
 							$data__[] = $data_[$ii];
 						}
 					}
@@ -478,23 +481,15 @@ class m_user extends wls implements dbtable{
 			}
 		}
 		
+//		print_r($data);exit();
 		return $data;
 	}
 	
 	public function getMyMenuForDesktop(){
+		$data = $this->getMyMenu();	
 
-		$data = $this->getMyMenu();
-		
 		$this->t->treeMenuToDesktopMenu(null,$data);
-		
-//		return $this
-//		header("Content-type: text/html; charset=utf-8");
 		return $this->t->desktopMenu;
 	}
-	
-	public function formatMenu(){
-		
-	}
-	
 }
 ?>

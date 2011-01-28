@@ -123,15 +123,15 @@ class tools {
 			'5'=>'组合题',
 			'6'=>'大题',
 			'7'=>'填空题'
-		);
+			);
 
-		if($bool){
-			$config = array_flip($config);
-		}
+			if($bool){
+				$config = array_flip($config);
+			}
 
-		return $config[$key];
+			return $config[$key];
 	}
-	
+
 	public function formatApplicationType($key,$bool=false){
 		$config = array(
 			'0'=>'做测验卷',
@@ -147,7 +147,7 @@ class tools {
 		}
 
 		return $config[$key];
-	}	
+	}
 
 	/**
 	 * 处理题目标题,主要处理\n变< br/ >之类的
@@ -170,7 +170,7 @@ class tools {
 			return $title;
 		}
 	}
-	
+
 	public $desktopMenu = array();
 	public function treeMenuToDesktopMenu($id=null,$data_all){
 		if($id==null){
@@ -178,13 +178,17 @@ class tools {
 			for($i=0;$i<count($data_all);$i++){
 				if(strlen($data_all[$i]['id_level'])==$len){
 					if(isset($data_all[$i]['children'])){
-						$data_all[$i]['startmenu'] = '/';
+						$data_all[$i]['menupath'] = '/';
 						for($i2=0;$i2<count($data_all[$i]['children']);$i2++){
-							$data_all[$i]['children'][$i2]['startmenu'] = $data_all[$i]['startmenu'].$data_all[$i]['text']."/";
+							$data_all[$i]['children'][$i2]['menupath'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 						}
 						$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
-
+						
+						$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
+						unset($data_all[$i]['children']);
+						$this->desktopMenu[] = $data_all[$i];						
 					}else{
+						$data_all[$i]['startmenu'] = "/";
 						$this->desktopMenu[] = $data_all[$i];
 					}
 				}
@@ -197,13 +201,16 @@ class tools {
 				}else{
 					if(strlen($data_all[$i]['id_level'])==$len){
 						if(isset($data_all[$i]['children'])){
-							
 							for($i2=0;$i2<count($data_all[$i]['children']);$i2++){
-								$data_all[$i]['children'][$i2]['startmenu'] =  $data_all[$i]['startmenu'].$data_all[$i]['text']."/";
+								$data_all[$i]['children'][$i2]['menupath'] =  $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							}
 							$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
-	
+							
+							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
+							unset($data_all[$i]['children']);
+							$this->desktopMenu[] = $data_all[$i];	
 						}else{
+							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'];
 							$this->desktopMenu[] = $data_all[$i];
 						}
 					}
@@ -280,6 +287,12 @@ class tools {
 			return $date_str;
 		}
 		return $date;
+	}
+
+	public function formatCellData($celldata){
+		$celldata = str_replace('\n','',$celldata);
+		$celldata = trim($celldata);
+		return $celldata;
 	}
 }
 ?>

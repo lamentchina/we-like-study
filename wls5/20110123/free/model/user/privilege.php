@@ -86,6 +86,10 @@ class m_user_privilege extends wls implements dbtable,levelList{
 				,name varchar(200) default '' 		/*名称*/
 				,money int default 0				/*每次执行这个操作,需要扣钱*/
 				,ismenu int default 0				/*是否是菜单*/
+				,isshortcut int default 0			/*是否为桌面图标*/
+				,isquickstart int default 0 		/*是否为快速启动项*/
+				,icon varchar(200) default ''
+				,description text				
 							
 			) DEFAULT CHARSET=utf8;
 			";

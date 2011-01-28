@@ -74,7 +74,7 @@ Ext.ux.TaskBar = Ext.extend(Ext.Container, {
          iconCls: 'icon-qwikioffice-24',
          region: 'west',
          split: true,
-         text: 'Start',
+         text: '开始',
          width: 90
       }, config.startButtonConfig || {});
 

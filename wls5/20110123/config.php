@@ -8,6 +8,6 @@ class wlsconfig{
 			public $dbprefix = '';
 			public $cmstype = '';
 			public $license = 'free';
-			public $debug = '0';
+			public $state = 'debug';
 }
 ?>
