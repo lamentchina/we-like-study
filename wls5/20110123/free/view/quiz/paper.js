@@ -340,7 +340,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					tb.add('-',{
 				        text: il8n.DoQuiz,
 				        handler : function(){
-				        	//TODO QoDesk JS required
+
 							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
 							var uid = user_.myUser.id;
 					        var desktop = QoDesk.App.getDesktop();

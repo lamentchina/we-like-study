@@ -275,6 +275,7 @@ class m_user extends wls implements dbtable{
 				}else{		
 					$data = $this->getList(1,1,array('id'=>$id));
 					$data = $data['data'][0];
+					
 				}
 				include_once dirname(__FILE__).'/user/privilege.php';
 				$o = new m_user_privilege();
@@ -378,12 +379,13 @@ class m_user extends wls implements dbtable{
 	public function checkMyPrivilege($privilege){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-				
+//						return true;
 		$user = $this->getUser($this->id,true);		
 		$privileges = $user['privilege'];
-		
+
 		$privileges = explode(",",$privileges);
 		if(in_array($privilege,$privileges)){
+
 			if($user['money']>$user['privileges'][$privilege]){
 				$sql = "update ".$pfx."wls_user set money = money - ".$user['privileges'][$privilege]." where id = ".$user['id'];
 				mysql_query($sql,$conn);
@@ -428,13 +430,16 @@ class m_user extends wls implements dbtable{
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
 						$data_[$ii]['type'] = 'subject';
+						$data_[$ii]['id_level_s'] = $data_[$ii]['id_level'];
+						$data_[$ii]['id_level'] = '11'.$data_[$ii]['id_level'];
 						if($data_[$ii]['checked']==1){
 							$data_[$ii]['ismenu'] = 1;
 							$data__[] = $data_[$ii];
 						}
 					}
-					$subject = $this->t->getTreeData(null,$data__);
+					$subject = $this->t->getTreeData('11',$data__);
 
+					
 					$arr = array();
 					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
 						$arr = $data[$i]['children'];
@@ -459,7 +464,7 @@ class m_user extends wls implements dbtable{
 						$data_[$ii]['type'] = 'group';
 						if($data_[$ii]['checked']==1){
 							$data_[$ii]['ismenu'] = 1;
-//							$data_[$ii]['ismenu'] = 1;
+							
 							$data__[] = $data_[$ii];
 						}
 					}
@@ -481,7 +486,7 @@ class m_user extends wls implements dbtable{
 			}
 		}
 		
-//		print_r($data);exit();
+
 		return $data;
 	}
 	
@@ -489,7 +494,8 @@ class m_user extends wls implements dbtable{
 		$data = $this->getMyMenu();	
 
 		$this->t->treeMenuToDesktopMenu(null,$data);
-		return $this->t->desktopMenu;
+		$data = $this->t->desktopMenu;
+		return $data;
 	}
 }
 ?>

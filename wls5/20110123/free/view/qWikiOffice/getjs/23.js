@@ -1,5 +1,5 @@
-class_1150 = Ext.extend(Ext.app.Module, {
-   id: 'id_1150',
+class_23 = Ext.extend(Ext.app.Module, {
+   id: 'id_23',
    type: 'demo/tab',
 
    init : function(){
@@ -11,21 +11,22 @@ class_1150 = Ext.extend(Ext.app.Module, {
         var win = desktop.getWindow(this.id);
         
         if(!win){
-        	var winWidth = desktop.getWinWidth() / 1.1;
-			var winHeight = desktop.getWinHeight() / 1.1;
-			var quiz_paper = new wls.quiz.paper();
+//        	var winWidth = desktop.getWinWidth() / 4;
+//			var winHeight = desktop.getWinHeight() / 2;
+//			
 			
             win = desktop.createWindow({
                 id: this.id,
-                title: 'Tab Window',
-                width: winWidth,
-                height: winHeight,
+                title: '用户登录',
+                width: 300,
+                height: 250,
                 iconCls: 'tab-icon',
                 shim: false,
                 constrainHeader: true,
                 layout: 'fit',
-                items:[quiz_paper.getList('qd_w_q_p_l')],
-                taskbuttonTooltip: '<b>Tab Window</b><br />A window with tabs'
+                modal:true,
+                items:[user_.getLogin()],
+                taskbuttonTooltip: '<b>用户登录</b>'
             });
         }
         win.show();

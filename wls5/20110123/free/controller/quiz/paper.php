@@ -218,10 +218,10 @@ class quiz_paper extends quiz{
 	public function viewOne(){
 		include_once $this->c->license.'/model/user.php';
 		$obj_ = new m_user();
-//		echo strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6');exit();
+
 		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == false )
 		{
-//		    print_r($_SERVER['HTTP_USER_AGENT']);
+
 		}
 		else
 		{

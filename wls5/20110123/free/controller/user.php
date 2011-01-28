@@ -247,7 +247,6 @@ class user extends wls{
 			}
 		}
 
-//				print_r($data);
 		echo json_encode($data);
 	}
 

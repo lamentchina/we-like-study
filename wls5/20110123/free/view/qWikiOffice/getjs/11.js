@@ -1,5 +1,5 @@
-class_1251 = Ext.extend(Ext.app.Module, {
-   id: 'id_1251',
+class_11 = Ext.extend(Ext.app.Module, {
+   id: 'id_11',
    type: 'demo/tab',
 
    init : function(){
@@ -13,21 +13,21 @@ class_1251 = Ext.extend(Ext.app.Module, {
         if(!win){
         	var winWidth = desktop.getWinWidth() / 1.1;
 			var winHeight = desktop.getWinHeight() / 1.1;
+			var quiz_paper = new wls.quiz.paper();
 			
             win = desktop.createWindow({
                 id: this.id,
-                title: 'Tab Window',
+                title: '所有试题列表',
                 width: winWidth,
                 height: winHeight,
-                iconCls: 'tab-icon',
+                iconCls: 'icon_paper_16_16',
                 shim: false,
                 constrainHeader: true,
                 layout: 'fit',
-                items:[user_.getMyCenter('qd_u_mc')],
-                taskbuttonTooltip: '<b>Tab Window</b><br />A window with tabs'
+                items:[quiz_paper.getList('qd_w_q_p_l')],
+                taskbuttonTooltip: '<b>所有试题列表</b>'
             });
         }
         win.show();
-        user_.afterMyCenterAdded('qd_u_mc');
     }
 });

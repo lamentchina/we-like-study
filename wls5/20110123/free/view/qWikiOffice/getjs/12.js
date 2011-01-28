@@ -1,5 +1,5 @@
-class_1250 = Ext.extend(Ext.app.Module, {
-   id: 'id_1250',
+class_12 = Ext.extend(Ext.app.Module, {
+   id: 'id_12',
 
    init : function(){
 
@@ -12,20 +12,19 @@ class_1250 = Ext.extend(Ext.app.Module, {
         if(!win){
         	var winWidth = desktop.getWinWidth() / 1.1;
 			var winHeight = desktop.getWinHeight() / 1.1;
-			var obj = new wls.quiz.wrong();
 			
             win = desktop.createWindow({
                 id: this.id,
-                title: '错题本',
+                title: '用户中心',
                 width: winWidth,
                 height: winHeight,
 
                 layout: 'fit',
-                items:[obj.getMyList('qd_w_q_w_ml')],
-//                items:[new Ext.Button({text:'asdf'})],
-                taskbuttonTooltip: '<b>错题本</b>'
+                items:[user_.getMyCenter('qd_u_mc')],
+                taskbuttonTooltip: '<b>用户中心</b>'
             });
         }
         win.show();
+        user_.afterMyCenterAdded('qd_u_mc');
     }
 });

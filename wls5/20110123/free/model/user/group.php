@@ -170,20 +170,20 @@ class m_user_group extends wls implements dbtable,levelList{
 			mysql_query($sql,$conn);
 		}
 
-		if($table==null||$table=='wls_user_group2user'){		
-			$sql = "drop table if exists ".$pfx."wls_user_group2user;";
-			mysql_query($sql,$conn);
-			$sql = "
-				create table ".$pfx."wls_user_group2user(
-				
-					 id int primary key auto_increment	/*自动编号*/
-					,id_level_group varchar(200) default ''		/*用户组编号*/
-					,username varchar(200) default '' 		/*用户名*/
-								
-				) DEFAULT CHARSET=utf8;
-				";
-			mysql_query($sql,$conn);
-		}
+//		if($table==null||$table=='wls_user_group2user'){		
+//			$sql = "drop table if exists ".$pfx."wls_user_group2user;";
+//			mysql_query($sql,$conn);
+//			$sql = "
+//				create table ".$pfx."wls_user_group2user(
+//				
+//					 id int primary key auto_increment	/*自动编号*/
+//					,id_level_group varchar(200) default ''		/*用户组编号*/
+//					,username varchar(200) default '' 		/*用户名*/
+//								
+//				) DEFAULT CHARSET=utf8;
+//				";
+//			mysql_query($sql,$conn);
+//		}
 
 		if($table==null||$table=='wls_user_group2subject'){			
 			$sql = "drop table if exists ".$pfx."wls_user_group2subject;";

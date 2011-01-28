@@ -243,11 +243,34 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		
 		var privilege = user_.myUser.privilege.split(",");
 		for(var i=0;i<privilege.length;i++){
-			if(privilege[i]=='115107'){
+			if(privilege[i]=='125301'){
 				tb.add({
 			        text: il8n.Review+il8n.Log,
 			        handler : function(){
-						window.open(thisObj.config.AJAXPATH+"?controller=quiz_log&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
+			        	
+						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
+						var uid = user_.myUser.id;
+				        var desktop = QoDesk.App.getDesktop();
+				        
+				        var win = desktop.getWindow(lid+'_qdesk');							
+			        	var winWidth = desktop.getWinWidth();
+						var winHeight = desktop.getWinHeight();
+	
+						if(!win){
+							win = desktop.createWindow({
+								id:lid+'_qdesk',
+								title: '查看练习记录',
+								width: winWidth,
+								height: winHeight,
+								layout: 'fit',
+								plain:false,
+								html:'<iframe src="'+thisObj.config.AJAXPATH+"?controller=quiz_log&action=viewOne&id="+lid+"&uid="+uid+'&temp='+Math.random()+'" style="width:100%; height:100%;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+							});
+						}
+					    win.show();				        	
+			        	
+			        	
+//						window.open(thisObj.config.AJAXPATH+"?controller=quiz_log&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
 					}
 			    });   
 			}

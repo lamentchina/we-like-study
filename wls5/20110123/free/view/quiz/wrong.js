@@ -203,7 +203,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		    url: thisObj.config.AJAXPATH+'?controller=quiz_wrong&action=myList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','id_level_subject','id_quiz_paper','date_created','timedif','subject_name','count']
+		    fields: ['id','id_level_subject','id_quiz_paper','date_created','timedif','subject_name','count','id_user']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -234,6 +234,10 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 			    },{
 		             header: il8n.Count.Wrong
 			        ,dataIndex: 'count'
+			    },{
+		             header: '用户编号'
+			        ,dataIndex: 'id_user'
+			        ,hidden:true
 			    }
 		    ]
 		});
@@ -243,7 +247,6 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		});	
 		
 		var grid = new Ext.grid.GridPanel({
-			title:il8n.Wrongs,
 		    store:store,
 		    cm: cm,        
 		    id: domid,
@@ -285,7 +288,27 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				tb.add({
 			        text: '所选科目错题练习',
 			        handler : function(){
-						window.open(thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=viewOne&id_level_subject="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject);
+			        	
+						var sid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject;
+						var uid = user_.myUser.id;
+						var desktop = QoDesk.App.getDesktop();
+						
+						var win = desktop.getWindow(sid+'_qdesk');							
+						var winWidth = desktop.getWinWidth();
+						var winHeight = desktop.getWinHeight();
+						
+						if(!win){
+							win = desktop.createWindow({
+								id:sid+'_qdesk',
+								title: '错题练习',
+								width: winWidth,
+								height: winHeight,
+								layout: 'fit',
+								plain:false,
+								html:'<iframe src="'+thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=viewOne&id_level_subject="+sid+"&uid="+uid+'&temp='+Math.random()+'" style="width:100%; height:100%;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+							});
+						}
+						win.show();				        	
 					}
 			    });   
 			}

@@ -50,7 +50,7 @@ class wls{
 		include_once dirname(__FILE__)."/".$this->c->license."/model/user.php";
 		$m = new m_user();
 		$myuser = $m->getUser(null,true);
-		print_r($myuser);		
+		
 		return $myuser;
 	}
 
@@ -113,23 +113,30 @@ class wls{
 				$shortcut = array();
 				$quickstart = array();
 				for($i=0;$i<count($menus);$i++){
-					$modules[] = array(
+					$menuItem = array(
 						'id'=>"id_".$menus[$i]['id_level'],
 						'className'=>"class_".$menus[$i]['id_level'],
 		          		"launcher"=>array(
-		          			"iconCls"=>'icon_'.$menus[$i]['icon'].'_16_16',
-		          			"shortcutIconCls"=>'icon_'.$menus[$i]['icon'].'_48_48',
 		          			"text"=>$menus[$i]['text'],
-		          			"tooltip"=>'单击启动  <b>'.$menus[$i]['description'].'</b>',
+		          			"tooltip"=>'<b>'.$menus[$i]['text'].'</b>',
 		          		),
 		          		"launcherPaths"=>array(
 		          			"startmenu"=>$menus[$i]['startmenu']
 		          		),
 					);
-					if($menus[$i]['isshortcut']==1){
+					
+					if(isset($menus[$i]['icon'])){
+						$menuItem['launcher']['iconCls'] = 'icon_'.$menus[$i]['icon'].'_16_16';
+						$menuItem['launcher']['shortcutIconCls'] = 'icon_'.$menus[$i]['icon'].'_48_48';
+					}
+					if(isset($menus[$i]['description'])){
+						$menuItem['launcher']['tooltip'] = '<b>'.$menus[$i]['description'].'</b>';
+					}					
+					$modules[] = $menuItem;
+					if(isset($menus[$i]['isshortcut']) && $menus[$i]['isshortcut']==1){
 						$shortcut[] = "id_".$menus[$i]['id_level'];
 					}
-					if($menus[$i]['isquickstart']==1){
+					if(isset($menus[$i]['isquickstart']) && $menus[$i]['isquickstart']==1){
 						$quickstart[] = "id_".$menus[$i]['id_level'];
 					}					
 				}

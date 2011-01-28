@@ -325,7 +325,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	}
 
 	public function paperToExcel($paper,$questions){
-//		print_r($paper);
+
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 		include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -378,7 +378,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		for($i=1;$i<=23;$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
 		}
-//		print_r($data);
+
 		$index = 3;
 		for($i=0;$i<count($data);$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
@@ -435,7 +435,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$ques = new m_question();
 		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
 		$questions = $data['data'];
-//		print_r($questions);
+
 		return $this->paperToExcel($paper,$questions);
 	}
 

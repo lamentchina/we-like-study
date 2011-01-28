@@ -23,7 +23,6 @@ wls.user = Ext.extend(wls, {
 			id:'wls_user_login_form',
 			labelWidth: 75, // label settings here cascade unless overridden
 	        frame:true,
-	        title: il8n.User.Login,
 	        bodyStyle:'padding:5px 5px 0',
 	        width: 350,
 	        defaults: {width: 100},
@@ -32,17 +31,20 @@ wls.user = Ext.extend(wls, {
 	        items: [{
 	                fieldLabel: il8n.User.Name,
 	                width:150,
+	                vtype:"alphanum",
 	                name: 'username',
 	                allowBlank:false
 	            },{
 	                fieldLabel: il8n.User.PassWord,
 	                width:150,
+	                vtype:"alphanum",
 	                name: 'password',
 	                inputType:'password',
 	                allowBlank:false
 	            },{
 	                fieldLabel: il8n.CheckCAPTCHA,
 	                width:150,
+	                vtype:"alphanum",
 	                enableKeyEvents:true,
 	                name: 'CAPTCHA',
 	                allowBlank:false,
@@ -172,16 +174,18 @@ wls.user = Ext.extend(wls, {
 		window_l.show();
 	},	
 	login:function(){
-		$.blockUI({
-			message: '<h1>'+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
-		}); 
+
 		var thisObj = this;
 		var form = Ext.getCmp('wls_user_login_form').getForm();
+
     	if(form.isValid()){
+			$.blockUI({
+				message: '<h1>'+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
+			});     		
     		var obj = form.getValues();
     		Ext.Ajax.request({				
 				method:'POST',				
-				url:thisObj.config.AJAXPATH+"?controller=user&action=login",				
+				url:thisObj.config.AJAXPATH+"?controller=user&action=login&temp="+Math.random(),				
 				success:function(response){				
 					var obj = jQuery.parseJSON(response.responseText);
 					if(obj.msg=='ok'){
@@ -201,6 +205,8 @@ wls.user = Ext.extend(wls, {
 				},				
 				params:obj				
 			});
+    	}else{
+    		 Ext.Msg.alert('输入错误','你没有输入所需要的信息!请输入<br/><br/><b>用户名</b><br/><b>密码</b><br/><b>验证码</b>');
     	}
 	},
 	logOut:function(){
