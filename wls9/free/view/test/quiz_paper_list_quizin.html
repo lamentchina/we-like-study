@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css"
+	href="../../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css"
+	href="../../../../app/free/view/wls.css" />		
+<script type="text/javascript"
+	src="../../../../libs/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="../../../../libs/jqueryextend.js"></script>
+	
+<script type="text/javascript"
+	src="../../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>	
+	
+<script type="text/javascript"
+	src="../../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../il8n.js"></script>
+<script type="text/javascript" src="../wls.js"></script>
+<script type="text/javascript" src="../user.js"></script>
+<script type="text/javascript" src="../quiz.js"></script>
+<script type="text/javascript" src="../quiz/paper.js"></script>
+<script type="text/javascript" src="../question.js"></script>
+<script type="text/javascript" src="../question/choice.js"></script>
+<script type="text/javascript" src="../question/check.js"></script>
+<script type="text/javascript" src="../question/multichoice.js"></script>
+
+<script type="text/javascript" src="../question/big.js"></script>
+
+
+
+<script type="text/javascript">
+var user_ = new wls.user();
+user_.myUser.privilege = '10,1001,1002,1003,1004,1005,1050,11,1101,1102,1103,1104,1105,1106,1107,1150,1151,115101,115102,115103,115107,1153,115303,12,1250,125003,125007,1251,1252,1253,13,1301,130101,1302,130201,1303,1304,130401,130402,1305,1350,14,1401,1402,1403,1404,1405,1450,15,1550';
+user_.myUser.group = '10';
+user_.myUser.subject = '10,1001,1002,1003,1004';
+user_.myUser.username = 'admin';
+user_.myUser.money = '15';
+user_.myUser.id = '1';
+user_.myUser.photo = 'u1.jpeg';
+
+var quiz_paper;
+
+Ext.onReady(function(){
+
+	var obj = new wls.quiz.paper();
+
+	var copoment = obj.getList('domid');
+	var window = new Ext.Window({
+        title: 'Resize Me',
+        width: "80%",
+        height: 500,
+        minWidth: 300,
+        minHeight: 200,
+        layout: 'fit',
+        plain:true,
+        bodyStyle:'padding:5px;',
+        buttonAlign:'center',
+        items: [copoment]       
+    });
+
+    window.show();
+
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>
