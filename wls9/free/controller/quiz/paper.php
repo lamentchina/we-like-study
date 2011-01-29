@@ -73,7 +73,7 @@ class quiz_paper extends quiz{
 	public function viewExport(){
 		$this->m->id = $_REQUEST['id'];
 		$file = $this->m->exportExcel();
-		echo "<a href='../../../../".$file."'>下载</a>";
+		echo "<a href='".$this->c->filePath.$file."'>下载</a>";
 	}
 
 	public function getOne(){
