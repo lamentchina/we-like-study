@@ -5,7 +5,7 @@
 <meta http-equiv="PRAGMA" content="NO-CACHE">
 <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
 <meta http-equiv="EXPIRES" content="-1">
-<title>我们喜欢学习!</title>
+<title><?php echo $this->c->siteName ?></title>
 <link rel="stylesheet" type="text/css"
 	href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/ext-all-notheme.css" />   
 
