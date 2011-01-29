@@ -1,6 +1,6 @@
 wls = function(){
 	this.config = {
-		 AJAXPATH:'/app/wls.php'
+		 AJAXPATH:'/wls9/wls.php'
 		,libPath:'/libs/'
 		,filePath:'/file/'
 	}

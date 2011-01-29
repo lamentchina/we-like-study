@@ -22,6 +22,7 @@ class m_subject extends wls implements dbtable,levelList{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_subject (".$keys.") values ('".$values."')";
+
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -94,8 +95,10 @@ class m_subject extends wls implements dbtable,levelList{
 				,id_level varchar(200) unique		/*级层编号*/
 				,name varchar(200) default '' 		/*用户组名称*/
 				,ordering int default 0				/*排序规则*/
-				,cach text 							/*缓存内容*/
+
+				,icon varchar(200) default ''		/*图标*/
 				,ids_level_knowledge varchar(200) default '0' /*知识点组成*/
+				,description text 					/*描述*/
 							
 			) DEFAULT CHARSET=utf8;
 			";
@@ -270,10 +273,10 @@ class m_subject extends wls implements dbtable,levelList{
 
 		$sql = "
 		select *,id_level in ( 
-			select id_level_subject from wls_user_group2subject where id_level_group in ( 
-				select id_level_group from wls_user_group2user where username = '".$username."'
+			select id_level_subject from ".$pfx."wls_user_group2subject where id_level_group in ( 
+				select id_level_group from ".$pfx."wls_user_group2user where username = '".$username."'
 			)
-		) as checked from wls_subject;";
+		) as checked from ".$pfx."wls_subject;";
 
 		$res = mysql_query($sql,$conn);
 		$data = array();

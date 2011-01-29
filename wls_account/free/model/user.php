@@ -22,6 +22,7 @@ class m_user extends wls implements dbtable{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
+//		echo $sql;
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -98,7 +99,10 @@ class m_user extends wls implements dbtable{
 				,credits int default 0
 				
 				,name varchar(200) /*姓名*/
-				,photo text 
+				,sex varchar(200) default '男'
+				,birthday datetime default '1999-09-09'
+				,qq varchar(200) default '0'
+				,photo varchar(200) 
 			
 			) DEFAULT CHARSET=utf8;
 			";

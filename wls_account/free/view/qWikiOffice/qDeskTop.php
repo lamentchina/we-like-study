@@ -1,10 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="PRAGMA" content="NO-CACHE">
-<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
-<meta http-equiv="EXPIRES" content="-1">
+
 <title><?php echo $this->c->siteName ?></title>
 <link rel="stylesheet" type="text/css"
 	href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/ext-all-notheme.css" />   

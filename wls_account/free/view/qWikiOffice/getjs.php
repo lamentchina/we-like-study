@@ -1,4 +1,5 @@
 <?php 
+header("Content-type: text/html; charset=utf-8");
 $actionid = explode("_",$_REQUEST['moduleId']);
 $actionid = $actionid[1];
 if(file_exists('getjs/'.$actionid.".js")){

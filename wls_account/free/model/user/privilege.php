@@ -262,11 +262,11 @@ class m_user_privilege extends wls implements dbtable,levelList{
 
 		$sql = "
 		select *,id_level in ( 
-			select id_level_privilege from wls_user_group2privilege where id_level_group in ( 
-				select id_level_group from wls_user_group2user where username = '".$username."'
+			select id_level_privilege from ".$pfx."wls_user_group2privilege where id_level_group in ( 
+				select id_level_group from ".$pfx."wls_user_group2user where username = '".$username."'
 			)
-		) as checked from wls_user_privilege;";
-
+		) as checked from ".$pfx."wls_user_privilege;";
+//		echo $sql;
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){

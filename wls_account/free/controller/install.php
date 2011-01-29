@@ -89,6 +89,29 @@ class install extends wls {
 		$file = $this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"];
 		move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 		
+		include_once $this->c->license.'/model/user/group.php';
+		$obj = new m_user_group();
+		$obj->importExcelWithP($file);		
+		$obj->importExcelWithS($file);
+		$obj->importExcelWithU($file);
+		
+		include_once $this->c->license.'/model/knowledge.php';
+		$obj = new m_knowledge();
+		$obj->importExcel($file);
+		
+		echo '
+		<html>
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script language="javascript">
+		alert("'.$this->lang['installDone'].'");
+		self.location=("wls.php");
+		</script>
+		</head>
+		<body>
+		</body>
+		</html>
+		';	
 	}
 
 	public function main(){
@@ -108,7 +131,7 @@ class install extends wls {
 				</tr>				
 				<tr>
 					<td>".$this->lang['siteName']."</td>
-					<td><input name = 'siteName' value='We Like Study!' /></td>
+					<td><input name = 'siteName' value='We Like Study! 作者:大菜鸟 wei1224hf. www.welikestudy.com' /></td>
 				</tr>
 				<tr>
 					<td colspan='2'>&nbsp;</td>
@@ -119,7 +142,7 @@ class install extends wls {
 				</tr>				
 				<tr>
 					<td>".$this->lang['dbname']."</td>
-					<td><input name = 'dbname' value='wls4' /></td>
+					<td><input name = 'dbname' value='wls' /></td>
 				</tr>
 				<tr>
 					<td>".$this->lang['dbuser']."</td>
@@ -131,7 +154,7 @@ class install extends wls {
 				</tr>
 				<tr>
 					<td>".$this->lang['dbprefix']."</td>
-					<td><input name = 'dbprefix' value='' /></td>
+					<td><input name = 'dbprefix' value='w_' /></td>
 				</tr>	
 				<tr>
 					<td colspan='2'>&nbsp;</td>

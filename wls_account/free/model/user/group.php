@@ -170,22 +170,22 @@ class m_user_group extends wls implements dbtable,levelList{
 			mysql_query($sql,$conn);
 		}
 
-//		if($table==null||$table=='wls_user_group2user'){		
-//			$sql = "drop table if exists ".$pfx."wls_user_group2user;";
-//			mysql_query($sql,$conn);
-//			$sql = "
-//				create table ".$pfx."wls_user_group2user(
-//				
-//					 id int primary key auto_increment	/*自动编号*/
-//					,id_level_group varchar(200) default ''		/*用户组编号*/
-//					,username varchar(200) default '' 		/*用户名*/
-//								
-//				) DEFAULT CHARSET=utf8;
-//				";
-//			mysql_query($sql,$conn);
-//		}
+		if($table==null||$table=='wls_user_group2user'){
+			$sql = "drop table if exists ".$pfx."wls_user_group2user;";
+			mysql_query($sql,$conn);
+			$sql = "
+				create table ".$pfx."wls_user_group2user(
+				
+					 id int primary key auto_increment	/*自动编号*/
+					,id_level_group varchar(200) default ''		/*用户组编号*/
+					,username varchar(200) default '' 		/*用户名*/
+								
+				) DEFAULT CHARSET=utf8;
+				";
+			mysql_query($sql,$conn);
+		}
 
-		if($table==null||$table=='wls_user_group2subject'){			
+		if($table==null||$table=='wls_user_group2subject'){
 			$sql = "drop table if exists ".$pfx."wls_user_group2subject;";
 			mysql_query($sql,$conn);
 			$sql = "
@@ -546,7 +546,7 @@ class m_user_group extends wls implements dbtable,levelList{
 	}
 
 	public function importExcelWithP($path){
-		$this->create();	
+		$this->create();
 
 		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
 		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
@@ -577,8 +577,8 @@ class m_user_group extends wls implements dbtable,levelList{
 			$groupsData[] = $data;
 			$this->insert($data);
 		}
-//		print_r($groupsData);
-		
+		//		print_r($groupsData);
+
 		for($i='A';$i<$grouppoint;$i++){
 			if($currentSheet->getCell($i.'3')->getValue()=='代价'){
 				$c_money = $i;
@@ -597,11 +597,11 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 			if($currentSheet->getCell($i.'3')->getValue()=='桌面'){
 				$c_shortcut = $i;
-			}	
+			}
 			if($currentSheet->getCell($i.'3')->getValue()=='启动栏'){
 				$c_quickstar = $i;
-			}				
-					
+			}
+
 			if($currentSheet->getCell($i.'3')->getValue()=='菜单'){
 				$c_menu = $i;
 			}
@@ -624,7 +624,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			$privilegesData[] = $data ;
 			$privilegeObj->insert($data);
 		}
-//		print_r($privilegesData);
+		//		print_r($privilegesData);
 
 		$p2p = array();
 		for($i=4;$i<=$allRow;$i++){
@@ -637,15 +637,14 @@ class m_user_group extends wls implements dbtable,levelList{
 					$p2p[] = $data ;
 					$this->linkPrivilege($data);
 				}
-			}			
+			}
 		}
-		
-		print_r($p2p);
 
+//		print_r($p2p);
 	}
-	
+
 	public function importExcelWithS($path){
-		$this->create('wls_user_group2subject');		
+		$this->create('wls_user_group2subject');
 		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
 		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -674,22 +673,45 @@ class m_user_group extends wls implements dbtable,levelList{
 			$groupsData[] = $data;
 		}
 
-		
+
 		for($i='A';$i<$grouppoint;$i++){
 			if($currentSheet->getCell($i.'3')->getValue()=='编号'){
 				$c_level = $i;
 			}
 		}
-		
+
+		for($i='A';$i<$grouppoint;$i++){
+
+			if($currentSheet->getCell($i.'3')->getValue()=='图标'){
+				$c_icon = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='描述'){
+				$c_desc = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='名称'){
+				$c_name = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='编号'){
+				$c_level = $i;
+			}
+
+		}
 		$subjectsData = array();
+		include_once dirname(__FILE__).'/../subject.php';
+		$subjectObj = new m_subject();
+		$subjectObj->create();
 		for($i=4;$i<=$allRow;$i++){
 			$data = array(
+				'name'=>$this->t->formatCellData($currentSheet->getCell($c_name.$i)->getValue()),
 				'id_level'=>$currentSheet->getCell($c_level.$i)->getValue(),
+				'icon'=>$currentSheet->getCell($c_icon.$i)->getValue(),
+				'description'=>$currentSheet->getCell($c_desc.$i)->getValue(),
 			);
 			$subjectsData[] = $data ;
+			$subjectObj->insert($data);
 		}
 
-		$p2p = array();
+		$p2s = array();
 		for($i=4;$i<=$allRow;$i++){
 			for($i2=$grouppoint;$i2<=$allColmun;$i2++){
 				if($currentSheet->getCell($i2.$i)->getValue()=='√'){
@@ -697,14 +719,110 @@ class m_user_group extends wls implements dbtable,levelList{
 						'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
 						'id_level_subject'=>$subjectsData[$i-4]['id_level']
 					);
-					$p2p[] = $data ;
+					$p2s[] = $data ;
 					$this->linkSubject($data);
 				}
-			}			
-		}		
-		print_r($p2p);
+			}
+		}
 	}
-	
 
+	public function importExcelWithU($path){
+		$this->create('wls_user_group2user');
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		$objPHPExcel = new PHPExcel();
+		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+		$PHPReader->setReadDataOnly(true);
+		$this->phpexcel = $PHPReader->load($path);
+		$currentSheet = $this->phpexcel->getSheetByName('UserToGroup');
+
+		$allRow = $currentSheet->getHighestRow();
+		$allColmun = $currentSheet->getHighestColumn();
+
+		$grouppoint = '';
+		for($i='A';$i<=$allColmun;$i++){
+			if($currentSheet->getCell($i."1")->getValue()=='名称'){
+				$grouppoint = ++$i;
+				break;
+			}
+		}
+
+		$groupsData = array();
+		for($i=$grouppoint;$i<=$allColmun;$i++){
+			$data = array(
+				'id_level'=>$currentSheet->getCell($i."2")->getValue()
+			);
+			$groupsData[] = $data;
+		}
+
+
+		for($i='A';$i<$grouppoint;$i++){
+			if($currentSheet->getCell($i.'3')->getValue()=='编号'){
+				$c_level = $i;
+			}
+		}
+
+		$columns = array();
+		for($i='A';$i<$grouppoint;$i++){
+			if($currentSheet->getCell($i.'3')->getValue()=='用户名'){
+				$columns['username'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='出生日期'){
+				$columns['birthday'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='QQ'){
+				$columns['qq'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='性别'){
+				$columns['sex'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='姓名'){
+				$columns['name'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='照片'){
+				$columns['photo'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='金币'){
+				$columns['money'] = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()=='密码'){
+				$columns['password'] = $i;
+			}
+		}
+		
+		$userData = array();
+		include_once dirname(__FILE__).'/../user.php';
+		$userObj = new m_user();
+		$userObj->create();
+		for($i=4;$i<=$allRow;$i++){
+			$data = array(
+				'username'=>$currentSheet->getCell($columns['username'].$i)->getValue(),
+				'birthday'=>$currentSheet->getCell($columns['birthday'].$i)->getValue(),
+				'qq'=>$currentSheet->getCell($columns['qq'].$i)->getValue(),
+				'sex'=>$currentSheet->getCell($columns['sex'].$i)->getValue(),
+				'name'=>$currentSheet->getCell($columns['name'].$i)->getValue(),
+				'photo'=>$currentSheet->getCell($columns['photo'].$i)->getValue(),
+				'money'=>$currentSheet->getCell($columns['money'].$i)->getValue(),
+				'password'=>$currentSheet->getCell($columns['password'].$i)->getValue(),
+			);
+			$userData[] = $data ;
+			$userObj->insert($data);
+		}
+	
+		$p2u = array();
+		for($i=4;$i<=$allRow;$i++){
+			for($i2=$grouppoint;$i2<=$allColmun;$i2++){
+				if($currentSheet->getCell($i2.$i)->getValue()=='√'){
+					$data = array(
+						'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
+						'username'=>$userData[$i-4]['username']
+					);
+					$p2u[] = $data ;
+					$this->linkUser($data);
+				}
+			}
+		}
+	}
 }
 ?>

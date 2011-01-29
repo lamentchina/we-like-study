@@ -107,7 +107,7 @@ class wls{
 				eval('$controller = new '.$controllername.'();');
 			}
 		}else{
-			if($this->c->state=='install'){//系统还未安装
+			if($this->c->state=='uninstall'){//系统还未安装
 				header("location:wls.php?controller=install&action=main"); 	
 			}else{ 
 				include_once 'free/model/user.php';

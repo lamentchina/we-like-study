@@ -21,8 +21,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_knowledge (".$keys.") values ('".$values."')";
-//		echo $sql;
-//		echo "<br/>";
+
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -114,16 +113,15 @@ class m_knowledge extends wls implements dbtable,levelList{
 	 * @return bool
 	 * */
 	public function importExcel($path){
-		echo 123123123;
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('data');
+		$currentSheet = $this->phpexcel->getSheetByName('Knowledge');
 		$allRow = array($currentSheet->getHighestRow());
 
 		$data = array();
@@ -131,7 +129,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 		for($i=2;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'name'=>$currentSheet->getCell('B'.$i)->getValue(),
+				'name'=>$this->t->formatTitle($currentSheet->getCell('B'.$i)->getValue()),
 				'ordering'=>$currentSheet->getCell('C'.$i)->getValue(),
 				'weight'=>$currentSheet->getCell('D'.$i)->getValue(),
 				'description'=>$currentSheet->getCell('E'.$i)->getValue(),
@@ -147,9 +145,9 @@ class m_knowledge extends wls implements dbtable,levelList{
 	 * @return $path
 	 * */
 	public function exportExcel(){
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
-		include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
+		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
