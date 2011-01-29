@@ -164,9 +164,15 @@ class tools {
 			$title = str_replace('<br/>',"\n",$title);
 			return $title;
 		}else{
+			$title = str_replace("<img src=\"","TEMP1",$title);
+			$title = str_replace(".gif\" />","TEMP2",$title);
+			
 			$title = str_replace("'","&acute;",$title);
 			$title = str_replace('"','&quot;',$title);
 			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
+			
+			$title = str_replace("TEMP1","<img src=\"",$title);
+			$title = str_replace("TEMP2",".gif\" />",$title);			
 			return $title;
 		}
 	}
