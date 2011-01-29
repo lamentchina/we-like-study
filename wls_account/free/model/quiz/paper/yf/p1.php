@@ -1,22 +1,22 @@
 <?php
 include_once dirname(__FILE__).'/../yf.php';
 
-class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{	
+class m_quiz_paper_yf_p1 extends m_quiz_paper_yf implements yfActions{	
 	
-	public $checkLength = 30;
-	public $choiceLength = 30;
-	public $multiChoiceLength = 20;
+	public $checkLength = 10;
+	public $choiceLength = 25;
+	public $multiChoiceLength = 10;
 
 	public function getPaper(){
-		$title = '公安基础知识'.rand(1,100);
+		$title = '会计_中级_财务管理'.rand(1,100);
 		if($this->yfnum!=null){
-			$title = $this->yfnum.'公安基础知识';
+			$title = $this->yfnum.'会计_中级_财务管理';
 		}
 		$data = array(
-			 'id_level_subject'=>'1003'
-			,'name_subject'=>'公安基础知识'
+			 'id_level_subject'=>'1101'
+			,'name_subject'=>'财务管理'
 			,'title'=>$title
-			,'description'=>'公安基础知识'.rand(1,100)
+			,'description'=>'财务管理'.rand(1,100)
 			,'creator'=>'admin'
 			,'date_created'=>date('Y-m-d H:i:s')
 			,'questions'=>'0'
@@ -32,18 +32,18 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 	
 	public function getCheckQuestions(){
 		$content = $this->paperHtmlContent;
-		$p1 = 0;
-		$p2 = strpos($content,"单项选择题");		
+		$p1 = strpos($content,"判断题");		
+		$p2 = strpos($content,"计算题");		
 		$content = substr($content,$p1,$p2-$p1);	
-		$checkPos = strpos($content,"s39tan");
-		if($checkPos!=false){
-			 $this->checkLength = 40;
-		}
-		$len = $this->checkLength;
+//		$checkPos = strpos($content,"s39tan");
+//		if($checkPos!=false){
+//			 $this->checkLength = 40;
+//		}
+		$len = $this->choiceLength + $this->multiChoiceLength;
 		
-		for($i=1;$i<=$len;$i++){
+		for($i=1;$i<=$this->checkLength;$i++){
 			$p1 = strpos($content,">".$i.".</td>");
-			$p2 = strpos($content,"name=s".($i-1)."fs");
+			$p2 = strpos($content,"name=s".($i+$len-1)."fs");
 			$data = substr($content,$p1,$p2-$p1);
 			
 			$p1 = strpos($data,"<a name='anway'>");
@@ -54,10 +54,10 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 			$title = str_replace("</tr>","",$title);
 			$title = $this->t->formatTitle($title);
 			
-			$p1 = strpos($data,"name=s".($i-1)."an");
-			$p2 = strpos($data,"name=s".($i-1)."t");
+			$p1 = strpos($data,"name=s".($i+$len-1)."an");
+			$p2 = strpos($data,"name=s".($i+$len-1)."t");
 			$answer = substr($data,$p1,$p2-$p1);
-			$answer = str_replace("name=s".($i-1)."an type=hidden value=\"","",$answer);
+			$answer = str_replace("name=s".($i+$len-1)."an type=hidden value=\"","",$answer);
 			$answer = str_replace("\"><input","",$answer);
 			$answer = trim($answer);
 			
@@ -82,7 +82,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 				,'id_quiz_paper'=>$this->paper['id']
 				,'title_quiz_paper'=>$this->paper['title']
 				
-				,'ids_level_knowledge'=>rand(1201,1205).",12"
+				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 		}
 	}
@@ -92,12 +92,12 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 		$p1 = strpos($content,"单项选择题");
 		$p2 = strpos($content,"多项选择题");		
 		$content = substr($content,$p1,$p2-$p1);	
-		$checkPos = strpos($content,"s74tan");
-		if($checkPos!=false){
-			 $this->choiceLength = 35;
-		}		
+//		$checkPos = strpos($content,"s74tan");
+//		if($checkPos!=false){
+//			 $this->choiceLength = 25;
+//		}		
 		
-		$len = $this->checkLength;
+		$len = 0;
 		
 		for($i=1;$i<=$this->choiceLength;$i++){
 			$p1 = strpos($content,">".$i.".</td>");
@@ -170,7 +170,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 				,'belongto'=>0
 				,'index' =>"2".$i
 				
-				,'ids_level_knowledge'=>rand(1201,1205).",12"
+				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 			
 			$this->questions[] = $question;
@@ -180,13 +180,13 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 	public function getMultiChoiceQuestions(){
 		$content = $this->paperHtmlContent;
 		$p1 = strpos($content,"多项选择题");
-		$p2 = strlen($content);	
+		$p2 = strpos($content,"判断题");	
 		$content = substr($content,$p1,$p2-$p1);	
-		$checkPos = strpos($content,"s104tan");
-		if($checkPos!=false){
-			 $this->multiChoiceLength = 30;
-		}		
-		$len = $this->checkLength + $this->choiceLength;
+//		$checkPos = strpos($content,"s104tan");
+//		if($checkPos!=false){
+//			 $this->multiChoiceLength = 30;
+//		}		
+		$len =  $this->choiceLength;
 		
 		for($i=1;$i<=$this->multiChoiceLength;$i++){
 			$p1 = strpos($content,">".$i.".</td>");
@@ -264,7 +264,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 				,'belongto'=>0
 				,'index' =>"3".$i
 				
-				,'ids_level_knowledge'=>rand(1201,1205).",12"
+				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 			
 			$this->questions[] = $question;
@@ -278,7 +278,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 			,'name_subject'=>$this->paper['name_subject']
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>'一.判断题'
+			,'title'=>'一.单项选择题'
 			,'cent'=>0
 			,'optionlength'=>0
 			,'type'=>'组合题'
@@ -291,14 +291,16 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 		);
 		$this->questions[] = $data;
 		
-		$this->getCheckQuestions();
+		$this->getChoiceQuestions();
+		
+//		return;
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
 			,'name_subject'=>$this->paper['name_subject']
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>'二.单项选择题<br/>(从下列各题列出的4个备选答案中，选出1个正确答案.)'
+			,'title'=>'二.多项选择题'
 			,'cent'=>0
 			,'optionlength'=>0
 			,'type'=>'组合题'
@@ -310,14 +312,16 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 			,'description'=>'0'				
 		);
 		$this->questions[] = $data;		
-		$this->getChoiceQuestions();
+		$this->getMultiChoiceQuestions();
+		
+//		return;
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
 			,'name_subject'=>$this->paper['name_subject']
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>'三.多项选择题<br/>(从下列各题列出的4个备选答案中，选出两个或者两个以上正确答案.)'
+			,'title'=>'三.判断题'
 			,'cent'=>0
 			,'optionlength'=>0
 			,'type'=>'组合题'
@@ -329,7 +333,7 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 			,'description'=>'0'				
 		);
 		$this->questions[] = $data;		
-		$this->getMultiChoiceQuestions();		
+		$this->getCheckQuestions();		
 		
 //		print_r($this->questions);
 	}
@@ -337,10 +341,10 @@ class m_quiz_paper_yf_gajczs extends m_quiz_paper_yf implements yfActions{
 	public function savePathListForXunlei(){}
 	public function readFile(){
 		$path = $this->path;
-
+//		echo $path;exit();
 		$content = file($path);
 		$content = implode("\n", $content);
-		//		$content = mb_convert_encoding($content,'UTF-8','GBK');
+		$content = mb_convert_encoding($content,'UTF-8','GBK');
 		$content = str_replace("DISPLAY: none","",$content);
 		$content = str_replace("A. ","A) ",$content);
 		$content = str_replace("B. ","B) ",$content);

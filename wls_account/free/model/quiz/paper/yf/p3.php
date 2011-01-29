@@ -1,22 +1,22 @@
 <?php
 include_once dirname(__FILE__).'/../yf.php';
 
-class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{	
+class m_quiz_paper_yf_p3 extends m_quiz_paper_yf implements yfActions{	
 	
-	public $checkLength = 20;
-	public $choiceLength = 30;
-	public $multiChoiceLength = 20;
+	public $checkLength = 10;
+	public $choiceLength = 15;
+	public $multiChoiceLength = 10;
 
 	public function getPaper(){
-		$title = '公共基础知识'.rand(1,100);
+		$title = '会计_注册_审计'.rand(1,100);
 		if($this->yfnum!=null){
-			$title = $this->yfnum.'公共基础知识';
+			$title = $this->yfnum.'会计_注册_审计';
 		}
 		$data = array(
-			 'id_level_subject'=>'1002'
-			,'name_subject'=>'公共基础知识'
+			 'id_level_subject'=>'1205'
+			,'name_subject'=>'审计'
 			,'title'=>$title
-			,'description'=>'公共基础知识'.rand(1,100)
+			,'description'=>'审计'.rand(1,100)
 			,'creator'=>'admin'
 			,'date_created'=>date('Y-m-d H:i:s')
 			,'questions'=>'0'
@@ -33,31 +33,31 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 	public function getCheckQuestions(){
 		$content = $this->paperHtmlContent;
 		$p1 = strpos($content,"判断题");		
-		$p2 = strpos($content,"案例分析题");		
+		$p2 = strpos($content,"计算题");		
 		$content = substr($content,$p1,$p2-$p1);	
 //		$checkPos = strpos($content,"s39tan");
 //		if($checkPos!=false){
 //			 $this->checkLength = 40;
 //		}
-//		$len = $this->checkLength;
+		$len = $this->choiceLength + $this->multiChoiceLength;
 		
-		for($i=51;$i<=70;$i++){
-			$p1 = strpos($content,">".($i-50).".</td>");
-			$p2 = strpos($content,"name=s".($i-1)."fs");
+		for($i=1;$i<=$this->checkLength;$i++){
+			$p1 = strpos($content,">".$i.".</td>");
+			$p2 = strpos($content,"name=s".($i+$len-1)."fs");
 			$data = substr($content,$p1,$p2-$p1);
 			
 			$p1 = strpos($data,"<a name='anway'>");
 			$title = substr($data,0,$p1);
-			$title = str_replace(">".($i-50).".</td><td width='99%'>","",$title);
+			$title = str_replace(">".$i.".</td><td width='99%'>","",$title);
 			$title = str_replace("</table>","",$title);
 			$title = str_replace("</td>","",$title);
 			$title = str_replace("</tr>","",$title);
 			$title = $this->t->formatTitle($title);
 			
-			$p1 = strpos($data,"name=s".($i-1)."an");
-			$p2 = strpos($data,"name=s".($i-1)."t");
+			$p1 = strpos($data,"name=s".($i+$len-1)."an");
+			$p2 = strpos($data,"name=s".($i+$len-1)."t");
 			$answer = substr($data,$p1,$p2-$p1);
-			$answer = str_replace("name=s".($i-1)."an type=hidden value=\"","",$answer);
+			$answer = str_replace("name=s".($i+$len-1)."an type=hidden value=\"","",$answer);
 			$answer = str_replace("\"><input","",$answer);
 			$answer = trim($answer);
 			
@@ -76,13 +76,13 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 				,'belongto'=>0
 				,'index' =>"1".$i	
 				,'cent'=>1
-
+				
 				,'id_level_subject'=>$this->paper['id_level_subject']
 				,'name_subject'=>$this->paper['name_subject']
 				,'id_quiz_paper'=>$this->paper['id']
 				,'title_quiz_paper'=>$this->paper['title']
 				
-				,'ids_level_knowledge'=>rand(1101,1105).",11"
+				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 		}
 	}
@@ -94,7 +94,7 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 		$content = substr($content,$p1,$p2-$p1);	
 //		$checkPos = strpos($content,"s74tan");
 //		if($checkPos!=false){
-//			 $this->choiceLength = 35;
+//			 $this->choiceLength = 25;
 //		}		
 		
 		$len = 0;
@@ -170,7 +170,7 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 				,'belongto'=>0
 				,'index' =>"2".$i
 				
-				,'ids_level_knowledge'=>rand(1101,1105).",11"
+				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 			
 			$this->questions[] = $question;
@@ -186,11 +186,11 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 //		if($checkPos!=false){
 //			 $this->multiChoiceLength = 30;
 //		}		
-//		$len = $this->choiceLength;
+		$len =  $this->choiceLength;
 		
-		for($i=$this->choiceLength+1;$i<=$this->multiChoiceLength+$this->choiceLength;$i++){
-			$p1 = strpos($content,">".($i-30).".</td>");
-			$p2 = strpos($content,"name=s".($i-1)."fs");
+		for($i=1;$i<=$this->multiChoiceLength;$i++){
+			$p1 = strpos($content,">".$i.".</td>");
+			$p2 = strpos($content,"name=s".($i+$len-1)."fs");
 			$data = substr($content,$p1,$p2-$p1);
 			$data = str_replace("<td width=\"50%\">","",$data);
 			$data = str_replace("</td>","",$data);
@@ -201,7 +201,7 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 
 			$p1 = strpos($data,"A．");
 			$title = substr($data,0,$p1);
-			$title = str_replace(">".($i-30).".<td width='99%'>","",$title);
+			$title = str_replace(">".$i.".<td width='99%'>","",$title);
 			$title = str_replace("<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">","",$title);
 			$title = $this->t->formatTitle($title);
 
@@ -226,10 +226,10 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 			$D = str_replace("D．","",$D);
 			$D = trim(str_replace(">".$i,"",$D));
 
-			$p1 = strpos($data,"name=s".($i-1)."an");
-			$p2 = strpos($data,"name=s".($i-1)."t");
+			$p1 = strpos($data,"name=s".($i+$len-1)."an");
+			$p2 = strpos($data,"name=s".($i+$len-1)."t");
 			$answer = substr($data,$p1,$p2-$p1);
-			$answer = str_replace("name=s".($i-1)."an type=hidden value=\"","",$answer);
+			$answer = str_replace("name=s".($i+$len-1)."an type=hidden value=\"","",$answer);
 			$answer = str_replace("\"><input","",$answer);
 			$answer = trim($answer);
 			$answerArr = array();
@@ -264,7 +264,7 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 				,'belongto'=>0
 				,'index' =>"3".$i
 				
-				,'ids_level_knowledge'=>rand(1101,1105).",11"
+				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 			
 			$this->questions[] = $question;
@@ -278,7 +278,7 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 			,'name_subject'=>$this->paper['name_subject']
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>'一.判断题'
+			,'title'=>'一.单项选择题'
 			,'cent'=>0
 			,'optionlength'=>0
 			,'type'=>'组合题'
@@ -291,14 +291,16 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 		);
 		$this->questions[] = $data;
 		
-		$this->getCheckQuestions();
+		$this->getChoiceQuestions();
+		
+//		return;
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
 			,'name_subject'=>$this->paper['name_subject']
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>'二.单项选择题<br/>(从下列各题列出的4个备选答案中，选出1个正确答案.)'
+			,'title'=>'二.多项选择题'
 			,'cent'=>0
 			,'optionlength'=>0
 			,'type'=>'组合题'
@@ -310,14 +312,16 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 			,'description'=>'0'				
 		);
 		$this->questions[] = $data;		
-		$this->getChoiceQuestions();
+		$this->getMultiChoiceQuestions();
+		
+//		return;
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
 			,'name_subject'=>$this->paper['name_subject']
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>'三.多项选择题<br/>(从下列各题列出的4个备选答案中，选出两个或者两个以上正确答案.)'
+			,'title'=>'三.判断题'
 			,'cent'=>0
 			,'optionlength'=>0
 			,'type'=>'组合题'
@@ -329,7 +333,7 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 			,'description'=>'0'				
 		);
 		$this->questions[] = $data;		
-		$this->getMultiChoiceQuestions();		
+		$this->getCheckQuestions();		
 		
 //		print_r($this->questions);
 	}
@@ -337,10 +341,10 @@ class m_quiz_paper_yf_ggjczs extends m_quiz_paper_yf implements yfActions{
 	public function savePathListForXunlei(){}
 	public function readFile(){
 		$path = $this->path;
-
+//		echo $path;exit();
 		$content = file($path);
 		$content = implode("\n", $content);
-		//		$content = mb_convert_encoding($content,'UTF-8','GBK');
+		$content = mb_convert_encoding($content,'UTF-8','GBK');
 		$content = str_replace("DISPLAY: none","",$content);
 		$content = str_replace("A. ","A) ",$content);
 		$content = str_replace("B. ","B) ",$content);

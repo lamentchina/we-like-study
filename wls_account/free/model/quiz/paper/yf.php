@@ -11,6 +11,34 @@ class m_quiz_paper_yf extends m_quiz_paper{
 	public $allIds = null;
 	public $path = null;
 	
+	public $knowledges = array(
+		'10',
+		'1001',
+		'1002',
+		'1003',
+		'1004',
+		'100401',
+		'100402',
+		'100403',
+		'100404',
+		'100405',
+		'1005',
+		'11',
+		'1101',
+		'1102',
+		'1103',
+		'1104',
+		'1105',
+		'1106',
+		'110601',
+		'110602',
+		'110603',
+		'12',
+		'13',
+		'14',
+		'15',	
+	);
+	
 	public function saveImages(){}
 	
 	public function getMp3ListForXunlei(){}
