@@ -53,6 +53,18 @@
 .icon_key_16_16{
 	background-image:url(free/view/images/key16x16.gif) !important;
 }
+.icon_discuzx_48_48{
+	background-image:url(free/view/images/discuzx48x48.png) !important;
+}
+.icon_discuzx_16_16{
+	background-image:url(free/view/images/discuzx16x16.png) !important;
+}
+.icon_subject_48_48{
+	background-image:url(free/view/images/subject48x48.png) !important;
+}
+.icon_subject_16_16{
+	background-image:url(free/view/images/subject16x16.png) !important;
+}
 </style>
 
 <!--qWikiOffice Js API  -->
@@ -76,6 +88,7 @@
 <script type="text/javascript" src="free/view/quiz/wrong.js"></script>
 <script type="text/javascript" src="free/view/quiz/log.js"></script>
 <script type="text/javascript" src="free/view/subject.js"></script>
+<script type="text/javascript" src="free/view/knowledge.js"></script>
 
 <script type="text/javascript">
 var user_ = new wls.user();

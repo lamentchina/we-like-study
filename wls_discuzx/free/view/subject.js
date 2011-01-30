@@ -37,7 +37,6 @@ wls.subject = Ext.extend(wls, {
 		});		
 		
 		var grid = new Ext.grid.EditorGridPanel({
-			title:il8n.Subject,
 		    store: store,
 		    cm: cm,        
 		    id: domid,
@@ -54,7 +53,7 @@ wls.subject = Ext.extend(wls, {
 		
 		var privilege = user_.myUser.privilege.split(",");
 		for(var i=0;i<privilege.length;i++){
-			if(privilege[i]=='1001'){
+			if(privilege[i]=='190701'){
 				tb.add({
 					text: il8n.Import,
 			        handler : function(){   
@@ -68,7 +67,7 @@ wls.subject = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			}else if(privilege[i]=='1002'){
+			}else if(privilege[i]=='190702'){
 				tb.add({
 					text: il8n.Export,
 			        handler : function(){   
@@ -82,7 +81,7 @@ wls.subject = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			}else if(privilege[i]=='1003'){
+			}else if(privilege[i]=='190703'){
 				tb.add({
 					text: il8n.Delete,
 			        handler : function(){   
@@ -99,9 +98,9 @@ wls.subject = Ext.extend(wls, {
 						});		
 					}
 				});
-			}else if(privilege[i]=='1004'){
+			}else if(privilege[i]=='190704'){
 				grid.on("afteredit", afteredit, grid);    
-			}else if(privilege[i]=='1005'){
+			}else if(privilege[i]=='190705'){
 				//TODO
 			}
 			function afteredit(e){    

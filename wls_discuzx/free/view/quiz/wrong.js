@@ -159,7 +159,6 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		});	
 		
 		var grid = new Ext.grid.GridPanel({
-			title:'随机错题复习',
 		    store:store,
 		    cm: cm,        
 		    id: domid,

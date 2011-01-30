@@ -51,7 +51,6 @@ wls.knowledge = Ext.extend(wls, {
 		});		
 		
 		var grid = new Ext.grid.EditorGridPanel({
-			title:il8n.knowledge,
 		    store: store,
 		    cm: cm,        
 		    id: domid,
@@ -69,7 +68,7 @@ wls.knowledge = Ext.extend(wls, {
 		
 		var privilege = user_.myUser.privilege.split(",");
 		for(var i=0;i<privilege.length;i++){
-			if(privilege[i]=='1001'){
+			if(privilege[i]=='190801'){
 				tb.add({
 					text: il8n.Import,
 			        handler : function(){   
@@ -78,12 +77,12 @@ wls.knowledge = Ext.extend(wls, {
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewUpload' width='100%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewUpload' width='19080%' height='250' />"
 						});
 						win.show(this);
 					}
 				});
-			}else if(privilege[i]=='1002'){
+			}else if(privilege[i]=='190802'){
 				tb.add({
 					text: il8n.Export,
 			        handler : function(){   
@@ -92,12 +91,12 @@ wls.knowledge = Ext.extend(wls, {
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewExport' width='100%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewExport' width='19080%' height='250' />"
 						});
 						win.show(this);
 					}
 				});
-			}else if(privilege[i]=='1003'){
+			}else if(privilege[i]=='190803'){
 				tb.add({
 					text: il8n.Delete,
 			        handler : function(){   
@@ -114,9 +113,9 @@ wls.knowledge = Ext.extend(wls, {
 						});		
 					}
 				});
-			}else if(privilege[i]=='1004'){
+			}else if(privilege[i]=='190804'){
 				grid.on("afteredit", afteredit, grid);    
-			}else if(privilege[i]=='1005'){
+			}else if(privilege[i]=='190805'){
 				//TODO
 			}
 			function afteredit(e){    

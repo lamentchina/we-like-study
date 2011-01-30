@@ -1,5 +1,5 @@
-class_111002 = Ext.extend(Ext.app.Module, {
-   id: 'id_111002',
+class_1907 = Ext.extend(Ext.app.Module, {
+   id: 'id_1907',
 
    init : function(){
 
@@ -9,24 +9,22 @@ class_111002 = Ext.extend(Ext.app.Module, {
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow(this.id);
         var obj = new wls.subject();
-        obj.id_level = '1002';
         
-        var cmp = obj.getSubjectCenter('111002')
-        if(!win){	
+        if(!win){
         	var winWidth = desktop.getWinWidth() / 1.1;
-			var winHeight = desktop.getWinHeight() / 1.1;        	
+			var winHeight = desktop.getWinHeight() / 1.1;
+			var obj = new wls.subject();
+			
             win = desktop.createWindow({
                 id: this.id,
-                title: '科目试卷',
+                title: '科目',
                 width: winWidth,
                 height: winHeight,
 
                 layout: 'fit',
-                modal:true,
-                items:[cmp]
+                items:[obj.getList('qd_w_u_l')],
             });
         }
         win.show();
-        obj.getMyQuizLine('111002chart');
     }
 });

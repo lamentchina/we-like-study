@@ -1,5 +1,5 @@
-class_111003 = Ext.extend(Ext.app.Module, {
-   id: 'id_111003',
+class_1651 = Ext.extend(Ext.app.Module, {
+   id: 'id_1651',
 
    init : function(){
 
@@ -8,25 +8,22 @@ class_111003 = Ext.extend(Ext.app.Module, {
 	createWindow : function(){
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow(this.id);
-        var obj = new wls.subject();
-        obj.id_level = '1003';
         
-        var cmp = obj.getSubjectCenter('111003')
-        if(!win){	
+        if(!win){
         	var winWidth = desktop.getWinWidth() / 1.1;
-			var winHeight = desktop.getWinHeight() / 1.1;        	
+			var winHeight = desktop.getWinHeight() / 1.1;
+			var obj = new wls.quiz.log();
+			
             win = desktop.createWindow({
                 id: this.id,
-                title: '科目试卷',
+                title: '所有的测验记录',
                 width: winWidth,
                 height: winHeight,
 
                 layout: 'fit',
-                modal:true,
-                items:[cmp]
+                items:[obj.getList('qd_w_q_l_l')],
             });
         }
         win.show();
-        obj.getMyQuizLine('111003chart');
     }
 });

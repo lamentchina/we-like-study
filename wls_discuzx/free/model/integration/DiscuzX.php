@@ -8,7 +8,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 	
 	public function bridge(){
 		$this->synchroConfig(dirname(__FILE__).'/../../../../../../../config/config_global.php');
-		$this->synchroMe();
+		$this->synchroMe(true);
 	}
 	
 	/**
@@ -81,6 +81,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 			$data = array(
 				 'id'=>$temp2['id']
 				,'money'=>$temp['money']
+				,'password'=>$temp['password']
 			);
 			$userObj->update($data);
 		}
@@ -90,8 +91,10 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 				unset($_SESSION['wls_user']);
 			}
 			session_destroy();//TODO 
-	
+//			echo 1241234;exit();
+//			print_r($temp);exit();
 			$userObj->login($temp['username'],$temp['password']);
+			
 		}
 	}	
 }

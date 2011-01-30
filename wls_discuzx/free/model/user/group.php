@@ -165,8 +165,13 @@ class m_user_group extends wls implements dbtable,levelList{
 					,id_level_group varchar(200) default ''		/*用户组编号*/
 					,id_level_privilege varchar(200) default '' 		/*权限编号*/
 								
+					
 				) DEFAULT CHARSET=utf8;
 				";
+//			echo $sql;
+			mysql_query($sql,$conn);
+			$sql = "ALTER TABLE ".$pfx."wls_user_group2privilege ADD INDEX idx_u_g2p (id_level_group,id_level_privilege);";
+//			echo $sql;
 			mysql_query($sql,$conn);
 		}
 
@@ -183,6 +188,8 @@ class m_user_group extends wls implements dbtable,levelList{
 				) DEFAULT CHARSET=utf8;
 				";
 			mysql_query($sql,$conn);
+			$sql = "ALTER TABLE ".$pfx."wls_user_group2user ADD INDEX idx_u_g2u (id_level_group,username);";
+			mysql_query($sql,$conn);
 		}
 
 		if($table==null||$table=='wls_user_group2subject'){
@@ -194,9 +201,11 @@ class m_user_group extends wls implements dbtable,levelList{
 					 id int primary key auto_increment	/*自动编号*/
 					,id_level_group varchar(200) default ''		/*用户组编号*/
 					,id_level_subject varchar(200) default '' 		/*科目编号*/
-								
+												
 				) DEFAULT CHARSET=utf8;
 				";
+			mysql_query($sql,$conn);
+			$sql = "ALTER TABLE ".$pfx."wls_user_group2subject ADD INDEX idx_u_g2s (id_level_group,id_level_subject);";
 			mysql_query($sql,$conn);
 		}
 

@@ -1,5 +1,5 @@
-class_10 = Ext.extend(Ext.app.Module, {
-   id: 'id_10',
+class_1653 = Ext.extend(Ext.app.Module, {
+   id: 'id_1653',
 
    init : function(){
 
@@ -8,21 +8,20 @@ class_10 = Ext.extend(Ext.app.Module, {
 	createWindow : function(){
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow(this.id);
-        var obj = new wls.subject();
         
         if(!win){
         	var winWidth = desktop.getWinWidth() / 1.1;
 			var winHeight = desktop.getWinHeight() / 1.1;
-			var obj = new wls.subject();
+			var obj = new wls.quiz.wrong();
 			
             win = desktop.createWindow({
                 id: this.id,
-                title: '科目',
+                title: '所有错题记录',
                 width: winWidth,
                 height: winHeight,
 
                 layout: 'fit',
-                items:[obj.getList('qd_w_u_l')],
+                items:[obj.getList('qd_w_q_w_l')],
             });
         }
         win.show();
