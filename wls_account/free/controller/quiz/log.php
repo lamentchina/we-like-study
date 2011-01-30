@@ -110,6 +110,10 @@ class quiz_log extends quiz{
 		echo json_encode($answers);		
 	}
 
+	/**
+	 * 查看这篇日志的详细经过
+	 * 重现当日做这张测验卷的结果
+	 * */
 	public function viewOne(){
 		$html = "
 <!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">

@@ -7,6 +7,10 @@ class knowledge_log extends wls{
 		$this->m = new m_knowledge_log();		 
 	}
 	
+	/**
+	 * 获得我的知识点掌握度雷达图统计描述
+	 * 为 AM CHART 前台提供数据
+	 * */
 	public function getMyRaderSetting(){
 		$id = '';
 		if(isset($_REQUEST['id']) && $_REQUEST['id']!=''){

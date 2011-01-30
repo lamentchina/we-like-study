@@ -221,19 +221,19 @@ class quiz_paper extends quiz{
 		echo $json;
 	}
 
+	/**
+	 * 往前台直接输出HTML
+	 * 现实一篇测验卷的详细内容
+	 * */
 	public function viewOne(){
 		include_once $this->c->license.'/model/user.php';
 		$obj_ = new m_user();
-
-		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == false )
-		{
-
-		}
-		else
-		{
-		    $obj_->id = $_REQUEST['uid'];
-		}
 		
+		//如果是IE6浏览器,就需要额外处理,操X
+		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == false ){
+		}else{
+		    $obj_->id = $_REQUEST['uid'];
+		}		
 		$foo = $obj_->checkMyPrivilege('1107');
 		
 		if($foo==false){
