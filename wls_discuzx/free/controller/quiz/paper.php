@@ -50,10 +50,12 @@ class quiz_paper extends quiz{
 	public function saveUpload(){
 		if ($_FILES["file"]["error"] > 0){
 			$this->error(array('description'=>'文件上传错误'));
+			echo 'fail';
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			//			$this->m->create();
-			$this->m->importExcel(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$file = $this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"];
+			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
+			$this->m->importExcel($file);
+			echo 'success';
 		}
 
 	}
@@ -123,6 +125,7 @@ class quiz_paper extends quiz{
 			'time_stop'=>$_POST['time']['stop'],
 			'time_used'=>$_POST['time']['used'],
 		);
+//		print_r($data);exit();
 		$id_quiz_log = $quizLogObj->insert($data);
 
 		$count_right = 0;

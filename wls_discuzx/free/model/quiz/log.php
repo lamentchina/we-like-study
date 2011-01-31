@@ -13,14 +13,13 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	 * @return bool
 	 * */
 	public function insert($data){
-//		print_r($data);
+
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
 		if(!isset($data['id_user'])){
 			$user = $this->getMyUser();
 			$data['id_user'] = $user['id'];
-			$data['id_level_user_group'] = $user['id_level_user_group'];
 		}
 
 		$keys = array_keys($data);
@@ -440,18 +439,22 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				ON ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
 			
 			where ".$pfx."wls_question.id in (".$temp['id_question'].")
-			 order by wls_question.id
+			 order by ".$pfx."wls_question.id
 			  ";					
 		}else{		
 			$sql = "select id,id_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
 		}
 		$res = mysql_query($sql,$conn);
-		$arr = array();
-		while($temp = mysql_fetch_assoc($res)){
-			if($temp['myanswer']==''||$temp['myanswer']==null)$temp['myanswer'] = 'I_DONT_KNOW';
-			$arr[$temp['id_question']] = $temp['myanswer'];
+		if($res==false){
+			echo $sql;	
+		}else{
+			$arr = array();
+			while($temp = mysql_fetch_assoc($res)){
+				if($temp['myanswer']==''||$temp['myanswer']==null)$temp['myanswer'] = 'I_DONT_KNOW';
+				$arr[$temp['id_question']] = $temp['myanswer'];
+			}
+			return $arr;
 		}
-		return $arr;
 	}
 	
 		

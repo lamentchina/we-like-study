@@ -17,7 +17,6 @@ class m_question_log extends wls implements dbtable,log{
 		if(!isset($data['id_user'])){
 			$user = $this->getMyUser();
 			$data['id_user'] = $user['id'];
-			$data['id_level_user_group'] = $user['id_level_user_group'];
 		}
 
 		$keys = array_keys($data);
@@ -39,7 +38,7 @@ class m_question_log extends wls implements dbtable,log{
 		$sql = '';
 		for($i=0;$i<count($datas);$i++){
 			$data = $datas[$i];
-//			print_r($data);exit();
+
 			if($data['myAnswer']=='I_DONT_KNOW' || $data['type']==5)continue;
 			$data['myanswer'] = $data['myAnswer'];
 			unset($data['myAnswer']);

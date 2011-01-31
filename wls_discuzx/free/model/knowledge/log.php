@@ -17,19 +17,18 @@ class m_knowledge_log extends wls implements dbtable,log{
 		if(!isset($data['id_user'])){
 			$user = $this->getMyUser();
 			$data['id_user'] = $user['id'];
-			$data['id_level_user_group'] = $user['id_level_user_group'];
 		}
 		if(isset($data['id_question'])){
 			$sql = "select ids_level_knowledge from ".$pfx."wls_question where id = ".$data['id_question'];
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
-//			print_r($temp);
+
 			$arr = explode(",",$temp['ids_level_knowledge']);
 			for($i=0;$i<count($arr);$i++){
 				$data2 = $data;
 				unset($data2['id_question']);
 				$data2['id_level_knowledge'] = $arr[$i];
-//				print_r($data2);
+
 				$this->insert($data2);
 			}
 			return;

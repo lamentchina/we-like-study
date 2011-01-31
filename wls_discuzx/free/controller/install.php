@@ -162,6 +162,7 @@ class install extends wls {
 				'dbuser'=>$_config['db'][1]['dbuser'],
 				'dbpwd'=>$_config['db'][1]['dbpw'],
 				'dbprefix'=>$_config['db'][1]['tablepre'],
+				'state'=>'running',
 			);
 			$this->rewirteConfig($config);
 			
