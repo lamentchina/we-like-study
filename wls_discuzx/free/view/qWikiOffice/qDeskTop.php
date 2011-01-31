@@ -183,26 +183,9 @@ QoDesk.App = new Ext.app.App({
 <?php 
  }else{
  	?>
-<link rel="stylesheet" type="text/css"
-	href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/xtheme-blue.css" />
-<script type="text/javascript">
- 	Ext.onReady(function(){
 
- 		var copoment = user_.getLogin();
- 	
- 		var window = new Ext.Window({
- 			title:il8n.WeLikeStudy,
- 	        width: 300,
- 	        height: 300,
- 	        layout: 'fit',
- 	        plain:true,
- 	        bodyStyle:'padding:5px;',
- 	        buttonAlign:'center',
- 	        items: [copoment]       
- 	    });
- 	
- 	    window.show();
- 	});
+<script type="text/javascript">
+ alert('Install fail! Contact me : QQ 467480903');
 
  <?php 
  }

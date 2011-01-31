@@ -16,9 +16,12 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 	 * */
 	public function synchroConfig($path){
 		include_once $path;
-
 		$this->cookiepre = $_config['cookie']['cookiepre'];
-		$this->sessionid = $_COOKIE[$this->cookiepre.'2132_sid'];
+		if(!isset($_config['server'])){
+			$this->sessionid = $_COOKIE[$this->cookiepre.'sid'];
+		}else{
+			$this->sessionid = $_COOKIE[$this->cookiepre.'2132_sid'];
+		}
 	}
 	
 	/**
@@ -54,7 +57,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 			,".$pfx."common_session
 			 where 			
 			".$pfx."common_member.uid = ".$pfx."common_member_count.uid and ".$pfx."common_session.uid = ".$pfx."common_member.uid
-			 and sid = '".$this->sessionid."';
+			 and ".$pfx."common_session.sid = '".$this->sessionid."';
 		";
 
 		$res = mysql_query($sql,$conn);

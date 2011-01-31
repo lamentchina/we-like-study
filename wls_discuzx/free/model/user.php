@@ -267,7 +267,6 @@ class m_user extends wls implements dbtable{
 			if( (isset($_SESSION)) && (isset($_SESSION['wls_user'])) && $_SESSION['wls_user']!=''){
 
 			}else{
-				//
 				session_start();
 			}
 				
@@ -277,9 +276,9 @@ class m_user extends wls implements dbtable{
 				$data = $data['data'][0];
 			}else{
 				$data = $this->getList(1,1,array('id'=>$id));
-				$data = $data['data'][0];
-					
+				$data = $data['data'][0];					
 			}
+			unset($data['password']);
 			include_once dirname(__FILE__).'/user/privilege.php';
 			$o = new m_user_privilege();
 			$d = $o->getListForUser($data['username']);
@@ -314,7 +313,7 @@ class m_user extends wls implements dbtable{
 			}
 			$ids = substr($ids,0,strlen($ids)-1);
 			$data['subject'] = $ids;
-
+			
 			$_SESSION['wls_user'] = $data;
 			}
 			return $_SESSION['wls_user'];

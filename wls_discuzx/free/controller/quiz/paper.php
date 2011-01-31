@@ -52,12 +52,11 @@ class quiz_paper extends quiz{
 			$this->error(array('description'=>'文件上传错误'));
 			echo 'fail';
 		}else{
-			$file = $this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"];
+			$file = $this->c->filePath."upload/upload".rand(1,1000).$_FILES["file"]["name"];
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 			$this->m->importExcel($file);
 			echo 'success';
 		}
-
 	}
 
 	public function saveUpdate(){

@@ -18,12 +18,19 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
+		if(!isset($data['cache_path_quiz'])){
+			$data['cache_path_quiz'] = '';
+		}
+		if(!isset($data['questions'])){
+			$data['questions'] = '';
+		}		
 
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_quiz_paper (".$keys.") values ('".$values."')";
+//		echo $sql;
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -105,7 +112,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				,id_level_subject int default 0		comment '考试科目编号,级别编号'
 				,name_subject varchar(200) default '0' comment '考试科目名称'
 				
-				,title varchar(200) not null		comment '试卷名称'
+				,title varchar(200) default 'title'		comment '试卷名称'
 				,questions text	comment '题目组成,由一大堆编号组成,这些编号都是主题目编号,不会记录子题目编号'
 				
 				,description varchar(200) default '0'	comment '描述'				
@@ -156,6 +163,8 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
+		
+//		print_r($this->phpexcel);
 
 		$currentSheet = $this->phpexcel->getSheetByName('paper');
 		$allRow = $currentSheet->getHighestRow();
@@ -180,7 +189,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				$paper['name_subject'] = $temp['name'];
 			}
 		}
-		$paper['date_created'] = date('Y-m-d i:m:s');
+		$paper['date_created'] = date('Y-m-d H:i:s');
 		$paper['id'] = $this->insert($paper);
 		$this->id = $paper['id'];
 		$this->paper = $paper;
