@@ -1,5 +1,11 @@
 var il8n = {
-	 Import:'导入'
+	 Right:'对'
+    ,Wrong:'错'
+    ,GiveUp:'放弃'
+	,Menu:'菜单'
+	,Yes:'是'
+	,No:'不是'			
+	,Import:'导入'
 	,ImportOne:'导入单条记录'
 	,Export:'导出'
 	,ExportOne:'导出单条记录'
@@ -64,9 +70,7 @@ var il8n = {
 		,Score:'分数'
 		,Total:'总分'
 	}
-	,Menu:'菜单'
-	,Yes:'是'
-	,No:'不是'
+
 	,Privilege:'权限'
 	,Subject:'科目'
 	,Wrongs:'错题本'
@@ -83,5 +87,5 @@ var il8n = {
 			'因为他们都是IE内核包装的' +
 			'<p>强烈建议您选用谷歌浏览器或火狐浏览器,升级IE6到IE8也是一种方案,这样系统会快很多</p></div>'
 	,YouAreIE6:'您浏览器的内核是IE6'
-	
+	,SeeQuestionAbout:'查看题目的解题思路和题目说明'
 };

@@ -13,15 +13,15 @@ wls.quiz = Ext.extend(wls, {
 	},
 	
 	/**
-	 * 0 尚未初始化 
-	 * 1已经得到题目编号数据 
-	 * 11已经初始化编号  
-	 * 2已经得到题目数据 
-	 * 21已经初始化题目 
-	 * 3用户提交答案 
-	 * 4得到服务端返回的答案
-	 * 41处理了题目的对错判断
-	 * 42添加了注释
+	 * 0 	Waite to init
+	 * 1 	Got the questions' id 
+	 * 11 	Inited
+	 * 2 	Got the questions' data 
+	 * 21 	Inited the questions
+	 * 3 	The user has just submitted the answers
+	 * 4    Got the server-side's answer , together with everything
+	 * 41   Checked every question if it's right or wrong
+	 * 42   Every questions' description has been added
 	 * */
 	state:0,
 	cent:0,

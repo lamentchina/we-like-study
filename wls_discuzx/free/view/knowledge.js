@@ -1,11 +1,5 @@
-/**
- * 知识点管理的前台
- * */
 wls.knowledge = Ext.extend(wls, {
-	/**
-	 * 必须依赖全局变量 user_,il8n
-	 * 根据用户权限设置列表前的按钮
-	 * */
+
 	getList:function(domid){
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({

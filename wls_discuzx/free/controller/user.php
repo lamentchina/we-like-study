@@ -168,8 +168,7 @@ class user extends wls{
 		$obj = new m_user_privilege();
 		$data = $obj->getListForUser($username);
 		$data2 = array();
-		for($i=0;$i<count($data);$i++){
-			
+		for($i=0;$i<count($data);$i++){			
 			if($data[$i]['checked']==true || $data[$i]['checked']=='true' || $data[$i]['checked']==1){
 				$data[$i]['type'] = 'menu';
 				$data2[] = $data[$i];

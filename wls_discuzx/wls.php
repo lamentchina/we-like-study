@@ -5,9 +5,14 @@ include_once 'free/model/tools.php';
 include_once 'free/model/il8n.php';
 
 /**
- * We Like Study!
+ * We Like Study! 
  * 
  * This is an open-source project
+ * It's written by a Chinese , from mainland.
+ * You are angry about this system's code? Now you know why ,
+ * Ha ha ,because I'm a Chinese , my English is poor. 
+ * Sorry dude, I suggest you to just view the code 
+ * and get rid of all the comments.
  *
  * @see www.welikestudy.com
  * @copyright www.wei1224hf.com 
@@ -16,27 +21,24 @@ include_once 'free/model/il8n.php';
 class wls{
 
 	/**
-	 * 配置参数,在这个类初始化之后得到
-	 * 需要引用外部文件 config.php
+	 * The configure stuff, it's in config.php
 	 * */
 	public $c = null;
 	
 	/**
-	 * 工具包,提供一些与系统逻辑无关的,
-	 * 但是又经常用到的函数
+	 * Some functions which has nothing to do with the system's logic, 
+	 * but yet there are usefull. 
+	 * So I unify them in the tool class. 
+	 * It's in tool.php
 	 * */
 	public $t = null;
 	
 	/**
-	 * 国际化语言支持
+	 * il8n supportted 
 	 * TODO
 	 * */
 	public $lang = null;
 
-	/**
-	 * 构造函数
-	 * 每次引用这个文件时都会自动运行
-	 * */
 	public function wls(){
 		$this->c = new wlsconfig();
 		$this->t = new tools();
@@ -45,9 +47,8 @@ class wls{
 	}
 
 	/**
-	 * 得到数据库连接参数
-	 * 需要读取配置
-	 * TODO 我还不知道怎样实现持久性连接
+	 * Request the config stuff.
+	 * TODO How to make the connection better?
 	 * */
 	public function conn(){
 		$conn = mysql_connect($this->c->dbhost,$this->c->dbuser,$this->c->dbpwd);
@@ -57,8 +58,8 @@ class wls{
 	}
 
 	/**
-	 * 得到当前用户数据
-	 * 需要其权限数据
+	 * Get the recent user.
+	 * It's mainlly from php Session
 	 * */
 	public function getMyUser(){
 		include_once dirname(__FILE__)."/".$this->c->license."/model/user.php";
@@ -69,9 +70,9 @@ class wls{
 	}
 
 	/**
-	 * 错误操作,需要记录下用户的行为
+	 * If there's someting wrong...
 	 *
-	 * @param $whatHappened 事件描述,可以是数组
+	 * @param $whatHappened It's an array
 	 * */
 	public function error($whatHappened,$arr=null){
 		//TODO
@@ -81,11 +82,12 @@ class wls{
 		fclose($handle);
 	}
 
-	/**
-	 * 解析前台传过来的  wls.php?controll=x&action=y 这种格式
-	 * 控制器有级层关系,以空格分开
-	 * 每一个控制器对应一个后台文件
-	 * 每一个动作对应一个函数
+	/** 
+	 * The client-side access the server-side in this way:
+	 * wls.php?controll=x&action=y
+	 * The controller has it's level structure , by '_' character
+	 * Each controller has it's .php file
+	 * Each action has it's function in one controller
 	 * */
 	public function initApp(){
 		$controller = null;
@@ -93,13 +95,13 @@ class wls{
 			$arr = explode("_",$_REQUEST['controller']);
 			$dept = count($arr);
 			if($dept==1){
-				//如果 controller 只有一层,比如 controller=x
-				//直接导入这个 controller/x.php 文件,并初始化这个class对象
+				//If the controller was only one level ,like controller=x
+				//Then just include the  controller/x.php and init the class
 				include $this->c->license.'/controller/'.$_REQUEST['controller'].'.php';
 				eval('$controller = new '.$_REQUEST['controller'].'();');
 			}else{
-				//如果 controller 不止一层,比如 controller=x_x2_x3 
-				//那么就要导入文件  controller/x/x2/x3.php 
+				//If the controller more than one level,like controller=x_x2_x3 
+				//Then will include the file: controller/x/x2/x3.php 
 				$path = '';
 				for($i=0;$i<count($arr);$i++){
 					$path .= "/".$arr[$i];
@@ -116,7 +118,7 @@ class wls{
 				eval('$controller = new '.$controllername.'();');
 			}
 		}else{
-			if($this->c->state=='uninstall'){//系统还未安装
+			if($this->c->state=='uninstall'){//Jump to the installaton
 				header("location:wls.php?controller=install&action=setCMS"); 	
 			}else{
 				if(isset($_REQUEST['cmstype']) && $this->c->cmstype=='DiscuzX'){
@@ -164,15 +166,16 @@ class wls{
 			}
 		}
 
-		//捕获前台传来的 action ,引用对应函数
+		//Get the client-side's action ,and run the function in the controller
 		if(isset($_REQUEST['action'])){
 			eval('$controller->'.$_REQUEST['action'].'();');
 		}else{
-//			echo 'need action!'; //TODO
+
 		}
 	}
 }
 
 $wls = new wls();
+//TODO Right , I use my own MVC framework ,Maybe I should upgrade it to CakePhp or ZendFrameWork? 
 $wls->initApp();
 ?>
