@@ -22,7 +22,6 @@ class m_user extends wls implements dbtable{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
-//		echo $sql;
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}

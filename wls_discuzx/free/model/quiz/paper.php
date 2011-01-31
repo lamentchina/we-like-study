@@ -295,10 +295,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				'ids_level_knowledge'=>$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue(),
 			);
 			$this->questions[$currentSheet->getCell($keys['index'].$i)->getValue()] = $question;
-			
 		}
-
-//		$this->questions = $questions;
 		$this->saveQuestions();
 	}
 

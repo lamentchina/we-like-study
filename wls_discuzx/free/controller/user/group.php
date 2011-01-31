@@ -27,13 +27,13 @@ class user_group extends wls{
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					导入EXCEL
+					'.$this->lang['importExcelAsGroup'].'
 					<form action="wls.php?controller=user_group&action=saveUpload" method="post"
 					enctype="multipart/form-data">
-						<label for="file">EXCEL文件:</label>
+						<label for="file">Excel :</label>
 						<input type="file" name="file" id="file" />
 						<br />
-						<input type="submit" name="submit" value="提交" />
+						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
 					</form>
 				</body>
 			</html>		
@@ -48,13 +48,13 @@ class user_group extends wls{
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					导入EXCEL
+					'.$this->lang['importExcelAsGroupItem'].'
 					<form action="wls.php?controller=user_group&action=saveUploadOne" method="post"
 					enctype="multipart/form-data">
-						<label for="file">EXCEL文件:</label>
+						<label for="file">Excel :</label>
 						<input type="file" name="file" id="file" />
 						<br />
-						<input type="submit" name="submit" value="提交" />
+						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
 					</form>
 				</body>
 			</html>		
@@ -65,22 +65,28 @@ class user_group extends wls{
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			move_uploaded_file($_FILES["file"]["tmp_name"],$this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 			$this->m->create();
-			$this->m->importExcel(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$this->m->importExcel($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
-		echo '已经导入';
+		echo '<html xmlns="http://www.w3.org/1999/xhtml">		
+				<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>		
+				<body>'.$this->lang['success'].'</body>
+			</html>';
 	}
 
 	public function saveUploadOne(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-//			$this->m->create();
-			$this->m->importExcelOne(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$file = $this->c->filePath."/upload/upload".date('Ymdims').$_FILES["file"]["name"];
+			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
+			$this->m->importExcelOne($file);
 		}
-		echo '已经导入';
+		echo '<html>		
+				<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>		
+				<body>'.$this->lang['success'].'</body>
+			</html>';
 	}		
 	
 	public function saveUpdate(){
@@ -89,22 +95,24 @@ class user_group extends wls{
 			$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
-			echo "已经更新";
+			echo 'success';
 		}else{
-			echo "更新失败";			
+			echo 'fail';			
 		}
 	}
 	
 	public function viewExport(){
 		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>下载</a>";
+		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
+				<body><a href='".$file."'>".$this->lang['download']."</a></body></html>";
 	}
 	
 	public function viewExportOne(){
 		$id_level = $_REQUEST['id_level'];
 		$this->m->id_level = $id_level;
 		$file = $this->m->exportExcelOne();
-		echo "<a href='/".$file."'>下载</a>";
+		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
+				<body><a href='".$file."'>".$this->lang['download']."</a></body></html>";
 	}
 	
 	public function getPrivilege(){
@@ -142,16 +150,5 @@ class user_group extends wls{
 	public function updateSubject(){
 		$this->m->updateSubject($_POST['id'],$_POST['ids']);
 	}
-	
-	public function saveP2P(){
-		$path =  'E:/Projects/WEBS/PHP/wls4/file/test/group2privilege.xls';
-		$this->m->importExcelWithP($path);
-	}
-	
-	public function saveP2S(){
-		$path =  'E:/Projects/WEBS/PHP/wls4/file/test/group2privilege.xls';
-		$this->m->importExcelWithS($path);
-	}	
-
 }
 ?>

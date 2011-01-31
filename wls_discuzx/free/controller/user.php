@@ -29,12 +29,8 @@ class user extends wls{
 		}else{
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
-				
-				
 			}			
-
-			session_destroy();
-			
+			session_destroy();			
 
 			$temp = $this->m->login($_POST['username'],$_POST['password']);
 			if($temp==false){
@@ -102,19 +98,17 @@ class user extends wls{
 
 	public function viewUpload(){
 		echo '
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-				<html xmlns="http://www.w3.org/1999/xhtml">		
+				<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					导入EXCEL
 					<form action="wls.php?controller=user&action=saveUpload" method="post"
 					enctype="multipart/form-data">
-						<label for="file">EXCEL文件:</label>
+						<label for="file">Excel :</label>
 						<input type="file" name="file" id="file" />
 						<br />
-						<input type="submit" name="submit" value="提交" />
+						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
 					</form>
 				</body>
 			</html>		
@@ -136,35 +130,33 @@ class user extends wls{
 		$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
-			echo "已经更新";
+			echo "success";
 		}else{
-			echo "更新失败";			
+			echo "fail";			
 		}
 	}
 
 	public function viewExport(){
 		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>下载</a>";
+		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
 	}
 
 	public function delete(){
 		if($this->m->delete($_POST['id'])){
-			echo '操作成功';
+			echo 'success';
 		}else{
-			echo '操作失败';
+			echo 'fail';
 		}
 	}
 
-	public function getPrivilege(){
+	public function getTreePrivilege(){
 		$username = $_REQUEST['username'];
 		include_once dirname(__FILE__).'/../model/user/privilege.php';
 
 		$obj = new m_user_privilege();
 		$data = $obj->getListForUser($username);
 
-		include_once dirname(__FILE__).'/../model/tools.php';
-		$t = new tools();
-		$data = $t->getTreeData(null,$data);
+		$data = $this->t->getTreeData(null,$data);
 
 		echo json_encode($data);
 	}
@@ -284,12 +276,15 @@ class user extends wls{
 		));
 	}
 	
-	public function getUserInfo(){
-		echo json_encode(array(
-			 'photo'=>'u1.jpeg'
-			,'money'=>100
-			,'groups'=>'用户组1,用户组2'
-		));
+	public function getTreeSubject(){
+		$username = $_REQUEST['username'];
+		include_once dirname(__FILE__).'/../model/subject.php';
+
+		$obj = new m_subject();
+		$data = $obj->getListForUser($username);		
+		$data = $this->t->getTreeData(null,$data);
+
+		echo json_encode($data);		
 	}
 	
 	public function getMyQuizLineData(){

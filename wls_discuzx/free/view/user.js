@@ -386,7 +386,7 @@ wls.user = Ext.extend(wls, {
 						},
 
 						dataUrl : thisObj.config.AJAXPATH
-								+ "?controller=user&action=getPrivilege&username="
+								+ "?controller=user&action=getTreePrivilege&username="
 								+ username
 
 					});
@@ -424,7 +424,7 @@ wls.user = Ext.extend(wls, {
 						},
 
 						dataUrl : thisObj.config.AJAXPATH
-								+ "?controller=user&action=getSubject&username="
+								+ "?controller=user&action=getTreeSubject&username="
 								+ username
 
 					});
@@ -438,8 +438,8 @@ wls.user = Ext.extend(wls, {
 								modal  :true,
 								items : [tree]
 							});
-					win.show(this);
-
+					
+					win.show();
 				}
 			}],
 		    bbar : new Ext.PagingToolbar({
