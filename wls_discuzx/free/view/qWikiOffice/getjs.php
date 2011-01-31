@@ -53,8 +53,8 @@ class_".$actionid." = Ext.extend(Ext.app.Module, {
 	createWindow : function(){
         var desktop = this.app.getDesktop();
         var win = desktop.getWindow(this.id);
-    	var winWidth = desktop.getWinWidth() / 1.1;
-		var winHeight = desktop.getWinHeight() / 1.1;
+    	var winWidth = desktop.getWinWidth() / 2.1;
+		var winHeight = desktop.getWinHeight() / 2.1;
         
 		var obj = new wls.user.group();
 		
