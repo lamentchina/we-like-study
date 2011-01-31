@@ -3,10 +3,10 @@
  * 用户操作,对应着一张数据库表
  * */
 class m_user extends wls implements dbtable{
-	
-	public $phpexcel;	
+
+	public $phpexcel;
 	public $id = null;
-	
+
 	/**
 	 * 插入一条数据
 	 *
@@ -16,7 +16,7 @@ class m_user extends wls implements dbtable{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-	
+
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -42,7 +42,7 @@ class m_user extends wls implements dbtable{
 			return true;
 		}catch (Exception $ex){
 			return false;
-		}	
+		}
 	}
 
 	/**
@@ -54,7 +54,7 @@ class m_user extends wls implements dbtable{
 	public function update($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$id = $data['id'];
 		unset($data['id']);
 		$keys = array_keys($data);
@@ -70,7 +70,7 @@ class m_user extends wls implements dbtable{
 			return true;
 		}catch (Exception $ex){
 			return false;
-		}		
+		}
 	}
 
 	/**
@@ -78,17 +78,17 @@ class m_user extends wls implements dbtable{
 	 * 创建过程中,会先尝试删除这张表,然后重新建立.
 	 * 因此在运行之前需要将数据备份
 	 * 如果配置文件中的state不是debug,无法执行这类函数
-	 * 
+	 *
 	 * @return bool
 	 * */
 	public function create(){
 
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "drop table if exists ".$pfx."wls_user;";
 		mysql_query($sql,$conn);
-		$sql = "		
+		$sql = "
 			create table ".$pfx."wls_user(
 				 id int primary key auto_increment	/*自动编号*/
 				
@@ -125,14 +125,14 @@ class m_user extends wls implements dbtable{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		
+
 		$currentSheet = $this->phpexcel->getSheetByName('data');
 		$allRow = array($currentSheet->getHighestRow());
 
 		$data = array();
 		$index = 0;
 		for($i=2;$i<=$allRow[0];$i++){
-			$data = array(				
+			$data = array(
 				'username'=>$currentSheet->getCell('A'.$i)->getValue(),
 				'password'=>$currentSheet->getCell('B'.$i)->getValue(),				
 				'money'=>$currentSheet->getCell('C'.$i)->getValue(),
@@ -141,7 +141,7 @@ class m_user extends wls implements dbtable{
 				'photo'=>$currentSheet->getCell('F'.$i)->getValue(),
 			);
 			$this->insert($data);
-		}				
+		}
 	}
 
 	/**
@@ -159,8 +159,8 @@ class m_user extends wls implements dbtable{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');	
-	
+		$objPHPExcel->getActiveSheet()->setTitle('data');
+
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', '用户名');
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', '密码');
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', '金币');
@@ -180,7 +180,7 @@ class m_user extends wls implements dbtable{
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));   
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "file/download/".date('YmdHis').".xls";
 		$objWriter->save(dirname(__FILE__)."/../../../".$file);
@@ -208,7 +208,7 @@ class m_user extends wls implements dbtable{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$where = " where 1 =1  ";
 
 		if($search!=null){
@@ -216,11 +216,11 @@ class m_user extends wls implements dbtable{
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}		
+				}
 				if($keys[$i]=='id'){
 					$where .= " and id in (".$search[$keys[$i]].") ";
-				}	
-				if($keys[$i]=='username'){									
+				}
+				if($keys[$i]=='username'){
 					$where .= " and username = '".$search[$keys[$i]]."' ";
 				}
 			}
@@ -239,12 +239,12 @@ class m_user extends wls implements dbtable{
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[] = $temp;
 		}
-		
+
 		$sql2 = "select count(*) as total from ".$pfx."wls_user ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
-		
+
 		return array(
 			'page'=>$page,
 			'data'=>$arr,
@@ -257,65 +257,65 @@ class m_user extends wls implements dbtable{
 	/**
 	 * 得到用户信息
 	 * 会引用session
-	 * 
+	 *
 	 * @param $id 如果id为空,则返回我的个人信息
 	 * @param $mine 是否提取我自己的个人信息,这就需要session
 	 * */
 	public function getUser($id=null,$mine=null){
 		if($mine==true){
-			
-			if( (isset($_SESSION)) && (isset($_SESSION['wls_user'])) && $_SESSION['wls_user']!=''){
 				
+			if( (isset($_SESSION)) && (isset($_SESSION['wls_user'])) && $_SESSION['wls_user']!=''){
+
 			}else{
-//				
+				//
 				session_start();
 			}
-			
+				
 			if(!isset($_SESSION['wls_user']) || $_SESSION['wls_user']['privilege']==''){//TODO
-				if($id==null){//访客
-					$data = $this->getList(1,1,array('username'=>'guest'));
-					$data = $data['data'][0];
-				}else{		
-					$data = $this->getList(1,1,array('id'=>$id));
-					$data = $data['data'][0];
+			if($id==null){//访客
+				$data = $this->getList(1,1,array('username'=>'guest'));
+				$data = $data['data'][0];
+			}else{
+				$data = $this->getList(1,1,array('id'=>$id));
+				$data = $data['data'][0];
 					
+			}
+			include_once dirname(__FILE__).'/user/privilege.php';
+			$o = new m_user_privilege();
+			$d = $o->getListForUser($data['username']);
+			$ids = '';
+			$privileges = array();
+			for($i=0;$i<count($d);$i++){
+				if($d[$i]['checked']=='1'){
+					$ids .= $d[$i]['id_level'].",";
+					$privileges[$d[$i]['id_level']] = $d[$i]['money'];
 				}
-				include_once dirname(__FILE__).'/user/privilege.php';
-				$o = new m_user_privilege();
-				$d = $o->getListForUser($data['username']);
-				$ids = '';
-				$privileges = array();
-				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1'){
-						$ids .= $d[$i]['id_level'].",";
-						$privileges[$d[$i]['id_level']] = $d[$i]['money'];
-					}
-				}
-				$ids = substr($ids,0,strlen($ids)-1);
-				$data['privilege'] = $ids;
-				$data['privileges'] = $privileges;
-				
-				include_once dirname(__FILE__).'/user/group.php';
-				$o = new m_user_group();
-				$d = $o->getListForUser($data['username']);
-				$ids = '';
-				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
-				}
-				$ids = substr($ids,0,strlen($ids)-1);
-				$data['group'] = $ids;
-				
-				include_once dirname(__FILE__).'/subject.php';
-				$o = new m_subject();
-				$d = $o->getListForUser($data['username']);
-				$ids = '';
-				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
-				}
-				$ids = substr($ids,0,strlen($ids)-1);
-				$data['subject'] = $ids;
-				
-				$_SESSION['wls_user'] = $data;						
+			}
+			$ids = substr($ids,0,strlen($ids)-1);
+			$data['privilege'] = $ids;
+			$data['privileges'] = $privileges;
+
+			include_once dirname(__FILE__).'/user/group.php';
+			$o = new m_user_group();
+			$d = $o->getListForUser($data['username']);
+			$ids = '';
+			for($i=0;$i<count($d);$i++){
+				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+			}
+			$ids = substr($ids,0,strlen($ids)-1);
+			$data['group'] = $ids;
+
+			include_once dirname(__FILE__).'/subject.php';
+			$o = new m_subject();
+			$d = $o->getListForUser($data['username']);
+			$ids = '';
+			for($i=0;$i<count($d);$i++){
+				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+			}
+			$ids = substr($ids,0,strlen($ids)-1);
+			$data['subject'] = $ids;
+
+			$_SESSION['wls_user'] = $data;
 			}
 			return $_SESSION['wls_user'];
 		}else{
@@ -325,13 +325,13 @@ class m_user extends wls implements dbtable{
 
 		}
 	}
-	
+
 	public function login($username,$password){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$sql = "select * from ".$pfx."wls_user where username = '".$username."';";
-		
+
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		if($temp==false){
@@ -341,25 +341,24 @@ class m_user extends wls implements dbtable{
 				return false;
 			}
 		}
-//		print_r($temp);exit();
 		$this->getUser($temp['id'],true);
-		return $temp;		
+		return $temp;
 	}
-	
+
 	/**
 	 * 导出某用户的成绩单
-	 * 
+	 *
 	 * @param $id 如果id为空,则返回当前用户
 	 * */
 	public function exportTranscripts($id){}
-	
+
 	/**
 	 * 导入某用户的成绩单
-	 * 
+	 *
 	 * @param $id 如果id为空,则返回当前用户
 	 * */
-	public function importTranscripts($id){}	
-	
+	public function importTranscripts($id){}
+
 	public function updateGroup($username,$ids_group){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -367,10 +366,10 @@ class m_user extends wls implements dbtable{
 		$sql = "delete from ".$pfx."wls_user_group2user where username = '".$username."' ;";
 		mysql_query($sql,$conn);
 		$arr = explode(",",$ids_group);
-		
+
 		include_once dirname(__FILE__).'/user/group.php';
-		$g = new m_user_group();		
-		
+		$g = new m_user_group();
+
 		for($i=0;$i<count($arr);$i++){
 			$data = array(
 				'id_level_group'=>$arr[$i],
@@ -379,18 +378,12 @@ class m_user extends wls implements dbtable{
 			$g->linkUser($data);
 		}
 	}
-	
+
 	public function checkMyPrivilege($privilege){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
-		if($this->c->cmstype!=''){
-			include_once dirname(__FILE__).'/integration/'.$this->c->cmstype.'.php';
-			eval('$obj = new m_integration_'.$this->c->cmstype.'();');
-			
-		}
 
-		$user = $this->getUser($this->id,true);		
+		$user = $this->getUser($this->id,true);
 		$privileges = $user['privilege'];
 		$privileges = explode(",",$privileges);
 		if(in_array($privilege,$privileges)){
@@ -398,15 +391,22 @@ class m_user extends wls implements dbtable{
 				$sql = "update ".$pfx."wls_user set money = money - ".$user['privileges'][$privilege]." where id = ".$user['id'];
 				mysql_query($sql,$conn);
 				$_SESSION['wls_user']['money'] -= $user['privileges'][$privilege];
-				return true;				
+
+				if($this->c->cmstype!=''){//同步金钱
+					$obj = null;
+					eval("include_once dirname(__FILE__).'/integration/".$this->c->cmstype.".php';");
+					eval('$obj = new m_integration_'.$this->c->cmstype.'();');
+					$obj->synchroMoney($user['username']);
+				}
+				return true;
 			}else{
 				return false;
 			}
 		}else{
 			return false;
 		}
-	}	
-	
+	}
+
 	public function getMyMenu(){
 		$me = $this->getUser(null,true);
 
@@ -424,14 +424,14 @@ class m_user extends wls implements dbtable{
 				}
 			}
 		}
-		
+
 		$data = $this->t->getTreeData(null,$data2);
-		for($i=0;$i<count($data);$i++){				
+		for($i=0;$i<count($data);$i++){
 			if($data[$i]['id_level']=='11'){
 				include_once dirname(__FILE__).'/subject.php';
 				$obj = new m_subject();
 				$data_ = $obj->getListForUser($username);
-				
+
 				if(count($data_)>0){
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
@@ -444,7 +444,7 @@ class m_user extends wls implements dbtable{
 						}
 					}
 					$subject = $this->t->getTreeData('11',$data__);
-					
+						
 					$arr = array();
 					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
 						$arr = $data[$i]['children'];
@@ -467,14 +467,20 @@ class m_user extends wls implements dbtable{
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
 						$data_[$ii]['type'] = 'group';
+						$data_[$ii]['icon'] = 'groups';
+						$data_[$ii]['isshortcut'] = '0';
+						$data_[$ii]['isquickstart'] = '0';
+						$data_[$ii]['description'] = '0';
+
+						$data_[$ii]['id_level_g'] = $data_[$ii]['id_level'];
+						$data_[$ii]['id_level'] = '13'.$data_[$ii]['id_level'];
 						if($data_[$ii]['checked']==1){
 							$data_[$ii]['ismenu'] = 1;
-							
 							$data__[] = $data_[$ii];
 						}
 					}
-					$subject = $this->t->getTreeData(null,$data__);
-
+					$subject = $this->t->getTreeData('13',$data__);
+						
 					$arr = array();
 					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
 						$arr = $data[$i]['children'];
@@ -490,13 +496,11 @@ class m_user extends wls implements dbtable{
 				}
 			}
 		}
-		
-
 		return $data;
 	}
-	
+
 	public function getMyMenuForDesktop(){
-		$data = $this->getMyMenu();	
+		$data = $this->getMyMenu();
 
 		$this->t->treeMenuToDesktopMenu(null,$data);
 		$data = $this->t->desktopMenu;

@@ -152,6 +152,7 @@ interface integrate{
 	 * */
 	public function synchroMe($resetUserSession = false);
 	
+	public function synchroMoney($username);
 }
 
 

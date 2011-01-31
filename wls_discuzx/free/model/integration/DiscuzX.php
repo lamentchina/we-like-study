@@ -37,7 +37,8 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 	public function synchroPrivileges(){}
 
 	/**
-	 * 同步当前用户
+	 * 同步当前用户 
+	 * 只在用户从DiscuzX跳入到WLS的时候启用
 	 * */
 	public function synchroMe($resetUserSession = false){
 		$conn = $this->conn();
@@ -91,11 +92,26 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 				unset($_SESSION['wls_user']);
 			}
 			session_destroy();//TODO 
-//			echo 1241234;exit();
-//			print_r($temp);exit();
+
 			$userObj->login($temp['username'],$temp['password']);
-			
 		}
-	}	
+	}
+
+	public function synchroMoney($username){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+		
+		$sql = "select uid from ".$pfx."common_member where username = '".$username."' ;";
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$uid = $temp['uid'];
+		
+		$sql = "select money from ".$pfx."wls_user where username = '".$username."' ;";
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$money = $temp['money'];		
+		$sql = "update ".$pfx."common_member_count set extcredits2 = ".$money." where uid = ".$uid;
+		mysql_query($sql,$conn);
+	}
 }
 ?>

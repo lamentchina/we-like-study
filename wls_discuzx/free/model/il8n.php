@@ -30,7 +30,8 @@ class il8n {
 		'ExcelFilePath'=>'Excel文件路径',
 		'seeExampleFile'=>'下载然后参照示例文件',		
 		'installDone'=>'安装完成',
-	
+		
+		'importExcel'=>'导入一个Excel文件',
 		'importExcelAsGroup'=>'导入一个 Excel 文件,重新配置好用户组',
 		'importExcelAsGroupItem'=>'导入一个 Excel 文件,重新配置好单个用户组的内容',
 	);

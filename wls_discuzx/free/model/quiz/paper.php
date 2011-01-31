@@ -597,8 +597,16 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$user = $this->getMyUser();
 		if($user['money']>$temp['money']){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
+			
 			$_SESSION['wls_user']['money'] -= $temp['money'];
 			mysql_query($sql,$conn);
+			
+			if($this->c->cmstype!=''){		
+				$obj = null;		
+				eval("include_once dirname(__FILE__).'/../integration/".$this->c->cmstype.".php';");
+				eval('$obj = new m_integration_'.$this->c->cmstype.'();');
+				$obj->synchroMoney($user['username']);
+			}
 			return true;
 		}else{
 			return false;

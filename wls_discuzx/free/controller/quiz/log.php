@@ -34,34 +34,31 @@ class quiz_log extends quiz{
 	}
 
 	public function viewUpload(){
-		echo '
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-				<html xmlns="http://www.w3.org/1999/xhtml">		
+		echo '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					导入EXCEL
+					'.$this->lang['importExcel'].'
 					<form action="wls.php?controller=quiz_log&action=saveUpload" method="post"
 					enctype="multipart/form-data">
-						<label for="file">EXCEL文件:</label>
+						<label for="file">Excel :</label>
 						<input type="file" name="file" id="file" />
 						<br />
-						<input type="submit" name="submit" value="提交" />
+						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
 					</form>
 				</body>
-			</html>		
-		';
+			</html>';
 	}
 
 	public function saveUpload(){
 		if ($_FILES["file"]["error"] > 0){
 			$this->error(array('description'=>'文件上传错误'));
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			$this->m->importExcel(dirname(__FILE__)."/../../../../file/upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$file = $this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"];
+			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
+			$this->m->importExcel($file);
 		}
-
 	}
 
 	public function saveUpdate(){
@@ -70,16 +67,16 @@ class quiz_log extends quiz{
 		$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
-			echo "已经更新";
+			echo "success";
 		}else{
-			echo "更新失败";			
+			echo "fail";			
 		}
 	}
 
 	public function viewExport(){
 		$this->m->id = $_REQUEST['id'];
 		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>下载</a>";
+		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
 	}
 
 	public function getOne(){
@@ -132,10 +129,7 @@ class quiz_log extends quiz{
 	src=\"".$this->c->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."jqueryextend.js\"></script>	
-<!--  
-<script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/adapter/ext/ext-base.js\"></script>	
--->
+
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>
 <script type=\"text/javascript\"
