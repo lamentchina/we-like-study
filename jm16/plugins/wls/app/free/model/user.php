@@ -110,11 +110,10 @@ class m_user extends wls implements dbtable{
 	}
 
 	/**
-	 * 导入一张EXCEL,并将数据全部填充到表中去
-	 * EXCEL已经成为数据存储标准,每个办公人员都会用
-	 * 这是实现批导入最方便的形式
+	 * Import an Excel file into the user's database table
+	 * But the Excel must fit some ruls.
 	 *
-	 * @param $path EXCEL路径
+	 * @param $path Excel Path
 	 * @return bool
 	 * */
 	public function importExcel($path){
@@ -126,19 +125,36 @@ class m_user extends wls implements dbtable{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('data');
-		$allRow = array($currentSheet->getHighestRow());
-
+		$currentSheet = $this->phpexcel->getSheetByName('user');
+		$allRow = array($currentSheet->getHighestRow());		
+	
+		$keys = array();
+		for($i='A';$i<=$allColmun;$i++){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['username']){
+				$keys['username'] = $i;
+			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['password']){
+				$keys['password'] = $i;
+			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['money']){
+				$keys['money'] = $i;
+			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['photo']){
+				$keys['photo'] = $i;
+			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['credits']){
+				$keys['credits'] = $i;
+			}
+		}		
+		
 		$data = array();
-		$index = 0;
-		for($i=2;$i<=$allRow[0];$i++){
+		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
-				'username'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'password'=>$currentSheet->getCell('B'.$i)->getValue(),				
-				'money'=>$currentSheet->getCell('C'.$i)->getValue(),
-				'credits'=>$currentSheet->getCell('D'.$i)->getValue(),
-				'id_level_user_group'=>$currentSheet->getCell('E'.$i)->getValue(),
-				'photo'=>$currentSheet->getCell('F'.$i)->getValue(),
+				'username'=>$currentSheet->getCell($keys['username'].$i)->getValue(),
+				'password'=>$currentSheet->getCell($keys['password'].$i)->getValue(),				
+				'money'=>$currentSheet->getCell($keys['money'].$i)->getValue(),
+				'credits'=>$currentSheet->getCell($keys['credits'].$i)->getValue(),
+				'photo'=>$currentSheet->getCell($keys['photo'].$i)->getValue(),
 			);
 			$this->insert($data);
 		}
@@ -153,22 +169,22 @@ class m_user extends wls implements dbtable{
 	 * */
 	public function exportExcel(){
 		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'"phpexcel/Classes/PHPExcel/IOFactory.php';
+		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
 		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');
+		$objPHPExcel->getActiveSheet()->setTitle('user');
 
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang->username);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang->password);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang->money);
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', $this->lang->credits);
-		$objPHPExcel->getActiveSheet()->setCellValue('E1', $this->lang->photo);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['username']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['password']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['money']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D1', $this->lang['credits']);
+		$objPHPExcel->getActiveSheet()->setCellValue('E1', $this->lang['photo']);
 
-		$index = 1;
+		$index = 2;
 		for($i=0;$i<count($data);$i++){
 			$index ++;
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['username']);
