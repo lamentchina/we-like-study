@@ -1,8 +1,7 @@
 <?php
 include_once dirname(__FILE__).'/../integration.php';
  
-class m_integration_DiscuzX extends m_integration implements integrate{
-	
+class m_integration_DiscuzX extends m_integration implements integrate{	
 	public $cookiepre = null;
 	public $sessionid = null;
 	
@@ -11,9 +10,6 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		$this->synchroMe(true);
 	}
 	
-	/**
-	 * 同步配置文件
-	 * */
 	public function synchroConfig($path){
 		include_once $path;
 		$this->cookiepre = $_config['cookie']['cookiepre'];
@@ -25,23 +21,25 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 	}
 	
 	/**
-	 * 同步用户数据
+	 * Synchro all the user informations from DisuczX to WLS.
+	 * The passwords would set to be MD5 securied
 	 * */
 	public function synchroUsers(){}
 	
 	/**
-	 * 同步用户组数据
+	 * Not synchoro all the user groups. Only these groups setted by DiscuzX admin.
+	 * These default DiscuzX grousp would not be synchrod.
 	 * */
 	public function synchroUserGroups(){}
 	
-	/**
-	 * 同步权限数据
-	 * */
 	public function synchroPrivileges(){}
 
 	/**
-	 * 同步当前用户 
-	 * 只在用户从DiscuzX跳入到WLS的时候启用
+	 * Sychros the current user info from DsicuzX to WLS
+	 * Every time when the user jumpped from DiscuzX to WLS, 
+	 * this function would be fired.
+	 * 
+	 * @param $resetUserSession Boolen
 	 * */
 	public function synchroMe($resetUserSession = false){
 		$conn = $this->conn();
@@ -70,7 +68,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		
 		include_once dirname(__FILE__).'/../user.php';
 		$userObj = new m_user();
-		if($temp2==false){//这个用户的信息还没有同步过来,需要实施数据插入
+		if($temp2==false){//Check the user info has synchrod , if not , synchrod
 			unset($temp['sid']);
 		
 			$uid = $userObj->insert($temp);
@@ -81,7 +79,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 				,'username'=>$temp['username']
 			);
 			$usergroupObj->linkUser($data);
-		}else{//此用户的信息已经同步过来了,那么就将 金钱 同步一下
+		}else{//Synchrod the money. the DiscuzX's money system is complex
 			$data = array(
 				 'id'=>$temp2['id']
 				,'money'=>$temp['money']
@@ -100,6 +98,12 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		}
 	}
 
+	/**
+	 * DiscuzX has it's own money and credits system.
+	 * First,the WLS' money costted , then the DiscuzX's money reduced.
+	 * 
+	 * @param $username 
+	 * */
 	public function synchroMoney($username){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;

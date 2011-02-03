@@ -143,7 +143,7 @@ class install extends wls {
 				</tr>
 				<tr>
 					<td>".$this->lang['siteName']."</td>
-					<td><input name = 'siteName' value='We Like Study! 作者:大菜鸟 wei1224hf. www.welikestudy.com' /></td>
+					<td><input name = 'siteName' value='We Like Study! www.welikestudy.com' /></td>
 				</tr>																														
 			</table>
 			<input type='submit' value='".$this->lang['submit']."' />

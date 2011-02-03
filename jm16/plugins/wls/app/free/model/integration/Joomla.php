@@ -11,9 +11,6 @@ class m_integration_Joomla extends m_integration implements integrate{
 		$this->synchroMe(true);
 	}
 	
-	/**
-	 * 同步配置文件
-	 * */
 	public function synchroConfig($path){
 		
 		define('_JEXEC', 1);
@@ -47,18 +44,17 @@ class m_integration_Joomla extends m_integration implements integrate{
 	}
 	
 	/**
-	 * 同步用户数据
+	 * Synchro all the user informations from DisuczX to WLS.
+	 * The passwords would set to be MD5 securied
 	 * */
 	public function synchroUsers(){}
 	
 	/**
-	 * 同步用户组数据
+	 * Not synchoro all the user groups. Only these groups setted by DiscuzX admin.
+	 * These default DiscuzX grousp would not be synchrod.
 	 * */
 	public function synchroUserGroups(){}
 	
-	/**
-	 * 同步权限数据
-	 * */
 	public function synchroPrivileges(){}
 
 	/**
