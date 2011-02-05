@@ -448,7 +448,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		$currentSheet = $this->phpexcel->getSheetByName('PrivilegeToGroup');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['PrivilegeToGroup']);
 
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
@@ -464,13 +464,12 @@ class m_user_group extends wls implements dbtable,levelList{
 		$groupsData = array();
 		for($i=$grouppoint;$i<=$allColmun;$i++){
 			$data = array(
-				'name'=>$this->t->formatCellData($currentSheet->getCell($i."1")->getValue()),
+				'name'=>$this->t->formatTitle($currentSheet->getCell($i."1")->getValue()),
 				'id_level'=>$currentSheet->getCell($i."2")->getValue()
 			);
 			$groupsData[] = $data;
 			$this->insert($data);
 		}
-		//		print_r($groupsData);
 
 		for($i='A';$i<$grouppoint;$i++){
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['cost']){
@@ -504,11 +503,11 @@ class m_user_group extends wls implements dbtable,levelList{
 		$privilegeObj->create();
 		for($i=4;$i<=$allRow;$i++){
 			$data = array(
-				'name'=>$this->t->formatCellData($currentSheet->getCell($c_name.$i)->getValue()),
+				'name'=>$this->t->formatTitle($currentSheet->getCell($c_name.$i)->getValue()),
 				'id_level'=>$currentSheet->getCell($c_level.$i)->getValue(),
-				'ismenu'=>($currentSheet->getCell($c_menu.$i)->getValue()==$this->lang['yes'])?1:0,
-				'isshortcut'=>($currentSheet->getCell($c_shortcut.$i)->getValue()==$this->lang['yes'])?1:0,
-				'isquickstart'=>($currentSheet->getCell($c_quickstar.$i)->getValue()==$this->lang['yes'])?1:0,
+				'ismenu'=>($currentSheet->getCell($c_menu.$i)->getValue()=='√')?1:0,
+				'isshortcut'=>($currentSheet->getCell($c_shortcut.$i)->getValue()=='√')?1:0,
+				'isquickstart'=>($currentSheet->getCell($c_quickstar.$i)->getValue()=='√')?1:0,
 				'icon'=>$currentSheet->getCell($c_icon.$i)->getValue(),
 				'description'=>$currentSheet->getCell($c_desc.$i)->getValue(),
 				'money'=>$currentSheet->getCell($c_money.$i)->getValue(),
@@ -516,7 +515,6 @@ class m_user_group extends wls implements dbtable,levelList{
 			$privilegesData[] = $data ;
 			$privilegeObj->insert($data);
 		}
-		//		print_r($privilegesData);
 
 		$p2p = array();
 		for($i=4;$i<=$allRow;$i++){
@@ -542,7 +540,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		$currentSheet = $this->phpexcel->getSheetByName('SubjectToGroup');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['SubjectToGroup']);
 
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
@@ -590,7 +588,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$subjectObj->create();
 		for($i=4;$i<=$allRow;$i++){
 			$data = array(
-				'name'=>$this->t->formatCellData($currentSheet->getCell($c_name.$i)->getValue()),
+				'name'=>$this->t->formatTitle($currentSheet->getCell($c_name.$i)->getValue()),
 				'id_level'=>$currentSheet->getCell($c_level.$i)->getValue(),
 				'icon'=>$currentSheet->getCell($c_icon.$i)->getValue(),
 				'description'=>$currentSheet->getCell($c_desc.$i)->getValue(),
@@ -623,7 +621,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		$currentSheet = $this->phpexcel->getSheetByName('UserToGroup');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['UserToGroup']);
 
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();

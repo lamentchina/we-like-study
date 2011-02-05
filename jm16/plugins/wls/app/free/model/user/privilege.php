@@ -81,6 +81,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 
 		$currentSheet = $this->phpexcel->getSheetByName('privilege');
 		$allRow = array($currentSheet->getHighestRow());
+		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){

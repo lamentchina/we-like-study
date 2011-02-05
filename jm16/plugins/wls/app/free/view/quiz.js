@@ -193,7 +193,7 @@ wls.quiz = Ext.extend(wls, {
 				        html: '<div id="navigation"></div>'
 				    },{
 				    	id:'ext_Brief',
-				        title: il8n.Paper.Brief,
+				        title: il8n.title,
 				        html: '<div id="paperBrief"></div>'
 				    }]
 	

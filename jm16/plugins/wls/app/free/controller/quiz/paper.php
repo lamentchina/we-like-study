@@ -277,7 +277,7 @@ class quiz_paper extends quiz{
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."star-rating/jquery.rating.pack.js\"></script>		
 	
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/il8n.js\"></script>
+<script type=\"text/javascript\" src=\"wls.php?controller=user&action=translateIniToJsClass\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/paper.js\"></script>

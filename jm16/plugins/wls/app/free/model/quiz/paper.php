@@ -17,7 +17,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		}
 		if(!isset($data['questions'])){
 			$data['questions'] = '';
-		}		
+		}
 
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -128,7 +128,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('paper');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['paper']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -156,7 +156,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$this->id = $paper['id'];
 		$this->paper = $paper;
 
-		$currentSheet = $this->phpexcel->getSheetByName('questions');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['question']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -230,7 +230,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
-			}			
+			}
 		}
 
 		$index = 0;
@@ -238,33 +238,72 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		for($i=3;$i<=$allRow;$i++){
 			$question = array(
 				'index'=>$currentSheet->getCell($keys['index'].$i)->getValue(),
-				'belongto'=>$currentSheet->getCell($keys['belongto'].$i)->getValue(),
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
 				'title'=>$this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue()),
-				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),
-				'cent'=>$currentSheet->getCell($keys['cent'].$i)->getValue(),
+				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
 				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
-				'option2'=>$this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue()),
-				'option3'=>$this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue()),
-				'option4'=>$this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue()),
-				'option5'=>$this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue()),
-				'option6'=>$this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue()),
-				'option7'=>$this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue()),
-				'description'=>$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue()),
-				'path_listen'=>$currentSheet->getCell($keys['path_listen'].$i)->getValue(),
-				'count_used'=>$currentSheet->getCell($keys['count_used'].$i)->getValue(),
-				'count_right'=>$currentSheet->getCell($keys['count_right'].$i)->getValue(),
-				'count_wrong'=>$currentSheet->getCell($keys['count_wrong'].$i)->getValue(),
-				'count_giveup'=>$currentSheet->getCell($keys['count_giveup'].$i)->getValue(),
-				'difficulty'=>$currentSheet->getCell($keys['difficulty'].$i)->getValue(),
-				'markingmethod'=>$currentSheet->getCell($keys['markingmethod'].$i)->getValue(),
 				'optionlength'=>$currentSheet->getCell($keys['optionlength'].$i)->getValue(),
-				'id_level_subject'=>$paper['id_level_subject'],
-				'name_subject'=>$paper['name_subject'],
-				'id_quiz_paper'=>$paper['id'],
-				'title_quiz_paper'=>$paper['title'],
-				'ids_level_knowledge'=>$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue(),
 			);
+			if(isset($keys['belongto'])){
+				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();
+			}
+			if(isset($keys['cent'])){
+				$question['cent']=$currentSheet->getCell($keys['cent'].$i)->getValue();
+			}
+			if(isset($keys['option2'])){
+				$question['option2']=$this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
+			}
+			if(isset($keys['option3'])){
+				$question['option3']=$this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue());
+			}
+			if(isset($keys['option4'])){
+				$question['option4']=$this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue());
+			}
+			if(isset($keys['option5'])){
+				$question['option5']=$this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue());
+			}
+			if(isset($keys['option6'])){
+				$question['option6']=$this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue());
+			}
+			if(isset($keys['option7'])){
+				$question['option7']=$this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue());
+			}
+			if(isset($keys['description'])){
+				$question['description']=$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
+			}
+			if(isset($keys['path_listen'])){
+				$question['path_listen']=$currentSheet->getCell($keys['path_listen'].$i)->getValue();
+			}
+			if(isset($keys['count_used'])){
+				$question['count_used']=$currentSheet->getCell($keys['count_used'].$i)->getValue();
+			}
+			if(isset($keys['count_right'])){
+				$question['count_right']=$currentSheet->getCell($keys['count_right'].$i)->getValue();
+			}
+			if(isset($keys['count_wrong'])){
+				$question['count_wrong']=$currentSheet->getCell($keys['count_wrong'].$i)->getValue();
+			}
+			if(isset($keys['count_giveup'])){
+				$question['count_giveup']=$currentSheet->getCell($keys['count_giveup'].$i)->getValue();
+			}
+			if(isset($keys['difficulty'])){
+				$question['difficulty']=$currentSheet->getCell($keys['difficulty'].$i)->getValue();
+			}
+			if(isset($keys['markingmethod'])){
+				$question['markingmethod']=$currentSheet->getCell($keys['markingmethod'].$i)->getValue();
+			}
+			if(isset($keys['id_level_subject'])){
+				$question['id_level_subject']=$paper['id_level_subject'];
+			}
+			if(isset($keys['id_quiz_paper'])){
+				$question['id_quiz_paper']=$paper['id'];
+			}
+			if(isset($keys['title_quiz_paper'])){
+				$question['title_quiz_paper']=$paper['title'];
+			}
+			if(isset($keys['ids_level_knowledge'])){
+				$question['ids_level_knowledge']=$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
+			}
 			$this->questions[$currentSheet->getCell($keys['index'].$i)->getValue()] = $question;
 		}
 		$this->saveQuestions();
@@ -281,7 +320,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			$values = array_values($ques);
 			$ids = '';
 			for($i=0;$i<count($values);$i++){
-				$ids .= $values[$i]['id'].",";				
+				$ids .= $values[$i]['id'].",";
 			}
 			$ids = substr($ids,0,strlen($ids)-1);
 			$data = array(
@@ -301,7 +340,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$data = $paper;
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('paper');
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['paper']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['subject']);
@@ -317,28 +356,28 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		//处理题目
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
-		$objPHPExcel->getActiveSheet()->setTitle('questions');
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['question']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['belongto']);
 		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['Qes_Type']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['title']);		
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['answer']);
 		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->lang['cent']);
 		$objPHPExcel->getActiveSheet()->setCellValue('G2', $this->lang['option'].'A');
-		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->lang['option'].'B');	
+		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->lang['option'].'B');
 		$objPHPExcel->getActiveSheet()->setCellValue('I2', $this->lang['option'].'C');
 		$objPHPExcel->getActiveSheet()->setCellValue('J2', $this->lang['option'].'D');
 		$objPHPExcel->getActiveSheet()->setCellValue('K2', $this->lang['option'].'E');
-		$objPHPExcel->getActiveSheet()->setCellValue('L2', $this->lang['option'].'F');	
+		$objPHPExcel->getActiveSheet()->setCellValue('L2', $this->lang['option'].'F');
 		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->lang['option'].'G');
 		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->lang['optionlength']);
 		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->lang['ques_description']);
-		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->lang['listenningFile']);	
+		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->lang['listenningFile']);
 		$objPHPExcel->getActiveSheet()->setCellValue('Q2', $this->lang['count_used']);
 		$objPHPExcel->getActiveSheet()->setCellValue('R2', $this->lang['count_right']);
 		$objPHPExcel->getActiveSheet()->setCellValue('S2', $this->lang['count_wrong']);
-		$objPHPExcel->getActiveSheet()->setCellValue('T2', $this->lang['count_giveup']);	
+		$objPHPExcel->getActiveSheet()->setCellValue('T2', $this->lang['count_giveup']);
 		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->lang['difficulty']);
 		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->lang['markingmethod']);
 		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->lang['ids_level_knowledge']);
@@ -451,7 +490,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				}
 				if($keys[$i]=='title'){
 					$where .= " and title like '%".$search[$keys[$i]]."%' ";
-				}								
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
@@ -499,24 +538,24 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$temp = mysql_fetch_assoc($res);
 		return $temp['questions'];
 	}
-	
+
 	public function checkMoney($id){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$sql = "select money,id from ".$pfx."wls_quiz_paper where id= ".$id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
-		
+
 		$user = $this->getMyUser();
 		if($user['money']>$temp['money']){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
-			
+
 			$_SESSION['wls_user']['money'] -= $temp['money'];
 			mysql_query($sql,$conn);
-			
-			if($this->c->cmstype!=''){		
-				$obj = null;		
+
+			if($this->c->cmstype!=''){
+				$obj = null;
 				eval("include_once dirname(__FILE__).'/../integration/".$this->c->cmstype.".php';");
 				eval('$obj = new m_integration_'.$this->c->cmstype.'();');
 				$obj->synchroMoney($user['username']);

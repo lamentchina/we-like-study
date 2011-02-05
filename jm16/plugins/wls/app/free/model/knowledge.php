@@ -86,8 +86,9 @@ class m_knowledge extends wls implements dbtable,levelList{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('Knowledge');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['knowledge']);
 		$allRow = array($currentSheet->getHighestRow());
+		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
@@ -111,11 +112,11 @@ class m_knowledge extends wls implements dbtable,levelList{
 		$data = array();
 		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
-				'id_level'=>$currentSheet->getCell('A'.$keys['id_level'])->getValue(),
-				'name'=>$this->t->formatTitle($currentSheet->getCell('B'.$keys['name'])->getValue()),
-				'ordering'=>$currentSheet->getCell('C'.$keys['ordering'])->getValue(),
-				'weight'=>$currentSheet->getCell('D'.$keys['weight'])->getValue(),
-				'description'=>$currentSheet->getCell('E'.$keys['description'])->getValue(),
+				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
+				'name'=>$this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue()),
+				'ordering'=>$currentSheet->getCell($keys['ordering'].$i)->getValue(),
+				'weight'=>$currentSheet->getCell($keys['weight'].$i)->getValue(),
+				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
 			);
 			$this->insert($data);
 		}

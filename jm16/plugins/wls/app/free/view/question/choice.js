@@ -1,4 +1,5 @@
 wls.question.choice = Ext.extend(wls.question, {
+
 	initDom:function(){
 		$("#wls_quiz_main").append("<div id='w_qs_"+this.id+"'></div>");
 		$("#w_qs_"+this.id).append("<div class='w_qw_title'>"+this.index+"&nbsp;<span class='w_qw_tool'></span>"+this.questionData.title+"</div>");
@@ -27,7 +28,7 @@ wls.question.choice = Ext.extend(wls.question, {
 			$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_g');
-			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent':'+(this.cent));
+			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent+':'+(this.cent));
 			wls_question_toogle(this.id);
 		}else if(obj.answer==obj.myAnswer){		
 			this.quiz.count.right ++;
@@ -38,7 +39,7 @@ wls.question.choice = Ext.extend(wls.question, {
 			$(":radio[value='"+obj.answer+"']", $("#w_qs_"+this.id)).parent().addClass('w_qs_q_w');
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_w');
-			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent':'+(this.cent));
+			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent+':'+(this.cent));
 			if(this.quiz.type=='paper')this.addWhyImWrong();
 		}
 
@@ -63,4 +64,5 @@ wls.question.choice = Ext.extend(wls.question, {
 			eval("c[temp."+myAnswer+"].checked = true");
 		}
 	}
+
 });

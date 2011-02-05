@@ -219,7 +219,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	                    allowBlank: false
 	                })  
 		        }, {
-		             header: il8n.count_total
+		             header: il8n.count_questions
 		            ,dataIndex: 'questions'
 		            ,renderer:function(value){
 		            	var json = '['+value+']';

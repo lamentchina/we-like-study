@@ -86,7 +86,7 @@ class install extends wls {
 	}
 
 	public function saveUpload(){
-		$file = $this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"];
+		$file = $this->c->filePath."upload/upload".date('Ymdims').".xls";
 		move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 		
 		include_once $this->c->license.'/model/user/group.php';

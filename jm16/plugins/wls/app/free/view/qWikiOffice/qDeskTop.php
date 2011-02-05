@@ -60,6 +60,12 @@
 .icon_discuzx_16_16{
 	background-image:url(free/view/images/discuzx16x16.png) !important;
 }
+.icon_joomla_48_48{
+	background-image:url(free/view/images/joomla48x48.png) !important;
+}
+.icon_joomla_16_16{
+	background-image:url(free/view/images/joomla16x16.png) !important;
+}
 .icon_subject_48_48{
 	background-image:url(free/view/images/subject48x48.png) !important;
 }

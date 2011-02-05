@@ -32,7 +32,7 @@ wls.question.multichoice = Ext.extend(wls.question, {
 			}
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_g');
-			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent':'+(this.cent));
+			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent+':'+(this.cent));
 			wls_question_toogle(this.id);
 		}else if(obj.answer==obj.myAnswer){		
 			this.quiz.count.right ++;
@@ -47,7 +47,7 @@ wls.question.multichoice = Ext.extend(wls.question, {
 			}
 			
 			$('#w_q_subQuesNav_'+this.id).addClass('w_q_sn_w');
-			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent':'+(this.cent));
+			$('#w_q_subQuesNav_'+this.id).attr('title',il8n.cent+':'+(this.cent));
 			if(this.quiz.type=='paper')this.addWhyImWrong();
 		}
 

@@ -223,8 +223,13 @@ class m_question extends wls implements dbtable{
 
 			unset($data['index']);
 			unset($data['belongto']);
-			$data['markingmethod'] = $this->t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
-			$data['type'] = $this->t->formatQuesType($questions[$indexs[$i]]['type'],true);
+			if(isset($data['markingmethod'])){
+				$data['markingmethod'] = $this->t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
+			}
+			if(isset($data['type'])){
+				$data['type'] = $this->t->formatQuesType($questions[$indexs[$i]]['type'],true);
+			}
+			
 			$data['date_created'] = date('Y-m-d H:i:s');
 			if($questions[$indexs[$i]]['belongto']=='0'){
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = 0;
