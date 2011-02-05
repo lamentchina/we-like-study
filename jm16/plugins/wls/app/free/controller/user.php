@@ -313,5 +313,17 @@ class user extends wls{
 			'data'=>$arr
 		));
 	}
+	
+	public function translateIniToJsClass(){
+		$js = 'var il8n = {';
+		$keys = array_keys($this->lang);
+		for($i=0;$i<count($this->lang);$i++ ){
+			$js .= "\n".$keys[$i].':"'.$this->lang[$keys[$i]].'",';
+		}		
+		$js = substr($js,0,strlen($js)-1);
+		$js .= "\n }";
+		header("Content-type: text/html; charset=utf-8");
+		echo $js;
+	}
 }
 ?>

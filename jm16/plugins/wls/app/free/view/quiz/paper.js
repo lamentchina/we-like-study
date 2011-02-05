@@ -249,8 +249,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		var tb = new Ext.Toolbar({
 			 id:"w_s_l_tb"
 			,items:[search,{
-				text: il8n.search
-			    handler : function(){  
+				 text: il8n.search
+			    ,handler : function(){  
 			    	store.load({params:{start:0, limit:15}});    
 			    }
 			},
