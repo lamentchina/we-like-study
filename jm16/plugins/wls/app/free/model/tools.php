@@ -1,12 +1,12 @@
 <?php
 /**
- * Some functions which is really usefull, 
- * but has nothing to do with the system's logic , 
- * and it's hard to decide which controller should it be.....  
- * So , I just put them here. 
+ * Some functions which is really usefull,
+ * but has nothing to do with the system's logic ,
+ * and it's hard to decide which controller should it be.....
+ * So , I just put them here.
  * */
 class tools {
-	
+
 	/**
 	 * It's setted in wls.php
 	 * */
@@ -14,7 +14,7 @@ class tools {
 
 	/**
 	 * Based on the secconds count, get a better time reponse,
-	 * 
+	 *
 	 * @param $sec int
 	 * @return $str
 	 * */
@@ -29,16 +29,16 @@ class tools {
 		$minutes = floor($remainSeconds / 60);
 		$seconds = intval($sec - $hours * 3600 - $minutes * 60);
 		$str = '';
-		if($days!=0)$str .= "&nbsp;".$days.$this->lang['day']; 
-		if($hours!=0)$str .= "&nbsp;".$hours.$this->lang['hour']; 
-		if($minutes!=0)$str .= "&nbsp;".$minutes.$this->lang['minute']; 
+		if($days!=0)$str .= "&nbsp;".$days.$this->lang['day'];
+		if($hours!=0)$str .= "&nbsp;".$hours.$this->lang['hour'];
+		if($minutes!=0)$str .= "&nbsp;".$minutes.$this->lang['minute'];
 		if($seconds!=0)$str .= "&nbsp;".$seconds.$this->lang['second'];
 		return $str;
 	}
 
 	/**
 	 * Get the time gap between two times.
-	 * 
+	 *
 	 * @param $t1 The time want to do the math
 	 * @param $t2 If it's null , it will be the current time
 	 * @return String
@@ -63,12 +63,12 @@ class tools {
 		if($dif>60){
 			return round($dif/60).$this->lang['minute'];
 		}
-		return $dif.$this->lang['second'];		
+		return $dif.$this->lang['second'];
 	}
 
 	/**
-	 * Cut a long string into  short string , and add 3 '.' at bottom 
-	 * 
+	 * Cut a long string into  short string , and add 3 '.' at bottom
+	 *
 	 * @param $title A long string
 	 * @param $num Cut into this num's length
 	 * @return $title The short string
@@ -84,7 +84,7 @@ class tools {
 
 	/**
 	 * Check if this string is all Chinese or not
-	 * 
+	 *
 	 * @param $str The Chinse String
 	 * @return boolen true or false
 	 * */
@@ -106,11 +106,11 @@ class tools {
 	}
 
 	/**
-	 * Handle the Key-Value relationship 
+	 * Handle the Key-Value relationship
 	 * If $bool is true ,then will flip the key-value
 	 * Poor English En? Haha ,If you can't handle these comments , just email me : wei1224hf@gmal.com
 	 *
-	 * @param key 
+	 * @param key
 	 * @param bool If true ,flip the key-value
 	 * */
 	public function formatMarkingMethod($key,$bool=false){
@@ -172,7 +172,7 @@ class tools {
 	/**
 	 * When import some data from .html files , have to handle some html tags
 	 *
-	 * @param title 
+	 * @param title
 	 * @param bool If true,< br/ > to \n
 	 * */
 	public function formatTitle($title,$bool=false){
@@ -186,21 +186,21 @@ class tools {
 		}else{
 			$title = str_replace("<img src=\"","TEMP1",$title);
 			$title = str_replace(".gif\" />","TEMP2",$title);
-			
+				
 			$title = str_replace("'","&acute;",$title);
 			$title = str_replace('"','&quot;',$title);
 			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
-			
+				
 			$title = str_replace("TEMP1","<img src=\"",$title);
-			$title = str_replace("TEMP2",".gif\" />",$title);	
-			$title = trim($title);		
+			$title = str_replace("TEMP2",".gif\" />",$title);
+			$title = trim($title);
 			return $title;
 		}
 	}
 
 	public $desktopMenu = array();
 	/**
-	 * To fit the qWikiOffice's menu rule. 
+	 * To fit the qWikiOffice's menu rule.
 	 * It's recursion
 	 * */
 	public function treeMenuToDesktopMenu($id=null,$data_all){
@@ -214,10 +214,10 @@ class tools {
 							$data_all[$i]['children'][$i2]['menupath'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 						}
 						$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
-						
+
 						$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 						unset($data_all[$i]['children']);
-						$this->desktopMenu[] = $data_all[$i];						
+						$this->desktopMenu[] = $data_all[$i];
 					}else{
 						$data_all[$i]['startmenu'] = "/";
 						$this->desktopMenu[] = $data_all[$i];
@@ -236,10 +236,10 @@ class tools {
 								$data_all[$i]['children'][$i2]['menupath'] =  $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							}
 							$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
-							
+								
 							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							unset($data_all[$i]['children']);
-							$this->desktopMenu[] = $data_all[$i];	
+							$this->desktopMenu[] = $data_all[$i];
 						}else{
 							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'];
 							$this->desktopMenu[] = $data_all[$i];
@@ -253,9 +253,9 @@ class tools {
 	/**
 	 * Format an array have id_level attribues into a tree structure
 	 * It's recursion
-	 * 
+	 *
 	 * @param $id The root id_level
-	 * @param $data_all 
+	 * @param $data_all
 	 * @return $data
 	 * */
 	public function getTreeData($id=null,$data_all){
@@ -315,9 +315,9 @@ class tools {
 	}
 
 	/**
-	 * The system request phpExcel 
+	 * The system request phpExcel
 	 * And the Excel have the datetime problem to handle.
-	 * 
+	 *
 	 * @param $date Excel Date
 	 * @param $time if true , return Y-m-d H:i:s
 	 * @return $date
@@ -334,6 +334,28 @@ class tools {
 			return $date_str;
 		}
 		return $date;
+	}
+
+	public function listFile($dir,$withFollder=false){
+		$fileArray = array();
+		$cFileNameArray = array();
+		if($handle = opendir($dir)){
+			while(($file = readdir($handle)) !== false){
+				if($file !="." && $file !=".."){
+					if(is_dir($dir."\\".$file) && $withFollder){
+						$cFileNameArray = $this->listFile($dir."\\".$file);
+						for($i=0;$i<count($cFileNameArray);$i++){
+							$fileArray[] = $cFileNameArray[$i];
+						}
+					}else{
+						$fileArray[] = $file;
+					}
+				}
+			}
+			return $fileArray;
+		}else{
+			echo "111";
+		}
 	}
 }
 ?>

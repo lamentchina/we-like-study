@@ -121,7 +121,7 @@ class wls{
 			}
 		}else{
 			if($this->c->state=='uninstall'){//Jump to the installaton
-				header("location:wls.php?controller=install&action=setCMS"); 	
+				header("location:wls.php?controller=install&action=setLanguage"); 	
 			}else{
 				if(isset($_REQUEST['cmstype']) && $this->c->cmstype==$_REQUEST['cmstype']){
 					eval("include_once 'free/model/integration/".$_REQUEST['cmstype'].".php';");

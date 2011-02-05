@@ -114,6 +114,49 @@ class install extends wls {
 		';	
 	}
 	
+	public function setLanguage(){
+		$html = "
+			<html>
+				<head>
+					<meta http-equiv='content-type' content='text/html; charset=UTF-8'>
+				</head>
+			<body>
+			<form method='post' action='wls.php?controller=install&action=saveLanguage'>
+			<table width='100%'>			
+				<tr>
+					<td width='30%'>Language(语言,言語,taal,gjuhën,언어)</td>
+					<td width='30%'>
+						<select name='language' style='width:90%'>							
+							<option value='en'>English</option>
+							<option value='zh-cn'>简体中文</option>
+						</select>
+					</td>
+					<td width='30%'><input type='submit' value='&nbsp;&nbsp;Next&nbsp;&nbsp;' /></td>
+				</tr>																												
+			</table>			
+			</form>
+			</body>
+			</html>
+		";
+		echo $html;
+	}
+	
+	public function saveLanguage(){
+		$this->rewirteConfig($_POST);
+		echo '
+		<html>
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script language="javascript">
+		self.location=("wls.php?controller=install&action=setCMS&temp='.rand(1,100).'");
+		</script>
+		</head>
+		<body>
+		</body>
+		</html>
+		';	
+	}
+	
 	public function setCMS(){
 		$html = "
 			<html>
@@ -122,11 +165,11 @@ class install extends wls {
 				</head>
 			<body>
 			<form method='post' action='wls.php?controller=install&action=saveCMS'>
-			<table>			
+			<table width='900%'>			
 				<tr>
-					<td>".$this->lang['cmstype']."</td>
-					<td>
-						<select name='cmstype'>
+					<td width='20%'>".$this->lang['cmstype']."</td>
+					<td width='60%'>
+						<select name='cmstype' style='width:90%'>
 							<option value=''>".$this->lang['NOCMS']."</option>
 							<option value='DiscuzX'>DiscuzX</option>
 							<option value='Joomla'>Joomla</option>
@@ -136,16 +179,17 @@ class install extends wls {
 				<tr>
 					<td>".$this->lang['license']."</td>
 					<td>
-						<select name='license'>
+						<select name='license' style='width:90%'>
 							<option value='free'>".$this->lang['freelicense']."</option>
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td>".$this->lang['siteName']."</td>
-					<td><input name = 'siteName' value='We Like Study! www.welikestudy.com' /></td>
+					<td><input name = 'siteName' value='We Like Study! www.welikestudy.com' style='width:90%' /></td>
 				</tr>																														
 			</table>
+			<br/><br/>
 			<input type='submit' value='".$this->lang['submit']."' />
 			</form>
 			</body>
@@ -154,8 +198,7 @@ class install extends wls {
 		echo $html;
 	}
 	
-	public function saveCMS(){
-	
+	public function saveCMS(){	
 		if($_POST['cmstype']=='DiscuzX'){
 			include_once dirname(__FILE__).'/../../../../../../config/config_global.php';
 			$config = array(
@@ -301,6 +344,6 @@ class wlsconfig{
 ?>";
 		fwrite($file_handle,$content);
 		fclose($file_handle);
-	}
+	}	
 }
 ?>
