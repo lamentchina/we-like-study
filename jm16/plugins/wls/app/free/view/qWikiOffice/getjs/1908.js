@@ -17,7 +17,7 @@ class_1908 = Ext.extend(Ext.app.Module, {
 			
             win = desktop.createWindow({
                 id: this.id,
-                title: '知识点',
+                title: il8n.knowledge,
                 width: winWidth,
                 height: winHeight,
 

@@ -16,7 +16,7 @@ class_13 = Ext.extend(Ext.app.Module, {
         if(!win){			
             win = desktop.createWindow({
                 id: this.id,
-                title: '用户组',
+                title: il8n.usergroup,
                 width: winWidth,
                 height: winHeight,
 

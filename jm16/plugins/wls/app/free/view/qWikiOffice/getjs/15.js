@@ -16,7 +16,7 @@ class_15 = Ext.extend(Ext.app.Module, {
         if(!win){			
             win = desktop.createWindow({
                 id: this.id,
-                title: '权限',
+                title: il8n.privilege,
                 width: winWidth,
                 height: winHeight,
 

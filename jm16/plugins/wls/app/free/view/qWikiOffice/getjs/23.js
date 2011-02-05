@@ -12,7 +12,7 @@ class_23 = Ext.extend(Ext.app.Module, {
         if(!win){			
             win = desktop.createWindow({
                 id: this.id,
-                title: '用户登录',
+                title: il8n.Login,
                 width: 300,
                 height: 250,
                 iconCls: 'tab-icon',
@@ -21,7 +21,6 @@ class_23 = Ext.extend(Ext.app.Module, {
                 layout: 'fit',
                 modal:true,
                 items:[user_.getLogin()],
-                taskbuttonTooltip: '<b>用户登录</b>'
             });
         }
         win.show();
