@@ -10,8 +10,8 @@ class wlsconfig{
 			public $license = 'free';
 			public $libsPath = '../libs/';
 			public $filePath = '../file/';
-			public $siteName = 'We Like Study! Author:wei1224hf; www.welikestudy.com';
-			public $state = 'uninstall';
-			public $language = 'en';
+			public $siteName = 'We Like Study! www.welikestudy.com';
+			public $state = 'running';
+			public $language = 'zh-cn';
 }
 ?>

@@ -66,8 +66,7 @@ class wls{
 	public function getMyUser(){
 		include_once dirname(__FILE__)."/".$this->c->license."/model/user.php";
 		$m = new m_user();
-		$myuser = $m->getUser(null,true);
-		
+		$myuser = $m->getUser();		
 		return $myuser;
 	}
 
@@ -123,16 +122,19 @@ class wls{
 			if($this->c->state=='uninstall'){//Jump to the installaton
 				header("location:wls.php?controller=install&action=setLanguage"); 	
 			}else{
+
 				if(isset($_REQUEST['cmstype']) && $this->c->cmstype==$_REQUEST['cmstype']){
 					eval("include_once 'free/model/integration/".$_REQUEST['cmstype'].".php';");
 					eval('$bridge = new m_integration_'.$_REQUEST['cmstype'].'();');	
 
 					$bridge->bridge();				
+				}else{					
+					$me = $this->getMyUser();
 				}
 				include_once 'free/model/user.php';
 				$m_user = new m_user();
 				$menus = $m_user->getMyMenuForDesktop();
-				
+
 				$modules = array();
 				$shortcut = array();
 				$quickstart = array();
