@@ -61,8 +61,9 @@ class m_integration_Joomla extends m_integration implements integrate{
 	public function synchroPrivileges(){}
 
 	/**
-	 * 同步当前用户 
-	 * 只在用户从Joomla跳入到WLS的时候启用
+	 * Only when the user jumpped from joomla to wls
+	 * 
+	 * @param $resetUserSession If true , the Session would be rest
 	 * */
 	public function synchroMe($resetUserSession = false){
 		$conn = $this->conn();
@@ -75,7 +76,10 @@ class m_integration_Joomla extends m_integration implements integrate{
 		include_once dirname(__FILE__).'/../user.php';
 		$userObj = new m_user();
 		if($temp2==false){//这个用户的信息还没有同步过来,需要实施数据插入
-		
+			$this->user['money']=100;
+			$this->user['password']=$this->user['username'];
+			$this->user['name']=$this->user['username'];
+			$temp2 = $this->user;
 			$uid = $userObj->insert($this->user);
 			include_once dirname(__FILE__).'/../user/group.php';
 			$usergroupObj = new m_user_group();
@@ -96,8 +100,6 @@ class m_integration_Joomla extends m_integration implements integrate{
 //			session_destroy();
 			
 			$userObj->login($temp2['username'],$temp2['password']);
-
-		}else{
 
 		}
 	}
