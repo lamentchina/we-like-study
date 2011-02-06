@@ -14,8 +14,8 @@ wls.question.check = Ext.extend(wls.question, {
 		$("#wls_quiz_main").append("<div id='w_qs_"+this.id+"'></div>");
 		$("#w_qs_"+this.id).append("<div class='w_qw_title'>"+this.index+"&nbsp;<span class='w_qw_tool'></span>"+this.questionData.title+"</div>");
 		$("#w_qs_"+this.id).append("<div class='w_qw_options'></div>");
-		$(".w_qw_options","#w_qs_"+this.id).append("<span><input type='radio' name='w_qs_"+this.id+"' value='A' />&nbsp;"+il8n.Right+"</span>");
-		$(".w_qw_options","#w_qs_"+this.id).append("<span><input type='radio' name='w_qs_"+this.id+"' value='B' />&nbsp;"+il8n.Wrong+"</span>");
+		$(".w_qw_options","#w_qs_"+this.id).append("<span><input type='radio' name='w_qs_"+this.id+"' value='A' />&nbsp;"+il8n.right+"</span>");
+		$(".w_qw_options","#w_qs_"+this.id).append("<span><input type='radio' name='w_qs_"+this.id+"' value='B' />&nbsp;"+il8n.wrong+"</span>");
 
 		this.cent = this.questionData.cent;
 		this.questionData = null;

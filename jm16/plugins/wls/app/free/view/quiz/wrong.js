@@ -6,7 +6,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	,ajaxIds:function(nextFunction){
 		var thisObj = this;
 		$.blockUI({
-			message: '<h1>'+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
+			message: '<h1>'+il8n.loading+'</h1>' 
 		}); 
 		$.ajax({
 			url: thisObj.config.AJAXPATH+"?controller=quiz_wrong&action=getOne",
@@ -29,7 +29,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	,addQuizBrief:function(){
 		var str = "<table width='90%'>" +
 				"<tr>" +
-				"<td>"+il8n.count_total+"</td>" +
+				"<td>"+il8n.count_questions+"</td>" +
 				"<td>"+this.count.total+"</td>" +	
 				"</tr>" +
 
@@ -40,7 +40,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	}	
 	,submit:function(nextFunction){
 		$.blockUI({
-			message: '<h1>'+il8n.submit+'</h1><br/>'+il8n.loading+'......' 
+			message: '<h1>'+il8n.loading+'</h1>' 
 		}); 
 		
 		this.answersData = [];
@@ -83,7 +83,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				"<td>"+this.count.giveup+"</td>" +	
 				"</tr>" +
 				"<tr>" +
-				"<td>"+il8n.count_total+"</td>" +
+				"<td>"+il8n.count_questions+"</td>" +
 				"<td>"+this.count.total+"</td>" +	
 				"</tr>" +
 				"</table>";

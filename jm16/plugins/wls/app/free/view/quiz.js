@@ -121,7 +121,7 @@ wls.quiz = Ext.extend(wls, {
 	ajaxQuestions:function(nextFunction){
 		var thisObj = this;
 		$.blockUI({
-			message: '<h1>'+il8n.Question+il8n.Loading+'</h1><br/>'+il8n.Wait+'......' 
+			message: '<h1>'+il8n.loading+'</h1>' 
 		}); 
 		$.ajax({
 			url: thisObj.config.AJAXPATH+"?controller=quiz&action=getQuestions",
