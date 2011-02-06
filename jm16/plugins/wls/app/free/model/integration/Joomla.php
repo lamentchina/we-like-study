@@ -6,41 +6,44 @@ class m_integration_Joomla extends m_integration implements integrate{
 	public $user = null;
 	
 	public function bridge(){
-		$this->synchroConfig(null);
-		if($this->user==null)return false;
-		$this->synchroMe(true);
+		$this->synchroConfig(dirname(__FILE__).'/../../../../../../configuration.php');
+		if($this->user!=null){
+			$this->synchroMe(true);
+		}
 	}
 	
-	public function synchroConfig($path){
+	public function synchroConfig($path){	
 		
-		define('_JEXEC', 1);
-		define('DS', DIRECTORY_SEPARATOR);
+		include_once $path;
+		$c = new JConfig();
+		$key = md5(md5($c->secret.'site'));
 		
-		if (file_exists(dirname(__FILE__) . '/../../../../../../defines.php')) {
-			include_once dirname(__FILE__) . '/../../../../../../defines.php';
+		if(!isset($_COOKIE[$key])){
+			echo $this->lang['JoomlaFirst'];
+			exit();
 		}
 		
-		if (!defined('_JDEFINES')) {
-			define('JPATH_BASE', dirname(__FILE__).'/../../../../../../');
-			require_once JPATH_BASE.DS.'includes'.DS.'defines.php';
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+		
+		$sql = "select username,guest from ".$pfx."session where session_id = '".$_COOKIE[$key]."' ";
+		
+		$res = mysql_query($sql,$conn);
+		if($res==false){
+			echo $this->lang['JoomlaFirst'];
+			exit();
 		}
+		$temp = mysql_fetch_assoc($res);
 		
-		require_once JPATH_BASE.DS.'includes'.DS.'framework.php';
-		
-		// Mark afterLoad in the profiler.
-		JDEBUG ? $_PROFILER->mark('afterLoad') : null;
-		
-		// Instantiate the application.
-		$app = JFactory::getApplication('site');
-		
-		$user = JFactory::getUser();
-		if($user->id==0)return;
-		
+		if((int)$temp['guest']==1){
+			include_once dirname(__FILE__).'/../user.php';
+			$userObj = new m_user();
+			$userObj->login("guest","guest");
+			return;
+		}
 		$this->user = array(
-			 'username'=>$user->username
-			,'name'=>$user->name
-			,'password'=>'joomla'
-		);		
+			 'username'=>$temp['username']
+		);
 	}
 	
 	/**
@@ -85,11 +88,17 @@ class m_integration_Joomla extends m_integration implements integrate{
 
 		}
 		if($resetUserSession==true){
+			if(!isset($_SESSION))session_start();
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
-			}		
-
+			}
+//			session_unset();
+//			session_destroy();
+			
 			$userObj->login($temp2['username'],$temp2['password']);
+
+		}else{
+
 		}
 	}
 

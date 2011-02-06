@@ -166,7 +166,7 @@ wls.quiz = Ext.extend(wls, {
 	        	items:[	  
 	        		new Ext.Button({
 	        			id:'quiz_submit',
-	        			text:il8n.Submit, region:'south',
+	        			text:il8n.submit, region:'south',
 	        			handler:function(){
 	        				thisObj.submit(thisObj.naming+".addDescriptions();");
 	        				Ext.getCmp('quiz_submit').disable();

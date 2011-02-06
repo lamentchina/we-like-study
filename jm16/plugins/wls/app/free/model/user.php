@@ -272,70 +272,77 @@ class m_user extends wls implements dbtable{
 	 * @param $resetSession To reset the current user's session ? 
 	 * */
 	public function getUser($id=null,$resetSession=null){
+//		print_r($id);exit();
 		if($resetSession==true){				
-			if( !(isset($_SESSION)) ){
+			if( !isset($_SESSION) ){
 				session_start();
+				if(isset($_SESSION['wls_user'])){
+					unset($_SESSION['wls_user']);
+				}
 			}
-				
-			if(!isset($_SESSION['wls_user']) || $_SESSION['wls_user']['privilege']==''){//TODO
-				if($id==null){//A guest visit this system.
-					$data = $this->getList(1,1,array('username'=>'guest'));
-					$data = $data['data'][0];
-				}else{
-					$data = $this->getList(1,1,array('id'=>$id));
-					$data = $data['data'][0];					
-				}
-				unset($data['password']);//The password should not in session.
-				
-				//Get the privileges , It's a little complex. 
-				//First , get the user's group info , 
-				//than get the privileges info from the group info  				
-				include_once dirname(__FILE__).'/user/privilege.php';
-				$o = new m_user_privilege();
-				$d = $o->getListForUser($data['username']);
-				$ids = '';
-				$privileges = array();
-				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1'){
-						$ids .= $d[$i]['id_level'].",";
-						$privileges[$d[$i]['id_level']] = $d[$i]['money'];
-					}
-				}
-				$ids = substr($ids,0,strlen($ids)-1);
-				$data['privilege'] = $ids;
-				$data['privileges'] = $privileges;
-	
-				//One user can belong to more than two groups.
-				//And one user at least belong to one group.
-				include_once dirname(__FILE__).'/user/group.php';
-				$o = new m_user_group();
-				$d = $o->getListForUser($data['username']);
-				$ids = '';
-				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
-				}
-				$ids = substr($ids,0,strlen($ids)-1);
-				$data['group'] = $ids;
-	
-				//How many subjects do this user participed?
-				include_once dirname(__FILE__).'/subject.php';
-				$o = new m_subject();
-				$d = $o->getListForUser($data['username']);
-				$ids = '';
-				for($i=0;$i<count($d);$i++){
-					if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
-				}
-				$ids = substr($ids,0,strlen($ids)-1);
-				$data['subject'] = $ids;
-				
-				$_SESSION['wls_user'] = $data;
+			
+//			print_r($_SESSION);
+//			exit();
+
+			if($id==null){//A guest visit this system.
+				$data = $this->getList(1,1,array('username'=>'guest'));
+				$data = $data['data'][0];
+			}else{
+				$data = $this->getList(1,1,array('id'=>$id));
+				$data = $data['data'][0];					
 			}
+			unset($data['password']);//The password should not in session.
+			
+			//Get the privileges , It's a little complex. 
+			//First , get the user's group info , 
+			//than get the privileges info from the group info  				
+			include_once dirname(__FILE__).'/user/privilege.php';
+			$o = new m_user_privilege();
+			$d = $o->getListForUser($data['username']);
+			$ids = '';
+			$privileges = array();
+			for($i=0;$i<count($d);$i++){
+				if($d[$i]['checked']=='1'){
+					$ids .= $d[$i]['id_level'].",";
+					$privileges[$d[$i]['id_level']] = $d[$i]['money'];
+				}
+			}
+			$ids = substr($ids,0,strlen($ids)-1);
+			$data['privilege'] = $ids;
+			$data['privileges'] = $privileges;
+
+			//One user can belong to more than two groups.
+			//And one user at least belong to one group.
+			include_once dirname(__FILE__).'/user/group.php';
+			$o = new m_user_group();
+			$d = $o->getListForUser($data['username']);
+			$ids = '';
+			for($i=0;$i<count($d);$i++){
+				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+			}
+			$ids = substr($ids,0,strlen($ids)-1);
+			$data['group'] = $ids;
+
+			//How many subjects do this user participed?
+			include_once dirname(__FILE__).'/subject.php';
+			$o = new m_subject();
+			$d = $o->getListForUser($data['username']);
+			$ids = '';
+			for($i=0;$i<count($d);$i++){
+				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+			}
+			$ids = substr($ids,0,strlen($ids)-1);
+			$data['subject'] = $ids;
+			
+			$_SESSION['wls_user'] = $data;
 			return $_SESSION['wls_user'];
 		}else{
-
+			if($id==null){
+				if(!isset($_SESSION))session_start();
+				return $_SESSION['wls_user'];
+			}
 			$data = $this->getList(1,1,array('id'=>$id));
 			return $data['data'][0];
-
 		}
 	}
 
@@ -348,6 +355,7 @@ class m_user extends wls implements dbtable{
 	 * @param $password
 	 * */
 	public function login($username,$password){
+
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
@@ -442,8 +450,9 @@ class m_user extends wls implements dbtable{
 	 * @return $data An array.
 	 * */
 	public function getMyMenu(){
-		$me = $this->getUser(null,true);
+		$me = $this->getMyUser();
 
+		 
 		$username = $me['username'];
 		include_once dirname(__FILE__).'/user/privilege.php';
 		$obj = new m_user_privilege();
@@ -544,6 +553,7 @@ class m_user extends wls implements dbtable{
 	 * @return $data Array
 	 * */
 	public function getMyMenuForDesktop(){
+
 		$data = $this->getMyMenu();
 
 		$this->t->treeMenuToDesktopMenu(null,$data);

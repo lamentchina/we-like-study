@@ -127,7 +127,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				"<td>"+this.cent+"</td>" +	
 				"</tr>" +				
 				"<tr>" +
-				"<td>"+il8n.count_tight+"</td>" +
+				"<td>"+il8n.count_right+"</td>" +
 				"<td>"+this.count.right+"</td>" +	
 				"</tr>" +				
 				"<tr>" +
@@ -139,7 +139,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				"<td>"+this.count.giveup+"</td>" +	
 				"</tr>" +
 				"<tr>" +
-				"<td>"+il8n.count_total+"</td>" +
+				"<td>"+il8n.count_questions+"</td>" +
 				"<td>"+this.count.total+"</td>" +	
 				"</tr>" +
 				"</table>";
@@ -149,7 +149,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		
 		ac.add({
 	    	id:'ext_PaperResult',
-	        title: il8n.Paper.Result,
+	        title: il8n.Quiz_Paper_Result,
 	        html: '<div id="paperresult">aaa</div>'			
 		});
 		ac.doLayout();

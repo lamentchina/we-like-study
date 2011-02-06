@@ -232,14 +232,16 @@ class quiz_paper extends quiz{
 
 	public function viewOne(){
 		include_once $this->c->license.'/model/user.php';
-		$obj_ = new m_user();
+		$userObj = new m_user();
 		
 		//IE6 is special
-		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == false ){
+		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == true ){
+			$userObj->id = $_REQUEST['uid'];
 		}else{
-		    $obj_->id = $_REQUEST['uid'];
+			$me = $this->getMyUser();
+		    $userObj->id = $me['id'];
 		}		
-		$foo = $obj_->checkMyPrivilege('1107');
+		$foo = $userObj->checkMyPrivilege('1107');
 		
 		if($foo==false){
 			echo "privilege request";
