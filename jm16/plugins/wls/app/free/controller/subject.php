@@ -166,6 +166,7 @@ class subject extends wls{
 	}
 	
 	public function addone(){
+		sleep(1);
 		$id = $this->m->insert($_POST);
 		echo $id;
 	}

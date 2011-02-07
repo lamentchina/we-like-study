@@ -1,5 +1,61 @@
 wls.user.group = Ext.extend(wls, {
-	getList : function(domid) {
+	getAddItemForm:function(){
+		var thisObj = this;
+		var form = new Ext.form.FormPanel({
+			id:'w_u_g_ai_f',
+			labelWidth: 75, 
+	        frame:true,
+	        bodyStyle:'padding:5px 5px 0',
+	        width: 350,
+	        defaults: {width: 100},
+	        defaultType: 'textfield',	        
+	
+	        items: [{
+	                fieldLabel: il8n.id_level,
+	                width:150,
+	                vtype:"alphanum",
+	                name: 'id_level',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.name,
+	                width:150,
+	                name: 'name',
+	                allowBlank:false
+	            }
+	        ],
+	
+	        buttons: [{
+		    	 text: il8n.save
+		        ,handler:function(){
+		    		var form = Ext.getCmp('w_u_g_ai_f').getForm();
+	
+		        	if(form.isValid()){
+		    			$.blockUI({
+		    				message: '<h1>'+il8n.loading+'......</h1>' 
+		    			});  
+		        		var obj = form.getValues();
+		        		Ext.Ajax.request({				
+		    				method:'POST',				
+		    				url:thisObj.config.AJAXPATH+"?controller=user_group&action=addone&temp="+Math.random(),				
+		    				success:function(response){				
+		    					var obj = jQuery.parseJSON(response.responseText);
+		    					$.unblockUI();
+		    				},				
+		    				failure:function(response){
+		    					//TODO
+		    					$.unblockUI();
+		    				},				
+		    				params:obj				
+		    			});
+		        	}else{
+		        		 Ext.Msg.alert(il8n.fail,il8n.RequesttedImputMissing);
+		        	}
+		        }
+        	}]
+		});
+		return form;
+	}
+	,getList : function(domid) {
 
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
@@ -16,16 +72,16 @@ wls.user.group = Ext.extend(wls, {
 				sortable : true
 			},
 			columns : [{
-				header : il8n.ID,
+				header : il8n.id_level,
 				dataIndex : 'id_level'
 			}, {
-				header : il8n.Name,
+				header : il8n.name,
 				dataIndex : 'name',
 				editor : new Ext.form.TextField({
 					allowBlank : false
 				})
 			}, {
-				header : il8n.Count.User,
+				header : il8n.count_total,
 				dataIndex : 'count_user',
 				editor : new Ext.form.TextField({
 					allowBlank : false
@@ -56,7 +112,7 @@ wls.user.group = Ext.extend(wls, {
 		for(var i=0;i<privilege.length;i++){
 			if(privilege[i]=='1301'){
 				tb.add({
-					text: il8n.Import,
+					text: il8n.importFile,
 			        handler : function(){   
 						var win = new Ext.Window({
 							id:'w_u_g_l_i',
@@ -70,7 +126,7 @@ wls.user.group = Ext.extend(wls, {
 				});
 			}else if(privilege[i]=='130101'){
 				tb.add({
-					text: il8n.ImportOne,
+					text: il8n.importFile+'(1)',
 			        handler : function(){   
 						var win = new Ext.Window({
 							id:'w_u_g_l_en',
@@ -84,7 +140,7 @@ wls.user.group = Ext.extend(wls, {
 				});
 			}else if(privilege[i]=='1302'){
 				tb.add({
-					text: il8n.Export,
+					text: il8n.exportFile,
 			        handler : function(){   
 						var win = new Ext.Window({
 							id:'w_u_g_l_e',
@@ -98,7 +154,7 @@ wls.user.group = Ext.extend(wls, {
 				});
 			}else if(privilege[i]=='130201'){
 				tb.add({
-					text: il8n.ExportOne,
+					text: il8n.exportFile+'(1)',
 			        handler : function(){   
 						var win = new Ext.Window({
 							id:'w_u_g_l_en',
@@ -112,8 +168,9 @@ wls.user.group = Ext.extend(wls, {
 				});
 			}else if(privilege[i]=='1303'){
 				tb.add({
-					text: il8n.Delete,
-			        handler : function(){   
+					text: il8n.deleteItems,
+			        handler : function(){ 
+						if(Ext.getCmp(domid).getSelectionModel().selection==null)return;//TODO
 						Ext.Ajax.request({				
 							method:'POST',				
 							url:thisObj.config.AJAXPATH+"?controller=user_group&action=delete",				
@@ -131,8 +188,9 @@ wls.user.group = Ext.extend(wls, {
 				grid.on("afteredit", afteredit, grid);    
 			}else if(privilege[i]=='130401'){
 				tb.add({
-				text : il8n.Privilege,
+				text : il8n.privilege,
 				handler : function() {
+					if(Ext.getCmp(domid).getSelectionModel().selection==null)return;//TODO
 					var id = Ext.getCmp(domid).getSelectionModel().selection.record.data.id_level;
 					var tree = new Ext.tree.TreePanel({
 						id:'w_u_g_l_p_t',
@@ -155,7 +213,7 @@ wls.user.group = Ext.extend(wls, {
 								+ "?controller=user_group&action=getPrivilege&id="
 								+ id,
 						buttons : [{
-							text : il8n.Submit,
+							text : il8n.submit,
 							handler : function() {
 								var checkedNodes = tree.getChecked();
 								var s = "";
@@ -199,7 +257,7 @@ wls.user.group = Ext.extend(wls, {
 			});
 			}else if(privilege[i]=='130402'){
 				tb.add({
-				text : il8n.Subject,
+				text : il8n.subject,
 				handler : function() {
 					var id = Ext.getCmp(domid).getSelectionModel().selection.record.data.id_level;
 					var tree = new Ext.tree.TreePanel({
@@ -223,7 +281,7 @@ wls.user.group = Ext.extend(wls, {
 								+ "?controller=user_group&action=getSubject&id="
 								+ id,
 						buttons : [{
-							text : il8n.Submit,
+							text : il8n.submit,
 							handler : function() {
 								var checkedNodes = tree.getChecked();
 								var s = "";
@@ -255,7 +313,7 @@ wls.user.group = Ext.extend(wls, {
 					var win = new Ext.Window({
 								id : 'w_u_g_l_s_w',
 								layout : 'fit',
-								title:il8n.Subject,
+								title:il8n.subject,
 								width : 500,
 								height : 300,
 								modal  :true,
@@ -265,8 +323,24 @@ wls.user.group = Ext.extend(wls, {
 
 				}
 			});
-			}else if(privilege[i]=='1005'){
-				//TODO
+			}else if(privilege[i]=='1305'){
+				tb.add({
+					text: il8n.add,
+			        handler : function(){   
+						var form = thisObj.getAddItemForm();
+						var w = new Ext.Window({
+							title:il8n.addNewSubject,
+					        width: 350,
+					        height: 300,
+					        layout: 'fit',
+					        buttonAlign:'center',
+					        items: [form],       
+					        modal:true
+					    });
+						
+						w.show();	
+					}
+				});	
 			}	
 		}
 		

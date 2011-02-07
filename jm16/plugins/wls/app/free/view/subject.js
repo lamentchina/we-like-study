@@ -188,8 +188,7 @@ wls.subject = Ext.extend(wls, {
 						
 						w.show();	
 					}
-				});				
-
+				});	
 			}
 			function afteredit(e){    
 		        Ext.Ajax.request({				
