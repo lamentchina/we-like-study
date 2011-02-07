@@ -152,7 +152,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 		}
 		$paper['date_created'] = date('Y-m-d H:i:s');
-		$paper['id'] = $this->insert($paper);
+		$paper['id'] = $this->insert($paper);		
 		$this->id = $paper['id'];
 		$this->paper = $paper;
 
@@ -243,6 +243,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
 				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
 				'optionlength'=>$currentSheet->getCell($keys['optionlength'].$i)->getValue(),
+				'id_level_subject'=>$paper['id_level_subject'],
+				'name_subject'=>$paper['name_subject'],
+				'id_quiz_paper'=>$paper['id'],
+				'title_quiz_paper'=>$paper['title'],			
 			);
 			if(isset($keys['belongto'])){
 				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();

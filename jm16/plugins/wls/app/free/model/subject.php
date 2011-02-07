@@ -224,7 +224,7 @@ class m_subject extends wls implements dbtable,levelList{
 				}
 			}
 		}
-		if($orderby==null)$orderby = " order by id";
+		if($orderby==null)$orderby = " order by id_level ";
 		$sql = "select ".$columns." from ".$pfx."wls_subject ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 

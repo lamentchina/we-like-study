@@ -1,6 +1,68 @@
 wls.subject = Ext.extend(wls, {
 	id_level:null
 	
+	,getAddItemForm:function(){
+		var thisObj = this;
+		var form = new Ext.form.FormPanel({
+			id:'w_s_ai_f',
+			labelWidth: 75, 
+	        frame:true,
+	        bodyStyle:'padding:5px 5px 0',
+	        width: 350,
+	        defaults: {width: 100},
+	        defaultType: 'textfield',	        
+	
+	        items: [{
+	                fieldLabel: il8n.id_level,
+	                width:150,
+	                vtype:"alphanum",
+	                name: 'id_level',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.name,
+	                width:150,
+	                name: 'name',
+	                allowBlank:false
+	            },{
+	                fieldLabel: il8n.icon,
+	                width:150,
+	                vtype:"alphanum",
+	                name: 'icon',
+	                allowBlank:false
+	            }
+	        ],
+	
+	        buttons: [{
+		    	 text: il8n.save
+		        ,handler:function(){
+		    		var form = Ext.getCmp('w_s_ai_f').getForm();
+	
+		        	if(form.isValid()){
+		    			$.blockUI({
+		    				message: '<h1>'+il8n.loading+'......</h1>' 
+		    			});  
+		        		var obj = form.getValues();
+		        		Ext.Ajax.request({				
+		    				method:'POST',				
+		    				url:thisObj.config.AJAXPATH+"?controller=subject&action=addone&temp="+Math.random(),				
+		    				success:function(response){				
+		    					var obj = jQuery.parseJSON(response.responseText);
+		    					$.unblockUI();
+		    				},				
+		    				failure:function(response){
+		    					//TODO
+		    					$.unblockUI();
+		    				},				
+		    				params:obj				
+		    			});
+		        	}else{
+		        		 Ext.Msg.alert(il8n.fail,il8n.RequesttedImputMissing);
+		        	}
+		        }
+        	}]
+		});
+		return form;
+	}
 	,getList:function(domid){
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
@@ -8,7 +70,7 @@ wls.subject = Ext.extend(wls, {
 		    url: thisObj.config.AJAXPATH+'?controller=subject&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','id_level', 'name']
+		    fields: ['id','id_level', 'name','description','icon']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -19,8 +81,21 @@ wls.subject = Ext.extend(wls, {
 		            header: il8n.id_level,
 		            dataIndex: 'id_level'
 		        },{
-		             header: il8n.Name
+		             header: il8n.name
 		            ,dataIndex: 'name'
+		            ,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
+		        },{
+		             header: il8n.description
+		            ,dataIndex: 'description'
+		            ,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
+		        	,hidden:true
+		        },{
+		             header: il8n.icon
+		            ,dataIndex: 'icon'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })
@@ -51,7 +126,7 @@ wls.subject = Ext.extend(wls, {
 		for(var i=0;i<privilege.length;i++){
 			if(privilege[i]=='190701'){
 				tb.add({
-					text: il8n.Import,
+					text: il8n.importFile,
 			        handler : function(){   
 						var win = new Ext.Window({
 							id:'w_s_gp_l_i',
@@ -65,7 +140,7 @@ wls.subject = Ext.extend(wls, {
 				});
 			}else if(privilege[i]=='190702'){
 				tb.add({
-					text: il8n.Export,
+					text: il8n.exportFile,
 			        handler : function(){   
 						var win = new Ext.Window({
 							id:'w_s_gp_l_e',
@@ -97,7 +172,24 @@ wls.subject = Ext.extend(wls, {
 			}else if(privilege[i]=='190704'){
 				grid.on("afteredit", afteredit, grid);    
 			}else if(privilege[i]=='190705'){
-				//TODO
+				tb.add({
+					text: il8n.add,
+			        handler : function(){   
+						var form = thisObj.getAddItemForm();
+						var w = new Ext.Window({
+							title:il8n.addNewSubject,
+					        width: 350,
+					        height: 300,
+					        layout: 'fit',
+					        buttonAlign:'center',
+					        items: [form],       
+					        modal:true
+					    });
+						
+						w.show();	
+					}
+				});				
+
 			}
 			function afteredit(e){    
 		        Ext.Ajax.request({				

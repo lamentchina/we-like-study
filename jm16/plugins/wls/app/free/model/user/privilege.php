@@ -62,6 +62,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 				,isshortcut int default 0			
 				,isquickstart int default 0 		
 				,icon varchar(200) default ''
+				,ordering int default 0
 				,description text				
 							
 			) DEFAULT CHARSET=utf8;
@@ -79,7 +80,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('privilege');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['privilege']);
 		$allRow = array($currentSheet->getHighestRow());
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -93,33 +94,54 @@ class m_user_privilege extends wls implements dbtable,levelList{
 			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
 				$keys['name'] = $i;
-			}			
+			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['menu']){
 				$keys['ismenu'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['desktop']){
 				$keys['isquickstart'] = $i;
-			}	
+			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['startupbar']){
 				$keys['isshortcut'] = $i;
-			}												
-		}	
-		
+			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['money']){
+				$keys['money'] = $i;
+			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['icon']){
+				$keys['icon'] = $i;
+			}
+		}
+
 		$data = array();
-		for($i=2;$i<=$allRow[0];$i++){
+		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
-				'name'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
-				'money'=>$currentSheet->getCell($keys['money'].$i)->getValue(),
-				'ordering'=>$currentSheet->getCell($keys['ordering'].$i)->getValue(),
-				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
-				'ismenu'=>($currentSheet->getCell($keys['ismenu'].$i)->getValue()==$this->lang['yes'])?1:0,
-				'isquickstart'=>($currentSheet->getCell($keys['isquickstart'].$i)->getValue()==$this->lang['yes'])?1:0,
-				'isshortcut'=>($currentSheet->getCell($keys['isshortcut'].$i)->getValue()==$this->lang['yes'])?1:0,
+				'name'=>$currentSheet->getCell($keys['name'].$i)->getValue(),
 			);
+			if(isset($keys['money'])){
+				$data['money']=$currentSheet->getCell($keys['money'].$i)->getValue();
+			}
+			if(isset($keys['ordering'])){
+				$data['ordering']=$currentSheet->getCell($keys['ordering'].$i)->getValue();
+			}
+			if(isset($keys['description'])){
+				$data['description']=$currentSheet->getCell($keys['description'].$i)->getValue();
+			}
+			if(isset($keys['ismenu'])){
+				$data['ismenu']=($currentSheet->getCell($keys['ismenu'].$i)->getValue()=='√')?1:0;
+			}
+			if(isset($keys['isquickstart'])){
+				$data['isquickstart']=($currentSheet->getCell($keys['isquickstart'].$i)->getValue()=='√')?1:0;
+			}
+			if(isset($keys['isshortcut'])){
+				$data['isshortcut']=($currentSheet->getCell($keys['isshortcut'].$i)->getValue()=='√')?1:0;
+			}	
+			if(isset($keys['icon'])){
+				$data['icon']=$currentSheet->getCell($keys['icon'].$i)->getValue();
+			}					
 			$this->insert($data);
 		}
 	}
@@ -133,19 +155,30 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('privilege');
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['privilege']);
 
-		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['name']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['ordering']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', $this->lang['money']);
-		$objPHPExcel->getActiveSheet()->setCellValue('E1', $this->lang['description']);
-		$objPHPExcel->getActiveSheet()->setCellValue('F1', $this->lang['menu'] );
-		$objPHPExcel->getActiveSheet()->setCellValue('G1', $this->lang['desktop'] );
-		$objPHPExcel->getActiveSheet()->setCellValue('H1', $this->lang['startupbar'] );
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(8);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(8);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(8);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(40);
+
+		for($i=1;$i<=9;$i++){
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
+		}
+
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['id_level']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['ordering']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['money']);
+		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['description']);
+		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->lang['menu'] );
+		$objPHPExcel->getActiveSheet()->setCellValue('G2', $this->lang['desktop'] );
+		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->lang['startupbar'] );
+		$objPHPExcel->getActiveSheet()->setCellValue('I2', $this->lang['icon'] );
 
 		$index = 2;
 		for($i=0;$i<count($data);$i++){
@@ -155,9 +188,10 @@ class m_user_privilege extends wls implements dbtable,levelList{
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['ordering']);
 			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['money']);
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['description']);
-			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, (($data[$i]['ismenu']==1)?$this->lang['yes']:'') );
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, (($data[$i]['isquickstart']==1)?$this->lang['yes']:'') );
-			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, (($data[$i]['isshortcut']==1)?$this->lang['yes']:'') );
+			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, (($data[$i]['ismenu']==1)?'√':'') );
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, (($data[$i]['isquickstart']==1)?'√':'') );
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, (($data[$i]['isshortcut']==1)?'√':'') );
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $data[$i]['icon']);
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('A1');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
@@ -165,9 +199,9 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "download/".date('YmdHis').".xls";
 		$objWriter->save($this->c->filePath.$file);
-		return $file;
+		return $this->c->filePath.$file;
 	}
-	
+
 	public function cumulative($column){}
 
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
@@ -183,7 +217,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 				}
 				if($keys[$i]=='id_level_group'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
-				}				
+				}
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
@@ -209,7 +243,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 			'pagesize'=>$pagesize,
 		);
 	}
-	
+
 	public function getLevelList($root){}
 
 	public function getListForGroup($id_level_group){
@@ -227,7 +261,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
-		
+
 		return $data;
 	}
 
@@ -241,7 +275,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 				select id_level_group from ".$pfx."wls_user_group2user where username = '".$username."'
 			)
 		) as checked from ".$pfx."wls_user_privilege;";
-		
+
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){

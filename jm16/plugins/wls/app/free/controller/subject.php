@@ -164,5 +164,10 @@ class subject extends wls{
 </data>';
 	echo $xml;
 	}
+	
+	public function addone(){
+		$id = $this->m->insert($_POST);
+		echo $id;
+	}
 }
 ?>
