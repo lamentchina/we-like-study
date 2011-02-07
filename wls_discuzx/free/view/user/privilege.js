@@ -14,22 +14,22 @@ wls.user.privilege = Ext.extend(wls, {
 		        sortable: true   
 		    },
 		    columns: [ {
-		            header: il8n.ID,
+		            header: il8n.id,
 		            dataIndex: 'id_level'
 		        },{
-		        	 header: il8n.Name
+		        	 header: il8n.name
 		            ,dataIndex: 'name'
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })
 		        }, {
-		             header: il8n.Money
+		             header: il8n.money
 		            ,dataIndex: 'money'
 	            	,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })
 		        }, {
-		             header: il8n.Menu
+		             header: il8n.menu
 		            ,dataIndex: 'ismenu'
 		            ,renderer:function(value){
 		                if (value == 1) {
