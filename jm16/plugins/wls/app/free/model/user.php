@@ -265,85 +265,14 @@ class m_user extends wls implements dbtable{
 	}
 
 	/**
-	 * Get the user's information. 
+	 * Get the current user's information. 
 	 * TODO It should depand on database's session
 	 *
 	 * @param $id If it's null , will return the current user's info.
 	 * @param $resetSession To reset the current user's session ? 
 	 * */
-	public function getUser($id=null,$resetSession=null){
-//		print_r($id);exit();
-		if($resetSession==true){				
-			if( !isset($_SESSION) ){
-				session_start();
-				if(isset($_SESSION['wls_user'])){
-					unset($_SESSION['wls_user']);
-				}
-			}
-			
-//			print_r($_SESSION);
-//			exit();
-
-			if($id==null){//A guest visit this system.
-				$data = $this->getList(1,1,array('username'=>'guest'));
-				$data = $data['data'][0];
-			}else{
-				$data = $this->getList(1,1,array('id'=>$id));
-				$data = $data['data'][0];					
-			}
-			unset($data['password']);//The password should not in session.
-			
-			//Get the privileges , It's a little complex. 
-			//First , get the user's group info , 
-			//than get the privileges info from the group info  				
-			include_once dirname(__FILE__).'/user/privilege.php';
-			$o = new m_user_privilege();
-			$d = $o->getListForUser($data['username']);
-			$ids = '';
-			$privileges = array();
-			for($i=0;$i<count($d);$i++){
-				if($d[$i]['checked']=='1'){
-					$ids .= $d[$i]['id_level'].",";
-					$privileges[$d[$i]['id_level']] = $d[$i]['money'];
-				}
-			}
-			$ids = substr($ids,0,strlen($ids)-1);
-			$data['privilege'] = $ids;
-			$data['privileges'] = $privileges;
-
-			//One user can belong to more than two groups.
-			//And one user at least belong to one group.
-			include_once dirname(__FILE__).'/user/group.php';
-			$o = new m_user_group();
-			$d = $o->getListForUser($data['username']);
-			$ids = '';
-			for($i=0;$i<count($d);$i++){
-				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
-			}
-			$ids = substr($ids,0,strlen($ids)-1);
-			$data['group'] = $ids;
-
-			//How many subjects do this user participed?
-			include_once dirname(__FILE__).'/subject.php';
-			$o = new m_subject();
-			$d = $o->getListForUser($data['username']);
-			$ids = '';
-			for($i=0;$i<count($d);$i++){
-				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
-			}
-			$ids = substr($ids,0,strlen($ids)-1);
-			$data['subject'] = $ids;
-			
-			$_SESSION['wls_user'] = $data;
-			return $_SESSION['wls_user'];
-		}else{
-			if($id==null){
-				if(!isset($_SESSION))session_start();
-				return $_SESSION['wls_user'];
-			}
-			$data = $this->getList(1,1,array('id'=>$id));
-			return $data['data'][0];
-		}
+	public function getUser(){
+		
 	}
 
 	/**
@@ -354,24 +283,64 @@ class m_user extends wls implements dbtable{
 	 * @param $username
 	 * @param $password
 	 * */
-	public function login($username,$password){
-
+	public function login($username,$password=null){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-
 		$sql = "select * from ".$pfx."wls_user where username = '".$username."';";
-
 		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);
-		if($temp==false){
+		$data = mysql_fetch_assoc($res);
+		if($data==false){
 			return false;
 		}else{
-			if($temp['password']!=$password){
+			if( ($password!=null) && ($data['password']!=$password) ){
 				return false;
 			}
+		}		
+		unset($data['password']);
+		
+		//Get the privileges , It's a little complex. 
+		//First , get the user's group info , 
+		//than get the privileges info from the group info  				
+		include_once dirname(__FILE__).'/user/privilege.php';
+		$o = new m_user_privilege();
+		$d = $o->getListForUser($data['username']);
+		$ids = '';
+		$privileges = array();
+		for($i=0;$i<count($d);$i++){
+			if($d[$i]['checked']=='1'){
+				$ids .= $d[$i]['id_level'].",";
+				$privileges[$d[$i]['id_level']] = $d[$i]['money'];
+			}
 		}
-		$this->getUser($temp['id'],true);
-		return $temp;
+		$ids = substr($ids,0,strlen($ids)-1);
+		$data['privilege'] = $ids;
+		$data['privileges'] = $privileges;
+
+		//One user can belong to more than two groups.
+		//And one user at least belong to one group.
+		include_once dirname(__FILE__).'/user/group.php';
+		$o = new m_user_group();
+		$d = $o->getListForUser($data['username']);
+		$ids = '';
+		for($i=0;$i<count($d);$i++){
+			if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		$data['group'] = $ids;
+
+		//How many subjects do this user participed?
+		include_once dirname(__FILE__).'/subject.php';
+		$o = new m_subject();
+		$d = $o->getListForUser($data['username']);
+		$ids = '';
+		for($i=0;$i<count($d);$i++){
+			if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		$data['subject'] = $ids;			
+		$_SESSION['wls_user'] = $data;
+		
+		return $data;
 	}
 
 	/**
@@ -451,8 +420,7 @@ class m_user extends wls implements dbtable{
 	 * */
 	public function getMyMenu(){
 		$me = $this->getMyUser();
-
-		 
+		
 		$username = $me['username'];
 		include_once dirname(__FILE__).'/user/privilege.php';
 		$obj = new m_user_privilege();
@@ -559,6 +527,49 @@ class m_user extends wls implements dbtable{
 		$this->t->treeMenuToDesktopMenu(null,$data);
 		$data = $this->t->desktopMenu;
 		return $data;
+	}
+	
+	public function getMyMenuWithShortCut(){
+		$menus = $this->getMyMenuForDesktop();
+
+		$modules = array();
+		$shortcut = array();
+		$quickstart = array();
+		for($i=0;$i<count($menus);$i++){
+			$menuItem = array(
+				'id'=>"id_".$menus[$i]['id_level'],
+				'className'=>"class_".$menus[$i]['id_level'],
+          		"launcher"=>array(
+          			"text"=>$menus[$i]['text'],
+          			"tooltip"=>'<b>'.$menus[$i]['text'].'</b>',
+          		),
+          		"launcherPaths"=>array(
+          			"startmenu"=>$menus[$i]['startmenu']
+          		),
+			);
+			
+			if(isset($menus[$i]['icon'])){
+				$menuItem['launcher']['iconCls'] = 'icon_'.$menus[$i]['icon'].'_16_16';
+				$menuItem['launcher']['shortcutIconCls'] = 'icon_'.$menus[$i]['icon'].'_48_48';
+			}
+			if(isset($menus[$i]['description'])){
+				$menuItem['launcher']['tooltip'] = '<b>'.$menus[$i]['description'].'</b>';
+			}					
+			$modules[] = $menuItem;
+			if(isset($menus[$i]['isshortcut']) && $menus[$i]['isshortcut']==1){
+				$shortcut[] = "id_".$menus[$i]['id_level'];
+			}
+			if(isset($menus[$i]['isquickstart']) && $menus[$i]['isquickstart']==1){
+				$quickstart[] = "id_".$menus[$i]['id_level'];
+			}					
+		}
+		
+		return array(
+			'menus'=>$menus
+			,'modules'=>$modules
+			,'quickstart'=>$quickstart
+			,'shortcut'=>$shortcut
+		);
 	}
 }
 ?>

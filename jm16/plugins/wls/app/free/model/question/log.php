@@ -12,8 +12,8 @@ class m_question_log extends wls implements dbtable,log{
 			$user = $this->getMyUser();
 			$data['id_user'] = $user['id'];
 		}
-		if(!isset($data['myanswer'])){
-			$data['myanswer'] = 'I_DONT_KNOW';
+		if(!isset($data['myAnswer'])){
+			$data['myAnswer'] = 'I_DONT_KNOW';
 		}
 		if(!isset($data['answer'])){
 			$data['answer'] = 'A';
@@ -24,6 +24,7 @@ class m_question_log extends wls implements dbtable,log{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_question_log (".$keys.") values ('".$values."')";
+
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -87,7 +88,7 @@ class m_question_log extends wls implements dbtable,log{
 				,id_level_subject varchar(200) default '0' 	
 				,id_quiz_paper int default 0		
 				,id_quiz_log int default 0					
-				,myanswer text 						
+				,myAnswer text 						
 				,answer text 						
 				,correct int default 0				
 				,type int default 1				

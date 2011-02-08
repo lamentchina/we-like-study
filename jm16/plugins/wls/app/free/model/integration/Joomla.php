@@ -99,6 +99,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 //			session_unset();
 //			session_destroy();
 			
+			
 			$userObj->login($temp2['username'],$temp2['password']);
 
 		}
