@@ -12,7 +12,9 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$conn = $this->conn();
 
 		if(!isset($data['id_user'])){
-			$user = $this->getMyUser();
+			include_once dirname(__FILE__)."/../user.php";
+			$userObj = new m_user();
+			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
 		}
 		
@@ -123,7 +125,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('paper');
+		$currentSheet = $this->phpexcel->getSheetByName('paper');//TODO
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 

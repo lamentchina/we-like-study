@@ -5,46 +5,51 @@ class m_integration_Joomla extends m_integration implements integrate{
 	
 	public $user = null;
 	
-	public function bridge(){
-		$this->synchroConfig(dirname(__FILE__).'/../../../../../../configuration.php');
-		if($this->user!=null){
-			$this->synchroMe(true);
-		}
-	}
-	
-	public function synchroConfig($path){	
-		
-		include_once $path;
-		$c = new JConfig();
-		$key = md5(md5($c->secret.'site'));
-		
-		if(!isset($_COOKIE[$key])){
-			echo $this->lang['JoomlaFirst'];
-			exit();
-		}
-		
+	public function bridge(){		
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
+		
+		include_once dirname(__FILE__).'/../../../../../../configuration.php';
+		$c = new JConfig();
+		$key = md5(md5($c->secret.'site'));
 		
 		$sql = "select username,guest from ".$pfx."session where session_id = '".$_COOKIE[$key]."' ";
 		
 		$res = mysql_query($sql,$conn);
 		if($res==false){
-			echo $this->lang['JoomlaFirst'];
-			exit();
+			return 'guest';
 		}
-		$temp = mysql_fetch_assoc($res);
-		
+		$temp = mysql_fetch_assoc($res);		
 		if((int)$temp['guest']==1){
-			include_once dirname(__FILE__).'/../user.php';
-			$userObj = new m_user();
-			$userObj->login("guest","guest");
-			return;
+			return 'guest';
 		}
-		$this->user = array(
-			 'username'=>$temp['username']
-		);
+		
+		$sql2 = "select * from ".$pfx."wls_user where username = '".$temp['username']."' ";
+		$res2 = mysql_query($sql2,$conn);
+		$temp2 = mysql_fetch_assoc($res2);
+		
+		include_once dirname(__FILE__).'/../user.php';
+		$userObj = new m_user();
+		if($temp2==false){//这个用户的信息还没有同步过来,需要实施数据插入
+			$temp['money']=100;
+			$temp['password']=$temp['username'];
+			$temp['name']=$temp['username'];
+			$temp2 = $this->user;
+			$uid = $userObj->insert($temp);
+			include_once dirname(__FILE__).'/../user/group.php';
+			$usergroupObj = new m_user_group();
+			$data = array(
+				 'id_level_group'=>'11'
+				,'username'=>$temp['username']
+			);
+			$usergroupObj->linkUser($data);
+		}else{//此用户的信息已经同步过来了,那么就将 金钱 同步一下
+			
+		}
+		return $temp['username'];		
 	}
+	
+	public function synchroConfig($path){}
 	
 	/**
 	 * Synchro all the user informations from DisuczX to WLS.
@@ -65,45 +70,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 	 * 
 	 * @param $resetUserSession If true , the Session would be rest
 	 * */
-	public function synchroMe($resetUserSession = false){
-		$conn = $this->conn();
-		$pfx = $this->c->dbprefix;
-
-		$sql2 = "select * from ".$pfx."wls_user where username = '".$this->user['username']."' ";
-		$res2 = mysql_query($sql2,$conn);
-		$temp2 = mysql_fetch_assoc($res2);
-		
-		include_once dirname(__FILE__).'/../user.php';
-		$userObj = new m_user();
-		if($temp2==false){//这个用户的信息还没有同步过来,需要实施数据插入
-			$this->user['money']=100;
-			$this->user['password']=$this->user['username'];
-			$this->user['name']=$this->user['username'];
-			$temp2 = $this->user;
-			$uid = $userObj->insert($this->user);
-			include_once dirname(__FILE__).'/../user/group.php';
-			$usergroupObj = new m_user_group();
-			$data = array(
-				 'id_level_group'=>'11'
-				,'username'=>$this->user['username']
-			);
-			$usergroupObj->linkUser($data);
-		}else{//此用户的信息已经同步过来了,那么就将 金钱 同步一下
-
-		}
-		if($resetUserSession==true){
-			if(!isset($_SESSION))session_start();
-			if(isset($_SESSION['wls_user'])){
-				unset($_SESSION['wls_user']);
-			}
-//			session_unset();
-//			session_destroy();
-			
-			
-			$userObj->login($temp2['username'],$temp2['password']);
-
-		}
-	}
+	public function synchroMe($resetUserSession = false){}
 
 	public function synchroMoney($username){
 

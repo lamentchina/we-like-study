@@ -9,7 +9,9 @@ class m_question_log extends wls implements dbtable,log{
 		$conn = $this->conn();
 
 		if(!isset($data['id_user'])){
-			$user = $this->getMyUser();
+			include_once dirname(__FILE__)."/../user.php";
+			$userObj = new m_user();
+			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
 		}
 		if(!isset($data['myAnswer'])){
@@ -33,7 +35,9 @@ class m_question_log extends wls implements dbtable,log{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		$user = $this->getMyUser();
+		include_once dirname(__FILE__)."/../user.php";
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 
 		$keys = null;
 		$sql = '';

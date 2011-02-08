@@ -87,8 +87,10 @@ class user extends wls{
 	
 	public function logout(){
 		session_start();
-		unset($_SESSION['wls_user']);
-		session_destroy();
+		if(isset($_SESSION['wls_user'])){
+			unset($_SESSION['wls_user']);
+			session_unregister('wls_user');
+		}
 		echo '
 	<script language="javascript" type="text/javascript">
            window.location.href="wls.php"; 

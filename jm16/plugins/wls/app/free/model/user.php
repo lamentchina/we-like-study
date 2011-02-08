@@ -263,6 +263,13 @@ class m_user extends wls implements dbtable{
 			'pagesize'=>$pagesize,
 		);
 	}
+	
+	public function getMyInfo(){
+		if(!isset($_SESSION)){
+			session_start();
+		}
+		return $_SESSION['wls_user'];
+	}
 
 	/**
 	 * Get the current user's information. 
@@ -271,7 +278,7 @@ class m_user extends wls implements dbtable{
 	 * @param $id If it's null , will return the current user's info.
 	 * @param $resetSession To reset the current user's session ? 
 	 * */
-	public function getUser(){
+	public function getInfo(){
 		
 	}
 
@@ -337,7 +344,10 @@ class m_user extends wls implements dbtable{
 			if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
-		$data['subject'] = $ids;			
+		$data['subject'] = $ids;		
+		if(!isset($_SESSION)){
+			session_start();
+		}	
 		$_SESSION['wls_user'] = $data;
 		
 		return $data;
@@ -388,7 +398,7 @@ class m_user extends wls implements dbtable{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		$user = $this->getUser($this->id,true);
+		$user = $this->getMyInfo();
 		$privileges = $user['privilege'];
 		$privileges = explode(",",$privileges);
 		if(in_array($privilege,$privileges)){
@@ -419,7 +429,7 @@ class m_user extends wls implements dbtable{
 	 * @return $data An array.
 	 * */
 	public function getMyMenu(){
-		$me = $this->getMyUser();
+		$me = $this->getMyInfo();
 		
 		$username = $me['username'];
 		include_once dirname(__FILE__).'/user/privilege.php';

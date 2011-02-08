@@ -450,7 +450,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
 			if($temp['score_top']<=$this->mycent){
-				$user = $this->getMyUser();
+				include_once dirname(__FILE__)."/../user.php";
+				$userObj = new m_user();
+				$user = $userObj->getMyInfo();
+				
 				$sql = "update ".$pfx."wls_quiz_paper set
 					score_top_user = '".$user['username']."',
 					score_top = '".$this->mycent."' 
@@ -551,10 +554,16 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 
-		$user = $this->getMyUser();
+		include_once dirname(__FILE__)."/../user.php";
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
+		
 		if($user['money']>$temp['money']){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
 
+			if(!isset($_SESSION)){
+				session_start();
+			}
 			$_SESSION['wls_user']['money'] -= $temp['money'];
 			mysql_query($sql,$conn);
 

@@ -78,9 +78,10 @@ class wls{
 	 * The controller has it's level structure , by '_' character
 	 * Each controller has it's .php file
 	 * Each action has it's function in one controller
+	 * 
+	 * Or , just visit as wls.php
 	 * */
-	public function initApp(){		
-		
+	public function initApp(){
 		if(isset($_REQUEST['controller'])){
 			$controller = null;
 			$arr = explode("_",$_REQUEST['controller']);
@@ -107,31 +108,51 @@ class wls{
 				$controllername = substr($controllername,0,strlen($controllername)-1);
 				include $this->c->license.'/controller'.$path.'.php';
 				eval('$controller = new '.$controllername.'();');
-				
-				//Get the client-side's action ,and run the function in the controller
-				if(isset($_REQUEST['action'])){
-					eval('$controller->'.$_REQUEST['action'].'();');
-				}else{
-		
-				}
+			}
+			
+			//Get the client-side's action ,and run the function in the controller
+			if(isset($_REQUEST['action'])){
+				eval('$controller->'.$_REQUEST['action'].'();');
+			}else{
+	
 			}
 		}else{
-			if($this->c->state=='uninstall'){//Jump to the installaton
+			//If it's uninstalled , Jump to the installaton
+			if($this->c->state=='uninstall'){
 				header("location:wls.php?controller=install&action=setLanguage"); 	
 			}else{
+				//View WLS's main page. Ther user's session would be reset.
+				$username = '';
 				include_once 'free/model/user.php';
-				$m_user = new m_user();
-				
-				
+				$m_user = new m_user();					
 				if(isset($_REQUEST['cmstype']) && $this->c->cmstype==$_REQUEST['cmstype']){
-					//The client must have been refreshed,so the whole sessions would be reset 
+					//When it's installed as CMS integratted ,
+					//Visit as wls.php?cmstype=joomla or wls.php?cmstype=discuzx
+					//The client must have been refreshed,so the whole sessions would be reset
+					//System should get the current user from CMS
 					eval("include_once 'free/model/integration/".$_REQUEST['cmstype'].".php';");
 					eval('$bridge = new m_integration_'.$_REQUEST['cmstype'].'();');	
-					$bridge->bridge();				
-				}else{			
-					$this->getMyUser();
+					$username = $bridge->bridge();
+				}else{	
+					if($this->c->cmstype!=''){
+						header("location:wls.php?cmstype=".$this->c->cmstype); 	
+					}
+					//Just visit as wls.php, The system is not integratted in any CMS
+					//It's stand alone.The sessions would be resetted too.
+					session_start();
+					if(!isset($_SESSION['wls_user'])){
+						$username = 'guest';
+					}else{
+						$username = $_SESSION['wls_user']['username'];
+					}				
 				}
+				$m_user->login($username);				
 				
+				$menuStff = $m_user->getMyMenuWithShortCut();
+				$modules = $menuStff['modules'];
+				$quickstart = $menuStff['quickstart'];
+				$shortcut = $menuStff['shortcut'];
+				$menus = $menuStff['menus'];
 				
 				include_once "free/view/qWikiOffice/qDeskTop.php";
 			}

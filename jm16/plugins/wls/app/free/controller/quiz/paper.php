@@ -111,7 +111,9 @@ class quiz_paper extends quiz{
 		$json = json_encode($answers);
 		
 		//Just out put the answsers if the current user is guest, and do nothing
-		$user = $this->getMyUser();
+		include_once dirname(__FILE__)."/../../model/user.php";
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 		if($user['username']=='guest'){
 			echo $json;
 			return;	
@@ -141,7 +143,10 @@ class quiz_paper extends quiz{
 		$cent = 0;
 		$mycent = 0;
 		$count_total = count($answers);
-		$user = $this->getMyUser();
+		
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 
 		include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
 		$wrongObj = new m_quiz_wrong();
@@ -238,7 +243,7 @@ class quiz_paper extends quiz{
 		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == true ){
 			$userObj->id = $_REQUEST['uid'];
 		}else{
-			$me = $this->getMyUser();
+			$me = $userObj->getMyInfo();
 		    $userObj->id = $me['id'];
 		}		
 		$foo = $userObj->checkMyPrivilege('1107');
