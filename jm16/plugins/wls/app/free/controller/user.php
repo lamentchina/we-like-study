@@ -291,7 +291,9 @@ class user extends wls{
 	public function getMyQuizLineData(){
 		include_once dirname(__FILE__).'/../model/quiz/log.php';
 
-		$user = $this->getMyUser();
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 		
 		$obj = new m_quiz_log();
 		$search = array(

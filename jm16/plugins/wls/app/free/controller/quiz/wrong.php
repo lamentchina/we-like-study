@@ -25,7 +25,9 @@ class quiz_wrong extends quiz{
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
 		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
-		$user = $this->getMyUser();
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 		$data = $this->m->getList($page,$pagesize,array('id_user'=>$user['id']));
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);

@@ -1,14 +1,14 @@
 <?php
 class subject extends wls{
-	
+
 	private $m = null;
-	
+
 	function subject(){
 		parent::wls();
 		include_once $this->c->license.'/model/subject.php';
 		$this->m = new m_subject();
 	}
-	
+
 	public function jsonList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
@@ -18,9 +18,9 @@ class subject extends wls{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
-	
+
 	public function viewUpload(){
-		echo '<html>		
+		echo '<html>
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
@@ -37,7 +37,7 @@ class subject extends wls{
 			</html>		
 		';
 	}
-	
+
 	public function saveUpload(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
@@ -48,25 +48,25 @@ class subject extends wls{
 			$this->m->importExcel($file);
 		}
 		echo 'success';
-	}	
-	
+	}
+
 	public function saveUpdate(){
 		$data = array(
 			'id'=>$_POST['id'],
-			$_POST['field']=>$_POST['value']
+		$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
 			echo "success";
 		}else{
-			echo "fail";			
+			echo "fail";
 		}
 	}
-	
+
 	public function viewExport(){
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
 	}
-	
+
 
 
 	public function delete(){
@@ -76,11 +76,11 @@ class subject extends wls{
 			echo 'fail';
 		}
 	}
-	
+
 	public function getPaperList(){
-		include_once dirname(__FILE__).'/../model/quiz/paper.php';		
+		include_once dirname(__FILE__).'/../model/quiz/paper.php';
 		$paper = new m_quiz_paper();
-				
+
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -89,11 +89,13 @@ class subject extends wls{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
-	
+
 	public function getMyQuizLine(){
-		include_once dirname(__FILE__).'/../model/quiz/log.php';		
+		include_once dirname(__FILE__).'/../model/quiz/log.php';
 		$log = new m_quiz_log();
-		$user = $this->getMyUser();
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 		$search = array('id_user'=>$user['id']);
 		if(isset($_REQUEST['id_level_subject_']) && $_REQUEST['id_level_subject_']!=''){
 			$search['id_level_subject_'] = $_REQUEST['id_level_subject_'];
@@ -143,14 +145,14 @@ class subject extends wls{
 	<data> 
 	<chart>
 	<series>';
-	for($i=0;$i<count($arr);$i++){
-		$xml .= '<value xid="'.$i.'">'.$arr[$i]['index'].'</value>';	
-	}
-	$xml .='</series><graphs><graph gid="1">';
-	for($i=0;$i<count($arr);$i++){
-		$xml .= '<value xid="'.$i.'">'.$arr[$i]['proportion'].'</value>';	
-	}
-	$xml .= '</graph>
+		for($i=0;$i<count($arr);$i++){
+			$xml .= '<value xid="'.$i.'">'.$arr[$i]['index'].'</value>';
+		}
+		$xml .='</series><graphs><graph gid="1">';
+		for($i=0;$i<count($arr);$i++){
+			$xml .= '<value xid="'.$i.'">'.$arr[$i]['proportion'].'</value>';
+		}
+		$xml .= '</graph>
 		</graphs>
 	<guides>	                                   
 	 <guide>                                     
@@ -162,9 +164,9 @@ class subject extends wls{
 	</guides>	
 </chart>
 </data>';
-	echo $xml;
+		echo $xml;
 	}
-	
+
 	public function addone(){
 		sleep(1);
 		$id = $this->m->insert($_POST);

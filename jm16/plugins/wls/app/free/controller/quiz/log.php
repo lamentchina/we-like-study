@@ -19,22 +19,24 @@ class quiz_log extends quiz{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
-	
+
 	public function getMyList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
 		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
-		
-		$user = $this->getMyUser();		
+
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 		$data = $this->m->getList($page,$pagesize,array('id_user'=>$user['id']));
-		
+
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
 
 	public function viewUpload(){
-		echo '<html>		
+		echo '<html>
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
@@ -69,7 +71,7 @@ class quiz_log extends quiz{
 		if($this->m->update($data)){
 			echo "success";
 		}else{
-			echo "fail";			
+			echo "fail";
 		}
 	}
 
@@ -81,13 +83,15 @@ class quiz_log extends quiz{
 
 	public function getOne(){
 		$id = $_POST['id'];
-		$user = $this->getMyUser();
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 
 		$data = $this->m->getList(1,1,array('id'=>$id));
 		$data = $data['data'][0];
-		
+
 		$data['application'] = $this->t->formatApplicationType($data['application']);
-		
+
 		echo json_encode($data);
 	}
 
@@ -103,7 +107,7 @@ class quiz_log extends quiz{
 		$ques_ = $this->m->getLogAnswers();
 
 		$answers = $this->m->getAnswers($ques_);
-		echo json_encode($answers);		
+		echo json_encode($answers);
 	}
 
 	/**
