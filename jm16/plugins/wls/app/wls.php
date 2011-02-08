@@ -146,6 +146,7 @@ class wls{
 						$username = $_SESSION['wls_user']['username'];
 					}				
 				}
+
 				$m_user->login($username);				
 				
 				$menuStff = $m_user->getMyMenuWithShortCut();
