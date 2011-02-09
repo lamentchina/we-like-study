@@ -1,0 +1,12 @@
+Foundations
+	Php5(Zend C.O.)
+	ExtJS(Sencha C.O.)
+	QwikiOffice(tmurdock)
+	JQueryJs(jQuery project)
+	AmChart(amCharts C.O.)
+	PhpExcel(CodePlex)
+	securimage(Drew Phillips)
+Authors
+	wei1224hf
+contributors
+	 南湖煮酒	 
