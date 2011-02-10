@@ -57,10 +57,14 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 			".$pfx."common_member.uid = ".$pfx."common_member_count.uid and ".$pfx."common_session.uid = ".$pfx."common_member.uid
 			 and ".$pfx."common_session.sid = '".$this->sessionid."';
 		";
-
+		
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
-		if($temp==false)return 'guest';
+
+		if($temp==false){
+			
+			return 'guest';
+		}
 
 		$sql2 = "select * from ".$pfx."wls_user where username = '".$temp['username']."' ";
 		$res2 = mysql_query($sql2,$conn);

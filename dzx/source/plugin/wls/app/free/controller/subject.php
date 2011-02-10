@@ -25,6 +25,7 @@ class subject extends wls{
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
+					'.$this->lang['privilageImportWarning'].'<br/><br/>
 					'.$this->lang['importExcel'].'
 					<form action="wls.php?controller=subject&action=saveUpload" method="post"
 					enctype="multipart/form-data">
@@ -64,7 +65,7 @@ class subject extends wls{
 
 	public function viewExport(){
 		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
+		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 
 

@@ -259,6 +259,10 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				tb.add({
 					text: il8n.deleteItems,
 			        handler : function(){   
+			        	if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}			        	
 			        	var ids = '';
 			        	var items = Ext.getCmp(domid).getSelectionModel().selections.items;
 			        	for(var i=0;i<items.length;i++){
@@ -282,6 +286,10 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				tb.add({
 			        text: il8n.Quiz_Wrongs,
 			        handler : function(){
+			        	if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
 						var sid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject;
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();

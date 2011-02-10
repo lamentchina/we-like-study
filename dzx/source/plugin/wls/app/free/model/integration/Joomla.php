@@ -42,7 +42,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 				 ,'username'=>$temp['username']
 			);
 			$usergroupObj->linkUser($data);
-		}else{//此用户的信息已经同步过来了,那么就将 金钱 同步一下
+		}else{//No money to synchro
 				
 		}
 

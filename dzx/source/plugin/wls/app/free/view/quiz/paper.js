@@ -281,13 +281,15 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				if(privilege[i]=='1101'){
 					tb.add({
 						text: il8n.importFile,
-				        handler : function(){   
+				        handler : function(){   			        	
 							var win = new Ext.Window({
 								id:'w_q_p_l_i',
 								layout:'fit',
 								width:500,
 								height:300,	
-								html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewUpload' width='100%' height='250' />"
+								title:il8n.importFile,
+								modal:true,
+								html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
@@ -296,13 +298,19 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					tb.add({
 						text: il8n.exportFile,
 				        handler : function(){   
+							if(Ext.getCmp(domid).getSelectionModel().selection==null){
+								alert(il8n.clickCellInGrid);
+								return;
+							}				        	
 				        	var pid= Ext.getCmp(domid).getSelectionModel().selection.record.id;
 							var win = new Ext.Window({
 								id:'w_q_p_l_e',
 								layout:'fit',
+								title:il8n.exportFile,
+								modal:true,
 								width:500,
-								height:300,	
-								html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport&id="+pid+"' width='100%' height='250' />"
+								height:300,								
+								html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewExport&id="+pid+"' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
@@ -311,6 +319,10 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					tb.add({
 						text: il8n.deleteItems,
 				        handler : function(){   
+							if(Ext.getCmp(domid).getSelectionModel().selection==null){
+								alert(il8n.clickCellInGrid);
+								return;
+							}				        	
 							Ext.Ajax.request({				
 								method:'POST',				
 								url:thisObj.config.AJAXPATH+"?controller=quiz_paper&action=delete",				
@@ -329,10 +341,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				        text: il8n.Quiz_Paper,
 				        handler : function(){
 							if(Ext.getCmp(domid).getSelectionModel().selection==null){
-								QoDesk.App.getDesktop().showNotification({
-						             html: il8n.clickCellInGrid
-						            ,title: il8n.fail
-						         });
+								alert(il8n.clickCellInGrid);
 								return;
 							}
 							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;

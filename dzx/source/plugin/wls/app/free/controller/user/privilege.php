@@ -25,7 +25,7 @@ class user_privilege extends wls{
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					'.$this->lang['privilageImportWarning'].'<br/><br/>
+					
 					'.$this->lang['importExcel'].'
 					<form action="wls.php?controller=user_privilege&action=saveUpload" method="post"
 					enctype="multipart/form-data">

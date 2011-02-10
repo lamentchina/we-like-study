@@ -81,7 +81,9 @@ class quiz_wrong extends quiz{
 
 	public function getOne(){
 		$id_level_subject = $_POST['id_level_subject'];
-		$user = $this->getMyUser();
+		include_once dirname(__FILE__)."/../../model/user.php";
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 
 		$data = $this->m->getList(1,100,array(
 			'id_level_subject'=>$id_level_subject,
@@ -133,7 +135,9 @@ class quiz_wrong extends quiz{
 		$mycent = 0;
 		$count_total = count($answers);
 
-		$user = $this->getMyUser();
+		include_once dirname(__FILE__)."/../../model/user.php";
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
 
 
 		$wrongObj = $this->m;

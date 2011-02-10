@@ -501,9 +501,12 @@ class m_user_group extends wls implements dbtable,levelList{
 		include_once dirname(__FILE__).'/privilege.php';
 		$privilegeObj = new m_user_privilege();
 		$privilegeObj->create();
+		
 		for($i=4;$i<=$allRow;$i++){
+			$name = $this->t->formatTitle($currentSheet->getCell($c_name.$i)->getValue());
+			$name = str_replace("<br/>&nbsp;&nbsp;","",$name);			
 			$data = array(
-				'name'=>$this->t->formatTitle($currentSheet->getCell($c_name.$i)->getValue()),
+				'name'=>$name,
 				'id_level'=>$currentSheet->getCell($c_level.$i)->getValue(),
 				'ismenu'=>($currentSheet->getCell($c_menu.$i)->getValue()=='√')?1:0,
 				'isshortcut'=>($currentSheet->getCell($c_shortcut.$i)->getValue()=='√')?1:0,

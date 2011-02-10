@@ -24,23 +24,27 @@ class user extends wls{
 		$securimage = new Securimage();
 		if ($securimage->check($_POST['CAPTCHA']) == false) {
 			echo json_encode(array(
-				'msg'=>'CAPTCHA'
-				));
+				'msg'=>$this->lang['CAPTCHAFail']
+				,'state'=>'fail'
+			));
 		}else{
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
-			}			
-			session_destroy();			
+				session_unregister('wls_user');
+			}					
 
-			$temp = $this->m->login($_POST['username'],$_POST['password']);
-			if($temp==false){
+			$data = $this->m->login($_POST['username'],$_POST['password']);
+				
+			if($data['username']=='guest'){
 				echo json_encode(array(
-					'msg'=>'wrong'
-					));
+					'msg'=>$this->lang['loginFail']
+					,'state'=>'fail'
+				));
 			}else{
 				echo json_encode(array(
-					'msg'=>'ok'
-					));
+					'msg'=>$this->lang['loginSuccess']
+					,'state'=>'success'
+				));
 			}
 		}
 	}

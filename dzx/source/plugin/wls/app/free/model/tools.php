@@ -140,8 +140,8 @@ class tools {
 			'2'=>$this->lang['Qes_MultiChoice'],
 			'3'=>$this->lang['Qes_Check'],
 			'4'=>$this->lang['Qes_Depict'],
-			'5'=>$this->lang['Qes_Mixed'],
-			'6'=>$this->lang['Qes_Big'],
+			'5'=>$this->lang['Qes_Big'],
+			'6'=>$this->lang['Qes_Mixed'],
 			'7'=>$this->lang['Qes_Blank']
 		);
 

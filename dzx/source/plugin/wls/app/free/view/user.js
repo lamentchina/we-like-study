@@ -188,7 +188,7 @@ wls.user = Ext.extend(wls, {
 				url:thisObj.config.AJAXPATH+"?controller=user&action=login&temp="+Math.random(),				
 				success:function(response){				
 					var obj = jQuery.parseJSON(response.responseText);
-					if(obj.msg=='ok'){
+					if(obj.state=='success'){
 						location.reload();
 					}
 					$.blockUI({

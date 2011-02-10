@@ -346,6 +346,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['paper']);
 
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['subject']);
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['money']);
@@ -377,6 +378,14 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->lang['option'].'G');
 		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->lang['optionlength']);
 		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->lang['ques_description']);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(15);
 		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->lang['listenningFile']);
 		$objPHPExcel->getActiveSheet()->setCellValue('Q2', $this->lang['count_used']);
 		$objPHPExcel->getActiveSheet()->setCellValue('R2', $this->lang['count_right']);

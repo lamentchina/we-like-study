@@ -121,41 +121,50 @@ class m_subject extends wls implements dbtable,levelList{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('subject');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['subject']);
 		$allRow = array($currentSheet->getHighestRow());
+		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['id_level']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['id_level']){
 				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['description']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['name']){
 				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['icon']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['icon']){
 				$keys['icon'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
 			}			
 		}		
 		
 		$data = array();
-		for($i=3;$i<=$allRow[0];$i++){
+		for($i=2;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
 				'name'=>$currentSheet->getCell($keys['name'].$i)->getValue(),
-				'ordering'=>$currentSheet->getCell($keys['ordering'].$i)->getValue(),
-				'ids_level_knowledge'=>$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue(),
-				'icon'=>$currentSheet->getCell($keys['icon'].$i)->getValue(),
-				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
 			);
+			if(isset($keys['ordering'])){
+				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();
+			}
+			if(isset($keys['description'])){
+				$data['description'] = $currentSheet->getCell($keys['description'].$i)->getValue();
+			}	
+			if(isset($keys['ids_level_knowledge'])){
+				$data['ids_level_knowledge'] = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
+			}	
+			if(isset($keys['icon'])){
+				$data['icon'] = $currentSheet->getCell($keys['icon'].$i)->getValue();
+			}								
 			$this->insert($data);
 		}
 	}
@@ -174,7 +183,7 @@ class m_subject extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('subject');
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['subject']);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
@@ -186,7 +195,7 @@ class m_subject extends wls implements dbtable,levelList{
 		$objPHPExcel->getActiveSheet()->setCellValue('E1', $this->lang['icon']);
 		$objPHPExcel->getActiveSheet()->setCellValue('F1', $this->lang['description']);
 
-		$index = 2;
+		$index = 1;
 		for($i=0;$i<count($data);$i++){
 			$index ++;
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id_level']);

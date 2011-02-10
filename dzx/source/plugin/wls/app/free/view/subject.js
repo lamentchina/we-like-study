@@ -133,7 +133,7 @@ wls.subject = Ext.extend(wls, {
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=subject&action=viewUpload' width='100%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=subject&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}
@@ -147,7 +147,7 @@ wls.subject = Ext.extend(wls, {
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=subject&action=viewExport' width='100%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=subject&action=viewExport' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}
