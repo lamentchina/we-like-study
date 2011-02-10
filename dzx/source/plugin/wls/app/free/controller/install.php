@@ -127,8 +127,8 @@ class install extends wls {
 					<td width='30%'>Language(语言,言語,taal,gjuhën,언어)</td>
 					<td width='30%'>
 						<select name='language' style='width:90%'>							
-							<option value='en'>English</option>
 							<option value='zh-cn'>简体中文</option>
+							<option value='en'>English</option>
 						</select>
 					</td>
 					<td width='30%'><input type='submit' value='&nbsp;&nbsp;Next&nbsp;&nbsp;' /></td>
