@@ -71,7 +71,7 @@ wls.knowledge = Ext.extend(wls, {
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewUpload' width='19080%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewUpload' width='19080%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}
@@ -85,7 +85,7 @@ wls.knowledge = Ext.extend(wls, {
 							layout:'fit',
 							width:500,
 							height:300,	
-							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewExport' width='19080%' height='250' />"
+							html: "<iframe src ='"+thisObj.config.AJAXPATH+"?controller=knowledge&action=viewExport' width='19080%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}

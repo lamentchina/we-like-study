@@ -70,7 +70,7 @@ wls.subject = Ext.extend(wls, {
 		    url: thisObj.config.AJAXPATH+'?controller=subject&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','id_level', 'name','description','icon']
+		    fields: ['id','id_level', 'name','description','icon','ids_level_knowledge','ordering']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -99,6 +99,21 @@ wls.subject = Ext.extend(wls, {
 		            ,editor: new Ext.form.TextField({
 	                    allowBlank: false
 	                })
+	                ,hidden:true
+		        },{
+		             header: il8n.ids_level_knowledge
+		            ,dataIndex: 'ids_level_knowledge'
+		            ,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
+	                ,hidden:true
+		        },{
+		             header: il8n.ordering
+		            ,dataIndex: 'ordering'
+		            ,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
+	                ,hidden:true
 		        }
 		    ]
 		});		

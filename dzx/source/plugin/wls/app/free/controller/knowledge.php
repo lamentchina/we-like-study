@@ -41,7 +41,7 @@ class knowledge extends wls{
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			$file = $this->c->filePath."upload/". $_FILES["file"]["name"];
+			$file = $this->c->filePath."upload/".date("YmdHis").".xls";
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 			$this->m->create();
 			$this->m->importExcel($file);
@@ -63,7 +63,7 @@ class knowledge extends wls{
 	
 	public function viewExport(){
 		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
+		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 
 	public function delete(){

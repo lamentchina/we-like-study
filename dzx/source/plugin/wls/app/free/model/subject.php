@@ -22,7 +22,7 @@ class m_subject extends wls implements dbtable,levelList{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_subject (".$keys.") values ('".$values."')";
-
+		$this->error($sql);
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -146,12 +146,13 @@ class m_subject extends wls implements dbtable,levelList{
 				$keys['ordering'] = $i;
 			}			
 		}		
+		print_r($keys);
 		
 		$data = array();
 		for($i=2;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
-				'name'=>$currentSheet->getCell($keys['name'].$i)->getValue(),
+				'name'=> $this->t->formatTitle( $currentSheet->getCell($keys['name'].$i)->getValue() ),
 			);
 			if(isset($keys['ordering'])){
 				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();

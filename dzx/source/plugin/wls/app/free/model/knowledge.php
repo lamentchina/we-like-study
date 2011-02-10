@@ -32,7 +32,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 			return false;
 		}
 	}
-	
+
 	public function update($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -55,7 +55,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 		}
 	}
 
-	public function create(){		
+	public function create(){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
@@ -92,32 +92,38 @@ class m_knowledge extends wls implements dbtable,levelList{
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['id_level']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['id_level']){
 				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['description']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['name']){
 				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['weight']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['weight']){
 				$keys['weight'] = $i;
-			}			
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
+			}
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
-			}			
-		}			
-		
+			}
+		}
+
 		$data = array();
-		for($i=3;$i<=$allRow[0];$i++){
+		for($i=2;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
 				'name'=>$this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue()),
-				'ordering'=>$currentSheet->getCell($keys['ordering'].$i)->getValue(),
-				'weight'=>$currentSheet->getCell($keys['weight'].$i)->getValue(),
-				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
 			);
+			if(isset($keys['ordering'])){
+				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();
+			}
+			if(isset($keys['description'])){
+				$data['description'] = $currentSheet->getCell($keys['description'].$i)->getValue();
+			}
+			if(isset($keys['weight'])){
+				$data['weight'] = $currentSheet->getCell($keys['weight'].$i)->getValue();
+			}
 			$this->insert($data);
 		}
 	}
@@ -131,7 +137,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['knowledge']);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
