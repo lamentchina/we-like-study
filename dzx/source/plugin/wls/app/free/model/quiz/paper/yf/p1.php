@@ -8,10 +8,10 @@ class m_quiz_paper_yf_p1 extends m_quiz_paper_yf implements yfActions{
 	public $multiChoiceLength = 10;
 
 	public function getPaper(){
-		$title = '会计_中级_财务管理'.rand(1,100);
-		if($this->yfnum!=null){
-			$title = $this->yfnum.'会计_中级_财务管理';
-		}
+		$title = '会计_中级_财务管理'.rand(1,10000);
+//		if($this->yfnum!=null){
+//			$title = $this->yfnum.'会计_中级_财务管理';
+//		}
 		$data = array(
 			 'id_level_subject'=>'1101'
 			,'name_subject'=>'财务管理'

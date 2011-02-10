@@ -276,8 +276,9 @@ class user extends wls{
 		for($i=0;$i<count($data);$i++){
 			if($data[$i]['checked']!=1)unset($data[$i]);
 		}
+//		print_r($data);exit();
 		echo json_encode(array(
-			'data'=>$data
+			'data'=>array_values($data)
 		));
 	}
 	

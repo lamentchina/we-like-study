@@ -146,7 +146,6 @@ class m_subject extends wls implements dbtable,levelList{
 				$keys['ordering'] = $i;
 			}			
 		}		
-		print_r($keys);
 		
 		$data = array();
 		for($i=2;$i<=$allRow[0];$i++){

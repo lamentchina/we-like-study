@@ -4,7 +4,7 @@ Foundations
 	QwikiOffice(tmurdock)
 	JQueryJs(jQuery project)
 	AmChart(amCharts C.O.)
-	PhpExcel(CodePlex)
+	PhpExcel(CodePlex C.O.)
 	securimage(Drew Phillips)
 Authors
 	wei1224hf

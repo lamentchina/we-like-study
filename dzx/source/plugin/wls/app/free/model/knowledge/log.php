@@ -171,6 +171,24 @@ class m_knowledge_log extends wls implements dbtable,log{
 	}
 
 	public function addLog($whatHappened){}
+	
+	public function getMyRecentAboutOneSubject($subjectid){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		include_once dirname(__FILE__)."/../user.php";
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
+		
+		$sql = " select * from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and 
+		id_level_knowledge in (
+			select ids_level_knowledge from ".$pfx."wls_subject where id_level = '".$subjectid."' 
+		); ";
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		
+		$sql = "select * from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and  ";
+	}
 
 	/**
 	 * Get my recent knowledge statics info.
@@ -185,12 +203,14 @@ class m_knowledge_log extends wls implements dbtable,log{
 		include_once dirname(__FILE__)."/../user.php";
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
+		//Get it's sub knowledge ids
 		$sql = "select id_level_knowledge from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and id_level_knowledge like '".$id."__' group by id_level_knowledge ";
 
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		$ids = "";
 		while ($temp = mysql_fetch_assoc($res)) {
+			
 			$sql_ = "select * from ".$pfx."wls_knowledge_log where id_user= ".$user['id']." and id_level_knowledge = '".$temp['id_level_knowledge']."' order by date_created desc  ";
 			$res_ = mysql_query($sql_,$conn);
 			$temp_ = mysql_fetch_assoc($res_);

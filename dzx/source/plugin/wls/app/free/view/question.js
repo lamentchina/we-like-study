@@ -65,7 +65,7 @@ var wls_question_saveComment = function(dom){
 			cc.push(Math.floor((c2*100)/(c1+c2+c3+c4)));
 			cc.push(Math.floor((c3*100)/(c1+c2+c3+c4)));
 			cc.push(Math.floor((c4*100)/(c1+c2+c3+c4)));
-			var str = il8n.WhyImWrong.Stat+":";
+			var str = il8n.statistic+":";
 			for(var i=0;i<4;i++){
 				if(i==0){
 					str += "<span style='background-color:red;color:red' title='"+il8n.whyImWrong_NotGoodEnough+","+c1+"'>";
