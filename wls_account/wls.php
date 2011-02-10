@@ -21,8 +21,16 @@ class wls{
 	 * */
 	public $c = null;
 	
+	/**
+	 * 工具包,提供一些与系统逻辑无关的,
+	 * 但是又经常用到的函数
+	 * */
 	public $t = null;
 	
+	/**
+	 * 国际化语言支持
+	 * TODO
+	 * */
 	public $lang = null;
 
 	/**
@@ -39,6 +47,7 @@ class wls{
 	/**
 	 * 得到数据库连接参数
 	 * 需要读取配置
+	 * TODO 我还不知道怎样实现持久性连接
 	 * */
 	public function conn(){
 		$conn = mysql_connect($this->c->dbhost,$this->c->dbuser,$this->c->dbpwd);

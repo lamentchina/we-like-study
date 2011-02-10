@@ -6,7 +6,7 @@ class wlsconfig{
 			public $dbuser = 'admin';
 			public $dbpwd = 'admin';
 			public $dbprefix = 'w9_';
-			public $cmstype = '';
+			public $cmstype = 'DiscuzX';
 			public $license = 'free';
 			public $libsPath = '../libs/';
 			public $filePath = '../file/';

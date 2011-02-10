@@ -65,6 +65,7 @@ class m_quiz_paper_yf_p2 extends m_quiz_paper_yf implements yfActions{
 			$description = substr($data,$p1);
 			$description = str_replace("amwser.gif>","",$description);
 			$description = str_replace("</TD></TR></TBODY></TABLE><br><input","",$description);
+			$description = str_replace("<br>","",$description);
 			
 			$this->questions[] = array(
 				 'title'=>$title
@@ -148,6 +149,7 @@ class m_quiz_paper_yf_p2 extends m_quiz_paper_yf implements yfActions{
 			$description = substr($data,$p1);
 			$description = str_replace("amwser.gif>","",$description);
 			$description = str_replace("</TD></TR></TBODY></TABLE><br><input","",$description);
+			$description = str_replace("<br>","",$description);
 
 			$question = array(
 				 'id_level_subject'=>$this->paper['id_level_subject']
@@ -242,6 +244,7 @@ class m_quiz_paper_yf_p2 extends m_quiz_paper_yf implements yfActions{
 			$description = substr($data,$p1);
 			$description = str_replace("amwser.gif>","",$description);
 			$description = str_replace("</TD></TR></TBODY></TABLE><br><input","",$description);
+			$description = str_replace("<br>","",$description);
 
 			$question = array(
 				 'id_level_subject'=>$this->paper['id_level_subject']

@@ -21,8 +21,8 @@ var readPaper = function(){
 	$.ajax({
 		url: \"wls.php?controller=install_yf_".$this->type."&action=readPaper&id=\"+arr[index],
 		success: function(msg){
-			$(\"#console\").html($(\"#console\").html()+\"<br/>下载试卷\"+arr[index]);
-			$(\"#index\").html(arr[index]+':'+arr.length);
+			//$(\"#console\").html($(\"#console\").html()+\"<br/>下载试卷\"+arr[index]);
+			$(\"#index\").html(arr[index]+':'+arr.length+':'+index);
 			index ++;
 			readPaper(index);
 		}

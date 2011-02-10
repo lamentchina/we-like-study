@@ -25,7 +25,7 @@ class il8n {
 		'freelicense'=>'自由开源软件协议 GPL3',
 		'importSysConfig'=>'导入系统配置文件',
 		'ExcelFilePath'=>'Excel文件路径',
-		'seeExampleFile'=>'参照示例文件',		
+		'seeExampleFile'=>'下载然后参照示例文件',		
 		'installDone'=>'安装完成',
 	);
 }

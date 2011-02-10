@@ -260,7 +260,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 			 id:"w_s_l_tb"
 			,items:[search,
 				    {
-				    	text: '查询',
+				    	text: il8n.search,
 				        handler : function(){  
 				        	store.load({params:{start:0, limit:15}});    
 				        }

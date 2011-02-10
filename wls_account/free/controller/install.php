@@ -188,10 +188,6 @@ class install extends wls {
 	public function saveconfig(){
 		$_POST['state']= 'running';
 		$this->rewirteConfig($_POST);
-		if($_POST['cmstype']=='DiscuzX'){
-			include_once dirname(__FILE__).'/install/discuzx.php';
-			
-		}
 
 		echo '
 		<html>

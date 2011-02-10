@@ -2,6 +2,7 @@
 header("Content-type: text/html; charset=utf-8");
 $actionid = explode("_",$_REQUEST['moduleId']);
 $actionid = $actionid[1];
+//if($actionid)
 if(file_exists('getjs/'.$actionid.".js")){
 	include_once 'getjs/'.$actionid.".js";
 }else{
