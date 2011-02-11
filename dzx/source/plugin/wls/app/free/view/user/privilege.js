@@ -6,7 +6,7 @@ wls.user.privilege = Ext.extend(wls, {
 		    url: thisObj.config.AJAXPATH+'?controller=user_privilege&action=jsonList',
 		    root: 'data',
 		    idProperty: 'id',
-		    fields: ['id','id_level', 'name','money','ismenu','icon']
+		    fields: ['id','id_level', 'name','money','ismenu','icon','isshortcut','isquickstart']
 		});
 		
 		var cm = new Ext.grid.ColumnModel({
@@ -29,15 +29,21 @@ wls.user.privilege = Ext.extend(wls, {
 	                    allowBlank: false
 	                })
 		        }, {
-		             header: il8n.menu
+		             header: il8n.ismenu
 		            ,dataIndex: 'ismenu'
-		            ,renderer:function(value){
-		                if (value == 1) {
-		                    return il8n.right;
-		                } else {
-		                    return il8n.wrong;
-		                }
-	            	}
+
+		        }, {
+		             header: il8n.isshortcut
+		            ,dataIndex: 'isshortcut'
+	            	,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
+		        }, {
+		             header: il8n.isquickstart
+		            ,dataIndex: 'isquickstart'
+	            	,editor: new Ext.form.TextField({
+	                    allowBlank: false
+	                })
 		        },{
 		        	 header: il8n.icon
 		            ,dataIndex: 'icon'

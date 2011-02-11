@@ -261,7 +261,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$objPHPExcel->setActiveSheetIndex(1);
 		$objPHPExcel->getActiveSheet()->setTitle('privilege');
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level_group']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['id_level_privilege']);			
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['id_level_privilege']);
 		$sql = "select * from ".$pfx."wls_user_group2privilege where id_level_group = '".$this->id_level."' ";
 		$res = mysql_query($sql,$conn);
 		$index = 2;
@@ -275,7 +275,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$objPHPExcel->setActiveSheetIndex(2);
 		$objPHPExcel->getActiveSheet()->setTitle('user');
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level_group']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['username']);			
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['username']);
 		$sql = "select * from ".$pfx."wls_user_group2user where id_level_group = '".$this->id_level."' ";
 		$res = mysql_query($sql,$conn);
 		$index = 2;
@@ -289,7 +289,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$objPHPExcel->setActiveSheetIndex(3);
 		$objPHPExcel->getActiveSheet()->setTitle('subject');
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level_group']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['id_level_subject']);			
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['id_level_subject']);
 		$sql = "select * from ".$pfx."wls_user_group2subject where id_level_group = '".$this->id_level."' ";
 		$res = mysql_query($sql,$conn);
 		$index = 2;
@@ -471,49 +471,50 @@ class m_user_group extends wls implements dbtable,levelList{
 			$this->insert($data);
 		}
 
+		$keys = array();
 		for($i='A';$i<$grouppoint;$i++){
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['cost']){
-				$c_money = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['money']){
+				$keys['money'] = $i;
 			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['icon']){
-				$c_icon = $i;
+				$keys['icon'] = $i;
 			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['description']){
-				$c_desc = $i;
+				$keys['description'] = $i;
 			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['name']){
-				$c_name = $i;
+				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id']){
-				$c_level = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id_level']){
+				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['desktop']){
-				$c_shortcut = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['isshortcut']){
+				$keys['isshortcut'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['startupbar']){
-				$c_quickstar = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['isquickstart']){
+				$keys['isquickstart'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['menu']){
-				$c_menu = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ismenu']){
+				$keys['ismenu'] = $i;
 			}
 		}
 		$privilegesData = array();
 		include_once dirname(__FILE__).'/privilege.php';
 		$privilegeObj = new m_user_privilege();
 		$privilegeObj->create();
-		
+
 		for($i=4;$i<=$allRow;$i++){
-			$name = $this->t->formatTitle($currentSheet->getCell($c_name.$i)->getValue());
-			$name = str_replace("<br/>&nbsp;&nbsp;","",$name);			
+			$name = $this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue());
+			$name = str_replace("<br/>&nbsp;&nbsp;","",$name);
 			$data = array(
 				'name'=>$name,
-				'id_level'=>$currentSheet->getCell($c_level.$i)->getValue(),
-				'ismenu'=>($currentSheet->getCell($c_menu.$i)->getValue()=='√')?1:0,
-				'isshortcut'=>($currentSheet->getCell($c_shortcut.$i)->getValue()=='√')?1:0,
-				'isquickstart'=>($currentSheet->getCell($c_quickstar.$i)->getValue()=='√')?1:0,
-				'icon'=>$currentSheet->getCell($c_icon.$i)->getValue(),
-				'description'=>$currentSheet->getCell($c_desc.$i)->getValue(),
-				'money'=>$currentSheet->getCell($c_money.$i)->getValue(),
+				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
+				'ismenu'=>($currentSheet->getCell($keys['ismenu'].$i)->getValue()=='√')?1:0,
+				'isshortcut'=>($currentSheet->getCell($keys['isshortcut'].$i)->getValue()=='√')?1:0,
+				'isquickstart'=>($currentSheet->getCell($keys['isquickstart'].$i)->getValue()=='√')?1:0,
+				'icon'=>$currentSheet->getCell($keys['icon'].$i)->getValue(),
+				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
+				'money'=>$currentSheet->getCell($keys['money'].$i)->getValue(),
 			);
 			$privilegesData[] = $data ;
 			$privilegeObj->insert($data);
@@ -571,18 +572,25 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 		}
 
+		$keys = array();
 		for($i='A';$i<$grouppoint;$i++){
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['name']){
+				$keys['name']  = $i;
+			}
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id_level']){
+				$keys['id_level']  = $i;
+			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['icon']){
-				$c_icon = $i;
+				$keys['icon'] = $i;
 			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['description']){
-				$c_desc = $i;
+				$keys['description']  = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['name']){
-				$c_name = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ordering']){
+				$keys['ordering']  = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id']){
-				$c_level = $i;
+			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ids_level_knowledge']){
+				$keys['ids_level_knowledge']  = $i;
 			}
 		}
 		$subjectsData = array();
@@ -591,11 +599,21 @@ class m_user_group extends wls implements dbtable,levelList{
 		$subjectObj->create();
 		for($i=4;$i<=$allRow;$i++){
 			$data = array(
-				'name'=>$this->t->formatTitle($currentSheet->getCell($c_name.$i)->getValue()),
-				'id_level'=>$currentSheet->getCell($c_level.$i)->getValue(),
-				'icon'=>$currentSheet->getCell($c_icon.$i)->getValue(),
-				'description'=>$currentSheet->getCell($c_desc.$i)->getValue(),
+				'name'=>$this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue()),
+				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
 			);
+			if(isset($keys['icon'])){
+				$data['icon'] = $currentSheet->getCell($keys['icon'].$i)->getValue();
+			}
+			if(isset($keys['description'])){
+				$data['description'] = $currentSheet->getCell($keys['description'].$i)->getValue();
+			}
+			if(isset($keys['ordering'])){
+				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();
+			}
+			if(isset($keys['ids_level_knowledge'])){
+				$data['ids_level_knowledge'] = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
+			}
 			$subjectsData[] = $data ;
 			$subjectObj->insert($data);
 		}
@@ -679,7 +697,7 @@ class m_user_group extends wls implements dbtable,levelList{
 				$columns['password'] = $i;
 			}
 		}
-		
+
 		$userData = array();
 		include_once dirname(__FILE__).'/../user.php';
 		$userObj = new m_user();
@@ -698,7 +716,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			$userData[] = $data ;
 			$userObj->insert($data);
 		}
-	
+
 		$p2u = array();
 		for($i=4;$i<=$allRow;$i++){
 			for($i2=$grouppoint;$i2<=$allColmun;$i2++){

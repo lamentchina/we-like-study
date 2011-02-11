@@ -156,6 +156,7 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
                },
                scope: this
             },
+            /*
             {
                text: '切换背景',
                handler: function(){
@@ -171,6 +172,7 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
                },              
                scope: this
             },
+            */
             '-',
             {
                text: '窗口全关',
