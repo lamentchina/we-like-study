@@ -14,5 +14,6 @@ class wlsconfig{
 			public $state = 'running';
 			public $language = 'zh-cn';
 			public $background = 'free/view/images/wallpaper2.jpg';
+			public $theme = 'xtheme-blue';
 }
 ?>
