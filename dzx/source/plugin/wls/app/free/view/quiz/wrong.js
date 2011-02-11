@@ -79,7 +79,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				"<td>"+this.count.wrong+"</td>" +	
 				"</tr>" +				
 				"<tr>" +
-				"<td>"+il8n.count_giveUp+"</td>" +
+				"<td>"+il8n.count_giveup+"</td>" +
 				"<td>"+this.count.giveup+"</td>" +	
 				"</tr>" +
 				"<tr>" +
@@ -91,7 +91,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		ac.layout.activeItem.collapse(false);		
 		ac.add({
 	    	id:'ext_wrongResult',
-	        title: il8n.Paper.Result,
+	        title: il8n.Quiz_Wrongs_Result,
 	        html: '<div id="wrongresult">aaa</div>'			
 		});
 		ac.doLayout();

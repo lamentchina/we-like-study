@@ -159,7 +159,7 @@ QoDesk.App = new Ext.app.App({
 	      "wallpaper":{
 	      	"id":10,
 	      	"name":"Lady Buggin",
-	      	"file":"free/view/qWikiOffice/resources/wallpapers/wallpaper2.jpg"
+	      	"file":"<?php echo $this->c->background ?>"
 		   }
 	   },
       launchers: {

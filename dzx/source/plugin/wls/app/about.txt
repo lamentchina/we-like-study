@@ -8,5 +8,5 @@ Foundations
 	securimage(Drew Phillips)
 Authors
 	wei1224hf
-contributors
+Contributors
 	 南湖煮酒	 

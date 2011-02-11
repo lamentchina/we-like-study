@@ -13,5 +13,6 @@ class wlsconfig{
 			public $siteName = 'We Like Study! www.welikestudy.com';
 			public $state = 'running';
 			public $language = 'zh-cn';
+			public $background = 'free/view/images/wallpaper2.jpg';
 }
 ?>

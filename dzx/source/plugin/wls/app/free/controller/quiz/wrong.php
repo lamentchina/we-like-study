@@ -85,7 +85,7 @@ class quiz_wrong extends quiz{
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 
-		$data = $this->m->getList(1,100,array(
+		$data = $this->m->getList(1,50,array(
 			'id_level_subject'=>$id_level_subject,
 			'id_user'=>$user['id'],
 		)," Order by RAND() ");
