@@ -4,6 +4,10 @@ class m_knowledge_log extends wls implements dbtable,log{
 	public $phpexcel;
 	public $id = null;
 
+	/**
+	 * The basic unit is by Hour
+	 * @param $data The keys must fit the columns
+	 * */
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -103,7 +107,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 				,date_slide int default 86400				 
 				,id_user int default 0				
 				,id_level_user_group varchar(200) default '0' 	
-				,id_level_knowledge varchar(200) default '0' 	
+				,id_level_knowledge int default 0 	
 				,count_right int default 0			
 				,count_wrong int default 0
 
@@ -180,14 +184,34 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		
-		$sql = " select * from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and 
-		id_level_knowledge in (
-			select ids_level_knowledge from ".$pfx."wls_subject where id_level = '".$subjectid."' 
-		); ";
-		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);
+		$sql = "		
+select * from pre_wls_knowledge
+left join pre_wls_knowledge_log 
+ON pre_wls_knowledge_log.id_level_knowledge = pre_wls_knowledge.id_level
+where 
+pre_wls_knowledge_log.id 
+in (
+SELECT 
+max(pre_wls_knowledge_log.id) as max_
+
+FROM pre_wls_knowledge 
+ join
+pre_wls_knowledge_log
+
+  ON pre_wls_knowledge_log.id_level_knowledge = pre_wls_knowledge.id_level
+
+WHERE instr((select ids_level_knowledge from pre_wls_subject where id_level ='".$subjectid."'),id_level)>0 
+and pre_wls_knowledge_log.id_user = ".$user['id']."
+GROUP BY pre_wls_knowledge.id_level
+)
+		";
 		
-		$sql = "select * from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and  ";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		return $data;
 	}
 
 	/**

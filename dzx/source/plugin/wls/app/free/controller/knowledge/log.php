@@ -12,13 +12,13 @@ class knowledge_log extends wls{
 	 * For client-side's Am Chart
 	 * */
 	public function getMyRaderSetting(){
-		$id = '';
+		$id = '10';
 		if(isset($_REQUEST['id']) && $_REQUEST['id']!=''){
 			$id = $_REQUEST['id'];
 		}
-		$data = $this->m->getMyRecent($id);
+		$data2 = $this->m->getMyRecentAboutOneSubject($id);
 		header('Content-Type:text/xml'); 		
-		$data2 = array_values($data);
+//		$data2 = array_values($data);
 		
 		$xml = '<?xml version="1.0" encoding="UTF-8"?>
 <settings> 

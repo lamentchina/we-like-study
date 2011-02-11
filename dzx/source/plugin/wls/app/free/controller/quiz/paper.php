@@ -157,7 +157,7 @@ class quiz_paper extends quiz{
 		for($i=0;$i<count($answers);$i++){
 			unset($answers[$i]['description']);
 			$knowledgeLog = array(
-				 'date_created'=>date('Y-m-d H:i:s')
+				 'date_created'=>date('Y-m-d H:00:00')
 				,'date_slide'=>3600
 				,'id_user'=>$user['id']
 				,'id_level_user_group'=>1

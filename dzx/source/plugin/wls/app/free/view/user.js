@@ -477,7 +477,7 @@ wls.user = Ext.extend(wls, {
 					 region:'center'
 					
 					,html:il8n.statistic+':<div id="chart1"></div><table width="100%" height="200px"><tr><td><div id="'+domid+'_uc"></div></td><td width="50%">知识点掌握:<br/>' +
-							'<div id="flashcontent"><strong>You need to upgrade your Flash Player</strong></div>' +
+							'<div id="chart2"><strong>You need to upgrade your Flash Player</strong></div>' +
 							'</div></td></tr></table>'
 				})
 								
@@ -496,10 +496,11 @@ wls.user = Ext.extend(wls, {
 		so.addVariable("path", this.config.libPath+"am/amradar/");
 		so.addVariable("chart_id", user_.myUser.id+"amradar");
 		so.addVariable("settings_file", encodeURIComponent(this.config.AJAXPATH+"?controller=knowledge_log&action=getMyRaderSetting"));
-		so.write("flashcontent");
+		so.write("chart2");
 		
 		var so = new SWFObject(this.config.libPath+"am/amline/amline.swf", user_.myUser.id+"amline", "100%", "200", "8", "#FFFFFF");
 		so.addVariable("path", this.config.libPath+"am/amline/");
+		so.addVariable("chart_id", user_.myUser.id+"amline");
 		so.addVariable("settings_file", encodeURIComponent(this.config.AJAXPATH+"?controller=subject&action=getMyQuizLine"));	
 		so.write("chart1");		
 	}
@@ -541,13 +542,12 @@ wls.user = Ext.extend(wls, {
 		    loadMask:true
 		});
 		grid.addListener('rowclick',function(t,r,e){			
-			var id_k = t.store.data.items[r].data.ids_level_knowledge;
-			var obj = document.getElementById(user_.myUser.id+"amradar");
-			obj.reloadSettings(thisObj.config.AJAXPATH+"?controller=knowledge_log&action=getMyRaderSetting&id="+id_k);
-			
 			var id_s = t.store.data.items[r].data.id_level;
-			var objs = document.getElementById(user_.myUser.id+"amline");
-			objs.reloadSettings(thisObj.config.AJAXPATH+"?controller=subject&action=getMyQuizLine&id_level_subject_="+id_s);				
+			var obj1 = document.getElementById(user_.myUser.id+"amline");
+			obj1.reloadSettings(thisObj.config.AJAXPATH+"?controller=subject&action=getMyQuizLine&id_level_subject_="+id_s);
+			
+			var obj2 = document.getElementById(user_.myUser.id+"amradar");
+			obj2.reloadSettings(thisObj.config.AJAXPATH+"?controller=knowledge_log&action=getMyRaderSetting&id="+id_s);
 		}); 
 	}
 });
