@@ -329,7 +329,36 @@ wls.subject = Ext.extend(wls, {
 				tb.add({
 			        text: il8n.Quiz_Paper,
 			        handler : function(){
-						window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id);
+			        	
+			        	
+							if(Ext.getCmp(domid).getSelectionModel().selection==null){
+								alert(il8n.clickCellInGrid);
+								return;
+							}
+							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
+							
+							var uid = user_.myUser.id;
+					        var desktop = QoDesk.App.getDesktop();
+					        
+					        var win = desktop.getWindow(pid+'_qdesk');							
+				        	var winWidth = desktop.getWinWidth();
+							var winHeight = desktop.getWinHeight();
+
+							 if(!win){
+							 win = desktop.createWindow({
+								id:pid+'_qdesk',
+						        title: Ext.getCmp(domid).getSelectionModel().selection.record.data.title,
+				                width: winWidth,
+				                height: winHeight,
+						        layout: 'fit',
+						        plain:false,
+						        html:'<iframe src="'+thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+pid+"&uid="+uid+'&temp='+Math.random()+'" style="width:100%; height:100%;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+						    });
+							 }
+						    win.show();	
+			        	
+			        	
+						//window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id);
 					}
 			    }); 
 			}
@@ -360,7 +389,7 @@ wls.subject = Ext.extend(wls, {
 	        ,width:400
 	        ,frame:true
 	        ,items:[{
-	        	title:'对错率曲线'
+	        	title:il8n.Quiz_Paper_Result + il8n.curve
 	        	,html:'<div id="'+domid+'chart"></div>'	
 	        }]
 	        ,region:'east'
