@@ -137,8 +137,6 @@ QoDesk.App = new Ext.app.App({
     * The definitions are used until the module is loaded on demand.
     */
     modules: <?php echo json_encode($modules) ?> ,
-          	
-
 
    /**
     * The desktop config object.
@@ -150,7 +148,7 @@ QoDesk.App = new Ext.app.App({
     	"theme":{
 			"id":1,
 			"name":"Blue",
-			"file":"free\/view\/qWikiOffice\/resources\/css\/xtheme-blue.css"
+			"file":"free/view/qWikiOffice/resources/css/<?php echo $this->c->theme ?>.css"
 		}
 	  },
       background: {

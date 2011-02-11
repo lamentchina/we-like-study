@@ -196,7 +196,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		        sortable: true   
 		    },
 		    columns: [{
-		             header:' '
+		             header:'&nbsp;'
 		            ,width:40
 		            ,dataIndex: 'index'
 		        },{
