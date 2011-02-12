@@ -186,6 +186,7 @@ class tools {
 		}else{
 			$title = str_replace("<img src=\"","TEMP1",$title);
 			$title = str_replace(".gif\" />","TEMP2",$title);
+			$title = str_replace(".gif\">","TEMP2",$title);
 				
 			$title = str_replace("'","&acute;",$title);
 			$title = str_replace('"','&quot;',$title);

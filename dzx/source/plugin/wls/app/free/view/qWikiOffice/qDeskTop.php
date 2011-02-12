@@ -14,65 +14,8 @@
 	src="<?php echo $this->c->libsPath ?>ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>ext_3_2_1/ext-all.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>ext_3_2_1/ext-lang-zh_CN.js"></script>
-
+<link rel="stylesheet" type="text/css" href="free/view/wls.css" />
 <link rel="stylesheet" type="text/css" href="free/view/qWikiOffice/resources/css/desktop.css" />
-
-<style type="text/css">
-.icon_user_48_48{
-	background-image:url(free/view/images/user48x48.png) !important;
-}
-.icon_user_16_16{
-	background-image:url(free/view/images/user16x16.png) !important;
-}
-.icon_layout_48_48{
-	background-image:url(free/view/images/layout48x48.png) !important;
-}
-.icon_layout_16_16{
-	background-image:url(free/view/images/layout16x16.gif) !important;
-}
-.icon_teacher_48_48{
-	background-image:url(free/view/images/teacher48x48.png) !important;
-}
-.icon_teacher_16_16{
-	background-image:url(free/view/images/teacher16x16.png) !important;
-}
-.icon_wrongbook_48_48{
-	background-image:url(free/view/images/wrongbook48x48.png) !important;
-}
-.icon_wrongbook_16_16{
-	background-image:url(free/view/images/wrongbook16x16.gif) !important;
-}
-.icon_paper_48_48{
-	background-image:url(free/view/images/paper48x48.png) !important;
-}
-.icon_paper_16_16{
-	background-image:url(free/view/images/paper16x16.png) !important;
-}
-.icon_key_48_48{
-	background-image:url(free/view/images/key48x48.png) !important;
-}
-.icon_key_16_16{
-	background-image:url(free/view/images/key16x16.gif) !important;
-}
-.icon_discuzx_48_48{
-	background-image:url(free/view/images/discuzx48x48.png) !important;
-}
-.icon_discuzx_16_16{
-	background-image:url(free/view/images/discuzx16x16.png) !important;
-}
-.icon_joomla_48_48{
-	background-image:url(free/view/images/joomla48x48.png) !important;
-}
-.icon_joomla_16_16{
-	background-image:url(free/view/images/joomla16x16.png) !important;
-}
-.icon_subject_48_48{
-	background-image:url(free/view/images/subject48x48.png) !important;
-}
-.icon_subject_16_16{
-	background-image:url(free/view/images/subject16x16.png) !important;
-}
-</style>
 
 <!--qWikiOffice Js API  -->
 <script type="text/javascript" src="free/view/qWikiOffice/client/App.js"></script>
