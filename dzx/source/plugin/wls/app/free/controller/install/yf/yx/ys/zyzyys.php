@@ -1,10 +1,10 @@
 <?php
-include_once dirname(__FILE__).'/../../yf.php';
+include_once dirname(__FILE__).'/../../../yf.php';
 
-class install_yf_gwy_xzzynl extends install_yf{
+class install_yf_yx_ys_zyzyys extends install_yf{
 
-	public $path = "E:/TDDOWNLOAD/Discuz_X_12_25/upload/source/plugin/wls3/file/yf/公务员类/模拟题试卷/国家公务员/行政职业能力/";
-	public $url = "http://www.yfzxmn.cn/com/left/left.jsp?so_id=13&su_id=5";
+	public $path = "E:/TDDOWNLOAD/Discuz_X_12_25/upload/source/plugin/wls3/file/yf/医学类/医师考试/中医执业医师/";
+	public $url = "http://www.yfzxmn.cn/com/left/left.jsp?so_id=50&su_id=11";
 
 	public function readList(){
 		$content = file($this->url);
@@ -25,8 +25,8 @@ class install_yf_gwy_xzzynl extends install_yf{
 		$arr2 = explode("ex_id=",$content);
 		$fileName=$this->path."xunlei.downlist";
 		$fileName = mb_convert_encoding($fileName,'GBK','UTF-8');
-		if(file_exists($fileName)){
-				
+		if(file_exists($fileName)){		
+			
 		}else{
 			$handle=fopen($fileName,"a");
 			$ids = '';
@@ -53,55 +53,43 @@ class install_yf_gwy_xzzynl extends install_yf{
 		$this->readPapers();
 	}
 
-	function install_yf_gwy_xzzynl(){
-		$this->type = 'gwy_xzzynl';
-		$this->path = $this->path.'5_';
-		
-		$fileName=$this->path."ids.txt";
-		$fileName = mb_convert_encoding($fileName,'GBK','UTF-8');
-		if(file_exists($fileName)){
-			$this->ids = file_get_contents($fileName);
-		}		
+	function install_yf_yx_ys_zyzyys(){
+		$this->type = 'yx_ys_zyzyys';
+		$this->path = $this->path.'11_';
 	}
 
 	public function readPaper(){
 		header("Content-type: text/html; charset=UTF-8");
-		//		include_once dirname(__FILE__).'/../../../model/quiz/paper.php';
-		//		$obj = new m_quiz_paper();
-		//		$obj->create();
-		//		include_once dirname(__FILE__).'/../../../model/question.php';
-		//		$obj = new m_question();
-		//		$obj->create();
-
-
-
-
+//		include_once dirname(__FILE__).'/../../../model/quiz/paper.php';
+//		$obj = new m_quiz_paper();
+//		$obj->create();
+//		include_once dirname(__FILE__).'/../../../model/question.php';
+//		$obj = new m_question();
+//		$obj->create();
+//		include_once dirname(__FILE__).'/../../../model/quiz/paper/yf/gwy_zyzyys.php';
+		
+//		$m = new m_quiz_paper_yf_gwy_zyzyys();
+//		$m->path = $this->path.$_REQUEST['id'].'.html';
+//		$m->yfnum = $_REQUEST['id'];
+//		$m->path = mb_convert_encoding($m->path,'GBK','UTF-8');
+		
 		$filename = $this->path.$_REQUEST['id'].'.html';
 		$filename = mb_convert_encoding($filename,'GBK','UTF-8');
 		if(!file_exists($filename)){
-			$content = file("http://www.yfzxmn.cn/user/exam/examcontext.jsp?su_id=5&ex_id=".$_REQUEST['id']);
+			$content = file("http://www.yfzxmn.cn/user/exam/examcontext.jsp?su_id=11&ex_id=".$_REQUEST['id']);
 			$content = implode("\n", $content);
 			$handle=fopen($filename,"a");
 			fwrite($handle,$content);
 			fclose($handle);
-		}else{
-//			return;
-			include_once 'free/model/quiz/paper/yf/gwy/xzzynl.php';
-			$m = new m_quiz_paper_yf_gwy_xzzynl();
-			$m->path = $this->path.$_REQUEST['id'].'.html';
-			$m->yfnum = $_REQUEST['id'];
-			$m->path = mb_convert_encoding($m->path,'GBK','UTF-8');
-			$m->readFile();
-			
-			$m->getPaper();
-
-//			$m->viewPaper();
-
-			$m->getQuestions();
-//			print_r($m->questions);
-			$m->saveQuestions();
 		}
+		//		$m->readFile();
+		//		$m->getPaper();
+		//
+		//		$m->viewPaper();
+		//
+		//		$m->getQuestions();
+		//		$m->saveQuestions();
+
 	}
-	
 }
 ?>

@@ -2,6 +2,9 @@
 include_once dirname(__FILE__).'/../../yf.php';
 
 class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{	
+	
+	public $start = null;
+	public $end = null;
 
 	public function getPaper(){
 		$title = '行政能力测试'.rand(1,100);
@@ -25,10 +28,14 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 		$this->id = $id;
 	}
 	
-	public function getPartQuestions($part1,$part2){
+	public function getPartQuestions($part1,$part2=null,$index=10,$belongto=0){
 		$content = $this->paperHtmlContent;
 		$p1 = strpos($content,$part1);
-		$p2 = strpos($content,$part2);		
+		if($part2==null){
+			$p2 = strlen($content);
+		}else{
+			$p2 = strpos($content,$part2);
+		}		
 		$content = substr($content,$p1,$p2-$p1);	
 //		echo $content;exit();		
 		
@@ -36,12 +43,15 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 		$p2 = strpos($content,"tan\" value=\"");	
 		$start = substr($content,$p1+strlen("<input type=\"radio\" name=\"s"),$p2-$p1-strlen("<input type=\"radio\" name=\"s"));
 //		echo $start;exit();	
+		$this->start = $start;
 
 		$p1 = strrpos($content,"<input type=\"radio\" name=\"s");
 		$p2 = strrpos($content,"tan\" value=\"");	
 		$end = substr($content,$p1+strlen("<input type=\"radio\" name=\"s"),$p2-$p1-strlen("<input type=\"radio\" name=\"s"));
 //		echo $end;exit();	
+		$this->end = $end;
 
+		
 		$len = $end - $start;
 //		echo $len;exit();
 		
@@ -68,9 +78,26 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 //				echo $p1;exit();
 				$p2 = strpos($data,"\"",$p1);
 				$title = substr($data,$p1,$p2-$p1);
-				$title = "<img src='IMAGEPATH".$title."'>"; 
+				
+				$p = strrpos($this->path,"/");
+				$filename = substr($this->path,0,$p)."/images.downlist";
+//				echo $filename;exit();
+				if(!file_exists($filename)){
+					$handle=fopen($filename,"a");
+					fwrite($handle,"");
+					fclose($handle);
+				}else{
+					$handle=fopen($filename,"a");
+					fwrite($handle,"http://www.yfzxmn.cn/".$title."\n");
+					fclose($handle);
+				}				
+				
+				$title = "<img src=\"__IMAGEPATH__".$title."\">"; 
 //				echo $title;exit();
 				$description = "无";		
+				
+
+//				if(file_exists())
 			}
 
 			$p1 = strpos($data,"A．");
@@ -111,6 +138,7 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 	//			echo $description;exit();
 			}
 
+			$temp = ($i>9)?$i:"0".$i;
 			$question = array(
 				 'id_level_subject'=>$this->paper['id_level_subject']
 				,'name_subject'=>$this->paper['name_subject']
@@ -129,24 +157,25 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 				,'answer'=>$answer
 				,'description'=>$description
 				
-				,'belongto'=>0
-				,'index' =>"2".$i
+				,'belongto'=>$belongto
+				,'index' =>$index.$temp
 				
 				,'ids_level_knowledge'=>$this->knowledges[rand(0,24)]
 			);
 			
-			$this->questions[] = $question;
+			$this->questions[$question['index']] = $question;
 		}
-		print_r($this->questions);exit();
+//		print_r($this->questions);exit();
 	}
 	
 	public function getQuestions(){
-
+		$this->paperHtmlContent = str_replace("数字推理","数学推理",$this->paperHtmlContent);
+		
 		$data = array(
 			 'title'=>'<b>第一部分 言语理解与表达<b/>
 <br/>每道题包含一段文字(或一个句子),后面是一个不完整的陈述,要求你从四个选项中选出一个来完成陈述.
 <br/>注意,答案可能是完成对所给文字主要意思的提要,也可能是满足陈述中其他方面的要求,你的选择应与所提要求最相符合.'
-			,'index'=>1091
+			,'index'=>1000
 			
 			,'cent'=>0
 			,'optionlength'=>0
@@ -160,15 +189,15 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']					
 		);
-		$this->questions[1091] = $data;
-		$this->getPartQuestions(1,25);
+		$this->questions[1000] = $data;
+		$this->getPartQuestions("言语理解与表达","数学推理","10");
 		
 		$data2 = array(
 			 'title'=>'<b/>第二部分 数量关系</b>
 <br/>本部分包括两种类型的题目:
 <br/><b>一.数学推理</b>
 <br/>给你一个数列,但其中缺少一项,要求你仔细观察数列的排列规律,然后从四个供选择的选项中选择你认为最合理的一项,来填补空缺项,使之符合原数列的排列规律.'			
-			,'index'=>1092
+			,'index'=>2000
 			
 			,'cent'=>0
 			,'optionlength'=>0
@@ -182,8 +211,8 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'id_quiz_paper'=>$this->paper['id']
 			,'title_quiz_paper'=>$this->paper['title']				
 		);
-		$this->questions[1092] = $data2;
-		$this->getPartQuestions(26,35);		
+		$this->questions[2000] = $data2;
+		$this->getPartQuestions("数学推理","数学运算","20");
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -197,13 +226,13 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'type'=>'大题'
 			,'belongto'=>0
 			
-			,'index'=>1093
+			,'index'=>3000
 			,'markingmethod'=>'自动批改'
 			,'answer'=>''
 			,'description'=>''				
 		);
-		$this->questions[1093] = $data;
-		$this->getPartQuestions(36,50);		
+		$this->questions[3000] = $data;
+		$this->getPartQuestions("数学运算","图形推理","30");	
 
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -219,13 +248,13 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'type'=>'大题'
 			,'belongto'=>0
 			
-			,'index'=>1094
+			,'index'=>4000
 			,'markingmethod'=>'自动批改'
 			,'answer'=>''
 			,'description'=>''				
 		);
-		$this->questions[1094] = $data;
-		$this->getPartQuestions(51,60);		
+		$this->questions[4000] = $data;
+		$this->getPartQuestions("图形推理","定义判断","40");	
 
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -239,13 +268,13 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'type'=>'大题'
 			,'belongto'=>0
 			
-			,'index'=>1095
+			,'index'=>5000
 			,'markingmethod'=>'自动批改'
 			,'answer'=>''
 			,'description'=>''				
 		);
-		$this->questions[1095] = $data;
-		$this->getPartQuestions(61,70);	
+		$this->questions[5000] = $data;
+		$this->getPartQuestions("定义判断","类比推理","50");	
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -260,13 +289,13 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'type'=>'大题'
 			,'belongto'=>0
 			
-			,'index'=>1096
+			,'index'=>6000
 			,'markingmethod'=>'自动批改'
 			,'answer'=>''
 			,'description'=>''				
 		);
-		$this->questions[1096] = $data;
-		$this->getPartQuestions(71,80);	
+		$this->questions[6000] = $data;
+		$this->getPartQuestions("类比推理","演绎推理","60");	
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -282,13 +311,13 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'type'=>'大题'
 			,'belongto'=>0
 			
-			,'index'=>1097
+			,'index'=>7000
 			,'markingmethod'=>'自动批改'
 			,'answer'=>''
 			,'description'=>''				
 		);
-		$this->questions[1097] = $data;
-		$this->getPartQuestions(81,95);	
+		$this->questions[7000] = $data;
+		$this->getPartQuestions("演绎推理","常识判断","70");	
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -303,13 +332,14 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 			,'type'=>'大题'
 			,'belongto'=>0
 			
-			,'index'=>1098
+			,'index'=>8000
 			,'markingmethod'=>'自动批改'
 			,'answer'=>''
 			,'description'=>''				
 		);
-		$this->questions[1098] = $data;
-		$this->getPartQuestions(96,115);	
+		$this->questions[8000] = $data;
+		$this->getPartQuestions("常识判断","资料分析","80");	
+		/*
 		
 		$data = array(
 			 'id_level_subject'=>$this->paper['id_level_subject']
@@ -331,156 +361,12 @@ class m_quiz_paper_yf_gwy_xzzynl extends m_quiz_paper_yf implements yfActions{
 		for($i=114;$i<130;$i+=5){
 			$this->getRead($i);
 			$this->getPartQuestions($i+2,$i+6);
-		}		
+		}
+		*/		
 	}
 	
 	public function savePathListForXunlei(){}
-	public function readFile(){
-		$path = $this->path;
 
-		$content = file($path);
-		$content = implode("\n", $content);
-		$content = mb_convert_encoding($content,'UTF-8','GBK');
-		$content = str_replace("DISPLAY: none","",$content);
-		$content = str_replace("A. ","A) ",$content);
-		$content = str_replace("B. ","B) ",$content);
-		$content = str_replace("C. ","C) ",$content);
-		$content = str_replace("D. ","D) ",$content);
-		$content = str_replace("<a id=\"donw\" href=\"","",$content);
-
-		$this->paperHtmlContent = $content;
-	}
-	public function import(){}
-
-	public function getRead($i){
-		$content = $this->paperHtmlContent;				
-		
-		$p1 = strpos($content,"s".$i."fs");
-		if($p1==false)return;
-		$p2 = strpos($content,">".($i+2).".<");
-		$data = substr($content,$p1,$p2-$p1);
-		$data = str_replace("<table width='100%'","",$data);
-		$data = str_replace("s".$i."fs type=hidden value=\"1\">","",$data);
-		$data = str_replace("border='0' cellpadding='0' cellspacing='0'>","",$data);
-		$data = str_replace("<tr><td width='1%' valign='top'","",$data);
-		$data = str_replace("src=\"","src=\"../file/images/",$data);
-		$data = array(
-			 'id_level_subject'=>$this->paper['id_level_subject']
-			,'name_subject'=>$this->paper['name_subject']
-			,'id_quiz_paper'=>$this->paper['id']
-			,'title_quiz_paper'=>$this->paper['title']
-			,'title'=>$data
-			,'cent'=>1
-			,'option1'=>0
-			,'option2'=>0
-			,'option3'=>0
-			,'option4'=>0
-			,'optionlength'=>0
-			,'date_created'=>date('Y-m-d H:i:s')
-			,'markingmethod'=>'自动批改'
-			,'type'=>'组合题'
-			,'answer'=>''
-			,'description'=>''
-			
-			,'belongto'=>0
-			,'index' =>($i+2)*100
-					
-			
-		);
-		$this->questions[($i+2)*100] = $data;		
-	}
-	
-	public function getPartQuestionsByIndex($start,$end){
-		$content = $this->paperHtmlContent;
-
-		for($i=$start;$i<=$end;$i++){
-			$p1 = strpos($content,">".$i.".</td>");
-			if($p1==false)return;
-			$p2 = strpos($content,"name=s".($i-1)."fs");
-			$data = substr($content,$p1,$p2-$p1);
-			$data = str_replace("<td width=\"50%\">","",$data);
-			$data = str_replace("</td>","",$data);
-			$data = str_replace("<tr>","",$data);
-			$data = str_replace("</tr>","",$data);
-			$data = str_replace("</div>","",$data);
-			$data = str_replace("<div>","",$data);
-
-			$p1 = strpos($data,"A．");
-			$title = substr($data,0,$p1);
-			$title = str_replace(">".$i.".<td width='99%'>","",$title);
-			$title = str_replace("<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">","",$title);
-			$title = $this->t->formatTitle($title);
-
-			$img = null;
-			if(strpos($data,'放大')!=false){
-				$p1 = strpos($data,"放大");
-				$p2 = strpos($data,"anway");
-				$img = substr($data,$p1,$p2-$p1);
-				$img = str_replace("放大 src=\"","",$img);
-				$img = str_replace("\"></table></table><a name='","",$img);
-			}
-
-			$p1 = strpos($data,"A．");
-			$p2 = strpos($data,"B．");
-			$A = substr($data,$p1,$p2-$p1);
-			$A = trim(str_replace("A．","",$A));
-
-			$p1 = strpos($data,"B．");
-			$p2 = strpos($data,"C．");
-			$B = substr($data,$p1,$p2-$p1);
-			$B = trim(str_replace("B．","",$B));
-
-			$p1 = strpos($data,"C．");
-			$p2 = strpos($data,"D．");
-			$C = substr($data,$p1,$p2-$p1);
-			$C = trim(str_replace("C．","",$C)); 
-
-			$p1 = strpos($data,"D．");
-			$p2 = strpos($data,"<",$p1);
-			$D = substr($data,$p1,$p2-$p1);
-			$D = str_replace("D．","",$D);
-			$D = trim(str_replace(">".$i,"",$D));
-
-			$p1 = strpos($data,"name=s".($i-1)."an");
-			$p2 = strpos($data,"name=s".($i-1)."t");
-			$answer = substr($data,$p1,$p2-$p1);
-			$answer = str_replace("name=s".($i-1)."an type=hidden value=\"","",$answer);
-			$answer = str_replace("\"><input","",$answer);
-			$answer = trim($answer);
-
-			$p1 = strpos($data,"amwser.gif");
-			$description = substr($data,$p1);
-			$description = str_replace("amwser.gif>","",$description);
-			$description = str_replace("</TD></TR></TBODY></TABLE><br><input","",$description);
-
-			$data = array(
-				 'id_level_subject'=>$this->paper['id_level_subject']
-				,'name_subject'=>$this->paper['name_subject']
-				,'id_quiz_paper'=>$this->paper['id']
-				,'title_quiz_paper'=>$this->paper['title']
-				,'title'=>$title
-				,'cent'=>1
-				,'option1'=>$A
-				,'option2'=>$B
-				,'option3'=>$C
-				,'option4'=>$D
-				,'optionlength'=>4
-				,'date_created'=>date('Y-m-d H:i:s')
-				,'markingmethod'=>'自动批改'
-				,'type'=>'单项选择题'
-				,'answer'=>$answer
-				,'description'=>$description
-				
-				,'belongto'=>0
-				,'index' =>$i
-			);
-
-			if($img!=null){
-				$data['title']='<img src="../file/images/'.$img.'" />';
-			}
-
-			$this->questions[$data['index']] = $data;
-		}
-	}	
+	public function import(){}	
 }
 ?>

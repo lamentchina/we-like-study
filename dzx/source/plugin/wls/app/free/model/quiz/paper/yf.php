@@ -59,6 +59,22 @@ class m_quiz_paper_yf extends m_quiz_paper{
 		$html = str_replace("src=\"","src=\"../file/images/",$html);
 		echo $html;
 	}
+	
+	public function readFile(){
+		$path = $this->path;
+
+		$content = file($path);
+		$content = implode("\n", $content);
+		$content = mb_convert_encoding($content,'UTF-8','GBK');
+		$content = str_replace("DISPLAY: none","",$content);
+		$content = str_replace("A. ","A) ",$content);
+		$content = str_replace("B. ","B) ",$content);
+		$content = str_replace("C. ","C) ",$content);
+		$content = str_replace("D. ","D) ",$content);
+		$content = str_replace("<a id=\"donw\" href=\"","",$content);
+
+		$this->paperHtmlContent = $content;
+	}
 }
 
 interface yfActions {
@@ -66,7 +82,6 @@ interface yfActions {
 	public function getPaper();
 	public function getQuestions();
 	public function savePathListForXunlei();
-	public function readFile();
 	public function import();
 	
 }

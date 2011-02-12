@@ -30,6 +30,7 @@ class m_quiz extends wls{
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
+			$temp['title'] = str_replace("__IMAGEPATH__",$this->c->filePath."images/",$temp['title']);
 			$data[] = $temp;
 		}
 		
