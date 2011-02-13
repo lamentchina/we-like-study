@@ -36,6 +36,7 @@ wls.quiz = Ext.extend(wls, {
 			switch(obj[i].type){
 				case '1':
 					ques = new wls.question.choice();
+					ques.type = "Qes_Choice";
 					ques.index = index;
 					index++;
 					ques.questionData = obj[i];
@@ -44,6 +45,7 @@ wls.quiz = Ext.extend(wls, {
 					break;	
 				case '2':
 					ques = new wls.question.multichoice();
+					ques.type = "Qes_MultiChoice";
 					ques.index = index;
 					index++;
 					ques.questionData = obj[i];
@@ -52,6 +54,7 @@ wls.quiz = Ext.extend(wls, {
 					break;	
 				case '3':
 					ques = new wls.question.check();
+					ques.type = "Qes_Check";
 					ques.index = index;
 					index++;
 					ques.questionData = obj[i];
@@ -60,6 +63,7 @@ wls.quiz = Ext.extend(wls, {
 					break;					
 				case '5':
 					ques = new wls.question.big();
+					ques.type = "Qes_Big";
 					ques.index = '';
 					ques.questionData = obj[i];
 					ques.id = obj[i].id;
@@ -76,8 +80,11 @@ wls.quiz = Ext.extend(wls, {
 		this.addNavigation();
 		this.status = 2;
 	},
-	addNavigation:function(){
-		
+	/**
+	 * Qestion Navigation , question list
+	 * On quiz left, in the according panel
+	 * */
+	addNavigation:function(){		
 		var str = '';
 		var index = 0;
 		for(var i=0;i<this.questions.length;i++){

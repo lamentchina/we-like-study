@@ -51,7 +51,7 @@ class m_quiz extends wls{
 		$keys = array_keys($myAnswers);
 		$ids = implode(",",$keys);
 		
-		$sql = "select answer,id,description,cent,type from ".$pfx."wls_question where id in (".$ids.") ; ";
+		$sql = "select answer,id,description,cent,type from ".$pfx."wls_question where id in (".$ids.") order by id ; ";
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		

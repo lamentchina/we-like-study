@@ -83,10 +83,14 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		window.clearInterval(wls_quiz_paper_clock);
 		this.answersData = [];
 		for(var i=0;i<this.questions.length;i++){
-			this.answersData.push({
-				 id:this.questions[i].id
-				,answer:this.questions[i].getMyAnswer()
-			});
+			//if(this.questions[i].type=='Qes_Big')continue;
+			//if(this.questions[i].getMyAnswer()!='I_DONT_KNOW'){
+				var ans = {
+					 id:this.questions[i].id
+					,answer:this.questions[i].getMyAnswer()
+				};
+				this.answersData.push(ans);
+			//}
 		}
 		var thisObj = this;
 		
@@ -109,6 +113,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				for(var i=0;i<obj.length;i++){
 					thisObj.questions[i].answerData = obj[i];
 				}
+
 				eval(nextFunction);
 				thisObj.showResult();
 			}
