@@ -47,7 +47,6 @@ class wls{
 		$this->c = new wlsconfig();
 		$inifile = 'language/'.$this->c->language.".ini";
 		$lang = parse_ini_file($inifile);
-
 		$this->lang = $lang;
 		$this->t = new tools();
 		$this->t->lang = $lang;		
