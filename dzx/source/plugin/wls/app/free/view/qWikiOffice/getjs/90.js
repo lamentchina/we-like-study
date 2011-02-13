@@ -1,11 +1,11 @@
 class_90 = Ext.extend(Ext.app.Module, {
-   id: 'id_90',
+			id : 'id_90',
 
-   init : function(){
+			init : function() {
 
-   },
-	
-	createWindow : function(){
-	   self.location=("/");
-    }
-});
+			},
+
+			createWindow : function() {
+				self.location = ("/");
+			}
+		});

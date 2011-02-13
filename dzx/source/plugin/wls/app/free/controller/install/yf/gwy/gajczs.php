@@ -66,12 +66,12 @@ class install_yf_gwy_gajczs extends install_yf{
 //		include_once dirname(__FILE__).'/../../../model/question.php';
 //		$obj = new m_question();
 //		$obj->create();
-//		include_once dirname(__FILE__).'/../../../model/quiz/paper/yf/gwy/gajczs.php';
-//		
-//		$m = new m_quiz_paper_yf_gwy_gajczs();
-//		$m->path = $this->path.$_REQUEST['id'].'.html';
-//		$m->yfnum = $_REQUEST['id'];
-//		$m->path = mb_convert_encoding($m->path,'GBK','UTF-8');
+		include_once dirname(__FILE__).'/../../../model/quiz/paper/yf/gwy/gajczs.php';
+		
+		$m = new m_quiz_paper_yf_gwy_gajczs();
+		$m->path = $this->path.$_REQUEST['id'].'.html';
+		$m->yfnum = $_REQUEST['id'];
+		$m->path = mb_convert_encoding($m->path,'GBK','UTF-8');
 		
 		$filename = $this->path.$_REQUEST['id'].'.html';
 		$filename = mb_convert_encoding($filename,'GBK','UTF-8');
@@ -82,14 +82,11 @@ class install_yf_gwy_gajczs extends install_yf{
 			fwrite($handle,$content);
 			fclose($handle);
 		}
-		//		$m->readFile();
-		//		$m->getPaper();
-		//
-		//		$m->viewPaper();
-		//
-		//		$m->getQuestions();
-		//		$m->saveQuestions();
-
+		$m->readFile();
+		$m->viewPaper();
+		$m->getPaper();		
+		$m->getQuestions();
+		$m->saveQuestions();
 	}
 }
 ?>
