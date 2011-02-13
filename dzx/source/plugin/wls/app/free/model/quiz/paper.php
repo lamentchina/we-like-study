@@ -310,6 +310,8 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 			$this->questions[$currentSheet->getCell($keys['index'].$i)->getValue()] = $question;
 		}
+//		print_r($this->questions);
+//		exit();
 		$this->saveQuestions();
 	}
 
@@ -586,6 +588,35 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		}else{
 			return false;
 		}
+	}
+	
+	/**
+	 * The client submit all the answers to the server , server check the answer one by one 
+	 * and return the whole paper's every question's description
+	 * 
+	 * @param $myAnswers
+	 * */
+	public function checkPaper($myAnswers,$paperId){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "select questions from ".$pfx."wls_quiz_paper where id =  ".$paperId;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);	
+		$questions = $temp['questions'];
+		
+		$arr = explode(',',$questions);
+		$data = array();
+		for($i=0;$i<count($arr);$i++){
+			$data[$arr[$i]] = 'I_DONT_KNOW'; 
+		}
+		
+		$keys = array_keys($myAnswers);
+		for($i=0;$i<count($myAnswers);$i++){
+			$data[$keys[$i]] = $myAnswers[$keys[$i]];
+		}
+		
+		return $data;
 	}
 }
 ?>
