@@ -237,3 +237,9 @@ A:hover {text-decoration: none}
 .icon_subject_16_16{
 	background-image:url("images/subject16x16.png") !important;
 }
+.icon_pcworking_48_48{
+	background-image:url("images/pcworking48x48.png") !important;
+}
+.icon_pcworking_16_16{
+	background-image:url("images/pcworking16x16.png") !important;
+}

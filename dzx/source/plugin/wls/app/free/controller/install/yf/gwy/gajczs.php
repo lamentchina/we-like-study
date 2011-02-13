@@ -66,7 +66,7 @@ class install_yf_gwy_gajczs extends install_yf{
 //		include_once dirname(__FILE__).'/../../../model/question.php';
 //		$obj = new m_question();
 //		$obj->create();
-		include_once dirname(__FILE__).'/../../../model/quiz/paper/yf/gwy/gajczs.php';
+		include_once 'free/model/quiz/paper/yf/gwy/gajczs.php';
 		
 		$m = new m_quiz_paper_yf_gwy_gajczs();
 		$m->path = $this->path.$_REQUEST['id'].'.html';
@@ -83,7 +83,7 @@ class install_yf_gwy_gajczs extends install_yf{
 			fclose($handle);
 		}
 		$m->readFile();
-		$m->viewPaper();
+//		$m->viewPaper();
 		$m->getPaper();		
 		$m->getQuestions();
 		$m->saveQuestions();

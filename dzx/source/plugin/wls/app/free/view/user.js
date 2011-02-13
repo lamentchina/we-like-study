@@ -555,10 +555,7 @@ wls.user = Ext.extend(wls, {
 				user_.myUser.id + "amradar", "320", "300", "8", "#FFFFFF");
 		so.addVariable("path", this.config.libPath + "am/amradar/");
 		so.addVariable("chart_id", user_.myUser.id + "amradar");
-		so
-				.addVariable(
-						"settings_file",
-						encodeURIComponent(this.config.AJAXPATH
+		so.addVariable("settings_file",encodeURIComponent(this.config.AJAXPATH
 								+ "?controller=knowledge_log&action=getMyRaderSetting"));
 		so.write("chart2");
 
@@ -570,7 +567,6 @@ wls.user = Ext.extend(wls, {
 						+ "?controller=subject&action=getMyQuizLine"));
 		so.write("chart1");
 	}
-
 	,
 	getMySubjectList : function(domid) {
 		var thisObj = this;
@@ -581,9 +577,14 @@ wls.user = Ext.extend(wls, {
 							+ user_.myUser.username,
 					root : 'data',
 					idProperty : 'id',
-					fields : ['id', 'name', 'id_level', 'ids_level_knowledge']
+					fields : ['id', 'name', 'id_level']
 				});
-		store.load();
+		store.load({
+				params : {
+					start : 0,
+					limit : 50
+				}
+			});
 
 		var cm = new Ext.grid.ColumnModel({
 					defaults : {
@@ -607,13 +608,17 @@ wls.user = Ext.extend(wls, {
 					renderTo : domid,
 					// width: '90%',
 					height : 500,
-					loadMask : true
+					loadMask : true,
+					bbar : new Ext.PagingToolbar({
+								store : store,
+								pageSize : 50,
+								displayInfo : true
+							})
 				});
 		grid.addListener('rowclick', function(t, r, e) {
 			var id_s = t.store.data.items[r].data.id_level;
 			var obj1 = document.getElementById(user_.myUser.id + "amline");
-			obj1
-					.reloadSettings(thisObj.config.AJAXPATH
+			obj1.reloadSettings(thisObj.config.AJAXPATH
 							+ "?controller=subject&action=getMyQuizLine&id_level_subject_="
 							+ id_s);
 

@@ -237,7 +237,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 
 		for($i=3;$i<=$allRow;$i++){
 			$question = array(
-				'index'=>$currentSheet->getCell($keys['index'].$i)->getValue(),
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
 				'title'=>$this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue()),
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
@@ -250,7 +249,14 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			);
 			if(isset($keys['belongto'])){
 				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();
+			}else{
+				$question['belongto']=0;
 			}
+			if(isset($keys['index'])){
+				$question['index']=$currentSheet->getCell($keys['index'].$i)->getValue();
+			}else{
+				$question['index']=$i;
+			}			
 			if(isset($keys['cent'])){
 				$question['cent']=$currentSheet->getCell($keys['cent'].$i)->getValue();
 			}
@@ -308,7 +314,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			if(isset($keys['ids_level_knowledge'])){
 				$question['ids_level_knowledge']=$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
 			}
-			$this->questions[$currentSheet->getCell($keys['index'].$i)->getValue()] = $question;
+			$this->questions[$question['index']] = $question;
 		}
 //		print_r($this->questions);
 //		exit();

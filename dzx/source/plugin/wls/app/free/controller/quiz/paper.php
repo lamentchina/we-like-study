@@ -49,7 +49,7 @@ class quiz_paper extends quiz{
 			$this->error(array('description'=>'wrong c q p'));
 			echo 'fail';
 		}else{
-			$file = $this->c->filePath."upload/upload".rand(1,1000).$_FILES["file"]["name"];
+			$file = $this->c->filePath."upload/upload".rand(1,1000).date('YmdHis').".xls";
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 			$this->m->importExcel($file);
 			echo 'success';
