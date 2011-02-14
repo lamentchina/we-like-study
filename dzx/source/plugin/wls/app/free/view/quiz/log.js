@@ -6,7 +6,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 	ajaxIds : function(nextFunction) {
 		var thisObj = this;
 		$.blockUI({
-					message : '<h1>' + il8n.Loading + '</h1>......'
+					message : '<h1>' + il8n.loading + '</h1>......'
 				});
 		$.ajax({
 					url : thisObj.config.AJAXPATH
@@ -155,7 +155,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		for (var i = 0; i < privilege.length; i++) {
 			if (privilege[i] == '115101') {
 				tb.add({
-					text : il8n.Import,
+					text : il8n.importFile,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_q_p_l_i',
@@ -209,8 +209,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 				tb.add({
 					text : il8n.log_review,
 					handler : function() {
-						window
-								.open(thisObj.config.AJAXPATH
+						window.open(thisObj.config.AJAXPATH
 										+ "?controller=quiz_log&action=viewOne&id="
 										+ Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
 					}
@@ -219,11 +218,11 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		}
 
 		store.load({
-					params : {
-						start : 0,
-						limit : 8
-					}
-				});
+			params : {
+				start : 0,
+				limit : 8
+			}
+		});
 		return grid;
 	},
 	getMyList : function(domid) {
