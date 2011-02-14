@@ -132,6 +132,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
+		$imagePath = "";
 		$paper = array();
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['title']){
@@ -143,6 +144,9 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['author']){
 				$paper['creator'] = $currentSheet->getCell($i."2")->getValue();
 			}
+			if($currentSheet->getCell($i."1")->getValue()==$this->lang['imagePath']){
+				$imagePath = $currentSheet->getCell($i."2")->getValue();
+			}			
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['subject']){
 				$paper['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$paper['id_level_subject']."'; ";
@@ -233,15 +237,27 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 		}
 
-		$index = 0;
-
 		for($i=3;$i<=$allRow;$i++){
+			$title = $this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());		
+			$title2 = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$title);
+
+			$tochange = "[/".$this->lang['image']."]";
+
+			$title3 = str_replace($tochange,"\">",$title2);
+			$optionlength = $currentSheet->getCell($keys['optionlength'].$i)->getValue();
+			$blankOptions = explode("[______]",$title);			
+			if($blankOptions!=false && count($blankOptions)>1){
+				$optionlength = count($blankOptions)-1;
+			}
+			$title4 = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title3);
+			$title = str_replace("___]","\"/>",$title4);
+			
 			$question = array(
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
-				'title'=>$this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue()),
+				'title'=>$title,
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
 				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
-				'optionlength'=>$currentSheet->getCell($keys['optionlength'].$i)->getValue(),
+				'optionlength'=>$optionlength,
 				'id_level_subject'=>$paper['id_level_subject'],
 				'name_subject'=>$paper['name_subject'],
 				'id_quiz_paper'=>$paper['id'],

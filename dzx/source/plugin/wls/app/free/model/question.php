@@ -36,7 +36,7 @@ class m_question extends wls implements dbtable{
 			$data['option7'] = ' ';
 		}
 		if(!isset($data['description'])){
-			$data['description'] = 'description missed';
+			$data['description'] = $this->lang['ques_description'];
 		}
 		if(!isset($data['title'])){
 			$data['title'] = 'question title missed';

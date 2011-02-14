@@ -29,6 +29,7 @@ wls.quiz = Ext.extend(wls, {
 		var index = 1;
 		for (var i = 0; i < obj.length; i++) {
 			var ques = null;
+			
 			switch (obj[i].type) {
 				case '1' :
 					ques = new wls.question.choice();
@@ -65,11 +66,22 @@ wls.quiz = Ext.extend(wls, {
 					ques.id = obj[i].id;
 					ques.quiz = this;
 					break;
+				case '7' :
+					ques = new wls.question.blank();
+					ques.type = "Qes_Blank";
+					ques.index = index;
+					index++;
+					ques.questionData = obj[i];
+					ques.id = obj[i].id;
+					ques.quiz = this;
+					break;
 				default :
 					break;
 			}
 			if (ques != null) {
-				ques.initDom();
+				//if( !(obj[i].type==7&&obj[i].id_parent!=0) ){
+					ques.initDom();
+				//}				
 				this.questions.push(ques);
 			}
 		}
@@ -116,6 +128,7 @@ wls.quiz = Ext.extend(wls, {
 	},
 	wls_quiz_nav : function(id) {
 		$("#wls_quiz_main").scrollTop($("#wls_quiz_main").scrollTop() * (-1));
+		console.debug(id);
 		var num = $("#w_qs_" + id).offset().top - 150;
 		$("#wls_quiz_main").scrollTop(num);
 	},
