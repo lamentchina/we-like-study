@@ -14,6 +14,6 @@ class wlsconfig{
 			public $state = 'running';
 			public $language = 'zh-cn';
 			public $background = 'free/view/qWikiOffice/resources/wallpapers/ladybuggin.jpg';
-			public $theme = 'xtheme-blue';
+			public $theme = 'xtheme-access';
 }
 ?>

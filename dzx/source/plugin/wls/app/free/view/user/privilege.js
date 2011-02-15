@@ -8,7 +8,7 @@ wls.user.privilege = Ext.extend(wls, {
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level', 'name', 'money', 'ismenu',
-							'icon', 'isshortcut', 'isquickstart']
+							'icon', 'isshortcut', 'isquickstart','description']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -50,6 +50,11 @@ wls.user.privilege = Ext.extend(wls, {
 								header : il8n.icon,
 								dataIndex : 'icon',
 								editor : new Ext.form.TextField()
+							}, {
+								 header : il8n.description
+								,dataIndex : 'description'
+								,editor : new Ext.form.TextField()
+								,hidden:true
 							}]
 				});
 
