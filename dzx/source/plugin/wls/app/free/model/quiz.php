@@ -24,7 +24,7 @@ class m_quiz extends wls{
 		$sql = "select 
 			id,type,title,optionlength,
 			option1,option2,option3,option4,option5,option6,option7,
-			description,cent,id_quiz_paper,id_parent,layout
+			description,cent,id_quiz_paper,id_parent,layout,path_listen
 			 from ".$pfx."wls_question where id in (".$ids.") or (id_parent !=0 and id_parent in (".$ids.")) order by id; ";
 
 		$res = mysql_query($sql,$conn);

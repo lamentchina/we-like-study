@@ -256,9 +256,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				'name_subject'=>$paper['name_subject'],
 				'id_quiz_paper'=>$paper['id'],
 				'title_quiz_paper'=>$paper['title'],			
-			);
-				
-			
+			);			
 				
 			if(isset($keys['belongto'])){
 				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();
@@ -329,7 +327,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 					$question['option7'] = $value;
 				}
 			}				
-			if(isset($keys['optionlength'])){
+			if(isset($keys['optionlength']) && ( $currentSheet->getCell($keys['optionlength'].$i)->getValue()!='') ){
 				$optionlength = $currentSheet->getCell($keys['optionlength'].$i)->getValue();
 			}
 			$question['optionlength'] = $optionlength;
@@ -338,7 +336,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				$question['description']=$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
 			}
 			if(isset($keys['path_listen'])){
-				$question['path_listen']=$currentSheet->getCell($keys['path_listen'].$i)->getValue();
+				$value = $currentSheet->getCell($keys['path_listen'].$i)->getValue();
+				if($value!=''){
+					$question['path_listen']=$imagePath.$value;
+				}				
 			}
 			if(isset($keys['count_used'])){
 				$question['count_used']=$currentSheet->getCell($keys['count_used'].$i)->getValue();

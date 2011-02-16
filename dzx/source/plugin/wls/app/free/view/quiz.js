@@ -58,6 +58,15 @@ wls.quiz = Ext.extend(wls, {
 					ques.id = obj[i].id;
 					ques.quiz = this;
 					break;
+				case '4' :
+					ques = new wls.question.depict();
+					ques.type = "Qes_Depict";
+					ques.index = index;
+					index++;
+					ques.questionData = obj[i];
+					ques.id = obj[i].id;
+					ques.quiz = this;
+					break;
 				case '5' :
 					ques = new wls.question.big();
 					ques.type = "Qes_Big";
@@ -69,18 +78,19 @@ wls.quiz = Ext.extend(wls, {
 				case '6' :
 					ques = new wls.question.mixed();
 					ques.type = "Qes_Mixed";
-					ques.index = index;
-					//index++;
+					ques.index = '';
 					ques.questionData = obj[i];
 					ques.id = obj[i].id;
 					ques.quiz = this;
 					break;					
 				case '7' :
 					ques = new wls.question.blank();
-					ques.type = "Qes_Blank";
-					ques.index = index;
+					ques.type = "Qes_Blank";					
 					if(parseInt(obj[i].id_parent)!=0){
 						index++;
+						ques.index = index;
+					}else{
+						ques.index = '';
 					}
 					ques.questionData = obj[i];
 					ques.id = obj[i].id;
