@@ -88,7 +88,8 @@ class m_question_log extends wls implements dbtable,log{
 				 
 				,date_created datetime default '1987-03-18'					 
 				,id_user int default 0				
-
+				,id_level_user_group varchar(200) default '0'
+				 	
 				,id_level_subject varchar(200) default '0' 	
 				,id_quiz_paper int default 0		
 				,id_quiz_log int default 0					

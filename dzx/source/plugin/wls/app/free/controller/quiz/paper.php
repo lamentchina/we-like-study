@@ -160,7 +160,7 @@ class quiz_paper extends quiz{
 				 'date_created'=>date('Y-m-d H:00:00')
 				,'date_slide'=>3600
 				,'id_user'=>$user['id']
-				,'id_level_user_group'=>1
+				,'id_level_user_group'=>$user['group']
 				,'id_question'=>$answers[$i]['id']
 			);
 			
@@ -174,7 +174,19 @@ class quiz_paper extends quiz{
 				
 				//Set the knowledge log
 				$knowledgeLog['count_right'] = 1;				
-				$knowledgeLogObj->insert($knowledgeLog);				
+//				$knowledgeLogObj->insert($knowledgeLog);				
+			}else if( ((int)$answers[$i]['type']) == 7 && (((int)$answers[$i]['id_parent'])!=0) && 
+				($answers[$i]['myAnswer']==$answers[$i]['option2'] ||
+				$answers[$i]['myAnswer']==$answers[$i]['option3'] ||
+				$answers[$i]['myAnswer']==$answers[$i]['option4'])  ){
+
+				$answers[$i]['correct'] = 1;
+				$count_right ++;
+				$mycent += $answers[$i]['cent'];
+				
+				//Set the knowledge log
+				$knowledgeLog['count_right'] = 1;				
+//				$knowledgeLogObj->insert($knowledgeLog);				
 			}else{
 				if($answers[$i]['type']!=5){
 					$obj_->id_question = $answers[$i]['id'];
@@ -193,7 +205,7 @@ class quiz_paper extends quiz{
 					
 					//Set the knowledge log
 					$knowledgeLog['count_wrong'] = 1;
-					$knowledgeLogObj->insert($knowledgeLog);
+//					$knowledgeLogObj->insert($knowledgeLog);
 				}
 			}		
 			
@@ -205,7 +217,14 @@ class quiz_paper extends quiz{
 			$answers[$i]['id_quiz_log'] = $id_quiz_log;
 			$answers[$i]['id_quiz_paper'] = $id;
 			$answers[$i]['id_level_subject'] = $item['id_level_subject'];
-								
+
+			$quesLogData = array(
+				 'date_created'=>date('Y-m-d H:i:s')
+				,'id_user'=>$user['id']
+				,'id_level_user_group'=>$user['group']
+				,'id_question'=>$answers[$i]['id']
+				,'id_question_parent'=>$answers[$i]['id_parent']
+			);
 			$quesLogObj->insert($answers[$i]);
 		}
 
