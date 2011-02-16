@@ -146,7 +146,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['imagePath']){
 				$imagePath = $currentSheet->getCell($i."2")->getValue();
-			}			
+			}
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['subject']){
 				$paper['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$paper['id_level_subject']."'; ";
@@ -156,7 +156,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}
 		}
 		$paper['date_created'] = date('Y-m-d H:i:s');
-		$paper['id'] = $this->insert($paper);		
+		$paper['id'] = $this->insert($paper);
 		$this->id = $paper['id'];
 		$this->paper = $paper;
 
@@ -235,34 +235,31 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
 			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['layout']){
+				$keys['layout'] = $i;
+			}			
 		}
 
 		for($i=3;$i<=$allRow;$i++){
-			$title = $this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());		
-			$title2 = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$title);
-
-			$tochange = "[/".$this->lang['image']."]";
-
-			$title3 = str_replace($tochange,"\">",$title2);
-			$optionlength = $currentSheet->getCell($keys['optionlength'].$i)->getValue();
-			$blankOptions = explode("[______]",$title);			
-			if($blankOptions!=false && count($blankOptions)>1){
-				$optionlength = count($blankOptions)-1;
-			}
-			$title4 = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title3);
-			$title = str_replace("___]","\"/>",$title4);
-			
+			$title = $this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());
+			$title = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$title);
+			$title = str_replace("[/".$this->lang['image']."]","\">",$title);
+			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
+			$title = str_replace("___]","\"/>",$title);
+				
 			$question = array(
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
 				'title'=>$title,
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
 				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
-				'optionlength'=>$optionlength,
 				'id_level_subject'=>$paper['id_level_subject'],
 				'name_subject'=>$paper['name_subject'],
 				'id_quiz_paper'=>$paper['id'],
 				'title_quiz_paper'=>$paper['title'],			
 			);
+				
+			
+				
 			if(isset($keys['belongto'])){
 				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();
 			}else{
@@ -272,28 +269,71 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				$question['index']=$currentSheet->getCell($keys['index'].$i)->getValue();
 			}else{
 				$question['index']=$i;
-			}			
+			}
 			if(isset($keys['cent'])){
 				$question['cent']=$currentSheet->getCell($keys['cent'].$i)->getValue();
 			}
-			if(isset($keys['option2'])){
-				$question['option2']=$this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
+			
+			$optionlength = 1;
+			if(isset($keys['option2']) ){
+				$value = $this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
+				if($value!=''){
+					$optionlength = 2;
+					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
+					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$question['option2'] = $value;
+				}
 			}
-			if(isset($keys['option3'])){
-				$question['option3']=$this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue());
+			if(isset($keys['option3']) ){
+				$value = $this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue());
+				if($value!=''){
+					$optionlength = 3;
+					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
+					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$question['option3'] = $value;
+				}
 			}
-			if(isset($keys['option4'])){
-				$question['option4']=$this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue());
+			if(isset($keys['option4']) ){
+				$value = $this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue());
+				if($value!=''){
+					$optionlength = 4;
+					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
+					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$question['option4'] = $value;
+				}
 			}
-			if(isset($keys['option5'])){
-				$question['option5']=$this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue());
+			if(isset($keys['option5']) ){
+				$value = $this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue());
+				if($value!=''){
+					$optionlength = 5;
+					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
+					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$question['option5'] = $value;
+				}
 			}
-			if(isset($keys['option6'])){
-				$question['option6']=$this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue());
+			if(isset($keys['option6']) ){
+				$value = $this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue());
+				if($value!=''){
+					$optionlength = 6;
+					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
+					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$question['option6'] = $value;
+				}
 			}
-			if(isset($keys['option7'])){
-				$question['option7']=$this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue());
+			if(isset($keys['option7']) ){
+				$value = $this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue());
+				if($value!=''){
+					$optionlength = 7;
+					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
+					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$question['option7'] = $value;
+				}
+			}				
+			if(isset($keys['optionlength'])){
+				$optionlength = $currentSheet->getCell($keys['optionlength'].$i)->getValue();
 			}
+			$question['optionlength'] = $optionlength;
+				
 			if(isset($keys['description'])){
 				$question['description']=$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
 			}
@@ -330,10 +370,16 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			if(isset($keys['ids_level_knowledge'])){
 				$question['ids_level_knowledge']=$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
 			}
+			if(isset($keys['layout'])){
+				$value = $currentSheet->getCell($keys['layout'].$i)->getValue();
+				if($value!=''){
+					$question['layout']=$this->t->formatLayout($value,true);
+				}				
+			}			
 			$this->questions[$question['index']] = $question;
 		}
-//		print_r($this->questions);
-//		exit();
+		//		print_r($this->questions);
+		//		exit();
 		$this->saveQuestions();
 	}
 
@@ -486,7 +532,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				include_once dirname(__FILE__)."/../user.php";
 				$userObj = new m_user();
 				$user = $userObj->getMyInfo();
-				
+
 				$sql = "update ".$pfx."wls_quiz_paper set
 					score_top_user = '".$user['username']."',
 					score_top = '".$this->mycent."' 
@@ -590,7 +636,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		include_once dirname(__FILE__)."/../user.php";
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
-		
+
 		if($user['money']>$temp['money']){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
 
@@ -611,6 +657,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			return false;
 		}
 	}
-	
+
 }
 ?>

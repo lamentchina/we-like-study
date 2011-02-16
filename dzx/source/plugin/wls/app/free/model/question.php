@@ -100,14 +100,14 @@ class m_question extends wls implements dbtable{
 				
 				,description text					
 				,cent float default 0				
+				,layout int default 1 /*1 vertical 0 horizonal */
 				
 				,id_level_subject int default 0			
 				,name_subject varchar(200) default 'Subject Missed'		
 				,id_quiz_paper int default	0		
 				,title_quiz_paper varchar(200) default 'Paper Title Missed'	
 				,id_parent int default 0			/*If it's a big question , mixed quesiton or depict question*/
-				,path_listen varchar(200) default '0'  			/*If this question has listenning file*/
-								
+				,path_listen varchar(200) default '0'  			/*If this question has listenning file*/								
 
 				,date_created datetime not null 		
 

@@ -1,25 +1,40 @@
 wls.question.choice = Ext.extend(wls.question, {
-
 			initDom : function() {
 				$("#wls_quiz_main").append("<div id='w_qs_" + this.id
-						+ "'></div>");
-				$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
-						+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
-						+ this.questionData.title + "</div>");
-				$("#w_qs_" + this.id)
-						.append("<span class='w_qw_options'></span>");
-				for (var i = 0; i < parseInt(this.questionData.optionlength); i++) {
-					eval("var title = this.questionData.option" + (i + 1));
-					var str = "<div>" + String.fromCharCode(i + 65)
-							+ ":&nbsp;<input type='radio' name='w_qs_"
-							+ this.id + "' value='"
-							+ String.fromCharCode(i + 65) + "' />&nbsp;"
-							+ title;
-					if (i != parseInt(this.questionData.optionlength) - 1) {
-						str += "</div>";
+						+ "'></div>");				
+				if(parseInt(this.questionData.layout)==0){
+					$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
+							+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
+							+ this.questionData.title + "</div>");
+					$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
+					
+					var str = "<table width='90%'><tr>";					
+					for (var i = 0; i < parseInt(this.questionData.optionlength); i++) {
+						eval("var title = this.questionData.option" + (i + 1));
+						str += ("<td width='"+parseInt(100/this.questionData.optionlength)+"%'>" + String.fromCharCode(i + 65) + ":&nbsp;<input type='radio' name='w_qs_" + this.id + "' value='" + String.fromCharCode(i + 65) + "' />&nbsp;" + title+"</td>");						
+					}					
+					str += "</tr></table>";
+					$(".w_qw_options", "#w_qs_" + this.id).append(str);					
+				}else{
+					$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
+							+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
+							+ this.questionData.title + "</div>");
+					$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
+					
+					for (var i = 0; i < parseInt(this.questionData.optionlength); i++) {
+						eval("var title = this.questionData.option" + (i + 1));
+						var str = "<div>" + String.fromCharCode(i + 65)
+								+ ":&nbsp;<input type='radio' name='w_qs_"
+								+ this.id + "' value='"
+								+ String.fromCharCode(i + 65) + "' />&nbsp;"
+								+ title;
+						if (i != parseInt(this.questionData.optionlength) - 1) {
+							str += "</div>";
+						}
+						$(".w_qw_options", "#w_qs_" + this.id).append(str);
 					}
-					$(".w_qw_options", "#w_qs_" + this.id).append(str);
 				}
+
 				this.cent = this.questionData.cent;
 				this.questionData = null;
 			},
@@ -63,7 +78,6 @@ wls.question.choice = Ext.extend(wls.question, {
 					if (this.quiz.type == 'paper')
 						this.addWhyImWrong();
 				}
-
 				obj = null;
 			},
 			getMyAnswer : function() {

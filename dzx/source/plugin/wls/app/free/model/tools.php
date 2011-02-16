@@ -152,6 +152,19 @@ class tools {
 		return $config[$key];
 	}
 
+	public function formatLayout($key,$bool=false){
+		$config = array(
+			'1'=>$this->lang['vertical'],
+			'0'=>$this->lang['horizonal'],
+		);
+
+		if($bool){
+			$config = array_flip($config);
+		}
+
+		return $config[$key];
+	}
+	
 	public function formatApplicationType($key,$bool=false){
 		$config = array(
 			'0'=>$this->lang['Quiz_Paper'],
