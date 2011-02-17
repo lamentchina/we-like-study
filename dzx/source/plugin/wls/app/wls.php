@@ -136,9 +136,7 @@ class wls{
 					//System should get the current user from CMS
 					eval("include_once 'free/model/integration/".$_REQUEST['cmstype'].".php';");
 					eval('$bridge = new m_integration_'.$_REQUEST['cmstype'].'();');	
-					
 					$username = $bridge->bridge();
-
 				}else{	
 					if($this->c->cmstype!=''){
 						header("location:wls.php?cmstype=".$this->c->cmstype); 	
@@ -154,13 +152,11 @@ class wls{
 				}
 				
 				$m_user->login($username);				
-				
 				$menuStff = $m_user->getMyMenuWithShortCut();
 				$modules = $menuStff['modules'];
 				$quickstart = $menuStff['quickstart'];
 				$shortcut = $menuStff['shortcut'];
-				$menus = $menuStff['menus'];
-				
+				$menus = $menuStff['menus'];				
 				include_once "free/view/qWikiOffice/qDeskTop.php";
 			}
 		}
