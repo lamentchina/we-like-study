@@ -144,9 +144,9 @@ wls.subject = Ext.extend(wls, {
 							})
 				});
 
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '190701') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '190701') {
 				tb.add({
 					text : il8n.importFile,
 					handler : function() {
@@ -162,7 +162,7 @@ wls.subject = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '190702') {
+			} else if (access[i] == '190702') {
 				tb.add({
 					text : il8n.exportFile,
 					handler : function() {
@@ -178,7 +178,7 @@ wls.subject = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '190703') {
+			} else if (access[i] == '190703') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -198,9 +198,9 @@ wls.subject = Ext.extend(wls, {
 						});
 					}
 				});
-			} else if (privilege[i] == '190704') {
+			} else if (access[i] == '190704') {
 				grid.on("afteredit", afteredit, grid);
-			} else if (privilege[i] == '190705') {
+			} else if (access[i] == '190705') {
 				tb.add({
 							text : il8n.add,
 							handler : function() {
@@ -317,9 +317,9 @@ wls.subject = Ext.extend(wls, {
 							})
 				});
 
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '1102') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '1102') {
 				tb.add({
 					text : il8n.exportFile,
 					handler : function() {
@@ -335,7 +335,7 @@ wls.subject = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '1103') {
+			} else if (access[i] == '1103') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -355,9 +355,9 @@ wls.subject = Ext.extend(wls, {
 						});
 					}
 				});
-			} else if (privilege[i] == '1104') {
+			} else if (access[i] == '1104') {
 				grid.on("afteredit", afteredit, grid);
-			} else if (privilege[i] == '1107') {
+			} else if (access[i] == '1107') {
 				tb.add({
 					text : il8n.Quiz_Paper,
 					handler : function() {

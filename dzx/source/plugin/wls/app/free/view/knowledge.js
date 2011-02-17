@@ -59,9 +59,9 @@ wls.knowledge = Ext.extend(wls, {
 							})
 				});
 
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '190801') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '190801') {
 				tb.add({
 					text : il8n.importFile,
 					handler : function() {
@@ -77,7 +77,7 @@ wls.knowledge = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '190802') {
+			} else if (access[i] == '190802') {
 				tb.add({
 					text : il8n.exportFile,
 					handler : function() {
@@ -93,7 +93,7 @@ wls.knowledge = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '190803') {
+			} else if (access[i] == '190803') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -113,9 +113,9 @@ wls.knowledge = Ext.extend(wls, {
 						});
 					}
 				});
-			} else if (privilege[i] == '190804') {
+			} else if (access[i] == '190804') {
 				grid.on("afteredit", afteredit, grid);
-			} else if (privilege[i] == '190805') {
+			} else if (access[i] == '190805') {
 				// TODO
 			}
 			function afteredit(e) {

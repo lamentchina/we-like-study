@@ -1,10 +1,10 @@
-wls.user.privilege = Ext.extend(wls, {
+wls.user.access = Ext.extend(wls, {
 	getList : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=user_privilege&action=jsonList',
+							+ '?controller=user_access&action=jsonList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level', 'name', 'money', 'ismenu',
@@ -77,14 +77,14 @@ wls.user.privilege = Ext.extend(wls, {
 					 * new Ext.Window({ title: il8n.importFile, id:'w_u_p_l_i',
 					 * layout:'fit', width:500, modal:true, height:300, html: "<iframe
 					 * src
-					 * ='"+thisObj.config.AJAXPATH+"?controller=user_privilege&action=viewUpload'
+					 * ='"+thisObj.config.AJAXPATH+"?controller=user_access&action=viewUpload'
 					 * width='100%' height='250' frameborder='no' border='0'
 					 * marginwidth='0' marginheight='0' />" }); win.show(this); }
 					 * },{ text: il8n.exportFile, handler : function(){ var win =
 					 * new Ext.Window({ title: il8n.exportFile, id:'w_u_g_l_e',
 					 * layout:'fit', width:500, modal:true, height:300, html: "<iframe
 					 * src
-					 * ='"+thisObj.config.AJAXPATH+"?controller=user_privilege&action=viewExport'
+					 * ='"+thisObj.config.AJAXPATH+"?controller=user_access&action=viewExport'
 					 * width='100%' height='250' frameborder='no' border='0'
 					 * marginwidth='0' marginheight='0' />" }); win.show(this); }
 					 * }],
@@ -100,7 +100,7 @@ wls.user.privilege = Ext.extend(wls, {
 			Ext.Ajax.request({
 						method : 'POST',
 						url : thisObj.config.AJAXPATH
-								+ "?controller=user_privilege&action=saveUpdate",
+								+ "?controller=user_access&action=saveUpdate",
 						success : function(response) {
 							// Ext.Msg.alert('success',response.responseText);
 						},
@@ -124,10 +124,10 @@ wls.user.privilege = Ext.extend(wls, {
 		if (typeof(user_) == "undefined") {
 			//
 		} else {
-			var privilege = user_.myUser.privilege.split(",");
+			var access = user_.myUser.access.split(",");
 
-			for (var i = 0; i < privilege.length; i++) {
-				if (privilege[i] == '190701') {
+			for (var i = 0; i < access.length; i++) {
+				if (access[i] == '190701') {
 					tb.add({
 						text : il8n.importFile,
 						handler : function() {
@@ -140,12 +140,12 @@ wls.user.privilege = Ext.extend(wls, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=user_privilege&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+										+ "?controller=user_access&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
 					});
-				} else if (privilege[i] == '190702') {
+				} else if (access[i] == '190702') {
 					tb.add({
 						text : il8n.exportFile,
 						handler : function() {
@@ -158,12 +158,12 @@ wls.user.privilege = Ext.extend(wls, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=user_privilege&action=viewExport' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+										+ "?controller=user_access&action=viewExport' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
 					});
-				} else if (privilege[i] == '190703') {
+				} else if (access[i] == '190703') {
 					// TODO
 				}
 			}

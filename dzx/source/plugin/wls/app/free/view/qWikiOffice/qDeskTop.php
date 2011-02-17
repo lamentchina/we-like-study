@@ -32,7 +32,7 @@
 <script type="text/javascript" src="free/view/wls.js"></script>
 <script type="text/javascript" src="free/view/user.js"></script>
 <script type="text/javascript" src="free/view/user/group.js"></script>
-<script type="text/javascript" src="free/view/user/privilege.js"></script>
+<script type="text/javascript" src="free/view/user/access.js"></script>
 <script type="text/javascript" src="free/view/quiz.js"></script>
 <script type="text/javascript" src="free/view/quiz/paper.js"></script>
 <script type="text/javascript" src="free/view/quiz/wrong.js"></script>
@@ -49,7 +49,7 @@ if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){
 <script type="text/javascript">
 <?php 
  
-echo "user_.myUser.privilege = '".$_SESSION['wls_user']['privilege']."';\n";
+echo "user_.myUser.access = '".$_SESSION['wls_user']['access']."';\n";
 echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
 echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
 echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";

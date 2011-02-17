@@ -276,9 +276,9 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		if (typeof(user_) == "undefined") {
 			//
 		} else {
-			var privilege = user_.myUser.privilege.split(",");
-			for (var i = 0; i < privilege.length; i++) {
-				if (privilege[i] == '1101') {
+			var access = user_.myUser.access.split(",");
+			for (var i = 0; i < access.length; i++) {
+				if (access[i] == '1101') {
 					tb.add({
 						text : il8n.importFile,
 						handler : function() {
@@ -296,7 +296,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							win.show(this);
 						}
 					});
-				} else if (privilege[i] == '1102') {
+				} else if (access[i] == '1102') {
 					tb.add({
 						text : il8n.exportFile,
 						handler : function() {
@@ -321,7 +321,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							win.show(this);
 						}
 					});
-				} else if (privilege[i] == '1103') {
+				} else if (access[i] == '1103') {
 					tb.add({
 						text : il8n.deleteItems,
 						handler : function() {
@@ -346,7 +346,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							});
 						}
 					});
-				} else if (privilege[i] == '1107') {
+				} else if (access[i] == '1107') {
 					tb.add('-', {
 						text : il8n.Quiz_Paper,
 						handler : function() {
@@ -388,9 +388,9 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							// window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id+"&uid="+user_.myUser.id);
 						}
 					});
-				} else if (privilege[i] == '1104') {
+				} else if (access[i] == '1104') {
 					grid.on("afteredit", afteredit, grid);
-				} else if (privilege[i] == '1105') {
+				} else if (access[i] == '1105') {
 					// TODO
 				}
 			}

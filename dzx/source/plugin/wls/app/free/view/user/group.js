@@ -112,9 +112,9 @@ wls.user.group = Ext.extend(wls, {
 							})
 				});
 
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '1301') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '1301') {
 				tb.add({
 					text : il8n.importFile,
 					handler : function() {
@@ -130,7 +130,7 @@ wls.user.group = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '130101') {
+			} else if (access[i] == '130101') {
 				tb.add({
 					text : il8n.importFile + '(1)',
 					handler : function() {
@@ -146,7 +146,7 @@ wls.user.group = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '1302') {
+			} else if (access[i] == '1302') {
 				tb.add({
 					text : il8n.exportFile,
 					handler : function() {
@@ -162,7 +162,7 @@ wls.user.group = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '130201') {
+			} else if (access[i] == '130201') {
 				tb.add({
 					text : il8n.exportFile + '(1)',
 					handler : function() {
@@ -180,7 +180,7 @@ wls.user.group = Ext.extend(wls, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '1303') {
+			} else if (access[i] == '1303') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -202,11 +202,11 @@ wls.user.group = Ext.extend(wls, {
 						});
 					}
 				});
-			} else if (privilege[i] == '1304') {
+			} else if (access[i] == '1304') {
 				grid.on("afteredit", afteredit, grid);
-			} else if (privilege[i] == '130401') {
+			} else if (access[i] == '130401') {
 				tb.add({
-					text : il8n.privilege,
+					text : il8n.access,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selection == null)
 							return;// TODO
@@ -229,7 +229,7 @@ wls.user.group = Ext.extend(wls, {
 
 							// auto create TreeLoader
 							dataUrl : thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=getPrivilege&id="
+									+ "?controller=user_group&action=getaccess&id="
 									+ id,
 							buttons : [{
 								text : il8n.submit,
@@ -244,7 +244,7 @@ wls.user.group = Ext.extend(wls, {
 									Ext.Ajax.request({
 										method : 'POST',
 										url : thisObj.config.AJAXPATH
-												+ "?controller=user_group&action=updatePrivilege",
+												+ "?controller=user_group&action=updateaccess",
 										success : function(response) {
 											Ext.getCmp("w_u_g_l_p_w").close();
 										},
@@ -265,7 +265,7 @@ wls.user.group = Ext.extend(wls, {
 						var win = new Ext.Window({
 									id : 'w_u_g_l_p_w',
 									layout : 'fit',
-									title : il8n.Privilege,
+									title : il8n.access,
 									width : 500,
 									height : 300,
 									modal : true,
@@ -275,7 +275,7 @@ wls.user.group = Ext.extend(wls, {
 
 					}
 				});
-			} else if (privilege[i] == '130402') {
+			} else if (access[i] == '130402') {
 				tb.add({
 					text : il8n.subject,
 					handler : function() {
@@ -344,7 +344,7 @@ wls.user.group = Ext.extend(wls, {
 
 					}
 				});
-			} else if (privilege[i] == '1305') {
+			} else if (access[i] == '1305') {
 				tb.add({
 							text : il8n.add,
 							handler : function() {

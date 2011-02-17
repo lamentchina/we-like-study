@@ -385,7 +385,7 @@ wls.user = Ext.extend(wls, {
 									},
 									params : {
 										username : username,
-										privileges : s.substring(0, s.length
+										accesss : s.substring(0, s.length
 														- 1)
 									}
 								});
@@ -406,7 +406,7 @@ wls.user = Ext.extend(wls, {
 					win.show(this);
 				}
 			}, {
-				text : il8n.privilege,
+				text : il8n.access,
 				handler : function() {
 					var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
 					var tree = new Ext.tree.TreePanel({
@@ -426,7 +426,7 @@ wls.user = Ext.extend(wls, {
 						},
 
 						dataUrl : thisObj.config.AJAXPATH
-								+ "?controller=user&action=getTreePrivilege&username="
+								+ "?controller=user&action=getTreeaccess&username="
 								+ username
 
 					});
@@ -434,7 +434,7 @@ wls.user = Ext.extend(wls, {
 					var win = new Ext.Window({
 								id : 'w_u_l_p_w',
 								layout : 'fit',
-								title : username + " " + il8n.Privilege,
+								title : username + " " + il8n.access,
 								width : 500,
 								height : 300,
 								modal : true,
@@ -547,8 +547,8 @@ wls.user = Ext.extend(wls, {
 				+ user_.myUser.money + il8n.money + "</div>" + "<div>:"
 				+ il8n.subjectsCountJoined
 				+ user_.myUser.subject.split(',').length + "</div>" + "<div>:"
-				+ il8n.privilegesCountJoined
-				+ user_.myUser.privilege.split(',').length + "</div>";
+				+ il8n.accesssCountJoined
+				+ user_.myUser.access.split(',').length + "</div>";
 		$('#' + domid + '_uc').append(str);
 		this.getMySubjectList(domid + '_subjects');
 		var so = new SWFObject(this.config.libPath + "am/amradar/amradar.swf",

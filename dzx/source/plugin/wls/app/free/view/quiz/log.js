@@ -151,9 +151,9 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							})
 				});
 
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '115101') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '115101') {
 				tb.add({
 					text : il8n.importFile,
 					handler : function() {
@@ -169,7 +169,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '115102') {
+			} else if (access[i] == '115102') {
 				tb.add({
 					text : il8n.exportFile,
 					handler : function() {
@@ -185,7 +185,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						win.show(this);
 					}
 				});
-			} else if (privilege[i] == '115103') {
+			} else if (access[i] == '115103') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -205,7 +205,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						});
 					}
 				});
-			} else if (privilege[i] == '115107') {
+			} else if (access[i] == '115107') {
 				tb.add({
 					text : il8n.log_review,
 					handler : function() {
@@ -255,9 +255,9 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							})
 				});
 
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '125301') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '125301') {
 				tb.add({
 					text : il8n.log_review,
 					handler : function() {

@@ -165,9 +165,9 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								displayInfo : true
 							})
 				});
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '115303') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '115303') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -263,9 +263,9 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								displayInfo : true
 							})
 				});
-		var privilege = user_.myUser.privilege.split(",");
-		for (var i = 0; i < privilege.length; i++) {
-			if (privilege[i] == '125003') {
+		var access = user_.myUser.access.split(",");
+		for (var i = 0; i < access.length; i++) {
+			if (access[i] == '125003') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
@@ -295,7 +295,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 						});
 					}
 				});
-			} else if (privilege[i] == '125007') {
+			} else if (access[i] == '125007') {
 				tb.add({
 					text : il8n.Quiz_Wrongs,
 					handler : function() {
