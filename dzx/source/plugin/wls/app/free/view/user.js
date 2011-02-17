@@ -665,8 +665,9 @@ wls.user = Ext.extend(wls, {
 						method : 'POST',
 						params : form.getForm().getValues(),
 						url : thisObj.config.AJAXPATH + "?controller=user&action=rewriteConfig&temp=" + Math.random(),
-							success : function(response) {
-							var obj = jQuery.parseJSON(response.responseText);
+						success : function(response) {
+							alert(il8n.success);
+							location.reload();
 						},
 						failure : function(response) {
 							//TODO			

@@ -208,13 +208,13 @@ A:hover {text-decoration: none}
 	background-image:url("images/access48x48.png") !important;
 }
 .icon_access_16_16{
-	background-image:url("images/access16x16.gif") !important;
+	background-image:url("images/access16x16.png") !important;
 }
 .icon_excel_48_48{
 	background-image:url("images/excel48x48.png") !important;
 }
 .icon_excel_16_16{
-	background-image:url("images/excel16x16.gif") !important;
+	background-image:url("images/excel16x16.png") !important;
 }
 .icon_teacher_48_48{
 	background-image:url("images/teacher48x48.png") !important;
@@ -226,7 +226,7 @@ A:hover {text-decoration: none}
 	background-image:url("images/wrongbook48x48.png") !important;
 }
 .icon_wrongbook_16_16{
-	background-image:url("images/wrongbook16x16.gif") !important;
+	background-image:url("images/wrongbook16x16.png") !important;
 }
 .icon_paper_48_48{
 	background-image:url("images/paper48x48.png") !important;
@@ -263,4 +263,10 @@ A:hover {text-decoration: none}
 }
 .icon_pcworking_16_16{
 	background-image:url("images/pcworking16x16.png") !important;
+}
+.icon_server_48_48{
+	background-image:url("images/server48x48.png") !important;
+}
+.icon_server_16_16{
+	background-image:url("images/server16x16.png") !important;
 }
