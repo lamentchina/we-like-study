@@ -21,6 +21,12 @@ class m_question_log extends wls implements dbtable,log{
 		if(!isset($data['answer'])){
 			$data['answer'] = 'A';
 		}		
+		if(!isset($data['description'])){
+			$data['description'] = ' ';
+		}		
+		if(!isset($data['date_created'])){
+			$data['date_created'] = date('Y-m-d H:i:s');
+		}			
 
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -88,19 +94,19 @@ class m_question_log extends wls implements dbtable,log{
 				 
 				,date_created datetime default '1987-03-18'					 
 				,id_user int default 0				
-				,id_level_user_group varchar(200) default '0'
-				 	
-				,id_level_subject varchar(200) default '0' 	
-				,id_quiz_paper int default 0		
-				,id_quiz_log int default 0					
+				,id_quiz_paper int default 0
+				,id_quiz_log int default 0	
+				,type int default 0
+				,markingmethod int default 0				
 				,myAnswer text 						
 				,answer text 						
-				,correct int default 0				
-				,type int default 1				
-				,cent float default 0						
+				,correct int default 0						
+				,cent float default 0			
+				,mycent float default 0			
 				,id_question int default 0			
-				,id_question_parent int default 0	
+
 				,application int default 0			
+				,description text 
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
@@ -150,6 +156,23 @@ class m_question_log extends wls implements dbtable,log{
 		);
 	}
 
-	public function addLog($whatHappened){}
+	public function addLog($whatHappened){
+		$answerData = $whatHappened;
+		
+		$return = 0;
+		if($answerData['myAnswer']=='I_DONT_KNOW'){
+			$answerData['correct'] = -1;
+			$return = -1;
+		}else if($answerData['myAnswer']==$answerData['answer']){
+			$answerData['correct'] = 1;
+			$answerData['mycent'] = $answerData['cent'];
+			$return = 1;
+		}else{
+			$answerData['correct'] = 0;
+			$return = 1;
+		}
+		$this->insert($answerData);
+		return $return;
+	}
 }
 ?>

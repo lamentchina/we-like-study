@@ -627,5 +627,81 @@ wls.user = Ext.extend(wls, {
 					+ "?controller=knowledge_log&action=getMyRaderSetting&id="
 					+ id_s);
 		});
-	}
+	},	
+	getSystemSettings : function() {
+		var thisObj = this;
+		var form = new Ext.form.FormPanel({
+			id : 'wls_user_login_form',
+			labelWidth : 75,
+			frame : true,
+			bodyStyle : 'padding:5px 5px 0',
+			width : 350,
+			defaults : {
+				width : 100
+			},
+			defaultType : 'textfield',
+
+			items : [{
+						fieldLabel : il8n.username,
+						width : 150,
+						vtype : "alphanum",
+						name : 'username',
+						allowBlank : false
+					}, {
+						fieldLabel : il8n.password,
+						width : 150,
+						vtype : "alphanum",
+						name : 'password',
+						inputType : 'password',
+						allowBlank : false
+					}, {
+						fieldLabel : il8n.CheckCAPTCHA,
+						width : 150,
+						vtype : "alphanum",
+						enableKeyEvents : true,
+						name : 'CAPTCHA',
+						allowBlank : false,
+						id : 'CAPTCHA'
+					}, new Ext.BoxComponent({
+						fieldLabel : il8n.CAPTCHA,
+						height : 32, // give north and south regions a height
+						autoEl : {
+							tag : 'div',
+							html : '<img style="width:100px; height:28px;" id="captcha" src="'
+									+ thisObj.config.libPath
+									+ 'securimage/'
+									+ 'securimage_show.php" alt="CAPTCHA Image" />'
+						}
+					})],
+
+			buttons : [{
+						text : il8n.Login,
+						handler : function() {
+							thisObj.login();
+						}
+					}, {
+						text : il8n.Refresh + il8n.CAPTCHA,
+						handler : function() {
+							$('#captcha').attr(
+									"src",
+									thisObj.config.libPath + 'securimage/'
+											+ 'securimage_show.php?wlstemp='
+											+ Math.random());
+						}
+					}, {
+						text : il8n.Register,
+						handler : function() {
+							thisObj.register();
+						}
+					}
+
+			]
+		});
+		Ext.getCmp('CAPTCHA').on('keyup', function(obj, e) {
+					if (e.getKey() == '13') {
+						thisObj.login();
+					}
+				});
+		return form;
+	}	
 });

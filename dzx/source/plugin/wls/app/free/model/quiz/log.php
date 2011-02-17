@@ -6,9 +6,9 @@ include_once dirname(__FILE__).'/../knowledge/log.php';
 include_once dirname(__FILE__).'/../question/log.php';
 include_once dirname(__FILE__).'/wrong.php';
 
-include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel.php';
-include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-require_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
 class m_quiz_log extends m_quiz implements dbtable,quizdo{
 
@@ -20,12 +20,12 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		if(!isset($data['id_user'])){			
+		if(!isset($data['id_user'])){		
 			$userObj = new m_user();
 			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
-		}
-		
+			$data['id_level_user_group'] = $user['group'];
+		}		
 		if(!isset($data['id_question'])){
 			$data['id_question'] = '0';
 		}
@@ -80,23 +80,17 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				 
 				,date_created datetime 							 
 				,id_user int default 0				
-				,id_level_user_group varchar(200) default '' 
-				
-				,id_question text 					
-				
+				,id_level_user_group varchar(200) default '' 				
+				,id_question text				
 				,id_level_subject varchar(200) default '0'
-				,id_quiz_paper int default 0		
-				
+				,id_quiz_paper int default 0					
 				,cent float default 0
-				,mycent float default 0
-				
+				,mycent float default 0				
 				,count_right int default 0
 				,count_wrong int default 0
 				,count_giveup int default 0
-				,count_total int default 0 
-				
-				,proportion float default 0			
-				
+				,count_total int default 0 				
+				,proportion float default 0					
 				,time_start datetime default '2011-01-08'
 				,time_stop datetime default '2011-01-08'
 				,time_used int default 0				
@@ -295,7 +289,9 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
-			$temp['name_subject'] = $subjects[$temp['id_level_subject']];
+			if($temp['id_level_subject']!=0){
+				$temp['name_subject'] = $subjects[$temp['id_level_subject']];
+			}
 			$temp['name_application'] = $this->t->formatApplicationType($temp['application']);
 			$temp['count_questions'] = count(explode(",", $temp['id_question']));
 			$arr[] = $temp;

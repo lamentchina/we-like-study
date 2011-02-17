@@ -7,8 +7,9 @@ include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
 include_once dirname(__FILE__).'/../model/question.php';
 include_once dirname(__FILE__).'/../model/quiz/paper.php';
-include_once dirname(__FILE__).'/../model/log.php';
-include_once dirname(__FILE__).'/../model/wrong.php';
+include_once dirname(__FILE__).'/../model/question/log.php';
+include_once dirname(__FILE__).'/../model/quiz/log.php';
+include_once dirname(__FILE__).'/../model/quiz/wrong.php';
 
 class install extends wls {
 

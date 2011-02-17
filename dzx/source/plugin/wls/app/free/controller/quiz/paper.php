@@ -98,28 +98,12 @@ class quiz_paper extends quiz{
 		//So let the server sleep 2 senconds whatever
 		sleep(2);
 
-		$ques = $_POST['answersData'];
-		$ques_ = array();
-		$id_question = '';
-		for($i=0;$i<count($ques);$i++){
-			$ques_[$ques[$i]['id']] = $ques[$i]['answer'];
-			$id_question .= $ques[$i]['id'].",";
-		}		
-		$id_question = substr($id_question,0,strlen($id_question)-1);
 
-		//It's written in controller/quiz.php
-		$answers = $this->m->getAnswers($ques_);
-		$json = json_encode($answers);
+		echo $this->m->checkMyPaper($_POST['answersData'],$_POST['id'],$_POST['time']);
+		exit();
 		
-		//Just out put the answsers if the current user is guest, and do nothing
-		$userObj = new m_user();
-		$user = $userObj->getMyInfo();
-		if($user['username']=='guest'){
-			echo $json;
-			return;	
-		}		
 
-		$id = $_POST['id'];
+
 		$item = $this->m->getList(1,1,array('id'=>$id),null,'id,id_level_subject');
 		$item = $item['data'][0];
 		

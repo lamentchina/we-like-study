@@ -2,14 +2,15 @@
 include_once dirname(__FILE__).'/../quiz.php';
 include_once dirname(__FILE__).'/../subject.php';
 include_once dirname(__FILE__).'/../question.php';
+include_once dirname(__FILE__).'/../question/log.php';
 include_once dirname(__FILE__)."/../user.php";
+include_once dirname(__FILE__).'/../quiz/log.php';
 
-include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel.php';
-include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-require_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
 class m_quiz_paper extends m_quiz implements dbtable,quizdo{
-
 	public $phpexcel;
 	public $id = null;
 	public $mycent = null;
@@ -50,7 +51,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			catch (Exception $ex2){
 				return false;
 			}
-
 		}
 		catch (Exception $ex){
 			return false;
@@ -385,7 +385,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	}
 
 	public function saveQuestions(){
-
 		$quesObj = new m_question();
 		$questions = $this->questions;
 		$ques = $quesObj->insertMany($questions);
@@ -653,5 +652,84 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		}
 	}
 
+	public function checkMyPaper($answers,$paperid,$time){
+		$ques_ = array();
+		$id_question = '';
+		for($i=0;$i<count($answers);$i++){
+			$ques_[$answers[$i]['id']] = $answers[$i]['answer'];
+			$id_question .= $answers[$i]['id'].",";
+		}		
+		$id_question = substr($id_question,0,strlen($id_question)-1);
+
+		//It's written in controller/quiz.php
+		$answers = $this->getAnswers($ques_);
+		$json = json_encode($answers);
+		
+		//Just out put the answsers if the current user is guest, and do nothing
+		$userObj = new m_user();
+		$user = $userObj->getMyInfo();
+		if($user['username']=='guest'){
+			return $json;
+		}
+		
+		//Do quiz log. 
+		$quizLogObj = new m_quiz_log();
+		$data = array(
+			'date_created'=>date('Y-m-d H:i:s'),
+			'id_question'=>$id_question,
+			'id_quiz_paper'=>$paperid,
+			'id_level_subject'=>$answers[0]['id_level_subject'],
+			'time_start'=>$time['start'],
+			'time_stop'=>$time['stop'],
+			'time_used'=>$time['used'],
+		);
+		$id_quiz_log = $quizLogObj->insert($data);		
+
+		$count_right = 0;
+		$count_wrong = 0;
+		$count_giveup = 0;
+		$cent = 0;
+		$mycent = 0;
+		$count_total = count($answers);
+		
+		$quesLogObj = new m_question_log();
+		for($i=0;$i<count($answers);$i++){
+			$cent += $answers[$i]['cent'];
+			$quesLogData = array(
+				 'id_quiz_paper'=>$answers[$i]['id_quiz_paper']
+				,'id_quiz_log'=>$id_quiz_log
+				,'myAnswer'=>$answers[$i]['myAnswer']
+				,'answer'=>$answers[$i]['answer']
+				,'id_question'=>$answers[$i]['id']	
+				,'id_user'=>$user['id']
+				,'cent'=>$answers[$i]['cent']	
+				,'type'=>$answers[$i]['type']		
+				,'markingmethod'=>$answers[$i]['markingmethod']		
+			);
+			$result = $quesLogObj->addLog($quesLogData);
+			if($result==1){
+				$count_right++;
+				$mycent += $answers[$i]['cent'];
+			}
+			if($result==0)$count_wrong++;
+			if($result==-1)$count_giveup++;
+		}
+		
+		$quizLogObj->update(array(
+			 'count_right'=>$count_right
+			,'count_wrong'=>$count_wrong
+			,'count_giveup'=>$count_giveup
+			,'count_total'=>$count_total
+			,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
+			,'id'=>$id_quiz_log
+		));
+
+		$this->id = $paperid;
+		$this->cumulative('count_used');
+		$this->mycent = $mycent;
+		$this->cumulative('score');
+		
+		return $json;
+	}
 }
 ?>
