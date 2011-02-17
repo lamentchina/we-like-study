@@ -1,11 +1,12 @@
 <?php
+include_once dirname(__FILE__).'/../model/knowledge.php';
+
 class knowledge extends wls{
 	
 	private $m = null;
 	
 	function knowledge(){
-		parent::wls();
-		include_once $this->c->license.'/model/knowledge.php';
+		parent::wls();		
 		$this->m = new m_knowledge();
 	}
 	

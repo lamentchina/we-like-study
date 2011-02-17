@@ -1,11 +1,15 @@
 <?php
+include_once dirname(__FILE__).'/../../model/user/group.php';
+include_once dirname(__FILE__).'/../../model/subject.php';
+include_once dirname(__FILE__).'/../../model/user/access.php';
+include_once dirname(__FILE__).'/../../model/tools.php';
+
 class user_group extends wls{
 	
 	private $m = null;
 	
 	function user_group(){
 		parent::wls();
-		include_once $this->c->license.'/model/user/group.php';
 		$this->m = new m_user_group();
 	}
 	
@@ -112,12 +116,12 @@ class user_group extends wls{
 	
 	public function getaccess(){
 		$id = $_REQUEST['id'];
-		include_once dirname(__FILE__).'/../../model/user/access.php';
+		
 		
 		$obj = new m_user_access();
 		$data = $obj->getListForGroup($id);		
 		
-		include_once dirname(__FILE__).'/../../model/tools.php';
+		
 		$t = new tools();
 		$data =  $t->getTreeData(null,$data);		
 		
@@ -125,13 +129,11 @@ class user_group extends wls{
 	}
 	
 	public function getSubject(){
-		$id = $_REQUEST['id'];
-		include_once dirname(__FILE__).'/../../model/subject.php';
+		$id = $_REQUEST['id'];		
 		
 		$obj = new m_subject();
 		$data = $obj->getListForGroup($id);
-		
-		include_once dirname(__FILE__).'/../../model/tools.php';
+
 		$t = new tools();
 		$data =  $t->getTreeData(null,$data);	
 		

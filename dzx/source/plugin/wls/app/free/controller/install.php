@@ -1,48 +1,48 @@
 <?php
+include_once dirname(__FILE__).'/../model/subject.php';
+include_once dirname(__FILE__).'/../model/knowledge.php';
+include_once dirname(__FILE__).'/../model/knowledge/log.php';
+include_once dirname(__FILE__).'/../model/user/group.php';
+include_once dirname(__FILE__).'/../model/user.php';
+include_once dirname(__FILE__).'/../model/user/access.php';
+include_once dirname(__FILE__).'/../model/question.php';
+include_once dirname(__FILE__).'/../model/quiz/paper.php';
+include_once dirname(__FILE__).'/../model/log.php';
+include_once dirname(__FILE__).'/../model/wrong.php';
+
 class install extends wls {
 
 	public function createTables(){
-		include_once $this->c->license.'/model/subject.php';
 		$obj = new m_subject();
 		$obj->create();
 
-		include_once $this->c->license.'/model/knowledge.php';
 		$obj = new m_knowledge();
 		$obj->create();
 
-		include_once $this->c->license.'/model/knowledge/log.php';
 		$obj = new m_knowledge_log();
 		$obj->create();
-
-		include_once $this->c->license.'/model/user/group.php';
+		
 		$obj = new m_user_group();
 		$obj->create();
 
-		include_once $this->c->license.'/model/user.php';
 		$obj = new m_user();
 		$obj->create();
 
-		include_once $this->c->license.'/model/user/access.php';
 		$obj = new m_user_access();
 		$obj->create();
 
-		include_once $this->c->license.'/model/question.php';
 		$obj = new m_question();
 		$obj->create();
 
-		include_once $this->c->license.'/model/question/log.php';
 		$obj = new m_question_log();
 		$obj->create();
 
-		include_once $this->c->license.'/model/quiz/paper.php';
 		$obj = new m_quiz_paper();
 		$obj->create();
 
-		include_once $this->c->license.'/model/quiz/log.php';
 		$obj = new m_quiz_log();
 		$obj->create();
 
-		include_once $this->c->license.'/model/quiz/wrong.php';
 		$obj = new m_quiz_wrong();
 		$obj->create();
 

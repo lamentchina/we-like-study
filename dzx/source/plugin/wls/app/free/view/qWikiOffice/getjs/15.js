@@ -11,12 +11,12 @@ class_15 = Ext.extend(Ext.app.Module, {
 				var winWidth = desktop.getWinWidth() / 1.1;
 				var winHeight = desktop.getWinHeight() / 1.1;
 
-				var obj = new wls.user.privilege();
+				var obj = new wls.user.access();
 
 				if (!win) {
 					win = desktop.createWindow({
 								id : this.id,
-								title : il8n.privilege,
+								title : il8n.access,
 								width : winWidth,
 								height : winHeight,
 

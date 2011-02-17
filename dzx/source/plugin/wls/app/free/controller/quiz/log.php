@@ -1,12 +1,14 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__).'/../../model/quiz/log.php';
+include_once dirname(__FILE__).'/../../model/user.php';
 
 class quiz_log extends quiz{
 	private $m = null;
 
 	function quiz_log(){
 		parent::wls();
-		include_once $this->c->license.'/model/quiz/log.php';
+		
 		$this->m = new m_quiz_log();
 	}
 
@@ -83,7 +85,6 @@ class quiz_log extends quiz{
 
 	public function getOne(){
 		$id = $_POST['id'];
-		include_once $this->c->license.'/model/user.php';
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 

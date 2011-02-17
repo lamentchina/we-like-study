@@ -1,12 +1,13 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
 
 class quiz_wrong extends quiz{
 	private $m = null;
 
 	function quiz_wrong(){
 		parent::wls();
-		include_once $this->c->license.'/model/quiz/wrong.php';
+		
 		$this->m = new m_quiz_wrong();
 	}
 

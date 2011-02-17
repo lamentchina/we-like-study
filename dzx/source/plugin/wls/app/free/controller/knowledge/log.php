@@ -1,9 +1,11 @@
 <?php 
+include_once dirname(__FILE__).'/../../model/knowledge/log.php';
+
 class knowledge_log extends wls{
 	private $m = null;
 	
 	function knowledge_log(){
-		include_once dirname(__FILE__).'/../../model/knowledge/log.php';
+		
 		$this->m = new m_knowledge_log();		 
 	}
 	
@@ -18,8 +20,6 @@ class knowledge_log extends wls{
 		}
 		$data2 = $this->m->getMyRecentAboutOneSubject($id);
 		header('Content-Type:text/xml'); 		
-//		$data2 = array_values($data);
-		
 		$xml = '<?xml version="1.0" encoding="UTF-8"?>
 <settings> 
 	<type>stacked</type> 

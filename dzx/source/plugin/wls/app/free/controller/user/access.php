@@ -1,11 +1,12 @@
 <?php
+include_once dirname(__FILE__).'/../../model/user/access.php';
+
 class user_access extends wls{
 	
 	private $m = null;
 	
 	function user_access(){
 		parent::wls();
-		include_once $this->c->license.'/model/user/access.php';
 		$this->m = new m_user_access();
 	}
 	
