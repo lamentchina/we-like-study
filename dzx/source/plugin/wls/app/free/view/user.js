@@ -628,11 +628,11 @@ wls.user = Ext.extend(wls, {
 					+ id_s);
 		});
 	},	
-	getSystemSettings : function() {
+	modifySystemSettings : function() {
 		var thisObj = this;
 		var form = new Ext.form.FormPanel({
-			id : 'wls_user_login_form',
-			labelWidth : 75,
+			id : 'wls_settings_form',
+			labelWidth : 90,
 			frame : true,
 			bodyStyle : 'padding:5px 5px 0',
 			width : 350,
@@ -642,66 +642,50 @@ wls.user = Ext.extend(wls, {
 			defaultType : 'textfield',
 
 			items : [{
-						fieldLabel : il8n.username,
+						fieldLabel : il8n.setBackground,
 						width : 150,
-						vtype : "alphanum",
-						name : 'username',
+						name : 'background',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.password,
+						fieldLabel : il8n.setTheme,
 						width : 150,
-						vtype : "alphanum",
-						name : 'password',
-						inputType : 'password',
+						name : 'theme',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.CheckCAPTCHA,
+						fieldLabel : il8n.setSiteName,
 						width : 150,
-						vtype : "alphanum",
-						enableKeyEvents : true,
-						name : 'CAPTCHA',
-						allowBlank : false,
-						id : 'CAPTCHA'
-					}, new Ext.BoxComponent({
-						fieldLabel : il8n.CAPTCHA,
-						height : 32, // give north and south regions a height
-						autoEl : {
-							tag : 'div',
-							html : '<img style="width:100px; height:28px;" id="captcha" src="'
-									+ thisObj.config.libPath
-									+ 'securimage/'
-									+ 'securimage_show.php" alt="CAPTCHA Image" />'
-						}
-					})],
+						name : 'siteName',
+						allowBlank : false
+					}],
 
 			buttons : [{
-						text : il8n.Login,
-						handler : function() {
-							thisObj.login();
-						}
-					}, {
-						text : il8n.Refresh + il8n.CAPTCHA,
-						handler : function() {
-							$('#captcha').attr(
-									"src",
-									thisObj.config.libPath + 'securimage/'
-											+ 'securimage_show.php?wlstemp='
-											+ Math.random());
-						}
-					}, {
-						text : il8n.Register,
-						handler : function() {
-							thisObj.register();
-						}
-					}
-
-			]
+				text : il8n.submit,
+				handler : function() {
+					Ext.Ajax.request({
+						method : 'POST',
+						params : form.getForm().getValues(),
+						url : thisObj.config.AJAXPATH + "?controller=user&action=rewriteConfig&temp=" + Math.random(),
+							success : function(response) {
+							var obj = jQuery.parseJSON(response.responseText);
+						},
+						failure : function(response) {
+							//TODO			
+						}						
+					});
+				}
+			}]
 		});
-		Ext.getCmp('CAPTCHA').on('keyup', function(obj, e) {
-					if (e.getKey() == '13') {
-						thisObj.login();
-					}
-				});
+		Ext.Ajax.request({
+			method : 'GET',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getConfig&temp=" + Math.random(),
+			success : function(response) {
+				var obj = jQuery.parseJSON(response.responseText);
+				form.getForm().setValues(obj);
+			},
+			failure : function(response) {
+				//TODO			
+			}						
+		});		
 		return form;
 	}	
 });

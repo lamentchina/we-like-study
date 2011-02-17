@@ -392,7 +392,7 @@ class m_user extends wls implements dbtable{
 	 * 
 	 * @param $access It's a num ,it's level id
 	 * */
-	public function checkMyaccess($access){
+	public function checkMyaccess($access,$withMoney=true){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
@@ -401,24 +401,27 @@ class m_user extends wls implements dbtable{
 		$accesss = explode(",",$accesss);
 
 		if(in_array($access,$accesss)){
-			if($user['money']>$user['accesss'][$access]){
-				$sql = "update ".$pfx."wls_user set money = money - ".$user['accesss'][$access]." where id = ".$user['id'];
-				mysql_query($sql,$conn);
-				if(!isset($_SESSION))session_start();
-				$_SESSION['wls_user']['money'] -= $user['accesss'][$access];
-
-				if($this->c->cmstype!=''){//Synchro money
-					$obj = null;
-					eval("include_once dirname(__FILE__).'/integration/".$this->c->cmstype.".php';");
-					eval('$obj = new m_integration_'.$this->c->cmstype.'();');
-					$obj->synchroMoney($user['username']);
+			if($withMoney){
+				if($user['money']>$user['accesss'][$access]){
+					$sql = "update ".$pfx."wls_user set money = money - ".$user['accesss'][$access]." where id = ".$user['id'];
+					mysql_query($sql,$conn);
+					if(!isset($_SESSION))session_start();
+					$_SESSION['wls_user']['money'] -= $user['accesss'][$access];
+	
+					if($this->c->cmstype!=''){//Synchro money
+						$obj = null;
+						eval("include_once dirname(__FILE__).'/integration/".$this->c->cmstype.".php';");
+						eval('$obj = new m_integration_'.$this->c->cmstype.'();');
+						$obj->synchroMoney($user['username']);
+					}
+					return true;					
+				}else{
+					return false;
 				}
-				return true;
 			}else{
-				return false;
+				return true;
 			}
 		}else{
-			
 			return false;
 		}
 	}
