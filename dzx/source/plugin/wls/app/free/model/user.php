@@ -1,4 +1,12 @@
 <?php
+include_once dirname(__FILE__).'/user/access.php';
+include_once dirname(__FILE__).'/user/group.php';
+include_once dirname(__FILE__).'/subject.php';
+
+include_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 /**
  * User's operations.
  * It's associated with the databast table wls_user
@@ -118,9 +126,6 @@ class m_user extends wls implements dbtable{
 	 * @return bool
 	 * */
 	public function importExcel($path){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -169,9 +174,6 @@ class m_user extends wls implements dbtable{
 	 * @return $path filepath
 	 * */
 	public function exportExcel(){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -307,8 +309,7 @@ class m_user extends wls implements dbtable{
 		
 		//Get the accesss , It's a little complex. 
 		//First , get the user's group info , 
-		//than get the accesss info from the group info  				
-		include_once dirname(__FILE__).'/user/access.php';
+		//than get the accesss info from the group info  						
 		$o = new m_user_access();
 		$d = $o->getListForUser($data['username']);
 		$ids = '';
@@ -325,7 +326,6 @@ class m_user extends wls implements dbtable{
 
 		//One user can belong to more than two groups.
 		//And one user at least belong to one group.
-		include_once dirname(__FILE__).'/user/group.php';
 		$o = new m_user_group();
 		$d = $o->getListForUser($data['username']);
 		$ids = '';
@@ -336,7 +336,6 @@ class m_user extends wls implements dbtable{
 		$data['group'] = $ids;
 
 		//How many subjects do this user participed?
-		include_once dirname(__FILE__).'/subject.php';
 		$o = new m_subject();
 		$d = $o->getListForUser($data['username']);
 		$ids = '';
@@ -375,7 +374,6 @@ class m_user extends wls implements dbtable{
 		mysql_query($sql,$conn);
 		$arr = explode(",",$ids_group);
 
-		include_once dirname(__FILE__).'/user/group.php';
 		$g = new m_user_group();
 
 		for($i=0;$i<count($arr);$i++){
@@ -435,7 +433,7 @@ class m_user extends wls implements dbtable{
 		$me = $this->getMyInfo();
 		
 		$username = $me['username'];
-		include_once dirname(__FILE__).'/user/access.php';
+		
 		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
 
@@ -453,7 +451,6 @@ class m_user extends wls implements dbtable{
 		for($i=0;$i<count($data);$i++){
 			//How many subjects do this user participate in?
 			if($data[$i]['id_level']=='11'){
-				include_once dirname(__FILE__).'/subject.php';
 				$obj = new m_subject();
 				$data_ = $obj->getListForUser($username);
 
@@ -487,8 +484,7 @@ class m_user extends wls implements dbtable{
 			}
 			
 			//How many groups do this user in?
-			if($data[$i]['id_level']=='13'){
-				include_once dirname(__FILE__).'/user/group.php';
+			if($data[$i]['id_level']=='13'){				
 				$obj = new m_user_group();
 				$data_ = $obj->getListForUser($username);
 				if(count($data_)>0){

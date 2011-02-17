@@ -1,4 +1,6 @@
 <?php
+include_once dirname(__FILE__)."/../user.php";
+
 class m_knowledge_log extends wls implements dbtable,log{
 
 	public $phpexcel;
@@ -13,7 +15,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$conn = $this->conn();
 
 		if(!isset($data['id_user'])){
-			include_once dirname(__FILE__)."/../user.php";
+			
 			$userObj = new m_user();
 			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
@@ -180,7 +182,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		include_once dirname(__FILE__)."/../user.php";
+		
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		
@@ -223,8 +225,7 @@ GROUP BY pre_wls_knowledge.id_level
 	public function getMyRecent($id){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-
-		include_once dirname(__FILE__)."/../user.php";
+		
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		//Get it's sub knowledge ids

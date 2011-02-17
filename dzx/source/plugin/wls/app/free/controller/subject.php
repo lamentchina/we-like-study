@@ -1,5 +1,8 @@
 <?php
 include_once dirname(__FILE__).'/../model/subject.php';
+include_once dirname(__FILE__).'/../model/quiz/paper.php';
+include_once dirname(__FILE__).'/../model/quiz/log.php';
+include_once dirname(__FILE__).'/../model/user.php';
 
 class subject extends wls{
 
@@ -79,8 +82,7 @@ class subject extends wls{
 		}
 	}
 
-	public function getPaperList(){
-		include_once dirname(__FILE__).'/../model/quiz/paper.php';
+	public function getPaperList(){		
 		$paper = new m_quiz_paper();
 
 		$page = 1;
@@ -92,10 +94,8 @@ class subject extends wls{
 		echo json_encode($data);
 	}
 
-	public function getMyQuizLine(){
-		include_once dirname(__FILE__).'/../model/quiz/log.php';
+	public function getMyQuizLine(){		
 		$log = new m_quiz_log();
-		include_once $this->c->license.'/model/user.php';
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		$search = array('id_user'=>$user['id']);

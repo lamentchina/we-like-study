@@ -1,5 +1,12 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__).'/../subject.php';
+include_once dirname(__FILE__).'/../question.php';
+include_once dirname(__FILE__)."/../user.php";
+
+include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
 class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 
@@ -111,18 +118,13 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
-		include_once dirname(__FILE__).'/../subject.php';
+		
 		$obj = new m_subject();
 		$data = $obj->getList(1,100);
 		if(count($data['data'])<1){
 			$this->error(array('description'=>'quiz paper wrong'));
-			include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
 			return false;
 		}
-
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -379,13 +381,11 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			}			
 			$this->questions[$question['index']] = $question;
 		}
-		//		print_r($this->questions);
-		//		exit();
 		$this->saveQuestions();
 	}
 
 	public function saveQuestions(){
-		include_once dirname(__FILE__).'/../question.php';
+
 		$quesObj = new m_question();
 		$questions = $this->questions;
 		$ques = $quesObj->insertMany($questions);
@@ -407,10 +407,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	}
 
 	public function paperToExcel($paper,$questions){
-
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $paper;
 
@@ -513,7 +509,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$data = $this->getList(1,1,array('id'=>$this->id));
 		$paper = $data['data'][0];
 
-		include_once dirname(__FILE__).'/../question.php';
 		$ques = new m_question();
 		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
 		$questions = $data['data'];
@@ -530,7 +525,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
 			if($temp['score_top']<=$this->mycent){
-				include_once dirname(__FILE__)."/../user.php";
 				$userObj = new m_user();
 				$user = $userObj->getMyInfo();
 
@@ -634,7 +628,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 
-		include_once dirname(__FILE__)."/../user.php";
+		
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 

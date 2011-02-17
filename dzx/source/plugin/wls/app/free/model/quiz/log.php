@@ -1,5 +1,14 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__).'/../user.php';
+include_once dirname(__FILE__).'/../subject.php';
+include_once dirname(__FILE__).'/../knowledge/log.php';
+include_once dirname(__FILE__).'/../question/log.php';
+include_once dirname(__FILE__).'/wrong.php';
+
+include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
 class m_quiz_log extends m_quiz implements dbtable,quizdo{
 
@@ -11,8 +20,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		if(!isset($data['id_user'])){
-			include_once dirname(__FILE__)."/../user.php";
+		if(!isset($data['id_user'])){			
 			$userObj = new m_user();
 			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
@@ -33,7 +41,6 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	public function delete($ids){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-
 		$sql = "delete from ".$pfx."wls_quiz_log where id  in (".$ids.");";
 		mysql_query($sql,$conn);
 	}
@@ -104,28 +111,20 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	public function importExcel($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-
-		include_once dirname(__FILE__).'/../subject.php';
+		
 		$obj = new m_subject();
 		$data = $obj->getList(1,100);
 		if(count($data['data'])<1){
 			$this->error(array('description'=>'quiz log wrong'));
-			include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
 			return false;
-		}
+		}		
 
-		include_once dirname(__FILE__).'/../tools.php';
-		$t = new tools();
-
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('paper');//TODO
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['paper']);//TODO
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -172,19 +171,15 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				$keys['myanswer'] = $i;
 			}
 		}
-
-		include_once dirname(__FILE__).'/../question/log.php';
+		
 		$quesObj = new m_question_log();
 		$index = 0;
 		$queslogs = array();
 		$count_wrong = 0;
 		$count_right = 0;
 		$quizlog_cent = 0;
-		$id_question = '';
-		include_once dirname(__FILE__).'/wrong.php';
-		$wrongObj = new m_quiz_wrong();
-		include_once dirname(__FILE__).'/../knowledge/log.php';
-		
+		$id_question = '';		
+		$wrongObj = new m_quiz_wrong();		
 		$knowledgeLogObj = new m_knowledge_log();		
 		for($i=3;$i<=$allRow;$i++){
 			$sql = "select id,answer,cent,id_parent,ids_level_knowledge from ".$pfx."wls_question where id = ".($currentSheet->getCell($keys['id_question'].$i)->getValue()+($minQuesId-1));
@@ -266,7 +261,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 		if($page==null)$page = 1;
 		if($pagesize==null)$pagesize = 100;
 		
-		include_once dirname(__FILE__).'/../subject.php';
+		
 		$subjectObj = new m_subject();
 		$data = $subjectObj->getList(1,1000);
 		$list = $data['data'];
@@ -290,8 +285,7 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				}	
 				if($keys[$i]=='id_level_subject_'){
 					$where .= " and id_level_subject like '".$search[$keys[$i]]."%' ";
-				}				
-							
+				}		
 			}
 		}
 		if($orderby==null)$orderby = " order by id";

@@ -1,5 +1,7 @@
 <?php
 include_once dirname(__FILE__).'/../integration.php';
+include_once dirname(__FILE__).'/../user.php';
+include_once dirname(__FILE__).'/../user/group.php';
 
 class m_integration_Joomla extends m_integration implements integrate{
 
@@ -28,14 +30,14 @@ class m_integration_Joomla extends m_integration implements integrate{
 		$res2 = mysql_query($sql2,$conn);
 		
 		if($res2==false || (mysql_fetch_assoc($res2)==false) ){//这个用户的信息还没有同步过来,需要实施数据插入
-			include_once dirname(__FILE__).'/../user.php';
+			
 			$userObj = new m_user();
 			$temp['money']=100;
 			$temp['password']=$temp['username'];
 			$temp['name']=$temp['username'];
 			unset($temp['guest']);
 			$uid = $userObj->insert($temp);
-			include_once dirname(__FILE__).'/../user/group.php';
+			
 			$usergroupObj = new m_user_group();
 			$data = array(
 				 'id_level_group'=>'11'

@@ -1,4 +1,12 @@
 <?php
+include_once dirname(__FILE__).'/access.php';
+include_once dirname(__FILE__).'/../subject.php';
+include_once dirname(__FILE__).'/../user.php';
+
+include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 class m_user_group extends wls implements dbtable,levelList{
 
 	public $phpexcel = null;
@@ -181,9 +189,6 @@ class m_user_group extends wls implements dbtable,levelList{
 	}
 
 	public function importExcel($path){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -204,9 +209,7 @@ class m_user_group extends wls implements dbtable,levelList{
 	}
 
 	public function exportExcel(){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -241,9 +244,6 @@ class m_user_group extends wls implements dbtable,levelList{
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 
 		$objPHPExcel->setActiveSheetIndex(0);
@@ -308,10 +308,6 @@ class m_user_group extends wls implements dbtable,levelList{
 	public function importExcelOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -441,9 +437,6 @@ class m_user_group extends wls implements dbtable,levelList{
 	public function importExcelWithP($path){
 		$this->create();
 
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -499,7 +492,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 		}
 		$accesssData = array();
-		include_once dirname(__FILE__).'/access.php';
+		
 		$accessObj = new m_user_access();
 		$accessObj->create();
 
@@ -537,9 +530,7 @@ class m_user_group extends wls implements dbtable,levelList{
 
 	public function importExcelWithS($path){
 		$this->create('wls_user_group2subject');
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -594,7 +585,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 		}
 		$subjectsData = array();
-		include_once dirname(__FILE__).'/../subject.php';
+		
 		$subjectObj = new m_subject();
 		$subjectObj->create();
 		for($i=4;$i<=$allRow;$i++){
@@ -635,9 +626,7 @@ class m_user_group extends wls implements dbtable,levelList{
 
 	public function importExcelWithU($path){
 		$this->create('wls_user_group2user');
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -699,7 +688,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		}
 
 		$userData = array();
-		include_once dirname(__FILE__).'/../user.php';
+		
 		$userObj = new m_user();
 		$userObj->create();
 		for($i=4;$i<=$allRow;$i++){

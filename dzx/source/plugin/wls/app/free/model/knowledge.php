@@ -1,4 +1,8 @@
 <?php
+include_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 class m_knowledge extends wls implements dbtable,levelList{
 
 	public $phpexcel = null;
@@ -23,7 +27,6 @@ class m_knowledge extends wls implements dbtable,levelList{
 	public function delete($ids){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-
 		$sql = "delete from ".$pfx."wls_knowledge where id  in (".$ids.");";
 		try{
 			mysql_query($sql,$conn);
@@ -78,9 +81,6 @@ class m_knowledge extends wls implements dbtable,levelList{
 	}
 
 	public function importExcel($path){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -129,9 +129,6 @@ class m_knowledge extends wls implements dbtable,levelList{
 	}
 
 	public function exportExcel(){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -210,10 +207,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 	 *
 	 * @param $root 根元素
 	 * */
-	public function getLevelList($root){
-
-	}
-
+	public function getLevelList($root){}
 
 	public function getListForGroup($id_level_group){
 		$pfx = $this->c->dbprefix;
@@ -229,7 +223,6 @@ class m_knowledge extends wls implements dbtable,levelList{
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
-
 		return $data;
 	}
 
@@ -249,9 +242,7 @@ class m_knowledge extends wls implements dbtable,levelList{
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
-
 		return $data;
 	}
-
 }
 ?>

@@ -1,5 +1,6 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__).'/../subject.php';
 
 class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 
@@ -136,7 +137,7 @@ class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 		$res = mysql_query($sql,$conn);
 
 
-		include_once dirname(__FILE__).'/../subject.php';
+		
 		$obj = new m_subject();
 		$data = $obj->getList(1,100);
 		$data = $data['data'];
@@ -145,11 +146,9 @@ class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 			$keys[$data[$i]['id_level']] = $data[$i]['name'];
 		}
 
-		include_once dirname(__FILE__).'/../tools.php';
-		$t = new tools();
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
-			$temp['timedif'] = $t->getTimeDif($temp['date_created']); 
+			$temp['timedif'] = $this->t->getTimeDif($temp['date_created']); 
 			$temp['subject_name'] = $keys[$temp['id_level_subject']];
 			$arr[] = $temp;
 		}
@@ -205,7 +204,5 @@ class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 		$temp = mysql_fetch_assoc($res);
 		return $temp['questions'];
 	}
-
-
 }
 ?>

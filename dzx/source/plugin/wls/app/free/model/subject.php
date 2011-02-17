@@ -1,4 +1,8 @@
 <?php
+include_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+
 class m_subject extends wls implements dbtable,levelList{
 
 	public $phpexcel = null;
@@ -113,9 +117,6 @@ class m_subject extends wls implements dbtable,levelList{
 	 * @return bool
 	 * */
 	public function importExcel($path){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -175,9 +176,6 @@ class m_subject extends wls implements dbtable,levelList{
 	 * @return $path filepath
 	 * */
 	public function exportExcel(){
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel.php';
-		include_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/IOFactory.php';
-		require_once $this->c->libsPath.'phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];

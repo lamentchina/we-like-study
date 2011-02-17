@@ -1,5 +1,7 @@
 <?php
 include_once dirname(__FILE__).'/../integration.php';
+include_once dirname(__FILE__).'/../user.php';
+include_once dirname(__FILE__).'/../user/group.php';
  
 class m_integration_DiscuzX extends m_integration implements integrate{	
 	public $cookiepre = null;
@@ -70,13 +72,12 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		$res2 = mysql_query($sql2,$conn);
 		$temp2 = mysql_fetch_assoc($res2);
 		
-		include_once dirname(__FILE__).'/../user.php';
+		
 		$userObj = new m_user();
 		if($temp2==false){//Check the user info has synchrod , if not , synchrod
 			unset($temp['sid']);
 		
 			$uid = $userObj->insert($temp);
-			include_once dirname(__FILE__).'/../user/group.php';
 			$usergroupObj = new m_user_group();
 			$data = array(
 				 'id_level_group'=>'11'

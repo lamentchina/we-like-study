@@ -1,11 +1,16 @@
 <?php
-class user extends wls{
+include_once dirname(__FILE__).'/../model/user.php';
+include_once dirname(__FILE__).'/../model/user/group.php';
+include_once dirname(__FILE__).'/../model/user/access.php';
+include_once dirname(__FILE__).'/../model/tools.php';
+include_once dirname(__FILE__).'/../model/subject.php';
+include_once dirname(__FILE__).'/../model/quiz/log.php';
 
+class user extends wls{
 	private $m = null;
 
 	function user(){
-		parent::wls();
-		include_once $this->c->license.'/model/user.php';
+		parent::wls();		
 		$this->m = new m_user();
 	}
 
@@ -60,7 +65,6 @@ class user extends wls{
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
 			}
-
 			session_destroy();
 			
 			$data = $_POST;
@@ -77,7 +81,7 @@ class user extends wls{
 					'id_level_group'=>12
 					,'username'=>$_POST['username']
 				);
-				include_once dirname(__FILE__).'/../model/user/group.php';
+				
 				$user_group = new m_user_group();
 				$user_group->linkUser($data);
 				
@@ -103,8 +107,7 @@ class user extends wls{
 	}
 
 	public function viewUpload(){
-		echo '
-				<html>		
+		$html = '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
@@ -119,6 +122,7 @@ class user extends wls{
 				</body>
 			</html>		
 		';
+		echo $html;
 	}
 
 	public function saveUpload(){
@@ -157,20 +161,14 @@ class user extends wls{
 
 	public function getTreeaccess(){
 		$username = $_REQUEST['username'];
-		include_once dirname(__FILE__).'/../model/user/access.php';
-
 		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
-
 		$data = $this->t->getTreeData(null,$data);
-
 		echo json_encode($data);
 	}
 
 	public function getMyMenu(){
-		$username = $_REQUEST['username'];
-
-		include_once dirname(__FILE__).'/../model/user/access.php';
+		$username = $_REQUEST['username'];		
 		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
 		$data2 = array();
@@ -179,16 +177,13 @@ class user extends wls{
 				$data[$i]['type'] = 'menu';
 				$data2[] = $data[$i];
 			}
-		}
+		}		
 		
-		include_once dirname(__FILE__).'/../model/tools.php';
 		$t = new tools();
 		$data = $t->getTreeData(null,$data2);
 
-		for($i=0;$i<count($data);$i++){
-				
-			if($data[$i]['id_level']=='11'){
-				include_once dirname(__FILE__).'/../model/subject.php';
+		for($i=0;$i<count($data);$i++){				
+			if($data[$i]['id_level']=='11'){				
 				$obj = new m_subject();
 				$data_ = $obj->getListForUser($username);
 				if(count($data)>0){
@@ -216,8 +211,7 @@ class user extends wls{
 					}
 				}
 			}
-			if($data[$i]['id_level']=='13'){
-				include_once dirname(__FILE__).'/../model/user/group.php';
+			if($data[$i]['id_level']=='13'){				
 				$obj = new m_user_group();
 				$data_ = $obj->getListForUser($username);
 				if(count($data)>0){
@@ -230,13 +224,11 @@ class user extends wls{
 						}
 					}
 					$subject = $t->getTreeData(null,$data__);
-
 					$arr = array();
 					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
 						$arr = $data[$i]['children'];
 					}
 					$data[$i]['children'] = $subject;
-
 					if(count($arr)>0){
 						$data[$i]['children'][] = array('text'=>'slide');
 						for($ii=0;$ii<count($arr);$ii++){
@@ -252,7 +244,6 @@ class user extends wls{
 
 	public function getGroup(){
 		$username = $_REQUEST['username'];
-		include_once dirname(__FILE__).'/../model/user/group.php';
 
 		$obj = new m_user_group();
 		$data = $obj->getListForUser($username);
@@ -268,7 +259,6 @@ class user extends wls{
 
 	public function getSubject(){
 		$username = $_REQUEST['username'];
-		include_once dirname(__FILE__).'/../model/subject.php';
 
 		$obj = new m_subject();
 		$data = $obj->getListForUser($username);
@@ -276,7 +266,6 @@ class user extends wls{
 		for($i=0;$i<count($data);$i++){
 			if($data[$i]['checked']!=1)unset($data[$i]);
 		}
-//		print_r($data);exit();
 		echo json_encode(array(
 			'data'=>array_values($data)
 		));
@@ -284,7 +273,6 @@ class user extends wls{
 	
 	public function getTreeSubject(){
 		$username = $_REQUEST['username'];
-		include_once dirname(__FILE__).'/../model/subject.php';
 
 		$obj = new m_subject();
 		$data = $obj->getListForUser($username);		
@@ -294,9 +282,6 @@ class user extends wls{
 	}
 	
 	public function getMyQuizLineData(){
-		include_once dirname(__FILE__).'/../model/quiz/log.php';
-
-		include_once $this->c->license.'/model/user.php';
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		
