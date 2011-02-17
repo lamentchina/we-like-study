@@ -155,11 +155,11 @@ class user extends wls{
 		}
 	}
 
-	public function getTreePrivilege(){
+	public function getTreeaccess(){
 		$username = $_REQUEST['username'];
-		include_once dirname(__FILE__).'/../model/user/privilege.php';
+		include_once dirname(__FILE__).'/../model/user/access.php';
 
-		$obj = new m_user_privilege();
+		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
 
 		$data = $this->t->getTreeData(null,$data);
@@ -170,8 +170,8 @@ class user extends wls{
 	public function getMyMenu(){
 		$username = $_REQUEST['username'];
 
-		include_once dirname(__FILE__).'/../model/user/privilege.php';
-		$obj = new m_user_privilege();
+		include_once dirname(__FILE__).'/../model/user/access.php';
+		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
 		$data2 = array();
 		for($i=0;$i<count($data);$i++){			
@@ -263,7 +263,7 @@ class user extends wls{
 	}
 
 	public function updateGroup(){
-		$this->m->updateGroup($_POST['username'],$_POST['privileges']);
+		$this->m->updateGroup($_POST['username'],$_POST['accesss']);
 	}
 
 	public function getSubject(){

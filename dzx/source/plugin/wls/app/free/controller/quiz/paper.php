@@ -1,12 +1,13 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__).'/../../model/quiz/paper.php';
+include_once dirname(__FILE__).'/../../model/user.php';
 
 class quiz_paper extends quiz{
 	private $m = null;
 
 	function quiz_paper(){
 		parent::wls();
-		include_once $this->c->license.'/model/quiz/paper.php';
 		$this->m = new m_quiz_paper();
 	}
 
@@ -111,7 +112,6 @@ class quiz_paper extends quiz{
 		$json = json_encode($answers);
 		
 		//Just out put the answsers if the current user is guest, and do nothing
-		include_once dirname(__FILE__)."/../../model/user.php";
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		if($user['username']=='guest'){
@@ -265,10 +265,10 @@ class quiz_paper extends quiz{
 			$me = $userObj->getMyInfo();
 		    $userObj->id = $me['id'];
 		}		
-		$foo = $userObj->checkMyPrivilege('1107');
+		$foo = $userObj->checkMyaccess('1107');
 		
 		if($foo==false){
-			echo "privilege request";
+			echo "access request";
 			exit();
 		}else{
 			if($this->m->checkMoney($_REQUEST['id'])==false){

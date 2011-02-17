@@ -305,23 +305,23 @@ class m_user extends wls implements dbtable{
 		}		
 		unset($data['password']);
 		
-		//Get the privileges , It's a little complex. 
+		//Get the accesss , It's a little complex. 
 		//First , get the user's group info , 
-		//than get the privileges info from the group info  				
-		include_once dirname(__FILE__).'/user/privilege.php';
-		$o = new m_user_privilege();
+		//than get the accesss info from the group info  				
+		include_once dirname(__FILE__).'/user/access.php';
+		$o = new m_user_access();
 		$d = $o->getListForUser($data['username']);
 		$ids = '';
-		$privileges = array();
+		$accesss = array();
 		for($i=0;$i<count($d);$i++){
 			if($d[$i]['checked']=='1'){
 				$ids .= $d[$i]['id_level'].",";
-				$privileges[$d[$i]['id_level']] = $d[$i]['money'];
+				$accesss[$d[$i]['id_level']] = $d[$i]['money'];
 			}
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
-		$data['privilege'] = $ids;
-		$data['privileges'] = $privileges;
+		$data['access'] = $ids;
+		$data['accesss'] = $accesss;
 
 		//One user can belong to more than two groups.
 		//And one user at least belong to one group.
@@ -392,22 +392,22 @@ class m_user extends wls implements dbtable{
 	 * Check if he/she can do some actions.
 	 * And money will be reduced if this action is 'expensive' 
 	 * 
-	 * @param $privilege It's a num ,it's level id
+	 * @param $access It's a num ,it's level id
 	 * */
-	public function checkMyPrivilege($privilege){
+	public function checkMyaccess($access){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
 		$user = $this->getMyInfo();
-		$privileges = $user['privilege'];
-		$privileges = explode(",",$privileges);
+		$accesss = $user['access'];
+		$accesss = explode(",",$accesss);
 
-		if(in_array($privilege,$privileges)){
-			if($user['money']>$user['privileges'][$privilege]){
-				$sql = "update ".$pfx."wls_user set money = money - ".$user['privileges'][$privilege]." where id = ".$user['id'];
+		if(in_array($access,$accesss)){
+			if($user['money']>$user['accesss'][$access]){
+				$sql = "update ".$pfx."wls_user set money = money - ".$user['accesss'][$access]." where id = ".$user['id'];
 				mysql_query($sql,$conn);
 				if(!isset($_SESSION))session_start();
-				$_SESSION['wls_user']['money'] -= $user['privileges'][$privilege];
+				$_SESSION['wls_user']['money'] -= $user['accesss'][$access];
 
 				if($this->c->cmstype!=''){//Synchro money
 					$obj = null;
@@ -435,8 +435,8 @@ class m_user extends wls implements dbtable{
 		$me = $this->getMyInfo();
 		
 		$username = $me['username'];
-		include_once dirname(__FILE__).'/user/privilege.php';
-		$obj = new m_user_privilege();
+		include_once dirname(__FILE__).'/user/access.php';
+		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
 
 		$data2 = array();

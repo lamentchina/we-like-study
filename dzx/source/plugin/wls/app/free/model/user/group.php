@@ -28,11 +28,11 @@ class m_user_group extends wls implements dbtable,levelList{
 		mysql_query($sql,$conn);
 	}
 
-	public function linkPrivilege($data){
+	public function linkaccess($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		$sql = "insert into ".$pfx."wls_user_group2privilege (id_level_group,id_level_privilege) values ('".$data['id_level_group']."','".$data['id_level_privilege']."');";
+		$sql = "insert into ".$pfx."wls_user_group2access (id_level_group,id_level_access) values ('".$data['id_level_group']."','".$data['id_level_access']."');";
 		mysql_query($sql,$conn);
 	}
 
@@ -64,19 +64,19 @@ class m_user_group extends wls implements dbtable,levelList{
 		}
 	}
 
-	public function updatePrivilege($id,$ids_privilege){
+	public function updateaccess($id,$ids_access){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		$sql = "delete from ".$pfx."wls_user_group2privilege where id_level_group = '".$id."' ;";
+		$sql = "delete from ".$pfx."wls_user_group2access where id_level_group = '".$id."' ;";
 		mysql_query($sql,$conn);
-		$arr = explode(",",$ids_privilege);
+		$arr = explode(",",$ids_access);
 		for($i=0;$i<count($arr);$i++){
 			$data = array(
 				'id_level_group'=>$id,
-				'id_level_privilege'=>$arr[$i]
+				'id_level_access'=>$arr[$i]
 			);
-			$this->linkPrivilege($data);
+			$this->linkaccess($data);
 		}
 	}
 
@@ -126,20 +126,20 @@ class m_user_group extends wls implements dbtable,levelList{
 			mysql_query($sql,$conn);
 		}
 
-		if($table==null||$table=='wls_user_group2privilege'){
-			$sql = "drop table if exists ".$pfx."wls_user_group2privilege;";
+		if($table==null||$table=='wls_user_group2access'){
+			$sql = "drop table if exists ".$pfx."wls_user_group2access;";
 			mysql_query($sql,$conn);
 			$sql = "
-				create table ".$pfx."wls_user_group2privilege(
+				create table ".$pfx."wls_user_group2access(
 				
 					 id int primary key auto_increment	
 					,id_level_group varchar(200) default ''		
-					,id_level_privilege varchar(200) default '' 						
+					,id_level_access varchar(200) default '' 						
 					
 				) DEFAULT CHARSET=utf8;
 				";
 			mysql_query($sql,$conn);
-			$sql = "ALTER TABLE ".$pfx."wls_user_group2privilege ADD INDEX idx_u_g2p (id_level_group,id_level_privilege);";
+			$sql = "ALTER TABLE ".$pfx."wls_user_group2access ADD INDEX idx_u_g2p (id_level_group,id_level_access);";
 			mysql_query($sql,$conn);
 		}
 
@@ -259,15 +259,15 @@ class m_user_group extends wls implements dbtable,levelList{
 
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
-		$objPHPExcel->getActiveSheet()->setTitle('privilege');
+		$objPHPExcel->getActiveSheet()->setTitle('access');
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level_group']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['id_level_privilege']);
-		$sql = "select * from ".$pfx."wls_user_group2privilege where id_level_group = '".$this->id_level."' ";
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['id_level_access']);
+		$sql = "select * from ".$pfx."wls_user_group2access where id_level_group = '".$this->id_level."' ";
 		$res = mysql_query($sql,$conn);
 		$index = 2;
 		while($temp = mysql_fetch_assoc($res)){
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $temp['id_level_group']);
-			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['id_level_privilege']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['id_level_access']);
 			$index ++;
 		}
 
@@ -320,8 +320,8 @@ class m_user_group extends wls implements dbtable,levelList{
 		$currentSheet = $this->phpexcel->getSheetByName('group');
 		$this->id_level = $currentSheet->getCell('A2')->getValue();
 
-		$currentSheet = $this->phpexcel->getSheetByName('privilege');
-		$sql = "delete from ".$pfx."wls_user_group2privilege where id_level_group = '".$this->id_level."' ";
+		$currentSheet = $this->phpexcel->getSheetByName('access');
+		$sql = "delete from ".$pfx."wls_user_group2access where id_level_group = '".$this->id_level."' ";
 		mysql_query($sql,$conn);
 		$allRow = array($currentSheet->getHighestRow());
 		$data = array();
@@ -329,13 +329,13 @@ class m_user_group extends wls implements dbtable,levelList{
 		for($i=2;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level_group'=>$currentSheet->getCell('A'.$i)->getValue(),
-				'id_level_privilege'=>$currentSheet->getCell('B'.$i)->getValue(),
+				'id_level_access'=>$currentSheet->getCell('B'.$i)->getValue(),
 			);
 			$keys = array_keys($data);
 			$keys = implode(",",$keys);
 			$values = array_values($data);
 			$values = implode("','",$values);
-			$sql = "insert into ".$pfx."wls_user_group2privilege (".$keys.") values ('".$values."')";
+			$sql = "insert into ".$pfx."wls_user_group2access (".$keys.") values ('".$values."')";
 			mysql_query($sql,$conn);
 		}
 
@@ -448,7 +448,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['PrivilegeToGroup']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['accessToGroup']);
 
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
@@ -498,10 +498,10 @@ class m_user_group extends wls implements dbtable,levelList{
 				$keys['ismenu'] = $i;
 			}
 		}
-		$privilegesData = array();
-		include_once dirname(__FILE__).'/privilege.php';
-		$privilegeObj = new m_user_privilege();
-		$privilegeObj->create();
+		$accesssData = array();
+		include_once dirname(__FILE__).'/access.php';
+		$accessObj = new m_user_access();
+		$accessObj->create();
 
 		for($i=4;$i<=$allRow;$i++){
 			$name = $this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue());
@@ -516,8 +516,8 @@ class m_user_group extends wls implements dbtable,levelList{
 				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
 				'money'=>$currentSheet->getCell($keys['money'].$i)->getValue(),
 			);
-			$privilegesData[] = $data ;
-			$privilegeObj->insert($data);
+			$accesssData[] = $data ;
+			$accessObj->insert($data);
 		}
 
 		$p2p = array();
@@ -526,10 +526,10 @@ class m_user_group extends wls implements dbtable,levelList{
 				if($currentSheet->getCell($i2.$i)->getValue()=='√'){
 					$data = array(
 						'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
-						'id_level_privilege'=>$privilegesData[$i-4]['id_level']
+						'id_level_access'=>$accesssData[$i-4]['id_level']
 					);
 					$p2p[] = $data ;
-					$this->linkPrivilege($data);
+					$this->linkaccess($data);
 				}
 			}
 		}

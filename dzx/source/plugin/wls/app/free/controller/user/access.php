@@ -1,12 +1,12 @@
 <?php
-class user_privilege extends wls{
+class user_access extends wls{
 	
 	private $m = null;
 	
-	function user_privilege(){
+	function user_access(){
 		parent::wls();
-		include_once $this->c->license.'/model/user/privilege.php';
-		$this->m = new m_user_privilege();
+		include_once $this->c->license.'/model/user/access.php';
+		$this->m = new m_user_access();
 	}
 	
 	public function jsonList(){
@@ -27,7 +27,7 @@ class user_privilege extends wls{
 				<body>
 					
 					'.$this->lang['importExcel'].'
-					<form action="wls.php?controller=user_privilege&action=saveUpload" method="post"
+					<form action="wls.php?controller=user_access&action=saveUpload" method="post"
 					enctype="multipart/form-data">
 						<label for="file">'.$this->lang['ExcelFilePath'].'</label>
 						<input type="file" name="file" id="file" />

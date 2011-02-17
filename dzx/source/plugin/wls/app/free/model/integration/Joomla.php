@@ -63,7 +63,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 	 * */
 	public function synchroUserGroups(){}
 
-	public function synchroPrivileges(){}
+	public function synchroaccesss(){}
 
 	/**
 	 * Only when the user jumpped from joomla to wls

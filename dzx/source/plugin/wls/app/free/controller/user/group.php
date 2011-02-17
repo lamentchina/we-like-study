@@ -110,11 +110,11 @@ class user_group extends wls{
 				<body><a href='".$file."'>".$this->lang['download']."</a></body></html>";
 	}
 	
-	public function getPrivilege(){
+	public function getaccess(){
 		$id = $_REQUEST['id'];
-		include_once dirname(__FILE__).'/../../model/user/privilege.php';
+		include_once dirname(__FILE__).'/../../model/user/access.php';
 		
-		$obj = new m_user_privilege();
+		$obj = new m_user_access();
 		$data = $obj->getListForGroup($id);		
 		
 		include_once dirname(__FILE__).'/../../model/tools.php';
@@ -138,8 +138,8 @@ class user_group extends wls{
 		echo json_encode($data);
 	}
 	
-	public function updatePrivilege(){
-		$this->m->updatePrivilege($_POST['id'],$_POST['ids']);
+	public function updateaccess(){
+		$this->m->updateaccess($_POST['id'],$_POST['ids']);
 	}
 	
 	public function updateSubject(){

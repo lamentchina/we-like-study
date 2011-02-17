@@ -1,5 +1,5 @@
 <?php
-class m_user_privilege extends wls implements dbtable,levelList{
+class m_user_access extends wls implements dbtable,levelList{
 
 	public $phpexcel = null;
 
@@ -14,7 +14,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_user_privilege (".$keys.") values ('".$values."');";
+		$sql = "insert into ".$pfx."wls_user_access (".$keys.") values ('".$values."');";
 
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
@@ -30,7 +30,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		unset($data['id']);
 		$keys = array_keys($data);
 
-		$sql = "update ".$pfx."wls_user_privilege set ";
+		$sql = "update ".$pfx."wls_user_access set ";
 		for($i=0;$i<count($keys);$i++){
 			$sql.= $keys[$i]."='".$data[$keys[$i]]."',";
 		}
@@ -49,10 +49,10 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
-		$sql = "drop table if exists ".$pfx."wls_user_privilege;";
+		$sql = "drop table if exists ".$pfx."wls_user_access;";
 		mysql_query($sql,$conn);
 		$sql = "
-			create table ".$pfx."wls_user_privilege(
+			create table ".$pfx."wls_user_access(
 			
 				 id int primary key auto_increment	
 				,id_level varchar(200) unique		
@@ -80,7 +80,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['privilege']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['access']);
 		$allRow = array($currentSheet->getHighestRow());
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -155,7 +155,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['privilege']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['access']);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(15);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
@@ -221,7 +221,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select ".$columns." from ".$pfx."wls_user_privilege ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_user_access ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
 		$res = mysql_query($sql,$conn);
@@ -230,7 +230,7 @@ class m_user_privilege extends wls implements dbtable,levelList{
 			$arr[] = $temp;
 		}
 
-		$sql2 = "select count(*) as total from ".$pfx."wls_user_privilege ".$where;
+		$sql2 = "select count(*) as total from ".$pfx."wls_user_access ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
@@ -252,8 +252,8 @@ class m_user_privilege extends wls implements dbtable,levelList{
 
 		$sql = "
 		SELECT *,(id_level in (
-			select id_level_privilege from ".$pfx."wls_user_group2privilege where id_level_group = '".$id_level_group."' 
-		))as checked FROM ".$pfx."wls_user_privilege order by id;
+			select id_level_access from ".$pfx."wls_user_group2access where id_level_group = '".$id_level_group."' 
+		))as checked FROM ".$pfx."wls_user_access order by id;
 		";
 
 		$res = mysql_query($sql,$conn);
@@ -271,10 +271,10 @@ class m_user_privilege extends wls implements dbtable,levelList{
 
 		$sql = "
 		select *,id_level in ( 
-			select id_level_privilege from ".$pfx."wls_user_group2privilege where id_level_group in ( 
+			select id_level_access from ".$pfx."wls_user_group2access where id_level_group in ( 
 				select id_level_group from ".$pfx."wls_user_group2user where username = '".$username."'
 			)
-		) as checked from ".$pfx."wls_user_privilege;";
+		) as checked from ".$pfx."wls_user_access;";
 
 		$res = mysql_query($sql,$conn);
 		$data = array();

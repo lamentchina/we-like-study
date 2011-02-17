@@ -22,8 +22,8 @@ class install extends wls {
 		$obj = new m_user();
 		$obj->create();
 
-		include_once $this->c->license.'/model/user/privilege.php';
-		$obj = new m_user_privilege();
+		include_once $this->c->license.'/model/user/access.php';
+		$obj = new m_user_access();
 		$obj->create();
 
 		include_once $this->c->license.'/model/question.php';
