@@ -69,7 +69,7 @@ class install extends wls {
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					'.$this->lang['importSysConfig'].',<a href="../file/test/nhzj.xls">'.$this->lang['seeExampleFile'].'</a>
+					'.$this->lang['importSysConfig'].',<a href="../file/test/wls_config_demo_dzx.xls">'.$this->lang['seeExampleFile'].'</a>
 					<br/>
 					<br/>
 					<form action="wls.php?controller=install&action=saveUpload" 
