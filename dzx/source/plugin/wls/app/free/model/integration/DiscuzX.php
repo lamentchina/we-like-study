@@ -34,7 +34,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 	 * */
 	public function synchroUserGroups(){}
 	
-	public function synchroaccesss(){}
+	public function synchroAccess(){}
 
 	/**
 	 * Sychros the current user info from DsicuzX to WLS
