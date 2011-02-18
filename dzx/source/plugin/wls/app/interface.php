@@ -56,7 +56,7 @@ interface integrate{
 	
 	public function synchroUserGroups();
 	
-	public function synchroAccesss();
+	public function synchroAccess();
 
 	public function synchroMe($resetUserSession = false);
 	

@@ -725,6 +725,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			,'count_giveup'=>$count_giveup
 			,'count_total'=>$count_total
 			,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
+			,'mycent'=>$mycent
 			,'id'=>$id_quiz_log
 		));
 

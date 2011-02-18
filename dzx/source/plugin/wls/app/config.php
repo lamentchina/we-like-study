@@ -1,16 +1,16 @@
 <?php
 class wlsconfig{
 
-			public $dbname = 'wls';
+			public $dbname = 'ultrax2';
 			public $dbhost = 'localhost';
 			public $dbuser = 'admin';
 			public $dbpwd = 'admin';
-			public $dbprefix = 'w_';
-			public $cmstype = '';
+			public $dbprefix = 'pre_';
+			public $cmstype = 'DiscuzX';
 			public $license = 'free';
 			public $libsPath = '../libs/';
 			public $filePath = '../file/';
-			public $siteName = '中文中文中文啊';
+			public $siteName = 'We Like Study! www.welikestudy.com';
 			public $state = 'running';
 			public $language = 'zh-cn';
 			public $background = 'free/view/qWikiOffice/resources/wallpapers/ladybuggin.jpg';
