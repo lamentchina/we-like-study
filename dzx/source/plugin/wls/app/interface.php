@@ -30,8 +30,6 @@ interface dbtable{
 	
 	public function exportExcel();
 	
-	public function cumulative($column);
-	
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*");
 	
 }
@@ -58,7 +56,7 @@ interface integrate{
 	
 	public function synchroUserGroups();
 	
-	public function synchroPrivileges();
+	public function synchroAccesss();
 
 	public function synchroMe($resetUserSession = false);
 	
