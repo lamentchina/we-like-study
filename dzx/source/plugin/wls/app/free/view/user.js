@@ -1,5 +1,4 @@
 wls.user = Ext.extend(wls, {
-
 	myUser : {
 		privilege : null,
 		group : null,
@@ -140,8 +139,7 @@ wls.user = Ext.extend(wls, {
 								url : thisObj.config.AJAXPATH
 										+ "?controller=user&action=register",
 								success : function(response) {
-									var obj = jQuery
-											.parseJSON(response.responseText);
+									var obj = jQuery.parseJSON(response.responseText);
 									if (obj.msg == 'ok') {
 										location.reload();
 									}
@@ -361,7 +359,7 @@ wls.user = Ext.extend(wls, {
 								+ "?controller=user&action=getGroup&username="
 								+ username,
 						buttons : [{
-							text : il8n.Submit,
+							text : il8n.submit,
 							handler : function() {
 								var checkedNodes = tree.getChecked();
 								var s = "";
@@ -373,20 +371,17 @@ wls.user = Ext.extend(wls, {
 
 								Ext.Ajax.request({
 									method : 'POST',
-									url : thisObj.config.AJAXPATH
-											+ "?controller=user&action=updateGroup",
+									url : thisObj.config.AJAXPATH + "?controller=user&action=updateGroup",
 									success : function(response) {
 										Ext.getCmp("w_u_l_g_w").close();
 									},
 									failure : function(response) {
-										Ext.Msg.alert('failure',
-												response.responseText);
+										Ext.Msg.alert('failure',response.responseText);
 										Ext.getCmp("w_u_l_g_w").close();
 									},
 									params : {
 										username : username,
-										accesss : s.substring(0, s.length
-														- 1)
+										accesss : s.substring(0, s.length- 1)
 									}
 								});
 							}
@@ -397,7 +392,7 @@ wls.user = Ext.extend(wls, {
 					var win = new Ext.Window({
 								id : 'w_u_l_g_w',
 								layout : 'fit',
-								title : username + " " + il8n.User.Group,
+								title : username + " " + il8n.UserToGroup,
 								width : 500,
 								height : 300,
 								modal : true,

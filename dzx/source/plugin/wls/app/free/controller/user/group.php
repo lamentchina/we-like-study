@@ -103,7 +103,7 @@ class user_group extends wls{
 	public function viewExport(){
 		$file = $this->m->exportExcel();
 		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
-				<body><a href='".$file."'>".$this->lang['download']."</a></body></html>";
+				<body><a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a></body></html>";
 	}
 	
 	public function viewExportOne(){
@@ -115,16 +115,11 @@ class user_group extends wls{
 	}
 	
 	public function getaccess(){
-		$id = $_REQUEST['id'];
-		
-		
+		$id = $_REQUEST['id'];				
 		$obj = new m_user_access();
-		$data = $obj->getListForGroup($id);		
-		
-		
+		$data = $obj->getListForGroup($id);				
 		$t = new tools();
-		$data =  $t->getTreeData(null,$data);		
-		
+		$data =  $t->getTreeData(null,$data);			
 		echo json_encode($data);
 	}
 	

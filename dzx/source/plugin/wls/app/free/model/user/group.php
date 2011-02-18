@@ -194,11 +194,11 @@ class m_user_group extends wls implements dbtable,levelList{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('group');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['userGroup']);
 		$allRow = array($currentSheet->getHighestRow());
+		
 		$data = array();
-		$index = 0;
-		for($i=2;$i<=$allRow[0];$i++){
+		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell('A'.$i)->getValue(),
 				'name'=>$currentSheet->getCell('B'.$i)->getValue(),
@@ -215,25 +215,30 @@ class m_user_group extends wls implements dbtable,levelList{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('data');
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['userGroup']);
 
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
+		$objPHPExcel->getActiveSheet()->mergeCells('A1:C1');   
+		$objPHPExcel->getActiveSheet()->getStyle('A1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+		$objPHPExcel->getActiveSheet()->getStyle('A1')->getFill()->getStartColor()->setARGB('FF808080');
+				
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['name']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['ordering']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['id']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['ordering']);
 
-		$index = 1;
+		$index = 2;
 		for($i=0;$i<count($data);$i++){
 			$index ++;
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id_level']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['name']);
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['ordering']);
 		}
-		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('A1');
+		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('A3');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+2));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "download/".date('YmdHis').".xls";
 		$objWriter->save($this->c->filePath.$file);

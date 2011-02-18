@@ -1,5 +1,5 @@
 <?php
-class m_quiz extends wls{
+class m_quiz extends wls implements dbtable{
 	
 	public $count_giveup = 0;		
 	public $count_right = 0;
@@ -77,5 +77,54 @@ class m_quiz extends wls{
 				
 		return $data;
 	}	
+	
+	
+	public function insert($data){}
+	
+	public function delete($ids){}
+	
+	public function update($data){}
+	
+	public function create(){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+
+		$sql = "drop table if exists ".$pfx."wls_quiz;";
+		mysql_query($sql,$conn);
+		$sql = "
+			create table ".$pfx."wls_quiz(
+				 id int primary key auto_increment	
+				,id_level_subject int default 0		
+				,name_subject varchar(200) default '0' 
+				
+				,title varchar(200) default 'title'		
+				,questions text
+				
+				,description varchar(200) default '0'			
+				,creator varchar(200) default 'admin'		
+				,date_created datetime not null 	
+				
+				,time_limit int default 3600		
+				,score_top float default 0			
+				,score_top_user varchar(200) default 0		
+				,score_avg float default 0			
+				,count_used int	default 0			
+				
+				,money int default 0				
+				
+				,cache_path_quiz text 				
+			
+			) DEFAULT CHARSET=utf8;
+			";
+		mysql_query($sql,$conn);
+		return true;
+	}
+	
+	public function importExcel($path){}
+	
+	public function exportExcel(){}
+	
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){}
+	
 }
 ?>
