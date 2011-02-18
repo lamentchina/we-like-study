@@ -13,6 +13,9 @@ class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
+		if(!isset($data['date_created'])){
+			$data['date_created'] = date('Y-m-d H:i:s');
+		}
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -21,7 +24,11 @@ class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 
 		$temp = mysql_query($sql,$conn);
 		if ( $temp === false ){
-			$this->cumulative('count');
+			if(isset($data['id_question']) && isset($data['id_user'])){
+				$this->id_question = $data['id_question'];
+				$this->id_user = $data['id_user'];
+				$this->cumulative('count');
+			}
 			return false;
 		}
 		return mysql_insert_id($conn);
@@ -137,19 +144,9 @@ class m_quiz_wrong extends m_quiz implements dbtable,quizdo{
 		$res = mysql_query($sql,$conn);
 
 
-		
-		$obj = new m_subject();
-		$data = $obj->getList(1,100);
-		$data = $data['data'];
-		$keys = array();
-		for($i=0;$i<count($data);$i++){
-			$keys[$data[$i]['id_level']] = $data[$i]['name'];
-		}
-
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$temp['timedif'] = $this->t->getTimeDif($temp['date_created']); 
-			$temp['subject_name'] = $keys[$temp['id_level_subject']];
 			$arr[] = $temp;
 		}
 

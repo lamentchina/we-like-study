@@ -1,6 +1,8 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
+include_once dirname(__FILE__)."/../../model/user.php";
 include_once dirname(__FILE__).'/../../model/quiz/wrong.php';
+include_once dirname(__FILE__).'/../../model/quiz/log.php';
 
 class quiz_wrong extends quiz{
 	private $m = null;
@@ -26,7 +28,6 @@ class quiz_wrong extends quiz{
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
 		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
-		include_once $this->c->license.'/model/user.php';
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		$data = $this->m->getList($page,$pagesize,array('id_user'=>$user['id']));
@@ -81,13 +82,11 @@ class quiz_wrong extends quiz{
 	}
 
 	public function getOne(){
-		$id_level_subject = $_POST['id_level_subject'];
-		include_once dirname(__FILE__)."/../../model/user.php";
+		
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 
 		$data = $this->m->getList(1,50,array(
-			'id_level_subject'=>$id_level_subject,
 			'id_user'=>$user['id'],
 		)," Order by RAND() ");
 		$data = $data['data'];
@@ -118,13 +117,11 @@ class quiz_wrong extends quiz{
 
 		$answers = $this->m->getAnswers($ques_);
 		$json = json_encode($answers);
-
-		include_once $this->c->license.'/model/quiz/log.php';
+		
 		$obj = new m_quiz_log();
 		$data = array(
 			'date_created'=>date('Y-m-d H:i:s'),
 			'id_question'=>$id_question,
-			'id_level_subject'=>$_POST['id_level_subject'],
 			'application'=>5,
 		);
 		$id_quiz_log = $obj->insert($data);
@@ -237,8 +234,6 @@ class quiz_wrong extends quiz{
 var quiz_wrong;
 Ext.onReady(function(){
 	quiz_wrong = new wls.quiz.wrong();
-	
-	quiz_wrong.id_level_subject = ".$_REQUEST['id_level_subject'].";
 	quiz_wrong.naming = 'quiz_wrong';
 	quiz_wrong.initLayout();
 	quiz_wrong.ajaxIds(\"quiz_wrong.ajaxQuestions('quiz_wrong.addQuestions()');\");

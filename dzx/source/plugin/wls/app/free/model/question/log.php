@@ -1,5 +1,6 @@
 <?php
 include_once dirname(__FILE__)."/../user.php";
+include_once dirname(__FILE__)."/../quiz/wrong.php";
 
 class m_question_log extends wls implements dbtable,log{
 
@@ -160,6 +161,7 @@ class m_question_log extends wls implements dbtable,log{
 		$answerData = $whatHappened;
 		
 		$return = 0;
+		$wrongObj = new m_quiz_wrong();
 		if($answerData['myAnswer']=='I_DONT_KNOW'){
 			$answerData['correct'] = -1;
 			$return = -1;
@@ -168,6 +170,13 @@ class m_question_log extends wls implements dbtable,log{
 			$answerData['mycent'] = $answerData['cent'];
 			$return = 1;
 		}else{
+			$wrongData = array(
+				 'id_user'=>$answerData['id_user']
+				,'id_question'=>$answerData['id_question']
+				,'id_question'=>$answerData['id_question']
+				,'id_quiz_paper'=>$answerData['id_quiz_paper']
+			);
+			$wrongObj->insert($wrongData);
 			$answerData['correct'] = 0;
 			$return = 1;
 		}

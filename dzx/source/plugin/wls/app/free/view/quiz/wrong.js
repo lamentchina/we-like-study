@@ -6,74 +6,59 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	,
 	ajaxIds : function(nextFunction) {
 		var thisObj = this;
-		$.blockUI({
-					message : '<h1>' + il8n.loading + '</h1>'
-				});
+		$.blockUI({message : '<h1>' + il8n.loading + '</h1>'});
 		$.ajax({
-					url : thisObj.config.AJAXPATH
-							+ "?controller=quiz_wrong&action=getOne",
-					data : {
-						id_level_subject : thisObj.id_level_subject
-					},
-					type : "POST",
-					success : function(msg) {
+			url : thisObj.config.AJAXPATH + "?controller=quiz_wrong&action=getOne",
+			type : "POST",
+			success : function(msg) {
+				thisObj.questionsIds = msg;
+				var temp = jQuery.parseJSON('[' + msg + ']');
+				thisObj.count.total = temp.length;
+				thisObj.state = 1;
+				thisObj.addQuizBrief();
+				thisObj.addNavigation();
+				$.unblockUI();
 
-						thisObj.questionsIds = msg;
-						var temp = jQuery.parseJSON('[' + msg + ']');
-						thisObj.count.total = temp.length;
-						thisObj.state = 1;
-						thisObj.addQuizBrief();
-						thisObj.addNavigation();
-						$.unblockUI();
-
-						eval(nextFunction);
-					}
-				});
+				eval(nextFunction);
+			}
+		});
 	},
 	addQuizBrief : function() {
 		var str = "<table width='90%'>" + "<tr>" + "<td>"
 				+ il8n.count_questions + "</td>" + "<td>" + this.count.total
-				+ "</td>" + "</tr>" +
-
-				"</table>";
+				+ "</td>" + "</tr>" + "</table>";
 		$("#paperBrief").append(str);
 		var thisObj = this;
 		Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Brief');
 	},
 	submit : function(nextFunction) {
-		$.blockUI({
-					message : '<h1>' + il8n.loading + '</h1>'
-				});
-
+		$.blockUI({message : '<h1>' + il8n.loading + '</h1>'});
 		this.answersData = [];
 		for (var i = 0; i < this.questions.length; i++) {
 			this.answersData.push({
-						id : this.questions[i].id,
-						answer : this.questions[i].getMyAnswer()
-					});
+				id : this.questions[i].id,
+				answer : this.questions[i].getMyAnswer()
+			});
 		}
 		var thisObj = this;
-
 		$.ajax({
-					url : thisObj.config.AJAXPATH
-							+ "?controller=quiz_wrong&action=getAnswers",
-					data : {
-						answersData : thisObj.answersData,
-						id_level_subject : thisObj.id_level_subject
-					},
-					type : "POST",
-					success : function(msg) {
-						$.unblockUI();
-						var obj = thisObj.answersData = jQuery.parseJSON(msg);
-						for (var i = 0; i < obj.length; i++) {
-							thisObj.questions[i].answerData = obj[i];
-						}
-						eval(nextFunction);
-						thisObj.showResult();
-					}
-				});
+			url : thisObj.config.AJAXPATH + "?controller=quiz_wrong&action=getAnswers",
+			data : {
+				answersData : thisObj.answersData,
+				id_level_subject : thisObj.id_level_subject
+			},
+			type : "POST",
+			success : function(msg) {
+				$.unblockUI();
+				var obj = thisObj.answersData = jQuery.parseJSON(msg);
+				for (var i = 0; i < obj.length; i++) {
+					thisObj.questions[i].answerData = obj[i];
+				}
+				eval(nextFunction);
+				thisObj.showResult();
+			}
+		});
 	}
-
 	,
 	showResult : function() {
 		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.count_right
@@ -110,7 +95,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level_subject', 'id_quiz_paper',
-							'date_created', 'timedif', 'subject_name', 'count',
+							'date_created', 'timedif', 'count',
 							'id_user']
 				});
 
@@ -136,10 +121,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							}, {
 								header : il8n.date_created,
 								dataIndex : 'timedif'
-							}, {
-								header : il8n.subject,
-								dataIndex : 'subject_name'
-							}, {
+							},  {
 								header : il8n.count_wrong,
 								dataIndex : 'count'
 							}, {
@@ -173,8 +155,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					handler : function() {
 						Ext.Ajax.request({
 							method : 'POST',
-							url : thisObj.config.AJAXPATH
-									+ "?controller=quiz_paper&action=delete",
+							url : thisObj.config.AJAXPATH + "?controller=quiz_paper&action=delete",
 							success : function(response) {
 								store.load();
 							},
@@ -206,8 +187,8 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							+ '?controller=quiz_wrong&action=myList',
 					root : 'data',
 					idProperty : 'id',
-					fields : ['id', 'id_level_subject', 'id_quiz_paper',
-							'date_created', 'timedif', 'subject_name', 'count',
+					fields : ['id', 'id_quiz_paper',
+							'date_created', 'timedif',  'count',
 							'id_user']
 				});
 
@@ -233,9 +214,6 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							}, {
 								header : il8n.date_created,
 								dataIndex : 'timedif'
-							}, {
-								header : il8n.subject,
-								dataIndex : 'subject_name'
 							}, {
 								header : il8n.count_wrong,
 								dataIndex : 'count'
@@ -303,17 +281,16 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							alert(il8n.clickCellInGrid);
 							return;
 						}
-						var sid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id_level_subject;
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();
 
-						var win = desktop.getWindow(sid + '_qdesk');
+						var win = desktop.getWindow(uid + '_wrongs');
 						var winWidth = desktop.getWinWidth();
 						var winHeight = desktop.getWinHeight();
 
 						if (!win) {
 							win = desktop.createWindow({
-								id : sid + '_qdesk',
+								id : uid + '_wrongs',
 								title : il8n.Quiz_Wrongs,
 								width : winWidth,
 								height : winHeight,
@@ -321,8 +298,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								plain : false,
 								html : '<iframe src="'
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_wrong&action=viewOne&id_level_subject="
-										+ sid
+										+ "?controller=quiz_wrong&action=viewOne"
 										+ "&uid="
 										+ uid
 										+ '&temp='

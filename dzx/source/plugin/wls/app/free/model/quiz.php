@@ -51,10 +51,10 @@ class m_quiz extends wls implements dbtable{
 		$keys = array_keys($myAnswers);
 		$ids = implode(",",$keys);
 		
-		$sql = "select 
-		
+		$sql = "select 		
 				 answer
 				,id
+				,id_parent
 				,id_quiz_paper
 				,markingmethod
 				,description

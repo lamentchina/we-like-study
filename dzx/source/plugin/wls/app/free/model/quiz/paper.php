@@ -694,6 +694,10 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		
 		$quesLogObj = new m_question_log();
 		for($i=0;$i<count($answers);$i++){
+			if($answers[$i]['type']==4||
+				$answers[$i]['type']==5||
+				$answers[$i]['type']==6||
+				($answers[$i]['type']==7&&$answers[$i]['id_parent']==0))continue;
 			$cent += $answers[$i]['cent'];
 			$quesLogData = array(
 				 'id_quiz_paper'=>$answers[$i]['id_quiz_paper']

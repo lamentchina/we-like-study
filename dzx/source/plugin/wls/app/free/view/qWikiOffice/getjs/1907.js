@@ -11,8 +11,8 @@ class_1907 = Ext.extend(Ext.app.Module, {
 				var obj = new wls.subject();
 
 				if (!win) {
-					var winWidth = desktop.getWinWidth() / 1.1;
-					var winHeight = desktop.getWinHeight() / 1.1;
+					var winWidth = 550;
+					var winHeight = 300;
 					var obj = new wls.subject();
 
 					win = desktop.createWindow({
