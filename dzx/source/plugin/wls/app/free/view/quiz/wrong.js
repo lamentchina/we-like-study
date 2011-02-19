@@ -1,9 +1,6 @@
 wls.quiz.wrong = Ext.extend(wls.quiz, {
 
 	type : 'wrong',
-	id_level_subject : null
-
-	,
 	ajaxIds : function(nextFunction) {
 		var thisObj = this;
 		$.blockUI({message : '<h1>' + il8n.loading + '</h1>'});

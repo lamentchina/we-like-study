@@ -28,7 +28,6 @@ class quiz_log extends quiz{
 		$pagesize = 15;
 		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
 
-		include_once $this->c->license.'/model/user.php';
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		$data = $this->m->getList($page,$pagesize,array('id_user'=>$user['id']));

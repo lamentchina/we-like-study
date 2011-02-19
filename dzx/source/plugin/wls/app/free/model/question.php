@@ -11,6 +11,12 @@ class m_question extends wls implements dbtable{
 		if(!isset($data['title'])){
 			$data['title'] = 'question title missed';
 		}
+		if(!isset($data['cent']) && $data['cent']==''){
+			$data['cent'] = '0';
+		}
+		if(!isset($data['optionlength']) && $data['optionlength']==''){
+			$data['optionlength'] = '0';
+		}		
 		if(!isset($data['answer'])){
 			$data['answer'] = 'A';
 		}
@@ -38,8 +44,8 @@ class m_question extends wls implements dbtable{
 		if(!isset($data['description'])){
 			$data['description'] = $this->lang['ques_description'];
 		}
-		if(!isset($data['title'])){
-			$data['title'] = 'question title missed';
+		if(!isset($data['date_created'])){
+			$data['date_created'] = date('Y-m-d H:i:s');
 		}
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);

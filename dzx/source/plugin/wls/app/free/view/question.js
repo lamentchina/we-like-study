@@ -38,9 +38,6 @@ wls.question = Ext.extend(wls, {
 						+ this.id + "' />" + il8n.whyImWrong_WrongAnswer
 						+ "</td>" + "</tr></table>" + "</div>");
 	},
-	saveWhyImWrong : function() {
-
-	},
 	addCommenter : function() {
 		$('.w_q_d', $('#w_qs_' + this.id))
 				.append("<div style='height:40px;'><input class='rating' value='1' /></div>");
@@ -51,12 +48,6 @@ wls.question = Ext.extend(wls, {
 				});
 	},
 	addListening : function() {
-
-	},
-	showComments : function() {
-
-	},
-	showWrongs : function() {
 
 	}
 

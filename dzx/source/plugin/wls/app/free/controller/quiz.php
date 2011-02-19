@@ -5,8 +5,7 @@ class quiz extends wls{
 	private $m = null;
 	
 	function quiz(){
-		parent::wls();
-		
+		parent::wls();		
 		$this->m = new m_quiz();
 	}
 	

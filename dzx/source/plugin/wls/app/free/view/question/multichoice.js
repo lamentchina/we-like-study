@@ -1,5 +1,4 @@
 wls.question.multichoice = Ext.extend(wls.question, {
-			optionLength : null,
 			initDom : function() {
 				$("#wls_quiz_main").append("<div id='w_qs_" + this.id
 						+ "'></div>");
