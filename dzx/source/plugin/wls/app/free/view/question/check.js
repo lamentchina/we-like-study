@@ -101,7 +101,7 @@ wls.question.check = Ext.extend(wls.question, {
 			 * between ExtJS and Jquery.
 			 */
 			,
-			setMyAnser : function() {
+			setMyAnswer : function() {
 				var myAnswer = this.answerData.myAnswer;
 				if (myAnswer != 'I_DONT_KNOW') {
 					var temp = {

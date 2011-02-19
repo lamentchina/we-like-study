@@ -54,7 +54,7 @@ wls.question.blank = Ext.extend(wls.question, {
 		return answer;
 
 	},
-	setMyAnser : function() {
+	setMyAnswer : function() {
 		var myAnswer = this.answerData.myAnswer;
 		if (myAnswer != 'I_DONT_KNOW') {
 			var c = $("input[name=w_qs_" + this.id + "]");

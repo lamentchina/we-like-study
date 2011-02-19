@@ -96,7 +96,7 @@ wls.question.multichoice = Ext.extend(wls.question, {
 				}
 				return answer;
 			},
-			setMyAnser : function() {
+			setMyAnswer : function() {
 				var myAnswer = this.answerData.myAnswer;
 				if (myAnswer != 'I_DONT_KNOW') {
 					var answerList = this.answerData.myAnswer.split(',');

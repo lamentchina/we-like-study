@@ -24,7 +24,7 @@ wls.question.mixed = Ext.extend(wls.question, {
 			getMyAnswer : function() {
 				return '';
 			},
-			setMyAnser : function() {
+			setMyAnswer : function() {
 
 			}
 		});
