@@ -2,7 +2,7 @@ wls.quiz = Ext.extend(wls, {
 
 	answersData : null,
 	questionsData : null,
-	questionsIds : null,
+	ids_questions : null,
 	questions : [],
 	count : {
 		giveup : 0,
@@ -174,9 +174,9 @@ wls.quiz = Ext.extend(wls, {
 				});
 		$.ajax({
 					url : thisObj.config.AJAXPATH
-							+ "?controller=quiz&action=getQuestions",
+							+ "?controller=question&action=getByIds",
 					data : {
-						questionsIds : thisObj.questionsIds
+						ids_questions : thisObj.ids_questions
 					},
 					type : "POST",
 					success : function(msg) {

@@ -8,10 +8,5 @@ class quiz extends wls{
 		parent::wls();		
 		$this->m = new m_quiz();
 	}
-	
-	public function getQuestions(){
-		$data = $this->m->getQuestions($_POST['questionsIds']);
-		echo json_encode($data);
-	}
 }
 ?>

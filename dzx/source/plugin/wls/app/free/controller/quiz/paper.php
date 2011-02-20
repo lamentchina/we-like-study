@@ -10,6 +10,13 @@ class quiz_paper extends quiz{
 		parent::wls();
 		$this->m = new m_quiz_paper();
 	}
+	
+	public function getOne(){
+		$data = $this->m->getList(1,1,array('id'=>$_REQUEST['id']),null,'money,name_subject,title,ids_questions,description,author,score_top,score_avg');
+		$data = $data['data'];
+		$data = $data[0];
+		echo json_encode($data);		
+	}
 
 	public function getList(){
 		$page = 1;
@@ -161,7 +168,7 @@ class quiz_paper extends quiz{
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."star-rating/jquery.rating.pack.js\"></script>		
 	
-<script type=\"text/javascript\" src=\"wls.php?controller=user&action=translateIniToJsClass\"></script>
+<script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/paper.js\"></script>

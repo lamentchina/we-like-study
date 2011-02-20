@@ -3,7 +3,7 @@ include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
 include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_subject extends wls implements dbtable,levelList{
+class m_subject extends wls implements dbtable,fileLoad{
 
 	public $phpexcel = null;
 	public $id_level = null;
@@ -19,7 +19,7 @@ class m_subject extends wls implements dbtable,levelList{
 		$conn = $this->conn();
 		
 		if(!isset($data['description'])){
-			$data['description'] = ' ';
+			$data['description'] = '0';
 		}
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -116,7 +116,7 @@ class m_subject extends wls implements dbtable,levelList{
 	 * @param $path Excel Path
 	 * @return bool
 	 * */
-	public function importExcel($path){
+	public function importAll($path){
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -128,43 +128,51 @@ class m_subject extends wls implements dbtable,levelList{
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['id_level']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['id_level']){
 				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['description']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['name']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
 				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['icon']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['icon']){
 				$keys['icon'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['ids_level_knowledge']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['ordering']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
 			}			
-		}		
+		}	
+		if( !(isset($keys['name'])&&isset($keys['id_level'])) ){
+			$error = "Wrong Structrue of Excel";
+			$this->error($error);
+		}
 		
 		$data = array();
-		for($i=2;$i<=$allRow[0];$i++){
+		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
 				'name'=> $this->t->formatTitle( $currentSheet->getCell($keys['name'].$i)->getValue() ),
 			);
 			if(isset($keys['ordering'])){
-				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();
+				$value = $currentSheet->getCell($keys['ordering'].$i)->getValue();
+				if($value!='')$data['ordering']=$value;
 			}
-			if(isset($keys['description'])){
-				$data['description'] = $currentSheet->getCell($keys['description'].$i)->getValue();
+			if(isset($keys['description']) ){
+				$value = $currentSheet->getCell($keys['description'].$i)->getValue();
+				if($value!='')$data['description']=$value;
 			}	
 			if(isset($keys['ids_level_knowledge'])){
-				$data['ids_level_knowledge'] = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
+				$value = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
+				if($value!='')$data['ids_level_knowledge']=$value;
 			}	
 			if(isset($keys['icon'])){
-				$data['icon'] = $currentSheet->getCell($keys['icon'].$i)->getValue();
+				$value = $currentSheet->getCell($keys['icon'].$i)->getValue();
+				if($value!='')$data['icon']=$value;
 			}								
 			$this->insert($data);
 		}
@@ -175,25 +183,26 @@ class m_subject extends wls implements dbtable,levelList{
 	 *
 	 * @return $path filepath
 	 * */
-	public function exportExcel(){
+	public function exportAll($path){
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['subject']);
-
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level']);
+		
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['name']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['ordering']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', $this->lang['ids_level_knowledge']);
-		$objPHPExcel->getActiveSheet()->setCellValue('E1', $this->lang['icon']);
-		$objPHPExcel->getActiveSheet()->setCellValue('F1', $this->lang['description']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['id_level']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['ordering']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['ids_level_knowledge']);
+		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['icon']);
+		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->lang['description']);
 
-		$index = 1;
+		$index = 2;
 		for($i=0;$i<count($data);$i++){
 			$index ++;
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id_level']);
@@ -211,6 +220,10 @@ class m_subject extends wls implements dbtable,levelList{
 		$objWriter->save($this->c->filePath.$file);
 		return $file;
 	}
+	
+	public function importOne($path){}
+	
+	public function exportOne($path){}
 	
 	public function cumulative($column){}
 

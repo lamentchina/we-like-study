@@ -107,11 +107,8 @@ class m_question extends wls implements dbtable{
 				,description text					
 				,cent float default 0				
 				,layout int default 1 /*1 vertical 0 horizonal */
-				
-				,id_level_subject int default 0			
-				,name_subject varchar(200) default 'Subject Missed'		
-				,id_quiz_paper int default	0		
-				,title_quiz_paper varchar(200) default 'Paper Title Missed'	
+					
+				,id_quiz int default	0		
 				,id_parent int default 0			/*If it's a big question , mixed quesiton or depict question*/
 				,path_listen varchar(200) default '0'  			/*If this question has listenning file*/								
 
@@ -131,17 +128,84 @@ class m_question extends wls implements dbtable{
 				,markingmethod int default 0		
 				
 				,ids_level_knowledge varchar(200) default '0' 
-				,weight_knowledge varchar(200) default '0' 
 			
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
 		return true;
 	}
+	
+	/**
+	 * Get questions by ids.
+	 * Each type of quiz, like quiz-paper , quiz-wrongs, quiz-random 
+	 * These's client-side will call this
+	 * 
+	 * @param $ids Database table wls_question's id
+	 * @return $data
+	 * */
+	public function getByIds($ids){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "select 
+			id,type,title,optionlength,
+			option1,option2,option3,option4,option5,option6,option7,
+			description,cent,id_quiz,id_parent,layout,path_listen
+			 from ".$pfx."wls_question where id in (".$ids.") or (id_parent !=0 and id_parent in (".$ids.")) order by id; ";
 
-	public function importExcel($path){}
-
-	public function exportExcel(){}
+		$res = mysql_query($sql,$conn);
+		if($res==false)die($sql);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			if($temp==false)die($sql);
+			$temp['title'] = str_replace("__IMAGEPATH__",$this->c->filePath."images/",$temp['title']);
+			$data[] = $temp;
+		}
+		
+		return $data;
+	}
+	
+	/**
+	 * The client-side post user's quiz result to the server, 
+	 * The server check the answers.
+	 * 
+	 * @param $myAnswers See this in each controller file , it's mostly from $_POST
+	 * @return $data
+	 * */
+	public function getAnswers($myAnswers){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+		$keys = array_keys($myAnswers);
+		$ids = implode(",",$keys);
+		
+		$sql = "select 		
+				 answer
+				,id
+				,id_parent
+				,id_quiz_paper
+				,markingmethod
+				,description
+				,cent
+				,type
+				,option2
+				,option3
+				,option4
+				,id_level_subject
+				,ids_level_knowledge
+				
+			 from ".$pfx."wls_question where id in (".$ids.") order by id ; ";
+		$res = mysql_query($sql,$conn);
+		if($res==false)echo $sql;
+		$data = array();		
+		while($temp = mysql_fetch_assoc($res)){
+			$temp['myAnswer'] = $myAnswers[$temp['id']];
+			$data[] = $temp;
+		}
+				
+		return $data;
+	}	
+	
 
 	/**
 	 * Cumulative one column, 

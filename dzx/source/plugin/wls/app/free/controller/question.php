@@ -18,5 +18,11 @@ class question extends wls{
 		$data = $data['data'][0];
 		echo json_encode($data);
 	}
+	
+	public function getByIds(){
+		$ids = $_REQUEST['ids_questions'];
+		$data = $this->m->getByIds($ids);
+		echo json_encode($data);
+	}
 }
 ?>

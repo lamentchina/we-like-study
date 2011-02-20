@@ -4,15 +4,16 @@ include_once dirname(__FILE__).'/../subject.php';
 include_once dirname(__FILE__).'/../question.php';
 include_once dirname(__FILE__).'/../question/log.php';
 include_once dirname(__FILE__)."/../user.php";
+include_once dirname(__FILE__).'/../quiz.php';
 include_once dirname(__FILE__).'/../quiz/log.php';
 
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_quiz_paper extends m_quiz implements dbtable,quizdo{
+class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 	public $phpexcel;
-	public $id = null;
+	public $id_paper = null;
 	public $mycent = null;
 	public $questions = null;
 	public $paper = null;
@@ -20,12 +21,6 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		if(!isset($data['cache_path_quiz'])){
-			$data['cache_path_quiz'] = '';
-		}
-		if(!isset($data['questions'])){
-			$data['questions'] = '';
-		}
 
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -58,6 +53,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 	}
 
 	public function update($data){
+
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
@@ -88,43 +84,23 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$sql = "
 			create table ".$pfx."wls_quiz_paper(
 				 id int primary key auto_increment	
-				,id_level_subject int default 0		
-				,name_subject varchar(200) default '0' 
-				
-				,title varchar(200) default 'title'		
-				,questions text
-				
-				,description varchar(200) default '0'			
-				,creator varchar(200) default 'admin'		
-				,date_created datetime not null 	
-				
-				,time_limit int default 3600		
-				,score_top float default 0			
-				,score_top_user varchar(200) default 0		
-				,score_avg float default 0			
-				,count_used int	default 0			
+				,id_quiz int default 0
 				
 				,money int default 0				
-				
-				,cache_path_quiz text 				
 			
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
 		return true;
 	}
+	
+	public function importAll($path){}
+	
+	public function exportAll($path){}
 
-	public function importExcel($path){
+	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-
-		
-		$obj = new m_subject();
-		$data = $obj->getList(1,100);
-		if(count($data['data'])<1){
-			$this->error(array('description'=>'quiz paper wrong'));
-			return false;
-		}
 
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -135,274 +111,39 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$imagePath = "";
-		$paper = array();
+		$quizData = array();
+		$paperData = array();
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['title']){
-				$paper['title'] = $currentSheet->getCell($i."2")->getValue();
+				$quizData['title'] = $currentSheet->getCell($i."2")->getValue();
 			}
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['money']){
-				$paper['money'] = $currentSheet->getCell($i."2")->getValue();
+				$paperData['money'] = $currentSheet->getCell($i."2")->getValue();
 			}
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['author']){
-				$paper['creator'] = $currentSheet->getCell($i."2")->getValue();
+				$quizData['author'] = $currentSheet->getCell($i."2")->getValue();
 			}
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['imagePath']){
 				$imagePath = $currentSheet->getCell($i."2")->getValue();
+				$quizData['imagePath'] = $imagePath;
 			}
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['subject']){
-				$paper['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
-				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$paper['id_level_subject']."'; ";
-				$res = mysql_query($sql_,$conn);
+				$quizData['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
+				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$quizData['id_level_subject']."'; ";
+				$res = mysql_query($sql_,$conn);				
 				$temp = mysql_fetch_assoc($res);
-				$paper['name_subject'] = $temp['name'];
+				$quizData['name_subject'] = $temp['name'];
 			}
 		}
-		$paper['date_created'] = date('Y-m-d H:i:s');
-		$paper['id'] = $this->insert($paper);
-		$this->id = $paper['id'];
-		$this->paper = $paper;
-
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['question']);
-		$allRow = $currentSheet->getHighestRow();
-		$allColmun = $currentSheet->getHighestColumn();
-
-		$keys = array();
-		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['index']){
-				$keys['index'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['belongto']){
-				$keys['belongto'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['Qes_Type']){
-				$keys['type'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['title']){
-				$keys['title'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['answer']){
-				$keys['answer'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['cent']){
-				$keys['cent'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'A'){
-				$keys['option1'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'B'){
-				$keys['option2'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'C'){
-				$keys['option3'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'D'){
-				$keys['option4'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'E'){
-				$keys['option5'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'F'){
-				$keys['option6'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'G'){
-				$keys['option7'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ques_description']){
-				$keys['description'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['listenningFile']){
-				$keys['path_listen'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_used']){
-				$keys['count_used'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_right']){
-				$keys['count_right'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_wrong']){
-				$keys['count_wrong'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_giveup']){
-				$keys['count_giveup'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['difficulty']){
-				$keys['difficulty'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['markingmethod']){
-				$keys['markingmethod'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['optionlength']){
-				$keys['optionlength'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
-				$keys['ids_level_knowledge'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['layout']){
-				$keys['layout'] = $i;
-			}			
-		}
-
-		for($i=3;$i<=$allRow;$i++){
-			$title = $this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());
-			$title = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$title);
-			$title = str_replace("[/".$this->lang['image']."]","\">",$title);
-			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
-			$title = str_replace("___]","\"/>",$title);
-				
-			$question = array(
-				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
-				'title'=>$title,
-				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
-				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
-				'id_level_subject'=>$paper['id_level_subject'],
-				'name_subject'=>$paper['name_subject'],
-				'id_quiz_paper'=>$paper['id'],
-				'title_quiz_paper'=>$paper['title'],			
-			);			
-				
-			if(isset($keys['belongto'])){
-				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();
-			}else{
-				$question['belongto']=0;
-			}
-			if(isset($keys['index'])){
-				$question['index']=$currentSheet->getCell($keys['index'].$i)->getValue();
-			}else{
-				$question['index']=$i;
-			}
-			if(isset($keys['cent'])){
-				$question['cent']=$currentSheet->getCell($keys['cent'].$i)->getValue();
-			}
-			
-			$optionlength = 1;
-			if(isset($keys['option2']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
-				if($value!=''){
-					$optionlength = 2;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
-					$question['option2'] = $value;
-				}
-			}
-			if(isset($keys['option3']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue());
-				if($value!=''){
-					$optionlength = 3;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
-					$question['option3'] = $value;
-				}
-			}
-			if(isset($keys['option4']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue());
-				if($value!=''){
-					$optionlength = 4;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
-					$question['option4'] = $value;
-				}
-			}
-			if(isset($keys['option5']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue());
-				if($value!=''){
-					$optionlength = 5;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
-					$question['option5'] = $value;
-				}
-			}
-			if(isset($keys['option6']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue());
-				if($value!=''){
-					$optionlength = 6;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
-					$question['option6'] = $value;
-				}
-			}
-			if(isset($keys['option7']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue());
-				if($value!=''){
-					$optionlength = 7;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$imagePath,$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
-					$question['option7'] = $value;
-				}
-			}				
-			if(isset($keys['optionlength']) && ( $currentSheet->getCell($keys['optionlength'].$i)->getValue()!='') ){
-				$optionlength = $currentSheet->getCell($keys['optionlength'].$i)->getValue();
-			}
-			$question['optionlength'] = $optionlength;
-				
-			if(isset($keys['description'])){
-				$question['description']=$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
-			}
-			if(isset($keys['path_listen'])){
-				$value = $currentSheet->getCell($keys['path_listen'].$i)->getValue();
-				if($value!=''){
-					$question['path_listen']=$imagePath.$value;
-				}				
-			}
-			if(isset($keys['count_used'])){
-				$question['count_used']=$currentSheet->getCell($keys['count_used'].$i)->getValue();
-			}
-			if(isset($keys['count_right'])){
-				$question['count_right']=$currentSheet->getCell($keys['count_right'].$i)->getValue();
-			}
-			if(isset($keys['count_wrong'])){
-				$question['count_wrong']=$currentSheet->getCell($keys['count_wrong'].$i)->getValue();
-			}
-			if(isset($keys['count_giveup'])){
-				$question['count_giveup']=$currentSheet->getCell($keys['count_giveup'].$i)->getValue();
-			}
-			if(isset($keys['difficulty'])){
-				$question['difficulty']=$currentSheet->getCell($keys['difficulty'].$i)->getValue();
-			}
-			if(isset($keys['markingmethod'])){
-				$question['markingmethod']=$currentSheet->getCell($keys['markingmethod'].$i)->getValue();
-			}
-			if(isset($keys['id_level_subject'])){
-				$question['id_level_subject']=$paper['id_level_subject'];
-			}
-			if(isset($keys['id_quiz_paper'])){
-				$question['id_quiz_paper']=$paper['id'];
-			}
-			if(isset($keys['title_quiz_paper'])){
-				$question['title_quiz_paper']=$paper['title'];
-			}
-			if(isset($keys['ids_level_knowledge'])){
-				$question['ids_level_knowledge']=$currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
-			}
-			if(isset($keys['layout'])){
-				$value = $currentSheet->getCell($keys['layout'].$i)->getValue();
-				if($value!=''){
-					$question['layout']=$this->t->formatLayout($value,true);
-				}				
-			}			
-			$this->questions[$question['index']] = $question;
-		}
-		$this->saveQuestions();
-	}
-
-	public function saveQuestions(){
-		$quesObj = new m_question();
-		$questions = $this->questions;
-		$ques = $quesObj->insertMany($questions);
-		if($ques==false){
-			return false;
-		}else{
-			$values = array_values($ques);
-			$ids = '';
-			for($i=0;$i<count($values);$i++){
-				$ids .= $values[$i]['id'].",";
-			}
-			$ids = substr($ids,0,strlen($ids)-1);
-			$data = array(
-				'id'=>$this->id,
-				'questions'=>$ids
-			);
-			return $this->update($data);
-		}
+		
+		$quizObj = new m_quiz();
+		$quizData['id'] = $quizObj->insert($quizData);
+		$quizObj->id_quiz = $quizData['id'];
+		$quizObj->quizData = $quizData;
+		$quizObj->importOne($this->phpexcel);
+		
+		$paperData['id_quiz'] = $quizData['id'];
+		$this->insert($paperData);
 	}
 
 	public function paperToExcel($paper,$questions){
@@ -504,7 +245,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 		return $file;
 	}
 
-	public function exportExcel(){
+	public function exportOne($path){
 		$data = $this->getList(1,1,array('id'=>$this->id));
 		$paper = $data['data'][0];
 
@@ -563,7 +304,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 					$where .= " and type in (".$search[$keys[$i]].") ";
 				}
 				if($keys[$i]=='id'){
-					$where .= " and id in (".$search[$keys[$i]].") ";
+					$where .= " and ".$pfx."wls_quiz_paper.id in (".$search[$keys[$i]].") ";
 				}
 				if($keys[$i]=='id_level_subject'){
 					$where .= " and id_level_subject in (".$search[$keys[$i]].") ";
@@ -573,8 +314,8 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 				}
 			}
 		}
-		if($orderby==null)$orderby = " order by id";
-		$sql = "select ".$columns." from ".$pfx."wls_quiz_paper ".$where." ".$orderby;
+		if($orderby==null)$orderby = " order by ".$pfx."wls_quiz_paper.id ";
+		$sql = "select ".$columns." from ".$pfx."wls_quiz_paper join ".$pfx."wls_quiz on ".$pfx."wls_quiz_paper.id_quiz = ".$pfx."wls_quiz.id ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
 		$res = mysql_query($sql,$conn);
@@ -589,7 +330,7 @@ class m_quiz_paper extends m_quiz implements dbtable,quizdo{
 			$arr[] = $temp;
 		}
 
-		$sql2 = "select count(*) as total from ".$pfx."wls_quiz_paper ".$where;
+		$sql2 = "select count(".$pfx."wls_quiz_paper.id) as total from ".$pfx."wls_quiz_paper join ".$pfx."wls_quiz on ".$pfx."wls_quiz_paper.id_quiz = ".$pfx."wls_quiz.id   ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
