@@ -13,7 +13,7 @@ class quiz_wrong extends quiz{
 		$this->m = new m_quiz_wrong();
 	}
 
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -23,7 +23,7 @@ class quiz_wrong extends quiz{
 		echo json_encode($data);
 	}
 
-	public function myList(){
+	public function getMyList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -35,14 +35,14 @@ class quiz_wrong extends quiz{
 		echo json_encode($data);
 	}	
 	
-	public function viewUpload(){
+	public function importAll(){
 		echo '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
 					'.$this->lang['importExcel'].'
-					<form action="wls.php?controller=quiz_wrong&action=saveUpload" method="post"
+					<form action="wls.php?controller=quiz_wrong&action=saveImportAll" method="post"
 					enctype="multipart/form-data">
 						<label for="file">'.$this->lang['ExcelFilePath'].'</label>
 						<input type="file" name="file" id="file" />
@@ -53,7 +53,7 @@ class quiz_wrong extends quiz{
 			</html>	';
 	}
 
-	public function saveUpload(){
+	public function saveImportAll(){
 		if ($_FILES["file"]["error"] > 0){
 			$this->error(array('description'=>'error , upload faild'));
 		}else{
@@ -63,40 +63,10 @@ class quiz_wrong extends quiz{
 		}
 	}
 
-	public function saveUpdate(){
-		$data = array(
-			'id'=>$_POST['id'],
-		$_POST['field']=>$_POST['value']
-		);
-		if($this->m->update($data)){
-			echo "success";
-		}else{
-			echo "fail";			
-		}
-	}
-
-	public function viewExport(){
+	public function exportAll(){
 		$this->m->id = $_REQUEST['id'];
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
-	}
-
-	public function getOne(){
-		
-		$userObj = new m_user();
-		$user = $userObj->getMyInfo();
-
-		$data = $this->m->getList(1,50,array(
-			'id_user'=>$user['id'],
-		)," Order by RAND() ");
-		$data = $data['data'];
-		$ids = '';
-		for($i=0;$i<count($data);$i++){
-			$ids .= $data[$i]['id_question'].",";
-		}
-		$ids = substr($ids,0,strlen($ids)-1);
-
-		echo $ids;
 	}
 
 	public function delete(){

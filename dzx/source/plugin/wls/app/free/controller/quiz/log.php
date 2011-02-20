@@ -12,7 +12,7 @@ class quiz_log extends quiz{
 		$this->m = new m_quiz_log();
 	}
 
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -82,19 +82,6 @@ class quiz_log extends quiz{
 		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
 	}
 
-	public function getOne(){
-		$id = $_POST['id'];
-		$userObj = new m_user();
-		$user = $userObj->getMyInfo();
-
-		$data = $this->m->getList(1,1,array('id'=>$id));
-		$data = $data['data'][0];
-
-		$data['application'] = $this->t->formatApplicationType($data['application']);
-
-		echo json_encode($data);
-	}
-
 	public function delete(){
 		$this->m->delete($_POST['id']);
 	}
@@ -114,7 +101,7 @@ class quiz_log extends quiz{
 	 * Review how I do this quiz befor.
 	 * It would open an additional window
 	 * */
-	public function viewOne(){
+	public function viewQuiz(){
 		$html = "
 <!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
 <html>

@@ -13,7 +13,7 @@ class subject extends wls{
 		$this->m = new m_subject();
 	}
 
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -23,7 +23,7 @@ class subject extends wls{
 		echo json_encode($data);
 	}
 
-	public function viewUpload(){
+	public function importAll(){
 		echo '<html>
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -43,7 +43,7 @@ class subject extends wls{
 		';
 	}
 
-	public function saveUpload(){
+	public function saveImportAll(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
@@ -67,7 +67,7 @@ class subject extends wls{
 		}
 	}
 
-	public function viewExport(){
+	public function exportAll(){
 		$file = $this->m->exportExcel();
 		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
@@ -169,7 +169,7 @@ class subject extends wls{
 		echo $xml;
 	}
 
-	public function addone(){
+	public function add(){
 		sleep(1);
 		$id = $this->m->insert($_POST);
 		echo $id;

@@ -10,7 +10,7 @@ class user_access extends wls{
 		$this->m = new m_user_access();
 	}
 	
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -20,7 +20,7 @@ class user_access extends wls{
 		echo json_encode($data);
 	}
 	
-	public function viewUpload(){
+	public function importAll(){
 		echo '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -28,7 +28,7 @@ class user_access extends wls{
 				<body>
 					
 					'.$this->lang['importExcel'].'
-					<form action="wls.php?controller=user_access&action=saveUpload" method="post"
+					<form action="wls.php?controller=user_access&action=saveImportAll" method="post"
 					enctype="multipart/form-data">
 						<label for="file">'.$this->lang['ExcelFilePath'].'</label>
 						<input type="file" name="file" id="file" />
@@ -39,7 +39,7 @@ class user_access extends wls{
 			</html>';
 	}
 	
-	public function saveUpload(){
+	public function saveImportAll(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
@@ -63,7 +63,7 @@ class user_access extends wls{
 		}
 	}
 	
-	public function viewExport(){
+	public function exportAll(){
 		$file = $this->m->exportExcel();
 		echo "<a href='".$file."'>".$this->lang['download']."</a>";
 	}

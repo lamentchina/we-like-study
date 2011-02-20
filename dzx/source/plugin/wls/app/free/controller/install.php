@@ -6,6 +6,7 @@ include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
 include_once dirname(__FILE__).'/../model/question.php';
+include_once dirname(__FILE__).'/../model/quiz.php';
 include_once dirname(__FILE__).'/../model/quiz/paper.php';
 include_once dirname(__FILE__).'/../model/question/log.php';
 include_once dirname(__FILE__).'/../model/quiz/log.php';
@@ -13,9 +14,24 @@ include_once dirname(__FILE__).'/../model/quiz/wrong.php';
 
 class install extends wls {
 
-	public function createTables(){
+	public function createTables(){		
 		$obj = new m_subject();
 		$obj->create();
+		$obj->importAll("F:/subject.xls");
+		
+		$obj = new m_question();
+		$obj->create();		
+		
+		$obj = new m_quiz();
+		$obj->create();
+		
+		$obj = new m_quiz_paper();
+		$obj->create();		
+		$obj->importOne("F:/paper.xls");
+		
+		exit();
+		
+
 
 		$obj = new m_knowledge();
 		$obj->create();
@@ -32,8 +48,7 @@ class install extends wls {
 		$obj = new m_user_access();
 		$obj->create();
 
-		$obj = new m_question();
-		$obj->create();
+
 
 		$obj = new m_question_log();
 		$obj->create();
@@ -46,6 +61,8 @@ class install extends wls {
 
 		$obj = new m_quiz_wrong();
 		$obj->create();
+		
+		exit();
 
 		echo '
 		<html>

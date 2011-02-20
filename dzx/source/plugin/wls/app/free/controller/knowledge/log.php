@@ -71,9 +71,5 @@ class knowledge_log extends wls{
 ';
 		echo $xml;
 	}
-	
-	public function getMyRaderData(){
-		
-	}
 }
 ?>

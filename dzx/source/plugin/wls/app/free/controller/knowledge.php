@@ -10,7 +10,7 @@ class knowledge extends wls{
 		$this->m = new m_knowledge();
 	}
 	
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -20,7 +20,7 @@ class knowledge extends wls{
 		echo json_encode($data);
 	}
 	
-	public function viewUpload(){
+	public function importAll(){
 		echo '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -38,7 +38,7 @@ class knowledge extends wls{
 			</html>';
 	}
 	
-	public function saveUpload(){
+	public function saveImportAll(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
@@ -62,11 +62,13 @@ class knowledge extends wls{
 		}
 	}
 	
-	public function viewExport(){
+	public function exportAll(){
 		$file = $this->m->exportExcel();
 		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 
+	public function getMyRaderSetting(){}
+	
 	public function delete(){
 		if($this->m->delete($_POST['id'])){
 			echo 'success';

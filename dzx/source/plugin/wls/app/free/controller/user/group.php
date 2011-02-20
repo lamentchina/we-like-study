@@ -13,7 +13,7 @@ class user_group extends wls{
 		$this->m = new m_user_group();
 	}
 	
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -23,7 +23,7 @@ class user_group extends wls{
 		echo json_encode($data);
 	}
 	
-	public function viewUpload(){
+	public function importAll(){
 		echo '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -40,27 +40,9 @@ class user_group extends wls{
 				</body>
 			</html>	';
 	}
+
 	
-	public function viewUploadOne(){
-		echo '<html>		
-				<head>
-					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-				</head>
-				<body>
-					'.$this->lang['importExcelAsGroupItem'].'
-					<form action="wls.php?controller=user_group&action=saveUploadOne" method="post"
-					enctype="multipart/form-data">
-						<label for="file">Excel :</label>
-						<input type="file" name="file" id="file" />
-						<br />
-						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
-					</form>
-				</body>
-			</html>		
-		';
-	}	
-	
-	public function saveUpload(){
+	public function saveImportAll(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
@@ -72,21 +54,7 @@ class user_group extends wls{
 				<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>		
 				<body>'.$this->lang['success'].'</body>
 			</html>';
-	}
-
-	public function saveUploadOne(){
-		if ($_FILES["file"]["error"] > 0){
-			echo "Error: " . $_FILES["file"]["error"] . "<br />";
-		}else{
-			$file = $this->c->filePath."/upload/upload".date('Ymdims').$_FILES["file"]["name"];
-			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
-			$this->m->importExcelOne($file);
-		}
-		echo '<html>		
-				<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>		
-				<body>'.$this->lang['success'].'</body>
-			</html>';
-	}		
+	}	
 	
 	public function saveUpdate(){
 		$data = array(
@@ -100,21 +68,13 @@ class user_group extends wls{
 		}
 	}
 	
-	public function viewExport(){
+	public function exportAll(){
 		$file = $this->m->exportExcel();
 		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
 				<body><a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a></body></html>";
 	}
 	
-	public function viewExportOne(){
-		$id_level = $_REQUEST['id_level'];
-		$this->m->id_level = $id_level;
-		$file = $this->m->exportExcelOne();
-		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
-				<body><a href='".$file."'>".$this->lang['download']."</a></body></html>";
-	}
-	
-	public function getaccess(){
+	public function getAccessTree(){
 		$id = $_REQUEST['id'];				
 		$obj = new m_user_access();
 		$data = $obj->getListForGroup($id);				
@@ -123,7 +83,7 @@ class user_group extends wls{
 		echo json_encode($data);
 	}
 	
-	public function getSubject(){
+	public function getCourseTree(){
 		$id = $_REQUEST['id'];		
 		
 		$obj = new m_subject();
@@ -135,15 +95,15 @@ class user_group extends wls{
 		echo json_encode($data);
 	}
 	
-	public function updateaccess(){
+	public function saveAccessTree(){
 		$this->m->updateaccess($_POST['id'],$_POST['ids']);
 	}
 	
-	public function updateSubject(){
+	public function saveCourseTree(){
 		$this->m->updateSubject($_POST['id'],$_POST['ids']);
 	}
 	
-	public function addone(){
+	public function add(){
 		sleep(1);
 		$id = $this->m->insert($_POST);
 		echo $id;

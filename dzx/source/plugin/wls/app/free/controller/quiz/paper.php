@@ -11,7 +11,7 @@ class quiz_paper extends quiz{
 		$this->m = new m_quiz_paper();
 	}
 
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -26,15 +26,32 @@ class quiz_paper extends quiz{
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
+	
+	//TODO
+	public function getMyList(){
+		$page = 1;
+		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
+		$pagesize = 15;
+		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
+		$search = null;
+		if(isset($_REQUEST['search']) && $_REQUEST['search']!=''){
+			$search = array(
+				'title'=>$_REQUEST['search']
+			);
+		}
+		$data = $this->m->getList($page,$pagesize,$search,' order by date_created ');
+		$data['totalCount'] = $data['total'];
+		echo json_encode($data);
+	}	
 
-	public function viewUpload(){
+	public function importOne(){
 		echo '<html>		
 			<head>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			</head>
 			<body>
 				'.$this->lang['importExcel'].'
-				<form action="wls.php?controller=quiz_paper&action=saveUpload" method="post"
+				<form action="wls.php?controller=quiz_paper&action=saveImportOne" method="post"
 				enctype="multipart/form-data">
 					<label for="file">'.$this->lang['ExcelFilePath'].'</label>
 					<input type="file" name="file" id="file" />
@@ -45,7 +62,7 @@ class quiz_paper extends quiz{
 		</html>';
 	}
 
-	public function saveUpload(){
+	public function saveImportOne(){
 		if ($_FILES["file"]["error"] > 0){
 			$this->error(array('description'=>'wrong c q p'));
 			echo 'fail';
@@ -69,15 +86,10 @@ class quiz_paper extends quiz{
 		}
 	}
 
-	public function viewExport(){
+	public function exportOne(){
 		$this->m->id = $_REQUEST['id'];
 		$file = $this->m->exportExcel();
 		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
-	}
-
-	public function getOne(){
-		$id = $_POST['id'];
-		echo json_encode($this->m->getList(1,1,array('id'=>$id)));
 	}
 
 	public function delete(){
@@ -100,28 +112,28 @@ class quiz_paper extends quiz{
 		echo $this->m->checkMyPaper($_POST['answersData'],$_POST['id'],$_POST['time']);
 	}
 
-	public function viewOne(){
-		include_once $this->c->license.'/model/user.php';
-		$userObj = new m_user();
-		
-		//IE6 is special
-		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == true ){
-			$userObj->id = $_REQUEST['uid'];
-		}else{
-			$me = $userObj->getMyInfo();
-		    $userObj->id = $me['id'];
-		}		
-		$foo = $userObj->checkMyaccess('1107');
-		
-		if($foo==false){
-			echo "access request";
-			exit();
-		}else{
-			if($this->m->checkMoney($_REQUEST['id'])==false){
-				echo "money request";
-				exit();
-			}
-		}
+	public function viewQuiz(){
+//		include_once $this->c->license.'/model/user.php';
+//		$userObj = new m_user();
+//		
+//		//IE6 is special
+//		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == true ){
+//			$userObj->id = $_REQUEST['uid'];
+//		}else{
+//			$me = $userObj->getMyInfo();
+//		    $userObj->id = $me['id'];
+//		}		
+//		$foo = $userObj->checkMyaccess('1107');
+//		
+//		if($foo==false){
+//			echo "access request";
+//			exit();
+//		}else{
+//			if($this->m->checkMoney($_REQUEST['id'])==false){
+//				echo "money request";
+//				exit();
+//			}
+//		}
 		
 		$html = "
 <!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">

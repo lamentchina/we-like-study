@@ -14,7 +14,7 @@ class user extends wls{
 		$this->m = new m_user();
 	}
 
-	public function jsonList(){
+	public function getList(){
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
@@ -54,7 +54,7 @@ class user extends wls{
 		}
 	}
 	
-	public function register(){
+	public function add(){
 		include_once $this->c->libsPath."securimage/securimage.php";
 		$securimage = new Securimage();
 		if ($securimage->check($_POST['CAPTCHA']) == false) {
@@ -106,7 +106,7 @@ class user extends wls{
 		';
 	}
 
-	public function viewUpload(){
+	public function importAll(){
 		$html = '<html>		
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -125,7 +125,7 @@ class user extends wls{
 		echo $html;
 	}
 
-	public function saveUpload(){
+	public function saveImportAll(){
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
@@ -146,7 +146,7 @@ class user extends wls{
 		}
 	}
 
-	public function viewExport(){
+	public function exportAll(){
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
 	}
@@ -159,86 +159,11 @@ class user extends wls{
 		}
 	}
 
-	public function getTreeaccess(){
+	public function getAccessTree(){
 		$username = $_REQUEST['username'];
 		$obj = new m_user_access();
 		$data = $obj->getListForUser($username);
 		$data = $this->t->getTreeData(null,$data);
-		echo json_encode($data);
-	}
-
-	public function getMyMenu(){
-		$username = $_REQUEST['username'];		
-		$obj = new m_user_access();
-		$data = $obj->getListForUser($username);
-		$data2 = array();
-		for($i=0;$i<count($data);$i++){			
-			if($data[$i]['checked']==true || $data[$i]['checked']=='true' || $data[$i]['checked']==1){
-				$data[$i]['type'] = 'menu';
-				$data2[] = $data[$i];
-			}
-		}		
-		
-		$t = new tools();
-		$data = $t->getTreeData(null,$data2);
-
-		for($i=0;$i<count($data);$i++){				
-			if($data[$i]['id_level']=='11'){				
-				$obj = new m_subject();
-				$data_ = $obj->getListForUser($username);
-				if(count($data)>0){
-					$data__ = array();
-					for($ii=0;$ii<count($data_);$ii++){
-						$data_[$ii]['type'] = 'subject';
-						if($data_[$ii]['checked']==1){
-							$data_[$ii]['ismenu'] = 1;
-							$data__[] = $data_[$ii];
-						}
-					}
-					$subject = $t->getTreeData(null,$data__);
-
-					$arr = array();
-					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
-						$arr = $data[$i]['children'];
-					}
-					$data[$i]['children'] = $subject;
-
-					if(count($arr)>0){
-						$data[$i]['children'][] = array('text'=>'slide');
-						for($ii=0;$ii<count($arr);$ii++){
-							$data[$i]['children'][] = $arr[$ii];
-						}
-					}
-				}
-			}
-			if($data[$i]['id_level']=='13'){				
-				$obj = new m_user_group();
-				$data_ = $obj->getListForUser($username);
-				if(count($data)>0){
-					$data__ = array();
-					for($ii=0;$ii<count($data_);$ii++){
-						$data_[$ii]['type'] = 'group';
-						if($data_[$ii]['checked']==1){
-							$data_[$ii]['ismenu'] = 1;
-							$data__[] = $data_[$ii];
-						}
-					}
-					$subject = $t->getTreeData(null,$data__);
-					$arr = array();
-					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
-						$arr = $data[$i]['children'];
-					}
-					$data[$i]['children'] = $subject;
-					if(count($arr)>0){
-						$data[$i]['children'][] = array('text'=>'slide');
-						for($ii=0;$ii<count($arr);$ii++){
-							$data[$i]['children'][] = $arr[$ii];
-						}
-					}
-				}
-			}
-		}
-
 		echo json_encode($data);
 	}
 
@@ -308,79 +233,8 @@ class user extends wls{
 		));
 	}
 	
-	public function translateIniToJsClass(){
-		$js = 'var il8n = {';
-		$keys = array_keys($this->lang);
-		for($i=0;$i<count($this->lang);$i++ ){
-			$js .= "\n".$keys[$i].':"'.$this->lang[$keys[$i]].'",';
-		}		
-		$js = substr($js,0,strlen($js)-1);
-		$js .= "\n }";
-		header("Content-type: text/html; charset=utf-8");
-		echo $js;
-	}
+	public function getMyMenu4Desktop(){}
 	
-	public function rewriteConfig(){
-		if($this->m->checkMyaccess(1906,false)==false)exit();
-		
-		if(isset($_POST['dbname']) ||
-			isset($_POST['dbhost']) ||
-			isset($_POST['dbuser']) ||
-			isset($_POST['dbpwd']) 
-		){
-			$this->error("Attack!");
-			exit();
-		}		
-		
-		$file_name = "config.php";
-		if(!$file_handle = fopen($file_name,"w")){
-			die($this->lang['configFileError']);
-		}
-		$arr = array();
-		$cfg = (array)$this->c;
-		$keys = array_keys($cfg);
-		for($i=0;$i<count($keys);$i++){
-			eval('$arr["'.$keys[$i].'"] = $this->c->'.$keys[$i].';');
-		}
-		$foo = $_POST;
-		if($foo!=null){
-			$keys = array_keys($foo);
-			for($i=0;$i<count($foo);$i++){
-				$arr[$keys[$i]] = $foo[$keys[$i]];
-			}
-		}
 
-		$content = "<?php
-class wlsconfig{
-";
-		$keys = array_keys($arr);
-		for($i=0;$i<count($arr);$i++){
-			$content .= "
-			public \$".$keys[$i]." = '".$arr[$keys[$i]]."';";
-		}
-		$content.=
-"
-}
-?>";
-		fwrite($file_handle,$content);
-		fclose($file_handle);
-	}
-	
-	public function getConfig(){
-		if($this->m->checkMyaccess(1906,false)==false)exit();
-		
-		$cfg = (array)$this->c;
-		$keys = array_keys($cfg);
-		$arr = array();
-		for($i=0;$i<count($keys);$i++){
-			eval('$arr["'.$keys[$i].'"] = $this->c->'.$keys[$i].';');
-		}
-		unset($arr['dbname']);
-		unset($arr['dbhost']);
-		unset($arr['dbuser']);
-		unset($arr['dbpwd']);
-		
-		echo json_encode($arr);
-	}
 }
 ?>
