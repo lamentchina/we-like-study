@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css"
 	href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/ext-all-notheme.css" />   
 	
-<script type="text/javascript" src="wls.php?controller=user&action=translateIniToJsClass"></script>
+<script type="text/javascript" src="wls.php?controller=system&action=translateIniToJsClass"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>jquery-1.4.2.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>jqueryextend.js"></script>	
 <script type="text/javascript"

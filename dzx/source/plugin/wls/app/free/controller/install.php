@@ -34,17 +34,22 @@ class install extends wls {
 		$obj->create();		
 
 		$obj = new m_question_log();
-		$obj->create();			
+		$obj->create();	
 		
-		$obj = new m_user_group();
-		$obj->create();
+		$obj = new m_subject();
+		$obj->create();		
 
 		$obj = new m_user();
 		$obj->create();
-		$obj->importExcel("F:/user.xls");
 
 		$obj = new m_user_access();
 		$obj->create();
+		
+		$obj = new m_user_group();
+		$obj->create();
+		$obj->importExcelWithU("F:/config.xls");
+		$obj->importExcelWithS("F:/config.xls");
+		$obj->importExcelWithG("F:/config.xls");
 		
 		exit();
 		

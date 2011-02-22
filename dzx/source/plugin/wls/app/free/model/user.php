@@ -31,7 +31,6 @@ class m_user extends wls implements dbtable{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
-
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -91,7 +90,6 @@ class m_user extends wls implements dbtable{
 	 * @return bool
 	 * */
 	public function create(){
-
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
@@ -314,6 +312,8 @@ class m_user extends wls implements dbtable{
 		//than get the accesss info from the group info  						
 		$o = new m_user_access();
 		$d = $o->getListForUser($data['username']);
+
+		
 		$ids = '';
 		$accesss = array();
 		for($i=0;$i<count($d);$i++){

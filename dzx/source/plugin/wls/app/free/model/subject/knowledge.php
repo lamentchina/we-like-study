@@ -1,9 +1,9 @@
 <?php
-include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
-include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_knowledge extends wls implements dbtable,levelList{
+class m_subject_knowledge extends wls implements dbtable{
 
 	public $phpexcel = null;
 
@@ -92,25 +92,25 @@ class m_knowledge extends wls implements dbtable,levelList{
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['id_level']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['id_level']){
 				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['description']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['name']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
 				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['weight']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['weight']){
 				$keys['weight'] = $i;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['ordering']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
 			}
 		}
 
 		$data = array();
-		for($i=2;$i<=$allRow[0];$i++){
+		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
 				'name'=>$this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue()),

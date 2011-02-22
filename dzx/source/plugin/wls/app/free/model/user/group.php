@@ -36,7 +36,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		mysql_query($sql,$conn);
 	}
 
-	public function linkaccess($data){
+	public function linkAccess($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
@@ -196,7 +196,7 @@ class m_user_group extends wls implements dbtable,levelList{
 
 		$currentSheet = $this->phpexcel->getSheetByName($this->lang['userGroup']);
 		$allRow = array($currentSheet->getHighestRow());
-		
+
 		$data = array();
 		for($i=3;$i<=$allRow[0];$i++){
 			$data = array(
@@ -218,10 +218,10 @@ class m_user_group extends wls implements dbtable,levelList{
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['userGroup']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
-		$objPHPExcel->getActiveSheet()->mergeCells('A1:C1');   
+		$objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
 		$objPHPExcel->getActiveSheet()->getStyle('A1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 		$objPHPExcel->getActiveSheet()->getStyle('A1')->getFill()->getStartColor()->setARGB('FF808080');
-				
+
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
@@ -439,9 +439,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		return $data;
 	}
 
-	public function importExcelWithP($path){
-		$this->create();
-
+	public function importExcelWithG($path){
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -497,7 +495,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 		}
 		$accesssData = array();
-		
+
 		$accessObj = new m_user_access();
 		$accessObj->create();
 
@@ -527,7 +525,7 @@ class m_user_group extends wls implements dbtable,levelList{
 						'id_level_access'=>$accesssData[$i-4]['id_level']
 					);
 					$p2p[] = $data ;
-					$this->linkaccess($data);
+					$this->linkAccess($data);
 				}
 			}
 		}
@@ -590,7 +588,7 @@ class m_user_group extends wls implements dbtable,levelList{
 			}
 		}
 		$subjectsData = array();
-		
+
 		$subjectObj = new m_subject();
 		$subjectObj->create();
 		for($i=4;$i<=$allRow;$i++){
@@ -693,25 +691,37 @@ class m_user_group extends wls implements dbtable,levelList{
 		}
 
 		$userData = array();
-		
+
 		$userObj = new m_user();
 		$userObj->create();
 		for($i=4;$i<=$allRow;$i++){
 			$data = array(
 				'username'=>$currentSheet->getCell($columns['username'].$i)->getValue(),
-				'birthday'=>$currentSheet->getCell($columns['birthday'].$i)->getValue(),
-				'qq'=>$currentSheet->getCell($columns['qq'].$i)->getValue(),
-				'sex'=>$currentSheet->getCell($columns['sex'].$i)->getValue(),
-				'name'=>$currentSheet->getCell($columns['name'].$i)->getValue(),
-				'photo'=>$currentSheet->getCell($columns['photo'].$i)->getValue(),
-				'money'=>$currentSheet->getCell($columns['money'].$i)->getValue(),
 				'password'=>$currentSheet->getCell($columns['password'].$i)->getValue(),
 			);
+			if(isset($columns['qq'])){
+				$data['qq'] = $currentSheet->getCell($columns['qq'].$i)->getValue();
+			}
+			if(isset($columns['birthday'])){
+				$data['birthday'] = $currentSheet->getCell($columns['birthday'].$i)->getValue();
+			}
+			if(isset($columns['sex'])){
+				$data['sex'] = $currentSheet->getCell($columns['sex'].$i)->getValue();
+			}
+			if(isset($columns['name'])){
+				$data['name'] = $currentSheet->getCell($columns['name'].$i)->getValue();
+			}
+			if(isset($columns['photo'])){
+				$data['photo'] = $currentSheet->getCell($columns['photo'].$i)->getValue();
+			}
+			if(isset($columns['money'])){
+				$data['money'] = $currentSheet->getCell($columns['money'].$i)->getValue();
+			}
 			$userData[] = $data ;
 			$userObj->insert($data);
 		}
 
-		$p2u = array();
+
 		for($i=4;$i<=$allRow;$i++){
 			for($i2=$grouppoint;$i2<=$allColmun;$i2++){
 				if($currentSheet->getCell($i2.$i)->getValue()=='√'){
@@ -719,7 +729,7 @@ class m_user_group extends wls implements dbtable,levelList{
 						'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
 						'username'=>$userData[$i-4]['username']
 					);
-					$p2u[] = $data ;
+
 					$this->linkUser($data);
 				}
 			}

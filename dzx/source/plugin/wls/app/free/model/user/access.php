@@ -273,6 +273,8 @@ class m_user_access extends wls implements dbtable,levelList{
 			)
 		) as checked from ".$pfx."wls_user_access;";
 
+		
+//		echo $sql;exit();
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
