@@ -12,8 +12,8 @@ class m_quiz extends wls implements dbtable{
 	public $count_total = 0;
 	public $questions = array();
 	public $ids_questions = '';
-
-	
+	public $cent = 0;
+	public $mycent = 0;	
 	
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
@@ -342,5 +342,41 @@ class m_quiz extends wls implements dbtable{
 			return $temp;
 		}
 	}	
+	
+	public function cumulative($column){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		if($column=='score'){
+			$sql = "select score_top from ".$pfx."wls_quiz where id = ".$this->$id_quiz;
+
+			$res = mysql_query($sql,$conn);
+			$temp = mysql_fetch_assoc($res);
+			if($temp['score_top']<=$this->mycent){
+				$userObj = new m_user();
+				$user = $userObj->getMyInfo();
+
+				$sql = "update ".$pfx."wls_quiz_paper set
+					score_top_user = '".$user['username']."',
+					score_top = '".$this->mycent."' 
+					where id = ".$this->$id_quiz;
+				$this->error($sql);
+				try{
+					mysql_query($sql,$conn);
+					return true;
+				}catch (Exception $ex){
+					return false;
+				}
+			}
+			$sql = "update ".$pfx."wls_quiz set score_avg = (score_avg*count_used+".$this->mycent.")/(count_used+1) where id = ".$this->$id_quiz;
+		}else{
+			$sql = "update ".$pfx."wls_quiz set ".$column." = ".$column."+1 where id = ".$this->$id_quiz;
+		}
+		try{
+			mysql_query($sql,$conn);
+			return true;
+		}catch (Exception $ex){
+			return false;
+		}
+	}
 }
 ?>

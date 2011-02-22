@@ -10,7 +10,7 @@ include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php'
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_quiz_log extends m_quiz implements dbtable,quizdo{
+class m_quiz_log extends m_quiz implements dbtable{
 
 	public $phpexcel;
 	public $id = null;
@@ -24,10 +24,10 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 			$userObj = new m_user();
 			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
-			$data['id_level_user_group'] = $user['group'];
+			$data['ids_level_user_group'] = $user['group'];
 		}		
-		if(!isset($data['id_question'])){
-			$data['id_question'] = '0';
+		if(!isset($data['ids_questions'])){
+			$data['ids_questions'] = '0';
 		}
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -68,7 +68,6 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 	}
 
 	public function create(){
-
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
@@ -80,9 +79,9 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				 
 				,date_created datetime 							 
 				,id_user int default 0				
-				,id_level_user_group varchar(200) default '' 				
-				,id_question text				
-				,id_level_subject varchar(200) default '0'
+				,ids_level_user_group varchar(200) default '' 				
+				,ids_questions text				
+
 				,id_quiz_paper int default 0					
 				,cent float default 0
 				,mycent float default 0				
@@ -90,9 +89,10 @@ class m_quiz_log extends m_quiz implements dbtable,quizdo{
 				,count_wrong int default 0
 				,count_giveup int default 0
 				,count_total int default 0 				
-				,proportion float default 0					
-				,time_start datetime default '2011-01-08'
-				,time_stop datetime default '2011-01-08'
+				,proportion float default 0	
+								
+				,time_start datetime default '1987-03-18'
+				,time_stop datetime default '1987-03-18'
 				,time_used int default 0				
 	
 				,application int default 0			

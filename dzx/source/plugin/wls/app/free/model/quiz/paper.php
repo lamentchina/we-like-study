@@ -14,7 +14,6 @@ require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writ
 class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 	public $phpexcel;
 	public $id_paper = null;
-	public $mycent = null;
 	public $questions = null;
 	public $paper = null;
 
@@ -256,41 +255,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		return $this->paperToExcel($paper,$questions);
 	}
 
-	public function cumulative($column){
-		$pfx = $this->c->dbprefix;
-		$conn = $this->conn();
-		if($column=='score'){
-			$sql = "select score_top from ".$pfx."wls_quiz_paper where id = ".$this->id;
 
-			$res = mysql_query($sql,$conn);
-			$temp = mysql_fetch_assoc($res);
-			if($temp['score_top']<=$this->mycent){
-				$userObj = new m_user();
-				$user = $userObj->getMyInfo();
-
-				$sql = "update ".$pfx."wls_quiz_paper set
-					score_top_user = '".$user['username']."',
-					score_top = '".$this->mycent."' 
-					where id = ".$this->id;
-				$this->error($sql);
-				try{
-					mysql_query($sql,$conn);
-					return true;
-				}catch (Exception $ex){
-					return false;
-				}
-			}
-			$sql = "update ".$pfx."wls_quiz_paper set score_avg = (score_avg*count_used+".$this->mycent.")/(count_used+1) where id = ".$this->id;
-		}else{
-			$sql = "update ".$pfx."wls_quiz_paper set ".$column." = ".$column."+1 where id = ".$this->id;
-		}
-		try{
-			mysql_query($sql,$conn);
-			return true;
-		}catch (Exception $ex){
-			return false;
-		}
-	}
 
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
@@ -393,7 +358,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		}
 	}
 
-	public function checkMyPaper($answers,$paperid,$time){
+	public function checkMyPaper($answers,$paperid){
 		$ques_ = array();
 		$id_question = '';
 		for($i=0;$i<count($answers);$i++){
@@ -403,7 +368,8 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		$id_question = substr($id_question,0,strlen($id_question)-1);
 
 		//It's written in controller/quiz.php
-		$answers = $this->getAnswers($ques_);
+		$questionObj = new m_question();
+		$answers = $questionObj->getAnswers($ques_);
 		$json = json_encode($answers);
 		
 		//Just out put the answsers if the current user is guest, and do nothing
@@ -419,10 +385,6 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 			'date_created'=>date('Y-m-d H:i:s'),
 			'id_question'=>$id_question,
 			'id_quiz_paper'=>$paperid,
-			'id_level_subject'=>$answers[0]['id_level_subject'],
-			'time_start'=>$time['start'],
-			'time_stop'=>$time['stop'],
-			'time_used'=>$time['used'],
 		);
 		$id_quiz_log = $quizLogObj->insert($data);		
 
@@ -441,7 +403,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 				($answers[$i]['type']==7&&$answers[$i]['id_parent']==0))continue;
 			$cent += $answers[$i]['cent'];
 			$quesLogData = array(
-				 'id_quiz_paper'=>$answers[$i]['id_quiz_paper']
+				 'id_quiz_paper'=>$paperid
 				,'id_quiz_log'=>$id_quiz_log
 				,'myAnswer'=>$answers[$i]['myAnswer']
 				,'answer'=>$answers[$i]['answer']
@@ -470,10 +432,10 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 			,'id'=>$id_quiz_log
 		));
 
-		$this->id = $paperid;
-		$this->cumulative('count_used');
-		$this->mycent = $mycent;
-		$this->cumulative('score');
+//		$this->$id_paper = $paperid;
+//		$this->cumulative('count_used');
+//		$this->mycent = $mycent;
+//		$this->cumulative('score');
 		
 		return $json;
 	}

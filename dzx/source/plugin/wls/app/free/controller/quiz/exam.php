@@ -116,7 +116,7 @@ class quiz_paper extends quiz{
 		//faster than the client-side's JavaScript parsing , there would be an error
 		//So let the server sleep 2 senconds whatever
 		sleep(2);
-		echo $this->m->checkMyPaper($_POST['answersData'],$_POST['id']);
+		echo $this->m->checkMyPaper($_POST['answersData'],$_POST['id'],$_POST['time']);
 	}
 
 	public function viewQuiz(){

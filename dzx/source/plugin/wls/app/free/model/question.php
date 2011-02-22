@@ -183,7 +183,7 @@ class m_question extends wls implements dbtable{
 				 answer
 				,id
 				,id_parent
-				,id_quiz_paper
+
 				,markingmethod
 				,description
 				,cent
@@ -191,7 +191,7 @@ class m_question extends wls implements dbtable{
 				,option2
 				,option3
 				,option4
-				,id_level_subject
+				
 				,ids_level_knowledge
 				
 			 from ".$pfx."wls_question where id in (".$ids.") order by id ; ";

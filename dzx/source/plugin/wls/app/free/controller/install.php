@@ -23,12 +23,15 @@ class install extends wls {
 		$obj->create();		
 		
 		$obj = new m_quiz();
-		$obj->create();
+		$obj->create();	
 		
 		$obj = new m_quiz_paper();
 		$obj->create();		
 		$obj->importOne("F:/paper.xls");
 		$obj->importOne("F:/paper2.xls");
+		
+		$obj = new m_quiz_log();
+		$obj->create();			
 		
 		exit();
 		

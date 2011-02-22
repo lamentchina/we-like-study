@@ -3,14 +3,19 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	type : 'paper',
 	id : null,
 	paperData : null,
-
+	time : {
+		start : null,
+		stop : null,
+		used : 0
+	},
 	ajaxIds : function(nextFunction) {
 		var thisObj = this;
 		$.blockUI({
 					message : '<h1>' + il8n.loading + '</h1>......'
 				});
 		$.ajax({
-					url : thisObj.config.AJAXPATH + "?controller=quiz_paper&action=getOne",
+					url : thisObj.config.AJAXPATH
+							+ "?controller=quiz_paper&action=getOne",
 					data : {
 						id : thisObj.id
 					},
@@ -24,66 +29,93 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						thisObj.addNavigation();
 						$.unblockUI();
 
+						var objDate = new Date();
+						var year = objDate.getFullYear();
+						var month = objDate.getMonth() + 1;
+						var day = objDate.getDate();
+						var hour = objDate.getHours();
+						var minute = objDate.getMinutes();
+						var second = objDate.getSeconds();
+
+						thisObj.time.start = year + "-" + month + "-" + day
+								+ " " + hour + ":" + minute + ":" + second;
+						// console.debug(thisObj);
 						obj = null;
 						eval(nextFunction);
 					}
 				});
 	},
 	addQuizBrief : function() {
-		var str = 
-			"<table width='90%' style='font-size:12px;'>" 
-				+ "<tr>" 
-					+ "<td width='25%'>" + il8n.name + "</td>"
-					+ "<td width='75%'>" + this.paperData.title + "</td>" 
-				+ "</tr>" 
-				+ "<tr>" 
-					+ "<td>" + il8n.score_top + "</td>" 
-					+ "<td>" + this.paperData.score_top + "</td>"
-				+ "</tr>" 
-				+ "<tr>" 
-					+ "<td>" + il8n.score_avg + "</td>" 
-					+ "<td>" + this.paperData.score_avg + "</td>" 
-				+ "</tr>" 
-				+ "<tr>"
-					+ "<td>" + il8n.money + "</td>" 
-					+ "<td>" + this.paperData.money+ "</td>" 
-				+ "</tr>" 
-			"</table>";
+		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.name + "</td>"
+				+ "<td>" + this.paperData.title + "</td>" + "</tr>" + "<tr>"
+				+ "<td>" + il8n.time_limit + "</td>" + "<td>"
+				+ this.get_elapsed_time_string(this.paperData.time_limit)
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.score_top
+				+ "</td>" + "<td>" + this.paperData.score_top + "</td>"
+				+ "</tr>" + "<tr>" + "<td>" + il8n.score_avg + "</td>" + "<td>"
+				+ this.paperData.score_avg + "</td>" + "</tr>" + "<tr>"
+				+ "<td>" + il8n.money + "</td>" + "<td>" + this.paperData.money
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.time_spent
+				+ "</td>" + "<td><span id='clock'>00</span></td>" + "</tr>"
+				+ "</table>";
 		$("#paperBrief").append(str);
 		var thisObj = this;
 		Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Brief');
+		wls_quiz_paper_clock = setInterval(function() {
+					thisObj.time.used++;
+					$('#clock').text(thisObj
+							.get_elapsed_time_string(thisObj.time.used));
+				}, 1000);
 	},
 	submit : function(nextFunction) {
 		$.blockUI({
 					message : '<h1>' + il8n.loading + '</h1>......'
 				});
 
+		window.clearInterval(wls_quiz_paper_clock);
 		this.answersData = [];
 		for (var i = 0; i < this.questions.length; i++) {
+			// if(this.questions[i].type=='Qes_Big')continue;
+			// if(this.questions[i].getMyAnswer()!='I_DONT_KNOW'){
 			var ans = {
 				id : this.questions[i].id,
 				answer : this.questions[i].getMyAnswer()
 			};
 			this.answersData.push(ans);
+			// }
 		}
 		var thisObj = this;
+
+		var objDate = new Date();
+		var year = objDate.getFullYear();
+		var month = objDate.getMonth() + 1;
+		var day = objDate.getDate();
+		var hour = objDate.getHours();
+		var minute = objDate.getMinutes();
+		var second = objDate.getSeconds();
+
+		thisObj.time.stop = year + "-" + month + "-" + day + " " + hour + ":"
+				+ minute + ":" + second;
 		$.ajax({
-			url : thisObj.config.AJAXPATH + "?controller=quiz_paper&action=getAnswers",
-			data : {
-				answersData : thisObj.answersData,
-				id : thisObj.id
-			},
-			type : "POST",
-			success : function(msg) {
-				$.unblockUI();
-				var obj = thisObj.answersData = jQuery.parseJSON(msg);
-				for (var i = 0; i < obj.length; i++) {
-					thisObj.questions[i].answerData = obj[i];
-				}
-				eval(nextFunction);
-				thisObj.showResult();
-			}
-		});
+					url : thisObj.config.AJAXPATH
+							+ "?controller=question&action=getByIds",
+					data : {
+						answersData : thisObj.answersData,
+						id : thisObj.id,
+						time : thisObj.time
+					},
+					type : "POST",
+					success : function(msg) {
+						$.unblockUI();
+						var obj = thisObj.answersData = jQuery.parseJSON(msg);
+						for (var i = 0; i < obj.length; i++) {
+							thisObj.questions[i].answerData = obj[i];
+						}
+
+						eval(nextFunction);
+						thisObj.showResult();
+					}
+				});
 	}
 
 	,
@@ -101,7 +133,9 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				+ "</td>" + "<td>" + this.count.total + "</td>" + "</tr>"
 				+ "</table>";
 		var ac = Ext.getCmp('ext_Operations');
+
 		ac.layout.activeItem.collapse(false);
+
 		ac.add({
 					id : 'ext_PaperResult',
 					title : il8n.Quiz_Paper_Result,
@@ -116,6 +150,26 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					message : str
 				});
 		$('.blockOverlay').attr('title', il8n.click2unblock).click($.unblockUI);
+	}
+
+	,
+	get_elapsed_time_string : function(total_seconds) {
+		function pretty_time_string(num) {
+			return (num < 10 ? "0" : "") + num;
+		}
+		var hours = Math.floor(total_seconds / 3600);
+		total_seconds = total_seconds % 3600;
+
+		var minutes = Math.floor(total_seconds / 60);
+		total_seconds = total_seconds % 60;
+
+		var seconds = Math.floor(total_seconds);
+
+		hours = pretty_time_string(hours);
+		minutes = pretty_time_string(minutes);
+		seconds = pretty_time_string(seconds);
+		var currentTimeString = hours + ":" + minutes + ":" + seconds;
+		return currentTimeString;
 	},
 	getList : function(domid) {
 		var thisObj = this;
@@ -184,7 +238,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 									params : {
 										start : 0,
 										limit : 15,
-										search : Ext.getCmp(domid + '_search').getValue()
+										search : Ext.getCmp(domid + '_search')
+												.getValue()
 									}
 								});
 					}
@@ -376,3 +431,4 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	}
 
 });
+var wls_quiz_paper_clock = null;
