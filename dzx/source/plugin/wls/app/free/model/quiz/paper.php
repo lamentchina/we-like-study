@@ -92,9 +92,9 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		mysql_query($sql,$conn);
 		return true;
 	}
-	
+
 	public function importAll($path){}
-	
+
 	public function exportAll($path){}
 
 	public function importOne($path){
@@ -129,18 +129,18 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['subject']){
 				$quizData['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$quizData['id_level_subject']."'; ";
-				$res = mysql_query($sql_,$conn);				
+				$res = mysql_query($sql_,$conn);
 				$temp = mysql_fetch_assoc($res);
 				$quizData['name_subject'] = $temp['name'];
 			}
 		}
-		
+
 		$quizObj = new m_quiz();
 		$quizData['id'] = $quizObj->insert($quizData);
 		$quizObj->id_quiz = $quizData['id'];
 		$quizObj->quizData = $quizData;
 		$quizObj->importOne($this->phpexcel);
-		
+
 		$paperData['id_quiz'] = $quizData['id'];
 		$this->insert($paperData);
 	}
@@ -333,7 +333,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 
-		
+
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 
@@ -359,34 +359,40 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 	}
 
 	public function checkMyPaper($answers,$paperid){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		$sql = "select * from ".$pfx."wls_quiz_paper where id=".$paperid;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$id_quiz = $temp['id_quiz'];
+
 		$ques_ = array();
-		$id_question = '';
+		$ids_question = '';
 		for($i=0;$i<count($answers);$i++){
 			$ques_[$answers[$i]['id']] = $answers[$i]['answer'];
-			$id_question .= $answers[$i]['id'].",";
-		}		
-		$id_question = substr($id_question,0,strlen($id_question)-1);
+			$ids_question .= $answers[$i]['id'].",";
+		}
+		$ids_question = substr($ids_question,0,strlen($ids_question)-1);
 
 		//It's written in controller/quiz.php
 		$questionObj = new m_question();
 		$answers = $questionObj->getAnswers($ques_);
 		$json = json_encode($answers);
-		
+
 		//Just out put the answsers if the current user is guest, and do nothing
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		if($user['username']=='guest'){
 			return $json;
 		}
-		
-		//Do quiz log. 
+
+		//Do quiz log.
 		$quizLogObj = new m_quiz_log();
 		$data = array(
-			'date_created'=>date('Y-m-d H:i:s'),
-			'id_question'=>$id_question,
-			'id_quiz_paper'=>$paperid,
+			'ids_question'=>$ids_question,
+			'id_quiz'=>$id_quiz,
 		);
-		$id_quiz_log = $quizLogObj->insert($data);		
+		$id_quiz_log = $quizLogObj->insert($data);
 
 		$count_right = 0;
 		$count_wrong = 0;
@@ -394,24 +400,24 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		$cent = 0;
 		$mycent = 0;
 		$count_total = count($answers);
-		
+
 		$quesLogObj = new m_question_log();
 		for($i=0;$i<count($answers);$i++){
 			if($answers[$i]['type']==4||
-				$answers[$i]['type']==5||
-				$answers[$i]['type']==6||
-				($answers[$i]['type']==7&&$answers[$i]['id_parent']==0))continue;
+			$answers[$i]['type']==5||
+			$answers[$i]['type']==6||
+			($answers[$i]['type']==7&&$answers[$i]['id_parent']==0))continue;
 			$cent += $answers[$i]['cent'];
 			$quesLogData = array(
-				 'id_quiz_paper'=>$paperid
+				 'id_quiz'=>$paperid
 				,'id_quiz_log'=>$id_quiz_log
 				,'myAnswer'=>$answers[$i]['myAnswer']
 				,'answer'=>$answers[$i]['answer']
-				,'id_question'=>$answers[$i]['id']	
+				,'id_question'=>$answers[$i]['id']
 				,'id_user'=>$user['id']
-				,'cent'=>$answers[$i]['cent']	
-				,'type'=>$answers[$i]['type']		
-				,'markingmethod'=>$answers[$i]['markingmethod']		
+				,'cent'=>$answers[$i]['cent']
+				,'type'=>$answers[$i]['type']
+				,'markingmethod'=>$answers[$i]['markingmethod']
 			);
 			$result = $quesLogObj->addLog($quesLogData);
 			if($result==1){
@@ -421,7 +427,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 			if($result==0)$count_wrong++;
 			if($result==-1)$count_giveup++;
 		}
-		
+
 		$quizLogObj->update(array(
 			 'count_right'=>$count_right
 			,'count_wrong'=>$count_wrong
@@ -429,14 +435,14 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 			,'count_total'=>$count_total
 			,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
 			,'mycent'=>$mycent
+			,'cent'=>$cent
 			,'id'=>$id_quiz_log
 		));
 
-//		$this->$id_paper = $paperid;
-//		$this->cumulative('count_used');
-//		$this->mycent = $mycent;
-//		$this->cumulative('score');
-		
+		$this->id_quiz = $id_quiz;
+		$this->mycent = $mycent;
+		$this->cumulative('score');
+		$this->cumulative('count_used');
 		return $json;
 	}
 }

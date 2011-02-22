@@ -10,6 +10,13 @@ class m_question_log extends wls implements dbtable,log{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
+		
+		if(!isset($data['id_quiz'])){
+			die(' id_quiz missed in m_question_log::insert ');
+		}
+		if(!isset($data['id_quiz_log'])){
+			die(' id_quiz_log missed in m_question_log::insert ');
+		}
 
 		if(!isset($data['id_user'])){
 			$userObj = new m_user();
@@ -95,7 +102,7 @@ class m_question_log extends wls implements dbtable,log{
 				 
 				,date_created datetime default '1987-03-18'					 
 				,id_user int default 0				
-				,id_quiz_paper int default 0
+				,id_quiz int default 0
 				,id_quiz_log int default 0	
 				,type int default 0
 				,markingmethod int default 0				
@@ -157,6 +164,13 @@ class m_question_log extends wls implements dbtable,log{
 		);
 	}
 
+	/**
+	 * Add question log , then add the knowledge log.
+	 * And other work for static.
+	 * TODO
+	 * 
+	 * @param $whatHappened   a big array contains all the answers stuff
+	 * */
 	public function addLog($whatHappened){
 		$answerData = $whatHappened;
 		
@@ -173,12 +187,11 @@ class m_question_log extends wls implements dbtable,log{
 			$wrongData = array(
 				 'id_user'=>$answerData['id_user']
 				,'id_question'=>$answerData['id_question']
-				,'id_question'=>$answerData['id_question']
-				,'id_quiz_paper'=>$answerData['id_quiz_paper']
+				,'id_quiz'=>$answerData['id_quiz']
 			);
 			$wrongObj->insert($wrongData);
 			$answerData['correct'] = 0;
-			$return = 1;
+			$return = 0;
 		}
 		$this->insert($answerData);
 		return $return;

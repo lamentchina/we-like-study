@@ -31,7 +31,19 @@ class install extends wls {
 		$obj->importOne("F:/paper2.xls");
 		
 		$obj = new m_quiz_log();
+		$obj->create();		
+
+		$obj = new m_question_log();
 		$obj->create();			
+		
+		$obj = new m_user_group();
+		$obj->create();
+
+		$obj = new m_user();
+		$obj->create();
+
+		$obj = new m_user_access();
+		$obj->create();
 		
 		exit();
 		
@@ -43,14 +55,7 @@ class install extends wls {
 		$obj = new m_knowledge_log();
 		$obj->create();
 		
-		$obj = new m_user_group();
-		$obj->create();
 
-		$obj = new m_user();
-		$obj->create();
-
-		$obj = new m_user_access();
-		$obj->create();
 
 
 

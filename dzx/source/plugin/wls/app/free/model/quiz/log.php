@@ -26,15 +26,19 @@ class m_quiz_log extends m_quiz implements dbtable{
 			$data['id_user'] = $user['id'];
 			$data['ids_level_user_group'] = $user['group'];
 		}		
-		if(!isset($data['ids_questions'])){
-			$data['ids_questions'] = '0';
+		if(!isset($data['ids_question'])){
+			$data['ids_question'] = '0';
 		}
+		if(!isset($data['date_created'])){
+			$data['date_created'] = date('Y-m-d H:i:s');
+		}		
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_quiz_log (".$keys.") values ('".$values."')";
 		mysql_query($sql,$conn);
+		
 		return mysql_insert_id($conn);
 	}
 
@@ -80,9 +84,9 @@ class m_quiz_log extends m_quiz implements dbtable{
 				,date_created datetime 							 
 				,id_user int default 0				
 				,ids_level_user_group varchar(200) default '' 				
-				,ids_questions text				
+				,ids_question text				
 
-				,id_quiz_paper int default 0					
+				,id_quiz int default 0					
 				,cent float default 0
 				,mycent float default 0				
 				,count_right int default 0
@@ -348,13 +352,5 @@ class m_quiz_log extends m_quiz implements dbtable{
 			return $arr;
 		}
 	}
-	
-	public function exportQuiz($type){}
-	
-	public function getMyDoneList($page=null,$pagesize=null,$search=null,$orderby=null){}
-	
-	public function getDoneList($page=null,$pagesize=null,$search=null,$orderby=null){}
-	
-	public function getQuizIds(){}
 }
 ?>
