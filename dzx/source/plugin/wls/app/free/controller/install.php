@@ -1,7 +1,7 @@
 <?php
 include_once dirname(__FILE__).'/../model/subject.php';
-include_once dirname(__FILE__).'/../model/knowledge.php';
-include_once dirname(__FILE__).'/../model/knowledge/log.php';
+//include_once dirname(__FILE__).'/../model/subject/knowledge.php';
+//include_once dirname(__FILE__).'/../model/subject/knowledge/log.php';
 include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
@@ -41,6 +41,7 @@ class install extends wls {
 
 		$obj = new m_user();
 		$obj->create();
+		$obj->importExcel("F:/user.xls");
 
 		$obj = new m_user_access();
 		$obj->create();

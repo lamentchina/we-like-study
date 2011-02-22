@@ -2,7 +2,6 @@
 include_once dirname(__FILE__).'/../quiz.php';
 include_once dirname(__FILE__).'/../user.php';
 include_once dirname(__FILE__).'/../subject.php';
-include_once dirname(__FILE__).'/../knowledge/log.php';
 include_once dirname(__FILE__).'/../question/log.php';
 include_once dirname(__FILE__).'/wrong.php';
 

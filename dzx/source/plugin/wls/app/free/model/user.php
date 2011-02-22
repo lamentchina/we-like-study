@@ -105,12 +105,13 @@ class m_user extends wls implements dbtable{
 				,password varchar(200) not null
 				,money int default 0
 				,credits int default 0
+				,photo varchar(200) default ''
 				
-				,name varchar(200) 
-				,sex varchar(200) default ''
-				,birthday datetime default '1999-09-09'
-				,qq varchar(200) default '0'
-				,photo varchar(200) 
+				,log_created datetime default '1987-03-18'			
+				,log_lastlogin datetime default '1987-03-18'			
+				,log_count_visit int default 0
+				,log_ip_lastlogin varchar(200) default '127.0.0.1'
+				
 			
 			) DEFAULT CHARSET=utf8;
 			";
@@ -131,8 +132,9 @@ class m_user extends wls implements dbtable{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName('user');
-		$allRow = array($currentSheet->getHighestRow());		
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['user']);
+		$allRow = array($currentSheet->getHighestRow());	
+		$allColmun = $currentSheet->getHighestColumn();	
 	
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
@@ -148,9 +150,6 @@ class m_user extends wls implements dbtable{
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['photo']){
 				$keys['photo'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['credits']){
-				$keys['credits'] = $i;
-			}
 		}		
 		
 		$data = array();
@@ -158,10 +157,13 @@ class m_user extends wls implements dbtable{
 			$data = array(
 				'username'=>$currentSheet->getCell($keys['username'].$i)->getValue(),
 				'password'=>$currentSheet->getCell($keys['password'].$i)->getValue(),				
-				'money'=>$currentSheet->getCell($keys['money'].$i)->getValue(),
-				'credits'=>$currentSheet->getCell($keys['credits'].$i)->getValue(),
-				'photo'=>$currentSheet->getCell($keys['photo'].$i)->getValue(),
 			);
+			if(isset($keys['photo'])){
+				$data['photo'] = $currentSheet->getCell($keys['photo'].$i)->getValue();
+			}
+			if(isset($keys['money'])){
+				$data['money'] = $currentSheet->getCell($keys['money'].$i)->getValue();
+			}			
 			$this->insert($data);
 		}
 	}
