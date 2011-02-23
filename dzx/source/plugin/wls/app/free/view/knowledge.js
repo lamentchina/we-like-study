@@ -5,7 +5,7 @@ wls.knowledge = Ext.extend(wls, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=knowledge&action=jsonList',
+							+ '?controller=knowledge&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level', 'name', 'weight', 'description']

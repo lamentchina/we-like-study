@@ -48,7 +48,7 @@ class user_group extends wls{
 		}else{
 			move_uploaded_file($_FILES["file"]["tmp_name"],$this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 			$this->m->create();
-			$this->m->importExcel($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$this->m->importAll($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
 		echo '<html xmlns="http://www.w3.org/1999/xhtml">		
 				<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>		
@@ -77,7 +77,7 @@ class user_group extends wls{
 	}
 	
 	public function exportAll(){
-		$file = $this->m->exportExcel();
+		$file = $this->m->exportAll();
 		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
 				<body><a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a></body></html>";
 	}

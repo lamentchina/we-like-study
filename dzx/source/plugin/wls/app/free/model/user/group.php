@@ -7,7 +7,7 @@ include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php'
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_user_group extends wls implements dbtable,levelList{
+class m_user_group extends wls implements dbtable,fileLoad{
 
 	public $phpexcel = null;
 	public $id_level = null;
@@ -195,7 +195,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		return true;
 	}
 
-	public function importExcel($path){
+	public function importAll($path){
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -215,7 +215,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		}
 	}
 
-	public function exportExcel(){
+	public function exportAll($path=null){
 
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
@@ -247,12 +247,14 @@ class m_user_group extends wls implements dbtable,levelList{
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+2));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
-		$file =  "download/".date('YmdHis').".xls";
-		$objWriter->save($this->c->filePath.$file);
+		if($path==null){
+			$path = $this->c->filePath."download/".date('YmdHis').".xls";
+		}
+		$objWriter->save($path);
 		return $file;
 	}
 
-	public function exportExcelOne(){
+	public function exportOne(){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
@@ -317,7 +319,7 @@ class m_user_group extends wls implements dbtable,levelList{
 		return $file;
 	}
 
-	public function importExcelOne($path){
+	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 		$objPHPExcel = new PHPExcel();

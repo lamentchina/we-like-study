@@ -74,7 +74,7 @@ wls.subject = Ext.extend(wls, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=subject&action=jsonList',
+							+ '?controller=subject&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level', 'name', 'description', 'icon',

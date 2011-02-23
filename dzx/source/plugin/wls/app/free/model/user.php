@@ -179,13 +179,14 @@ class m_user extends wls implements dbtable{
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle('user');
-
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['username']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['password']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['money']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', $this->lang['credits']);
-		$objPHPExcel->getActiveSheet()->setCellValue('E1', $this->lang['photo']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['user']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1',  $this->c->siteName.'_'.$this->lang['exportFile']);
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['username']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['password']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['money']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['credits']);
+		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['photo']);
 
 		$index = 2;
 		for($i=0;$i<count($data);$i++){
@@ -194,8 +195,7 @@ class m_user extends wls implements dbtable{
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['password']);
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $data[$i]['money']);
 			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['credits']);
-
-			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['photo']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['photo']);
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);

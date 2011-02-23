@@ -88,7 +88,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=quiz_wrong&action=jsonList',
+							+ '?controller=quiz_wrong&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level_subject', 'id_quiz_paper',

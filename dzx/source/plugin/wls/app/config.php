@@ -1,12 +1,12 @@
 <?php
 class wlsconfig{
 
-			public $dbname = 'ultrax2';
+			public $dbname = 'wls';
 			public $dbhost = 'localhost';
 			public $dbuser = 'admin';
 			public $dbpwd = 'admin';
 			public $dbprefix = 'pre_';
-			public $cmstype = 'DiscuzX';
+			public $cmstype = '';
 			public $license = 'free';
 			public $libsPath = '../libs/';
 			public $filePath = '../file/';

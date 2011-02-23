@@ -176,7 +176,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=quiz_paper&action=jsonList',
+							+ '?controller=quiz_paper&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'index', 'name_subject', 'title', 'money',

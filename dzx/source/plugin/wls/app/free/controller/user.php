@@ -148,7 +148,7 @@ class user extends wls{
 
 	public function exportAll(){
 		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
+			echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 
 	public function delete(){

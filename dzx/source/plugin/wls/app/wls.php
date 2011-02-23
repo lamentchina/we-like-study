@@ -31,7 +31,7 @@ class wls{
 	
 	/**
 	 * Some functions which has nothing to do with the system's logic, 
-	 * but yet there are usefull. 
+	 * but yet they are usefull. 
 	 * So I unify them in the tool class. 
 	 * It's in tool.php
 	 * */

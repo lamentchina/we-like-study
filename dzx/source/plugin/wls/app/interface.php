@@ -22,16 +22,23 @@ interface dbtable{
 	 * */
 	public function delete($ids);
 	
-	public function update($data);
+	public function update($data);	
 	
 	public function create();
 	
-	public function importExcel($path);
-	
-	public function exportExcel();
-	
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*");
 	
+}
+
+interface fileLoad{
+		
+	public function importAll($path);
+	
+	public function exportAll($path);
+	
+	public function importOne($path);
+	
+	public function exportOne($path);
 }
 
 
@@ -49,6 +56,8 @@ interface log{
 }
 
 interface integrate{	
+	
+	public function bridge();
 
 	public function synchroConfig($path);
 	

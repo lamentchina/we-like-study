@@ -127,7 +127,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=quiz_log&action=jsonList',
+							+ '?controller=quiz_log&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : listStuff.fields
