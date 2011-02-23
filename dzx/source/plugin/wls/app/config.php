@@ -10,10 +10,10 @@ class wlsconfig{
 			public $license = 'free';
 			public $libsPath = '../libs/';
 			public $filePath = '../file/';
-			public $siteName = 'We Like Study! www.welikestudy.com';
+			public $siteName = 'WLS_Basic';
 			public $state = 'running';
 			public $language = 'zh-cn';
-			public $background = 'free/view/qWikiOffice/resources/wallpapers/ladybuggin.jpg';
+			public $background = 'http://www.soppt.cn/sucai/UploadFiles_3609/200804/20080410001022188.jpg';
 			public $theme = 'xtheme-blue';
 }
 ?>

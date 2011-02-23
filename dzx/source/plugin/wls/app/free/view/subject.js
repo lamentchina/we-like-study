@@ -48,7 +48,7 @@ wls.subject = Ext.extend(wls, {
 						Ext.Ajax.request({
 									method : 'POST',
 									url : thisObj.config.AJAXPATH
-											+ "?controller=subject&action=addone&temp="
+											+ "?controller=subject&action=add&temp="
 											+ Math.random(),
 									success : function(response) {
 										var obj = jQuery
@@ -157,7 +157,7 @@ wls.subject = Ext.extend(wls, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=subject&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+									+ "?controller=subject&action=importAll' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}

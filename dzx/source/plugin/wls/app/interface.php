@@ -34,11 +34,11 @@ interface fileLoad{
 		
 	public function importAll($path);
 	
-	public function exportAll($path);
+	public function exportAll($path=null);
 	
 	public function importOne($path);
 	
-	public function exportOne($path);
+	public function exportOne($path=null);
 }
 
 

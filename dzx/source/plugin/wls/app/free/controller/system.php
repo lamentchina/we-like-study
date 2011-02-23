@@ -1,4 +1,6 @@
 <?php
+include_once dirname(__FILE__).'/../model/user.php';
+
 class system extends wls{
 	public function translateIniToJsClass(){
 		$js = 'var il8n = {';
@@ -19,7 +21,8 @@ class system extends wls{
 	public function exportAll(){}
 	
 	public function saveUpdate(){
-		if($this->m->checkMyaccess(1906,false)==false)exit();
+		$userObj = new m_user();
+		if($userObj->checkMyaccess(1906,false)==false)die('access denied');
 		
 		if(isset($_POST['dbname']) ||
 			isset($_POST['dbhost']) ||
@@ -27,7 +30,7 @@ class system extends wls{
 			isset($_POST['dbpwd']) 
 		){
 			$this->error("Attack!");
-			exit();
+			die("You want to modify system's core info !");
 		}		
 		
 		$file_name = "config.php";
@@ -65,7 +68,8 @@ class wlsconfig{
 	}
 	
 	public function getConfig(){
-		if($this->m->checkMyaccess(1906,false)==false)exit();
+		$userObj = new m_user();
+		if($userObj->checkMyaccess(1906,false)==false)die('access denied');
 		
 		$cfg = (array)$this->c;
 		$keys = array_keys($cfg);

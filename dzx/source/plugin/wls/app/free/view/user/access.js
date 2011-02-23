@@ -72,23 +72,7 @@ wls.user.access = Ext.extend(wls, {
 					clicksToEdit : 2,
 					loadMask : true,
 					tbar : tb,
-					/*
-					 * [{ text: il8n.importFile, handler : function(){ var win =
-					 * new Ext.Window({ title: il8n.importFile, id:'w_u_p_l_i',
-					 * layout:'fit', width:500, modal:true, height:300, html: "<iframe
-					 * src
-					 * ='"+thisObj.config.AJAXPATH+"?controller=user_access&action=viewUpload'
-					 * width='100%' height='250' frameborder='no' border='0'
-					 * marginwidth='0' marginheight='0' />" }); win.show(this); }
-					 * },{ text: il8n.exportFile, handler : function(){ var win =
-					 * new Ext.Window({ title: il8n.exportFile, id:'w_u_g_l_e',
-					 * layout:'fit', width:500, modal:true, height:300, html: "<iframe
-					 * src
-					 * ='"+thisObj.config.AJAXPATH+"?controller=user_access&action=viewExport'
-					 * width='100%' height='250' frameborder='no' border='0'
-					 * marginwidth='0' marginheight='0' />" }); win.show(this); }
-					 * }],
-					 */
+
 					bbar : new Ext.PagingToolbar({
 								store : store,
 								pageSize : 15,
@@ -140,7 +124,7 @@ wls.user.access = Ext.extend(wls, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=user_access&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+										+ "?controller=user_access&action=importAll' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
@@ -158,7 +142,7 @@ wls.user.access = Ext.extend(wls, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=user_access&action=viewExport' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+										+ "?controller=user_access&action=exportAll' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}

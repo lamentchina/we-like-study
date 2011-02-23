@@ -6,7 +6,7 @@ class_1906 = Ext.extend(Ext.app.Module, {
 	createWindow : function() {
 		var desktop = this.app.getDesktop();
 		var win = desktop.getWindow(this.id);
-		var obj = new wls.user();
+		var obj = new wls.system();
 
 		if (!win) {
 			var winWidth = 300;

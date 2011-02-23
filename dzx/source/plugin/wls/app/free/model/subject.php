@@ -183,14 +183,14 @@ class m_subject extends wls implements dbtable,fileLoad{
 	 *
 	 * @return $path filepath
 	 * */
-	public function exportAll($path){
+	public function exportAll($path=null){
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
 
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['subject']);
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['id_level']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
 		
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
@@ -216,14 +216,18 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
-		$file =  "download/".date('YmdHis').".xls";
-		$objWriter->save($this->c->filePath.$file);
+		
+		$file = "download/".date('YmdHis').".xls";
+		if($path==null){
+			$path = $this->c->filePath.$file;
+		}
+		$objWriter->save($path);
 		return $file;
 	}
 	
 	public function importOne($path){}
 	
-	public function exportOne($path){}
+	public function exportOne($path=null){}
 	
 	public function cumulative($column){}
 

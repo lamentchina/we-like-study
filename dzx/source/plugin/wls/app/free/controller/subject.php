@@ -31,7 +31,7 @@ class subject extends wls{
 				<body>
 					'.$this->lang['privilageImportWarning'].'<br/><br/>
 					'.$this->lang['importExcel'].'
-					<form action="wls.php?controller=subject&action=saveUpload" method="post"
+					<form action="wls.php?controller=subject&action=saveImportAll" method="post"
 					enctype="multipart/form-data">
 						<label for="file">'.$this->lang['ExcelFilePath'].'</label>
 						<input type="file" name="file" id="file" />
@@ -50,7 +50,7 @@ class subject extends wls{
 			$file = $this->c->filePath."upload/". $_FILES["file"]["name"];
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 			$this->m->create();
-			$this->m->importExcel($file);
+			$this->m->importAll($file);
 		}
 		echo 'success';
 	}
@@ -68,7 +68,7 @@ class subject extends wls{
 	}
 
 	public function exportAll(){
-		$file = $this->m->exportExcel();
+		$file = $this->m->exportAll();
 		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 

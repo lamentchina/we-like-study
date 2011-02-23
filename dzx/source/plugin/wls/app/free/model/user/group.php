@@ -216,7 +216,6 @@ class m_user_group extends wls implements dbtable,fileLoad{
 	}
 
 	public function exportAll($path=null){
-
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -247,14 +246,15 @@ class m_user_group extends wls implements dbtable,fileLoad{
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+2));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+		$file = "download/".date('YmdHis').".xls";
 		if($path==null){
-			$path = $this->c->filePath."download/".date('YmdHis').".xls";
+			$path = $this->c->filePath.$file;
 		}
 		$objWriter->save($path);
 		return $file;
 	}
 
-	public function exportOne(){
+	public function exportOne($path=null){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 

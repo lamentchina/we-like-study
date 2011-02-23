@@ -1,4 +1,4 @@
-wls.knowledge = Ext.extend(wls, {
+wls.subject.knowledge = Ext.extend(wls, {
 
 	getList : function(domid) {
 		var thisObj = this;

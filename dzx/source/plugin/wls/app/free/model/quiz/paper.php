@@ -95,7 +95,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 
 	public function importAll($path){}
 
-	public function exportAll($path){}
+	public function exportAll($path=null){}
 
 	public function importOne($path){
 		$conn = $this->conn();
@@ -244,7 +244,7 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		return $file;
 	}
 
-	public function exportOne($path){
+	public function exportOne($path=null){
 		$data = $this->getList(1,1,array('id'=>$this->id));
 		$paper = $data['data'][0];
 

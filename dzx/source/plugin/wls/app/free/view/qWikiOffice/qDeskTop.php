@@ -28,8 +28,8 @@
 
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>swfobject.js"></script>
 
-<script type="text/javascript" src="free/view/il8n.js"></script>
 <script type="text/javascript" src="free/view/wls.js"></script>
+<script type="text/javascript" src="free/view/system.js"></script>
 <script type="text/javascript" src="free/view/user.js"></script>
 <script type="text/javascript" src="free/view/user/group.js"></script>
 <script type="text/javascript" src="free/view/user/access.js"></script>
