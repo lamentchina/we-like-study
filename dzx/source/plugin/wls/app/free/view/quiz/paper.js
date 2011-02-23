@@ -237,7 +237,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								modal : true,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+										+ "?controller=quiz_paper&action=importOne' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
@@ -260,7 +260,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=exportAll&id="
+										+ "?controller=quiz_paper&action=exportOne&id="
 										+ pid
 										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
@@ -320,7 +320,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 									plain : false,
 									html : '<iframe src="'
 											+ thisObj.config.AJAXPATH
-											+ "?controller=quiz_paper&action=viewOne&id="
+											+ "?controller=quiz_paper&action=viewQuiz&id="
 											+ pid
 											+ "&uid="
 											+ uid

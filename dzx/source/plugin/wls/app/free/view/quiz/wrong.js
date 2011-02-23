@@ -8,14 +8,13 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 			url : thisObj.config.AJAXPATH + "?controller=quiz_wrong&action=getOne",
 			type : "POST",
 			success : function(msg) {
-				thisObj.questionsIds = msg;
+				thisObj.ids_questions = msg;
 				var temp = jQuery.parseJSON('[' + msg + ']');
 				thisObj.count.total = temp.length;
 				thisObj.state = 1;
 				thisObj.addQuizBrief();
 				thisObj.addNavigation();
 				$.unblockUI();
-
 				eval(nextFunction);
 			}
 		});
@@ -181,7 +180,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=quiz_wrong&action=myList',
+							+ '?controller=quiz_wrong&action=getMyList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_quiz_paper',
@@ -295,7 +294,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								plain : false,
 								html : '<iframe src="'
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_wrong&action=viewOne"
+										+ "?controller=quiz_wrong&action=viewQuiz"
 										+ "&uid="
 										+ uid
 										+ '&temp='

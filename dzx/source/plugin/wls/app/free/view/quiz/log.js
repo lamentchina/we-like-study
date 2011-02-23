@@ -210,7 +210,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					text : il8n.log_review,
 					handler : function() {
 						window.open(thisObj.config.AJAXPATH
-										+ "?controller=quiz_log&action=viewOne&id="
+										+ "?controller=quiz_log&action=viewQuiz&id="
 										+ Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
 					}
 				});

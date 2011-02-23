@@ -151,7 +151,7 @@ wls.quiz = Ext.extend(wls, {
 		$("#wls_quiz_main").scrollTop(num);
 	},
 	addAnswers : function() {
-
+		alert(1);
 	},
 	addDescriptions : function() {
 		this.count.giveup = 0;
@@ -161,20 +161,13 @@ wls.quiz = Ext.extend(wls, {
 		}
 		this.state = 42;
 	},
-	addList : function() {
-
-	},
-	addMyList : function() {
-
-	},
 	ajaxQuestions : function(nextFunction) {
 		var thisObj = this;
 		$.blockUI({
 					message : '<h1>' + il8n.loading + '</h1>'
 				});
 		$.ajax({
-					url : thisObj.config.AJAXPATH
-							+ "?controller=question&action=getByIds",
+					url : thisObj.config.AJAXPATH + "?controller=question&action=getByIds",
 					data : {
 						ids_questions : thisObj.ids_questions
 					},
@@ -183,9 +176,7 @@ wls.quiz = Ext.extend(wls, {
 						thisObj.questionsData = jQuery.parseJSON(msg);
 						thisObj.state = 2;
 						$.unblockUI();
-						Ext.getCmp('ext_Operations').layout
-								.setActiveItem('ext_Navigation');
-
+						Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Navigation');
 						eval(nextFunction);
 					}
 				});
