@@ -369,5 +369,94 @@ class m_quiz extends wls implements dbtable{
 		}
 		mysql_query($sql,$conn);
 	}
+	
+	/**
+	 * Export all the questions of one quiz to an Excel
+	 * TODO export to a PDF ?
+	 * 
+	 * @param $id 
+	 * */
+	public function exportOne($id,$objPHPExcel){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+		
+		$sql = "select * from ".$pfx."wls_question where id_quiz = ".$id;
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(1);
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['question']);
+
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['belongto']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['Qes_Type']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['title']);
+		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['answer']);
+		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->lang['cent']);
+		$objPHPExcel->getActiveSheet()->setCellValue('G2', $this->lang['option'].'A');
+		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->lang['option'].'B');
+		$objPHPExcel->getActiveSheet()->setCellValue('I2', $this->lang['option'].'C');
+		$objPHPExcel->getActiveSheet()->setCellValue('J2', $this->lang['option'].'D');
+		$objPHPExcel->getActiveSheet()->setCellValue('K2', $this->lang['option'].'E');
+		$objPHPExcel->getActiveSheet()->setCellValue('L2', $this->lang['option'].'F');
+		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->lang['option'].'G');
+		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->lang['optionlength']);
+		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->lang['ques_description']);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(5);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(15);
+		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->lang['listenningFile']);
+		$objPHPExcel->getActiveSheet()->setCellValue('Q2', $this->lang['count_used']);
+		$objPHPExcel->getActiveSheet()->setCellValue('R2', $this->lang['count_right']);
+		$objPHPExcel->getActiveSheet()->setCellValue('S2', $this->lang['count_wrong']);
+		$objPHPExcel->getActiveSheet()->setCellValue('T2', $this->lang['count_giveup']);
+		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->lang['difficulty']);
+		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->lang['markingmethod']);
+		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->lang['ids_level_knowledge']);
+		for($i=1;$i<=23;$i++){
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
+		}
+
+		$index = 3;
+		for($i=0;$i<count($data);$i++){
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['title']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
+			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $data[$i]['option1']);
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $data[$i]['option2']);
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $data[$i]['option3']);
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $data[$i]['option4']);
+			$objPHPExcel->getActiveSheet()->setCellValue('K'.$index, $data[$i]['option5']);
+			$objPHPExcel->getActiveSheet()->setCellValue('L'.$index, $data[$i]['option6']);
+			$objPHPExcel->getActiveSheet()->setCellValue('M'.$index, $data[$i]['option7']);
+			$objPHPExcel->getActiveSheet()->setCellValue('N'.$index, $data[$i]['optionlength']);
+			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $data[$i]['description']);
+			$objPHPExcel->getActiveSheet()->setCellValue('P'.$index, $data[$i]['path_listen']);
+			$objPHPExcel->getActiveSheet()->setCellValue('Q'.$index, $data[$i]['count_used']);
+			$objPHPExcel->getActiveSheet()->setCellValue('R'.$index, $data[$i]['count_right']);
+			$objPHPExcel->getActiveSheet()->setCellValue('S'.$index, $data[$i]['count_wrong']);
+			$objPHPExcel->getActiveSheet()->setCellValue('T'.$index, $data[$i]['count_giveup']);
+			$objPHPExcel->getActiveSheet()->setCellValue('U'.$index, $data[$i]['difficulty']);
+			$objPHPExcel->getActiveSheet()->setCellValue('V'.$index,$this->t->formatMarkingMethod($data[$i]['markingmethod']));
+			$objPHPExcel->getActiveSheet()->setCellValue('W'.$index, $data[$i]['ids_level_knowledge']);
+
+			$index ++;
+		}
+		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
+		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));
+	}
 }
 ?>

@@ -11,7 +11,7 @@ include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php'
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
+class m_quiz_paper extends wls implements dbtable,fileLoad{
 	public $phpexcel;
 	public $id_paper = null;
 	public $questions = null;
@@ -145,117 +145,63 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		$this->insert($paperData);
 	}
 
-	public function paperToExcel($paper,$questions){
-		$objPHPExcel = new PHPExcel();
-		$data = $paper;
+	public function exportOne($path=null){		
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+		
+		$sql = "select 
+			 ".$pfx."wls_quiz_paper.id as pid
+			,".$pfx."wls_quiz.id as qid
+			,money
+			,author
+			,id_level_subject
+			,title
+			,imagePath
+			
+			from ".$pfx."wls_quiz_paper
+			join ".$pfx."wls_quiz 
+			on ".$pfx."wls_quiz_paper.id_quiz = ".$pfx."wls_quiz.id 
+			where ".$pfx."wls_quiz_paper.id = ".$this->id_paper." ;";
 
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+
+		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['paper']);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['subject']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['money']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', $this->lang['author']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['author']);
 
-		$objPHPExcel->getActiveSheet()->setCellValue('A2', $data['title']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B2', $data['id_level_subject']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C2', $data['money']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D2', $data['creator']);
-
-		$data = $questions;
-		//处理题目
-		$objPHPExcel->createSheet();
-		$objPHPExcel->setActiveSheetIndex(1);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['question']);
-
-		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['belongto']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['Qes_Type']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['title']);
-		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['answer']);
-		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->lang['cent']);
-		$objPHPExcel->getActiveSheet()->setCellValue('G2', $this->lang['option'].'A');
-		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->lang['option'].'B');
-		$objPHPExcel->getActiveSheet()->setCellValue('I2', $this->lang['option'].'C');
-		$objPHPExcel->getActiveSheet()->setCellValue('J2', $this->lang['option'].'D');
-		$objPHPExcel->getActiveSheet()->setCellValue('K2', $this->lang['option'].'E');
-		$objPHPExcel->getActiveSheet()->setCellValue('L2', $this->lang['option'].'F');
-		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->lang['option'].'G');
-		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->lang['optionlength']);
-		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->lang['ques_description']);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(5);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(15);
-		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->lang['listenningFile']);
-		$objPHPExcel->getActiveSheet()->setCellValue('Q2', $this->lang['count_used']);
-		$objPHPExcel->getActiveSheet()->setCellValue('R2', $this->lang['count_right']);
-		$objPHPExcel->getActiveSheet()->setCellValue('S2', $this->lang['count_wrong']);
-		$objPHPExcel->getActiveSheet()->setCellValue('T2', $this->lang['count_giveup']);
-		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->lang['difficulty']);
-		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->lang['markingmethod']);
-		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->lang['ids_level_knowledge']);
-		for($i=1;$i<=23;$i++){
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
-		}
-
-		$index = 3;
-		for($i=0;$i<count($data);$i++){
-			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
-			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['title']);
-			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
-			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $data[$i]['option1']);
-			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $data[$i]['option2']);
-			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $data[$i]['option3']);
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $data[$i]['option4']);
-			$objPHPExcel->getActiveSheet()->setCellValue('K'.$index, $data[$i]['option5']);
-			$objPHPExcel->getActiveSheet()->setCellValue('L'.$index, $data[$i]['option6']);
-			$objPHPExcel->getActiveSheet()->setCellValue('M'.$index, $data[$i]['option7']);
-			$objPHPExcel->getActiveSheet()->setCellValue('N'.$index, $data[$i]['optionlength']);
-			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $data[$i]['description']);
-			$objPHPExcel->getActiveSheet()->setCellValue('P'.$index, $data[$i]['path_listen']);
-			$objPHPExcel->getActiveSheet()->setCellValue('Q'.$index, $data[$i]['count_used']);
-			$objPHPExcel->getActiveSheet()->setCellValue('R'.$index, $data[$i]['count_right']);
-			$objPHPExcel->getActiveSheet()->setCellValue('S'.$index, $data[$i]['count_wrong']);
-			$objPHPExcel->getActiveSheet()->setCellValue('T'.$index, $data[$i]['count_giveup']);
-			$objPHPExcel->getActiveSheet()->setCellValue('U'.$index, $data[$i]['difficulty']);
-			$objPHPExcel->getActiveSheet()->setCellValue('V'.$index,$this->t->formatMarkingMethod($data[$i]['markingmethod']));
-			$objPHPExcel->getActiveSheet()->setCellValue('W'.$index, $data[$i]['ids_level_knowledge']);
-
-			$index ++;
-		}
-		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
-		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'E2:E'.(count($data)+1));
-
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $temp['title']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $temp['id_level_subject']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $temp['author']);
+		
+		$chr = 66;
+		if(!($temp['money']==''||$temp['money']=='0')){
+			$chr++;
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['money']);	
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['money']);				
+		}	
+		if(!($temp['imagePath']==''||$temp['imagePath']=='0')){
+			$chr++;
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['imagePath']);	
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);				
+		}	
+		
+		$quizObj = new m_quiz();
+		$quizObj->exportOne($temp['qid'],$objPHPExcel);		
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+		
 		$file =  "download/".date('YmdHis').".xls";
-		$path = $this->c->filePath.$file;
-
+		if($path==null){
+			$path = $this->c->filePath.$file;
+		}
 		$objWriter->save($path);
 		return $file;
 	}
-
-	public function exportOne($path=null){
-		$data = $this->getList(1,1,array('id'=>$this->id));
-		$paper = $data['data'][0];
-
-		$ques = new m_question();
-		$data = $ques->getList(1,200,array('id_quiz_paper'=>$this->id));
-		$questions = $data['data'];
-
-		return $this->paperToExcel($paper,$questions);
-	}
-
-
 
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
@@ -308,12 +254,6 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 			'pagesize'=>$pagesize,
 		);
 	}
-
-	public function exportQuiz($type){}
-
-	public function getMyDoneList($page=null,$pagesize=null,$search=null,$orderby=null){}
-
-	public function getDoneList($page=null,$pagesize=null,$search=null,$orderby=null){}
 
 	public function getQuizIds(){
 		$pfx = $this->c->dbprefix;
@@ -377,73 +317,23 @@ class m_quiz_paper extends m_quiz implements dbtable,fileLoad{
 		//It's written in controller/quiz.php
 		$questionObj = new m_question();
 		$answers = $questionObj->getAnswers($ques_);
-		$json = json_encode($answers);
 
 		//Just out put the answsers if the current user is guest, and do nothing
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		if($user['username']=='guest'){
-			return $json;
+			return $answers;
 		}
 
 		//Do quiz log.
 		$quizLogObj = new m_quiz_log();
-		$data = array(
-			'ids_question'=>$ids_question,
-			'id_quiz'=>$id_quiz,
-		);
-		$id_quiz_log = $quizLogObj->insert($data);
-
-		$count_right = 0;
-		$count_wrong = 0;
-		$count_giveup = 0;
-		$cent = 0;
-		$mycent = 0;
-		$count_total = count($answers);
-
-		$quesLogObj = new m_question_log();
-		for($i=0;$i<count($answers);$i++){
-			if($answers[$i]['type']==4||
-			$answers[$i]['type']==5||
-			$answers[$i]['type']==6||
-			($answers[$i]['type']==7&&$answers[$i]['id_parent']==0))continue;
-			$cent += $answers[$i]['cent'];
-			$quesLogData = array(
-				 'id_quiz'=>$paperid
-				,'id_quiz_log'=>$id_quiz_log
-				,'myAnswer'=>$answers[$i]['myAnswer']
-				,'answer'=>$answers[$i]['answer']
-				,'id_question'=>$answers[$i]['id']
-				,'id_user'=>$user['id']
-				,'cent'=>$answers[$i]['cent']
-				,'type'=>$answers[$i]['type']
-				,'markingmethod'=>$answers[$i]['markingmethod']
-			);
-			$result = $quesLogObj->addLog($quesLogData);
-			if($result==1){
-				$count_right++;
-				$mycent += $answers[$i]['cent'];
-			}
-			if($result==0)$count_wrong++;
-			if($result==-1)$count_giveup++;
-		}
-
-		$quizLogObj->update(array(
-			 'count_right'=>$count_right
-			,'count_wrong'=>$count_wrong
-			,'count_giveup'=>$count_giveup
-			,'count_total'=>$count_total
-			,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
-			,'mycent'=>$mycent
-			,'cent'=>$cent
-			,'id'=>$id_quiz_log
+		$quizLogObj->addLog(array(
+			 'id_quiz'=>$temp['id_quiz']
+			,'answers'=>$answers
+			,'ids_question'=>$ids_question
 		));
-
-		$this->id_quiz = $id_quiz;
-		$this->mycent = $mycent;
-		$this->cumulative('score');
-		$this->cumulative('count_used');
-		return $json;
+		
+		return $answers;
 	}
 }
 ?>

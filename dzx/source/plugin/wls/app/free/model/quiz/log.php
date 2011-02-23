@@ -9,7 +9,7 @@ include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php'
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_quiz_log extends m_quiz implements dbtable{
+class m_quiz_log extends wls implements dbtable,fileLoad,log{
 
 	public $phpexcel;
 	public $id = null;
@@ -19,25 +19,25 @@ class m_quiz_log extends m_quiz implements dbtable{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		if(!isset($data['id_user'])){		
+		if(!isset($data['id_user'])){
 			$userObj = new m_user();
 			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
 			$data['ids_level_user_group'] = $user['group'];
-		}		
+		}
 		if(!isset($data['ids_question'])){
 			$data['ids_question'] = '0';
 		}
 		if(!isset($data['date_created'])){
 			$data['date_created'] = date('Y-m-d H:i:s');
-		}		
+		}
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_quiz_log (".$keys.") values ('".$values."')";
 		mysql_query($sql,$conn);
-		
+
 		return mysql_insert_id($conn);
 	}
 
@@ -62,12 +62,9 @@ class m_quiz_log extends m_quiz implements dbtable{
 		}
 		$sql = substr($sql,0,strlen($sql)-1);
 		$sql .= " where id =".$id;
-		try{
-			mysql_query($sql,$conn);
-			return true;
-		}catch (Exception $ex){
-			return false;
-		}
+		$res = mysql_query($sql,$conn);
+
+		return $res;
 	}
 
 	public function create(){
@@ -105,167 +102,97 @@ class m_quiz_log extends m_quiz implements dbtable{
 		return true;
 	}
 
-	public function importExcel($path){
+	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
-		$obj = new m_subject();
-		$data = $obj->getList(1,100);
-		if(count($data['data'])<1){
-			$this->error(array('description'=>'quiz log wrong'));
-			return false;
-		}		
 
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['paper']);//TODO
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['main']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$quizlog = array();
+		$id_quiz = 0;
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['time']){
-				$quizlog['date_created'] = $currentSheet->getCell($i."2")->getValue();
-			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['id_user']){
-				$quizlog['id_user'] = $currentSheet->getCell($i."2")->getValue();
-			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['id_paper']){
-				$quizlog['id_quiz_paper'] = $currentSheet->getCell($i."2")->getValue();
-				$sql = "select id_level_subject from ".$pfx."wls_quiz_paper where id =".$quizlog['id_quiz_paper'];
-
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
+				$title = $currentSheet->getCell($i.'3')->getValue();
+				$sql = "select id from ".$pfx."wls_quiz where title = '".$title."';";
 				$res = mysql_query($sql,$conn);
 				$temp = mysql_fetch_assoc($res);
-				$quizlog['id_level_subject'] = $temp['id_level_subject'];
+				$id_quiz = $temp['id'];
 			}
 		}
-		$sql = "select questions from ".$pfx."wls_quiz_paper where id = ".$quizlog['id_quiz_paper'];
-		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);	
-		$paperQuestions = $temp['questions'];
-		$quizlog['id_question'] = $paperQuestions;
-				
-		$quizlog['id'] = $this->insert($quizlog);
 		
-		$sql = "select min(id) as minid from ".$pfx."wls_question where id_quiz_paper = ".$quizlog['id_quiz_paper'];
+		
+		$sql = "select 		
+				
+				 answer
+				,id
+				,id_parent
+				,markingmethod
+				,description
+				,cent
+				,type
+				,option2
+				,option3
+				,option4				
+				,ids_level_knowledge
+				
+					from ".$pfx."wls_question where id_quiz = ".$id_quiz." order by id;";
 		$res = mysql_query($sql,$conn);
-		$temp = mysql_fetch_assoc($res);	
-		$minQuesId = $temp['minid'];
+		$questions = array();
+		$ids_question = '';
+		while($temp = mysql_fetch_assoc($res)){
+			$temp['myAnswer'] = 'I_DONT_KNOW';
+			$questions[] = $temp;
+			$ids_question .= $temp['id'].',';
+		}
+		$ids_question = substr($ids_question,0,strlen($ids_question)-1);
 
-		$currentSheet = $this->phpexcel->getSheetByName('questions');
+		$currentSheet = $this->phpexcel->getSheetByName($this->lang['quizLog']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['id_question']){
-				$keys['id_question'] = $i;
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['index']){
+				$keys['index'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['answer']){
-				$keys['myanswer'] = $i;
-			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['myAnswer']){
+				$keys['myAnswer'] = $i;
+			}			
 		}
 		
-		$quesObj = new m_question_log();
-		$index = 0;
-		$queslogs = array();
-		$count_wrong = 0;
-		$count_right = 0;
-		$quizlog_cent = 0;
-		$id_question = '';		
-		$wrongObj = new m_quiz_wrong();		
-		$knowledgeLogObj = new m_knowledge_log();		
 		for($i=3;$i<=$allRow;$i++){
-			$sql = "select id,answer,cent,id_parent,ids_level_knowledge from ".$pfx."wls_question where id = ".($currentSheet->getCell($keys['id_question'].$i)->getValue()+($minQuesId-1));
-
-			$res = mysql_query($sql,$conn);
-			$temp = mysql_fetch_assoc($res);
-			$id_question .= $temp['id'].',';
-			$queslog = array(
-				'date_created'=>$quizlog['date_created']
-				,'id_user'=>$quizlog['id_user']
-				,'id_level_subject'=>$quizlog['id_level_subject']
-				,'id_quiz_paper'=>$quizlog['id_quiz_paper']
-				,'id_quiz_log'=>$quizlog['id']
-				,'id_question'=>$temp['id']
-				,'id_question_parent'=>$temp['id_parent']
-				,'answer'=>$temp['answer']
-				,'cent'=>$temp['cent']
-				,'myanswer'=>$currentSheet->getCell($keys['myanswer'].$i)->getValue()
-			);
-			if($queslog['myanswer']==$queslog['answer']){
-				$queslog['correct'] = 1;
-				$quizlog_cent += $queslog['cent'];
-				$count_right ++;
-			}else{
-				$queslog['correct'] = 0;
-				$count_wrong ++;
-				$wrong = array(
-					 'id_question' => $temp['id']
-					,'id_quiz_paper' => $quizlog['id_quiz_paper']
-					,'id_level_subject' => $quizlog['id_level_subject']
-					,'id_user'=>$quizlog['id_user']
-					,'date_created'=>$quizlog['date_created']
-				);
-				$wrongObj->insert($wrong);				
-			}
-			$knowledges = explode(",",$temp['ids_level_knowledge']);
-			for($ii=0;$ii<count($knowledges);$ii++){
-				if($queslog['correct']==1){				
-					$knowledgeLog = array(
-						 'date_created'=>date('Y-m-d',strtotime($quizlog['date_created']))
-						,'id_user'=>$quizlog['id_user']
-						,'id_level_knowledge'=>$knowledges[$ii]
-						,'count_right'=>1
-						,'date_slide'=>86400
-					);
-				}else{
-					$knowledgeLog = array(
-						 'date_created'=>date('Y-m-d',strtotime($quizlog['date_created']))
-						,'id_user'=>$quizlog['id_user']
-						,'id_level_knowledge'=>$knowledges[$ii]
-						,'count_wrong'=>1
-						,'date_slide'=>86400
-					);
-				}
-				$knowledgeLogObj->insert($knowledgeLog);
-			}
-
-			$queslog['id'] = $quesObj->insert($queslog);
-			$queslogs[] = $queslog;
+			$value = $currentSheet->getCell($keys['index'].$i)->getValue();
+			if($value=='')continue;	
+			$questions[intval($value)-1]['myAnswer'] = $currentSheet->getCell($keys['myAnswer'].$i)->getValue();
 		}
-		$id_question = substr($id_question,0,strlen($id_question)-1);
-		$quizlog_update = array(
-			 'id'=>$quizlog['id']
-			,'mycent'=>$quizlog_cent
-			,'count_right'=>$count_right
-			,'count_wrong'=>$count_wrong
-			,'proportion'=>$count_right/($count_wrong+$count_right)			
-		);
-		$this->update($quizlog_update);
+		
+		$this->addLog(array(
+			 'id_quiz'=>$id_quiz
+			,'answers'=>$questions
+			,'ids_question'=>$ids_question
+		));
+
 	}
 
-	public function exportExcel(){}
+	public function exportOne($path=null){}
 
-	public function cumulative($column){}
+	public function exportAll($path=null){}
+
+	public function importAll($path){}
 
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		if($page==null)$page = 1;
 		if($pagesize==null)$pagesize = 100;
-		
-		
-		$subjectObj = new m_subject();
-		$data = $subjectObj->getList(1,1000);
-		$list = $data['data'];
-		$subjects = array();
-		for($i=0;$i<count($list);$i++){
-			$subjects[$list[$i]['id_level']] = $list[$i]['name'];
-		}
+
 
 		$where = " where 1 =1  ";
 		if($search!=null){
@@ -277,12 +204,6 @@ class m_quiz_log extends m_quiz implements dbtable{
 				if($keys[$i]=='id_user'){
 					$where .= " and id_user in (".$search[$keys[$i]].") ";
 				}
-				if($keys[$i]=='id_level_subject'){
-					$where .= " and id_level_subject in ('".$search[$keys[$i]]."') ";
-				}	
-				if($keys[$i]=='id_level_subject_'){
-					$where .= " and id_level_subject like '".$search[$keys[$i]]."%' ";
-				}		
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
@@ -292,11 +213,8 @@ class m_quiz_log extends m_quiz implements dbtable{
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
-			if($temp['id_level_subject']!=0){
-				$temp['name_subject'] = $subjects[$temp['id_level_subject']];
-			}
 			$temp['name_application'] = $this->t->formatApplicationType($temp['application']);
-			$temp['count_questions'] = count(explode(",", $temp['id_question']));
+			$temp['count_questions'] = count(explode(",", $temp['ids_question']));
 			$arr[] = $temp;
 		}
 
@@ -314,17 +232,83 @@ class m_quiz_log extends m_quiz implements dbtable{
 		);
 	}
 
-	public function addLog($whatHappened){}
+	public function addLog($whatHappened){
+		
+		$answers = $whatHappened['answers'];
+		$id_quiz = $whatHappened['id_quiz'];
+		$ids_question = $whatHappened['ids_question'];
+
+		$userObj = new m_user();
+		$me = $userObj->getMyInfo();
+
+		$data = array(
+			'ids_question'=>$ids_question,
+			'id_quiz'=>$id_quiz,
+		);
+		$id_quiz_log = $this->insert($data);
+
+		$count_right = 0;
+		$count_wrong = 0;
+		$count_giveup = 0;
+		$cent = 0;
+		$mycent = 0;
+		$count_total = count($answers);
+
+		$quesLogObj = new m_question_log();
+		for($i=0;$i<count($answers);$i++){
+			if($answers[$i]['type']==4||
+			$answers[$i]['type']==5||
+			$answers[$i]['type']==6||
+			($answers[$i]['type']==7&&$answers[$i]['id_parent']==0))continue;
+			$cent += $answers[$i]['cent'];
+			$quesLogData = array(
+				 'id_quiz'=>$id_quiz
+			,'id_quiz_log'=>$id_quiz_log
+			,'myAnswer'=>$answers[$i]['myAnswer']
+			,'answer'=>$answers[$i]['answer']
+			,'id_question'=>$answers[$i]['id']
+			,'id_user'=>$me['id']
+			,'cent'=>$answers[$i]['cent']
+			,'type'=>$answers[$i]['type']
+			,'markingmethod'=>$answers[$i]['markingmethod']
+			);
+			$result = $quesLogObj->addLog($quesLogData);
+			if($result==1){
+				$count_right++;
+				$mycent += $answers[$i]['cent'];
+			}
+			if($result==0)$count_wrong++;
+			if($result==-1)$count_giveup++;
+		}
+
+		$this->update(array(
+			 'count_right'=>$count_right
+		,'count_wrong'=>$count_wrong
+		,'count_giveup'=>$count_giveup
+		,'count_total'=>$count_total
+		,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
+		,'mycent'=>$mycent
+		,'cent'=>$cent
+		,'id'=>$id_quiz_log
+		));
+
+		$quizObj = new m_quiz();
+		$quizObj->id_quiz = $id_quiz;
+		$quizObj->mycent = $mycent;
+		$quizObj->cumulative('score');
+		$quizObj->cumulative('count_used');
+
+	}
 
 	public function getLogAnswers(){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$sql = "select application,id,id_question from ".$pfx."wls_quiz_log where id = ".$this->id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		if($temp['application']==0){
-			$sql = "select 
+			$sql = "select
 			
 			".$pfx."wls_question.id as id_question,
 			".$pfx."wls_question_log.myanswer
@@ -336,12 +320,12 @@ class m_quiz_log extends m_quiz implements dbtable{
 			where ".$pfx."wls_question.id in (".$temp['id_question'].")
 			 order by ".$pfx."wls_question.id
 			  ";					
-		}else{		
+		}else{
 			$sql = "select id,id_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
 		}
 		$res = mysql_query($sql,$conn);
 		if($res==false){
-			echo $sql;	
+			echo $sql;
 		}else{
 			$arr = array();
 			while($temp = mysql_fetch_assoc($res)){

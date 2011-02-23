@@ -274,17 +274,6 @@ class m_user extends wls implements dbtable{
 	}
 
 	/**
-	 * Get the current user's information. 
-	 * TODO It should depand on database's session
-	 *
-	 * @param $id If it's null , will return the current user's info.
-	 * @param $resetSession To reset the current user's session ? 
-	 * */
-	public function getInfo(){
-		
-	}
-
-	/**
 	 * Login and rest the session.
 	 * Normally , the client-side would refresh the page.
 	 * Because once logined , the current user's structur would change a lot

@@ -72,7 +72,7 @@ class m_user_group extends wls implements dbtable,fileLoad{
 		}
 	}
 
-	public function updateaccess($id,$ids_access){
+	public function updateAccess($id,$ids_access){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
@@ -213,7 +213,7 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			);
 			$this->insert($data);
 		}
-	}
+	}	
 
 	public function exportAll($path=null){
 		$objPHPExcel = new PHPExcel();
@@ -322,6 +322,7 @@ class m_user_group extends wls implements dbtable,fileLoad{
 	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
+		
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);

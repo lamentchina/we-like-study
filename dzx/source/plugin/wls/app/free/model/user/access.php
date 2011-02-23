@@ -3,7 +3,7 @@ include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php'
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_user_access extends wls implements dbtable,levelList{
+class m_user_access extends wls implements dbtable,fileLoad{
 
 	public $phpexcel = null;
 
@@ -74,7 +74,7 @@ class m_user_access extends wls implements dbtable,levelList{
 		return true;
 	}
 
-	public function importExcel($path){
+	public function importAll($path){
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -145,8 +145,12 @@ class m_user_access extends wls implements dbtable,levelList{
 			$this->insert($data);
 		}
 	}
+	
+	public function importOne($path){}
+	
+	public function exportOne($path=null){}
 
-	public function exportExcel(){
+	public function exportAll($path=null){
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -163,9 +167,7 @@ class m_user_access extends wls implements dbtable,levelList{
 		$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(8);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(40);
 
-		for($i=1;$i<=9;$i++){
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
-		}
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['id_level']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['name']);

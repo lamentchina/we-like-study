@@ -187,7 +187,6 @@ class m_question_log extends wls implements dbtable,log{
 			$wrongData = array(
 				 'id_user'=>$answerData['id_user']
 				,'id_question'=>$answerData['id_question']
-				,'id_quiz'=>$answerData['id_quiz']
 			);
 			$wrongObj->insert($wrongData);
 			$answerData['correct'] = 0;
