@@ -173,7 +173,7 @@ wls.subject = Ext.extend(wls, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=subject&action=viewExport' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+									+ "?controller=subject&action=exportAll' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}
@@ -330,7 +330,7 @@ wls.subject = Ext.extend(wls, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=subject&action=viewExport' width='100%' height='250' />"
+									+ "?controller=subject&action=exportAll' width='100%' height='250' />"
 						});
 						win.show(this);
 					}

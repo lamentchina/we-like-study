@@ -180,7 +180,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=viewExport' width='100%' height='250' />"
+									+ "?controller=quiz_log&action=exportAll' width='100%' height='250' />"
 						});
 						win.show(this);
 					}

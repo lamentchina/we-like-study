@@ -88,7 +88,14 @@ class m_user_group extends wls implements dbtable,levelList{
 		}
 	}
 
-	public function delete($ids){}
+	public function delete($ids){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "delete from ".$pfx."wls_user_group where id  in (".$ids.");";
+		$res = mysql_query($sql,$conn);
+		return $res;
+	}
 
 	public function update($data){
 		$pfx = $this->c->dbprefix;

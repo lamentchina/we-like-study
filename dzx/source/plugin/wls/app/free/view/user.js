@@ -51,13 +51,12 @@ wls.user = Ext.extend(wls, {
 						id : 'CAPTCHA'
 					}, new Ext.BoxComponent({
 						fieldLabel : il8n.CAPTCHA,
-						height : 32, // give north and south regions a height
+						height : 32, 
 						autoEl : {
 							tag : 'div',
 							html : '<img style="width:100px; height:28px;" id="captcha" src="'
 									+ thisObj.config.libPath
-									+ 'securimage/'
-									+ 'securimage_show.php" alt="CAPTCHA Image" />'
+									+ 'securimage/securimage_show.php" alt="CAPTCHA Image" />'
 						}
 					})],
 
@@ -71,8 +70,7 @@ wls.user = Ext.extend(wls, {
 						handler : function() {
 							$('#captcha').attr(
 									"src",
-									thisObj.config.libPath + 'securimage/'
-											+ 'securimage_show.php?wlstemp='
+									thisObj.config.libPath + 'securimage/securimage_show.php?temp='
 											+ Math.random());
 						}
 					}, {
@@ -125,8 +123,7 @@ wls.user = Ext.extend(wls, {
 							tag : 'div',
 							html : '<img style="width:100px; height:28px;" id="captcha_reg" src="'
 									+ thisObj.config.libPath
-									+ 'securimage/'
-									+ 'securimage_show.php" alt="CAPTCHA Image" />'
+									+ 'securimage/securimage_show.php" alt="CAPTCHA Image" />'
 						}
 					})],
 
@@ -153,8 +150,7 @@ wls.user = Ext.extend(wls, {
 											.attr(
 													"src",
 													thisObj.config.libPath
-															+ 'securimage/'
-															+ 'securimage_show.php?wlstemp='
+															+ 'securimage/securimage_show.php?wlstemp='
 															+ Math.random());
 								},
 								failure : function(response) {
@@ -168,8 +164,7 @@ wls.user = Ext.extend(wls, {
 				handler : function() {
 					$('#captcha_reg').attr(
 							"src",
-							thisObj.config.libPath + 'securimage/'
-									+ 'securimage_show.php?wlstemp='
+							thisObj.config.libPath + 'securimage/securimage_show.php?wlstemp='
 									+ Math.random());
 				}
 			}]
@@ -248,7 +243,7 @@ wls.user = Ext.extend(wls, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=user&action=jsonList',
+							+ '?controller=user&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'username', 'password', 'money', 'credits']
@@ -312,7 +307,7 @@ wls.user = Ext.extend(wls, {
 						height : 300,
 						html : "<iframe src ='"
 								+ thisObj.config.AJAXPATH
-								+ "?controller=user&action=viewExport' width='100%' height='250' />"
+								+ "?controller=user&action=exportAll' width='100%' height='250' />"
 					});
 					win.show(this);
 				}
@@ -356,7 +351,7 @@ wls.user = Ext.extend(wls, {
 
 						// auto create TreeLoader
 						dataUrl : thisObj.config.AJAXPATH
-								+ "?controller=user&action=getGroup&username="
+								+ "?controller=user&action=getGroupTree&username="
 								+ username,
 						buttons : [{
 							text : il8n.submit,
@@ -421,7 +416,7 @@ wls.user = Ext.extend(wls, {
 						},
 
 						dataUrl : thisObj.config.AJAXPATH
-								+ "?controller=user&action=getTreeaccess&username="
+								+ "?controller=user&action=getAccessTree&username="
 								+ username
 
 					});
@@ -459,7 +454,7 @@ wls.user = Ext.extend(wls, {
 						},
 
 						dataUrl : thisObj.config.AJAXPATH
-								+ "?controller=user&action=getTreeSubject&username="
+								+ "?controller=user&action=getSubjectTree&username="
 								+ username
 
 					});

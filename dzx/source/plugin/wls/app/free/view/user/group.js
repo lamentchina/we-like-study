@@ -39,7 +39,7 @@ wls.user.group = Ext.extend(wls, {
 						Ext.Ajax.request({
 							method : 'POST',
 							url : thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=addone&temp="
+									+ "?controller=user_group&action=add&temp="
 									+ Math.random(),
 							success : function(response) {
 								var obj = jQuery
@@ -61,17 +61,15 @@ wls.user.group = Ext.extend(wls, {
 		return form;
 	},
 	getList : function(domid) {
-
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=user_group&action=jsonList',
+							+ '?controller=user_group&action=getList',
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level', 'name', 'count_user']
 				});
-
 		var cm = new Ext.grid.ColumnModel({
 					defaults : {
 						sortable : true
@@ -125,23 +123,7 @@ wls.user.group = Ext.extend(wls, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=viewUpload' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			} else if (access[i] == '130101') {
-				tb.add({
-					text : il8n.importFile + '(1)',
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_u_g_l_en',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=viewUploadOne' width='100%' height='250' />"
+									+ "?controller=user_group&action=importAll' width='100%' height='250' />"
 						});
 						win.show(this);
 					}
@@ -157,25 +139,7 @@ wls.user.group = Ext.extend(wls, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=viewExport' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			} else if (access[i] == '130201') {
-				tb.add({
-					text : il8n.exportFile + '(1)',
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_u_g_l_en',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=viewExportOne&id_level="
-									+ Ext.getCmp(domid).getSelectionModel().selection.record.data.id_level
-									+ "' width='100%' height='250' />"
+									+ "?controller=user_group&action=exportAll' width='100%' height='250' />"
 						});
 						win.show(this);
 					}
@@ -229,7 +193,7 @@ wls.user.group = Ext.extend(wls, {
 
 							// auto create TreeLoader
 							dataUrl : thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=getaccess&id="
+									+ "?controller=user_group&action=getAccessTree&id="
 									+ id,
 							buttons : [{
 								text : il8n.submit,
@@ -244,7 +208,7 @@ wls.user.group = Ext.extend(wls, {
 									Ext.Ajax.request({
 										method : 'POST',
 										url : thisObj.config.AJAXPATH
-												+ "?controller=user_group&action=updateaccess",
+												+ "?controller=user_group&action=saveAccessTree",
 										success : function(response) {
 											Ext.getCmp("w_u_g_l_p_w").close();
 										},
@@ -298,7 +262,7 @@ wls.user.group = Ext.extend(wls, {
 
 							// auto create TreeLoader
 							dataUrl : thisObj.config.AJAXPATH
-									+ "?controller=user_group&action=getSubject&id="
+									+ "?controller=user_group&action=getSubjectTree&id="
 									+ id,
 							buttons : [{
 								text : il8n.submit,
@@ -313,7 +277,7 @@ wls.user.group = Ext.extend(wls, {
 									Ext.Ajax.request({
 										method : 'POST',
 										url : thisObj.config.AJAXPATH
-												+ "?controller=user_group&action=updateSubject",
+												+ "?controller=user_group&action=saveSubjectTree",
 										success : function(response) {
 											Ext.getCmp("w_u_g_l_s_w").close();
 										},
@@ -350,7 +314,7 @@ wls.user.group = Ext.extend(wls, {
 							handler : function() {
 								var form = thisObj.getAddItemForm();
 								var w = new Ext.Window({
-											title : il8n.addNewSubject,
+											title : il8n.add,
 											width : 350,
 											height : 300,
 											layout : 'fit',

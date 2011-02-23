@@ -88,7 +88,7 @@ wls.knowledge = Ext.extend(wls, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=knowledge&action=viewExport' width='19080%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+									+ "?controller=knowledge&action=exportAll' width='19080%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}

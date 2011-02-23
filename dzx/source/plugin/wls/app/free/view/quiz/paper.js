@@ -260,7 +260,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=viewExport&id="
+										+ "?controller=quiz_paper&action=exportAll&id="
 										+ pid
 										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});

@@ -56,6 +56,14 @@ class user_group extends wls{
 			</html>';
 	}	
 	
+	public function delete(){
+		if($this->m->delete($_POST['id'])){
+			echo 'success';
+		}else{
+			echo 'fail';
+		}
+	}
+	
 	public function saveUpdate(){
 		$data = array(
 			'id'=>$_POST['id'],
@@ -83,6 +91,18 @@ class user_group extends wls{
 		echo json_encode($data);
 	}
 	
+	public function getSubjectTree(){
+		$id = $_REQUEST['id'];		
+		
+		$obj = new m_subject();
+		$data = $obj->getListForGroup($id);
+
+		$t = new tools();
+		$data =  $t->getTreeData(null,$data);	
+		
+		echo json_encode($data);
+	}	
+	
 	public function getCourseTree(){
 		$id = $_REQUEST['id'];		
 		
@@ -98,6 +118,10 @@ class user_group extends wls{
 	public function saveAccessTree(){
 		$this->m->updateaccess($_POST['id'],$_POST['ids']);
 	}
+	
+	public function saveSubjectTree(){
+		$this->m->updateSubject($_POST['id'],$_POST['ids']);
+	}	
 	
 	public function saveCourseTree(){
 		$this->m->updateSubject($_POST['id'],$_POST['ids']);

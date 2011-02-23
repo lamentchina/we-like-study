@@ -167,7 +167,7 @@ class user extends wls{
 		echo json_encode($data);
 	}
 
-	public function getGroup(){
+	public function getGroupTree(){
 		$username = $_REQUEST['username'];
 
 		$obj = new m_user_group();
@@ -196,7 +196,7 @@ class user extends wls{
 		));
 	}
 	
-	public function getTreeSubject(){
+	public function getSubjectTree(){
 		$username = $_REQUEST['username'];
 
 		$obj = new m_subject();
