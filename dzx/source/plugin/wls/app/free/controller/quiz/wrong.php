@@ -118,9 +118,7 @@ class quiz_wrong extends quiz{
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."jqueryextend.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>
-<script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."star-rating/jquery.rating.pack.js\"></script>		
+	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>	
 	
 <script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>

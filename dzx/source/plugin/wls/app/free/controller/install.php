@@ -30,12 +30,6 @@ class install extends wls {
 		$obj->importOne("F:/paper.xls");
 		$obj->importOne("F:/paper2.xls");
 		
-		$obj = new m_quiz_log();
-		$obj->create();		
-
-		$obj = new m_question_log();
-		$obj->create();	
-		
 		$obj = new m_subject();
 		$obj->create();		
 
@@ -49,7 +43,17 @@ class install extends wls {
 		$obj->create();
 		$obj->importExcelWithU("F:/config.xls");
 		$obj->importExcelWithS("F:/config.xls");
-		$obj->importExcelWithG("F:/config.xls");
+		$obj->importExcelWithG("F:/config.xls");	
+		
+		$obj = new m_quiz_wrong();
+		$obj->create();			
+
+		$obj = new m_question_log();
+		$obj->create();	
+		
+		$obj = new m_quiz_log();
+		$obj->create();	
+		$obj->importOne('F:/quizlog.xls');
 		
 		exit();
 		
@@ -60,24 +64,6 @@ class install extends wls {
 
 		$obj = new m_knowledge_log();
 		$obj->create();
-		
-
-
-
-
-		$obj = new m_question_log();
-		$obj->create();
-
-		$obj = new m_quiz_paper();
-		$obj->create();
-
-		$obj = new m_quiz_log();
-		$obj->create();
-
-		$obj = new m_quiz_wrong();
-		$obj->create();
-		
-		exit();
 
 		echo '
 		<html>

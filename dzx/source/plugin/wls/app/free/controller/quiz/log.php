@@ -2,6 +2,7 @@
 include_once dirname(__FILE__).'/../quiz.php';
 include_once dirname(__FILE__).'/../../model/quiz/log.php';
 include_once dirname(__FILE__).'/../../model/user.php';
+include_once dirname(__FILE__).'/../../model/question.php';
 
 class quiz_log extends quiz{
 	private $m = null;
@@ -87,14 +88,21 @@ class quiz_log extends quiz{
 	}
 
 	public function getAnswers(){
-		sleep(2);
+		sleep(1);
 		$id = $_POST['id'];
 
 		$this->m->id = $id;
 		$ques_ = $this->m->getLogAnswers();
 
-		$answers = $this->m->getAnswers($ques_);
+		$questionObj = new m_question();
+		$answers = $questionObj->getAnswers($ques_);
 		echo json_encode($answers);
+	}
+	
+	public function getOne(){
+		$data = $this->m->getList(1,1,array('id'=>$_REQUEST['id']));
+		$data = $data['data'][0];
+		echo json_encode($data);
 	}
 
 	/**
@@ -125,7 +133,7 @@ class quiz_log extends quiz{
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."star-rating/jquery.rating.pack.js\"></script>		
 	
-<script type=\"text/javascript\" src=\"wls.php?controller=user&action=translateIniToJsClass\"></script>
+<script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/log.js\"></script>

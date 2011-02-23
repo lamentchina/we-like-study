@@ -125,8 +125,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 				$temp = mysql_fetch_assoc($res);
 				$id_quiz = $temp['id'];
 			}
-		}
-		
+		}		
 		
 		$sql = "select 		
 				
@@ -192,8 +191,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$conn = $this->conn();
 		if($page==null)$page = 1;
 		if($pagesize==null)$pagesize = 100;
-
-
+		
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
@@ -304,7 +302,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		$sql = "select application,id,id_question from ".$pfx."wls_quiz_log where id = ".$this->id;
+		$sql = "select application,id,ids_question from ".$pfx."wls_quiz_log where id = ".$this->id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		if($temp['application']==0){
@@ -317,11 +315,11 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			".$pfx."wls_question_log
 				ON ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
 			
-			where ".$pfx."wls_question.id in (".$temp['id_question'].")
+			where ".$pfx."wls_question.id in (".$temp['ids_question'].")
 			 order by ".$pfx."wls_question.id
 			  ";					
 		}else{
-			$sql = "select id,id_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
+			$sql = "select id,ids_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
 		}
 		$res = mysql_query($sql,$conn);
 		if($res==false){
