@@ -76,7 +76,7 @@ class quiz_paper extends quiz{
 		}else{
 			$file = $this->c->filePath."upload/upload".rand(1,1000).date('YmdHis').".xls";
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
-			$this->m->importExcel($file);
+			$this->m->importOne($file);
 			echo 'success';
 		}
 	}
@@ -94,8 +94,8 @@ class quiz_paper extends quiz{
 	}
 
 	public function exportOne(){
-		$this->m->id = $_REQUEST['id'];
-		$file = $this->m->exportExcel();
+		$this->m->id_paper = $_REQUEST['id'];
+		$file = $this->m->exportOne();
 		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 
@@ -116,7 +116,8 @@ class quiz_paper extends quiz{
 		//faster than the client-side's JavaScript parsing , there would be an error
 		//So let the server sleep 2 senconds whatever
 		sleep(2);
-		echo $this->m->checkMyPaper($_POST['answersData'],$_POST['id']);
+		$data = $this->m->checkMyPaper($_POST['answersData'],$_POST['id']);
+		echo json_encode($data);
 	}
 
 	public function viewQuiz(){
