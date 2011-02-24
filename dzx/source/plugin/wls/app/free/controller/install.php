@@ -17,7 +17,7 @@ class install extends wls {
 	public function createTables(){		
 		$obj = new m_subject();
 		$obj->create();
-		$obj->importAll("F:/subject.xls");
+//		$obj->importAll("F:/subject.xls");
 		
 		$obj = new m_question();
 		$obj->create();		
@@ -27,11 +27,17 @@ class install extends wls {
 		
 		$obj = new m_quiz_paper();
 		$obj->create();		
-		$obj->importOne("F:/paper.xls");
-		$obj->importOne("F:/paper2.xls");
+//		$obj->importOne("F:/paper.xls");
+//		$obj->importOne("F:/paper2.xls");
 		
 		$obj = new m_subject();
 		$obj->create();		
+		
+//		$obj = new m_subject_knowledge();
+//		$obj->create();	
+//
+//		$obj = new m_subject_knowledge_log();
+//		$obj->create();			
 
 		$obj = new m_user();
 		$obj->create();
@@ -41,9 +47,9 @@ class install extends wls {
 		
 		$obj = new m_user_group();
 		$obj->create();
-		$obj->importExcelWithU("F:/config.xls");
-		$obj->importExcelWithS("F:/config.xls");
-		$obj->importExcelWithG("F:/config.xls");	
+//		$obj->importExcelWithU("F:/config.xls");
+//		$obj->importExcelWithS("F:/config.xls");
+//		$obj->importExcelWithG("F:/config.xls");	
 		
 		$obj = new m_quiz_wrong();
 		$obj->create();			
@@ -53,17 +59,9 @@ class install extends wls {
 		
 		$obj = new m_quiz_log();
 		$obj->create();	
-		$obj->importOne('F:/quizlog.xls');
-		
-		exit();
-		
-
-
-		$obj = new m_knowledge();
-		$obj->create();
-
-		$obj = new m_knowledge_log();
-		$obj->create();
+//		$obj->importOne('F:/quizlog.xls');
+//		$obj->importOne('F:/quizlog2.xls');
+//		$obj->importOne('F:/quizlog4.xls');
 
 		echo '
 		<html>
@@ -110,13 +108,13 @@ class install extends wls {
 		
 		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();
-		$obj->importExcelWithP($file);		
+		$obj->importExcelWithG($file);		
 		$obj->importExcelWithS($file);
 		$obj->importExcelWithU($file);
 		
-		include_once $this->c->license.'/model/knowledge.php';
-		$obj = new m_knowledge();
-		$obj->importExcel($file);
+//		include_once $this->c->license.'/model/knowledge.php';
+//		$obj = new m_knowledge();
+//		$obj->importExcel($file);
 		
 		echo '
 		<html>
@@ -205,7 +203,7 @@ class install extends wls {
 				</tr>
 				<tr>
 					<td>".$this->lang['siteName']."</td>
-					<td><input name = 'siteName' value='We Like Study! www.welikestudy.com' style='width:90%' /></td>
+					<td><input name = 'siteName' value='We_Like_Study' style='width:90%' /></td>
 				</tr>																														
 			</table>
 			<br/><br/>

@@ -45,6 +45,20 @@ wls.system = Ext.extend(wls, {
 						}						
 					});
 				}
+			},{
+				text : il8n.importSysConfig,
+				handler : function() {
+					var win = new Ext.Window({
+						id : 'w_s_ic',
+						layout : 'fit',
+						width : 400,
+						height : 150,
+						html : "<iframe src ='"
+								+ thisObj.config.AJAXPATH
+								+ "?controller=system&action=importAll' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+					});
+					win.show();
+				}
 			}]
 		});
 		Ext.Ajax.request({
