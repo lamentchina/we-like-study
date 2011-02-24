@@ -221,7 +221,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 					$where .= " and id_level_subject in (".$search[$keys[$i]].") ";
 				}
 				if($keys[$i]=='title'){
-					$where .= " and title like '%".$search[$keys[$i]]."%' ";
+					$where .= " and ".$pfx."wls_quiz.title like '%".$search[$keys[$i]]."%' ";
 				}
 			}
 		}

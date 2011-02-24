@@ -3,7 +3,7 @@ include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel.php'
 include_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 require_once dirname(__FILE__).'/../../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
-class m_subject_knowledge extends wls implements dbtable{
+class m_subject_knowledge extends wls implements dbtable,fileLoad{
 
 	public $phpexcel = null;
 
@@ -18,7 +18,7 @@ class m_subject_knowledge extends wls implements dbtable{
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_knowledge (".$keys.") values ('".$values."')";
+		$sql = "insert into ".$pfx."wls_subject_knowledge (".$keys.") values ('".$values."')";
 
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
@@ -27,7 +27,7 @@ class m_subject_knowledge extends wls implements dbtable{
 	public function delete($ids){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		$sql = "delete from ".$pfx."wls_knowledge where id  in (".$ids.");";
+		$sql = "delete from ".$pfx."wls_subject_knowledge where id  in (".$ids.");";
 		try{
 			mysql_query($sql,$conn);
 			return true;
@@ -44,7 +44,7 @@ class m_subject_knowledge extends wls implements dbtable{
 		unset($data['id']);
 		$keys = array_keys($data);
 
-		$sql = "update ".$pfx."wls_knowledge set ";
+		$sql = "update ".$pfx."wls_subject_knowledge set ";
 		for($i=0;$i<count($keys);$i++){
 			$sql.= $keys[$i]."='".$data[$keys[$i]]."',";
 		}
@@ -62,10 +62,10 @@ class m_subject_knowledge extends wls implements dbtable{
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
-		$sql = "drop table if exists ".$pfx."wls_knowledge;";
+		$sql = "drop table if exists ".$pfx."wls_subject_knowledge;";
 		mysql_query($sql,$conn);
 		$sql = "
-			create table ".$pfx."wls_knowledge(
+			create table ".$pfx."wls_subject_knowledge(
 				 id int primary key auto_increment	
 				,id_level varchar(200) unique		
 				,name varchar(200) default '' 			
@@ -80,7 +80,7 @@ class m_subject_knowledge extends wls implements dbtable{
 		return true;
 	}
 
-	public function importExcel($path){
+	public function importAll($path){
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -128,7 +128,7 @@ class m_subject_knowledge extends wls implements dbtable{
 		}
 	}
 
-	public function exportExcel(){
+	public function exportAll($path=null){
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -162,8 +162,10 @@ class m_subject_knowledge extends wls implements dbtable{
 		$objWriter->save($this->c->filePath.$file);
 		return $file;
 	}
-
-	public function cumulative($column){}
+	
+	public function importOne($path){}
+	
+	public function exportOne($path=null){}
 
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
@@ -179,7 +181,7 @@ class m_subject_knowledge extends wls implements dbtable{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select ".$columns." from ".$pfx."wls_knowledge ".$where." ".$orderby;
+		$sql = "select ".$columns." from ".$pfx."wls_subject_knowledge ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
 		$res = mysql_query($sql,$conn);
@@ -188,7 +190,7 @@ class m_subject_knowledge extends wls implements dbtable{
 			$arr[] = $temp;
 		}
 
-		$sql2 = "select count(*) as total from ".$pfx."wls_knowledge ".$where;
+		$sql2 = "select count(*) as total from ".$pfx."wls_subject_knowledge ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
@@ -202,13 +204,6 @@ class m_subject_knowledge extends wls implements dbtable{
 		);
 	}
 
-	/**
-	 * 获得具有级层关系的列表
-	 *
-	 * @param $root 根元素
-	 * */
-	public function getLevelList($root){}
-
 	public function getListForGroup($id_level_group){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -216,7 +211,7 @@ class m_subject_knowledge extends wls implements dbtable{
 		$sql = "
 		SELECT *,(id_level in (
 			select id_level_knowledge from ".$pfx."wls_user_group2knowledge where id_level_group = '".$id_level_group."' 
-		))as checked FROM ".$pfx."wls_knowledge order by id;
+		))as checked FROM ".$pfx."wls_subject_knowledge order by id;
 		";
 		$res = mysql_query($sql,$conn);
 		$data = array();
@@ -235,7 +230,7 @@ class m_subject_knowledge extends wls implements dbtable{
 			select id_level_knowledge from wls_user_group2knowledge where id_level_group in ( 
 				select id_level_group from wls_user_group2user where username = '".$username."'
 			)
-		) as checked from wls_knowledge;";
+		) as checked from wls_subject_knowledge;";
 
 		$res = mysql_query($sql,$conn);
 		$data = array();

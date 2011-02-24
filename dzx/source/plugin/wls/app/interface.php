@@ -26,8 +26,7 @@ interface dbtable{
 	
 	public function create();
 	
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*");
-	
+	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*");	
 }
 
 interface fileLoad{
@@ -42,17 +41,15 @@ interface fileLoad{
 }
 
 
-interface levelList{
+interface levelList{	
 	
-	public function getLevelList($root);
-	
+	public function getLevelList($root);	
 }
 
 
-interface log{
+interface log{	
 	
-	public function addLog($whatHappened);
-	
+	public function addLog($whatHappened);	
 }
 
 interface integrate{	

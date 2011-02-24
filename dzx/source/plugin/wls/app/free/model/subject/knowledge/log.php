@@ -1,7 +1,7 @@
 <?php
-include_once dirname(__FILE__)."/../user.php";
+include_once dirname(__FILE__).'/../../user.php';
 
-class m_knowledge_log extends wls implements dbtable,log{
+class m_subject_knowledge_log extends wls implements dbtable,log{
 
 	public $phpexcel;
 	public $id = null;
@@ -42,17 +42,17 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_knowledge_log (".$keys.") values ('".$values."')";
+		$sql = "insert into ".$pfx."wls_subject_knowledge_log (".$keys.") values ('".$values."')";
 		$done = mysql_query($sql,$conn);
 		if($done===false){
 			if(isset($data['count_right'])){
-				$sql2 = "update ".$pfx."wls_knowledge_log set count_right = count_right +1 where
+				$sql2 = "update ".$pfx."wls_subject_knowledge_log set count_right = count_right +1 where
 				 date_created = '".$data['date_created']."' and
 				 date_slide = '".$data['date_slide']."' and
 				 id_level_knowledge = '".$data['id_level_knowledge']."'
 				"; 
 			}else{
-				$sql2 = "update ".$pfx."wls_knowledge_log set count_wrong = count_wrong +1 where
+				$sql2 = "update ".$pfx."wls_subject_knowledge_log set count_wrong = count_wrong +1 where
 				 date_created = '".$data['date_created']."' and
 				 date_slide = '".$data['date_slide']."' and
 				 id_level_knowledge = '".$data['id_level_knowledge']."'
@@ -72,7 +72,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 		unset($data['id']);
 		$keys = array_keys($data);
 
-		$sql = "update ".$pfx."wls_knowledge_log set ";
+		$sql = "update ".$pfx."wls_subject_knowledge_log set ";
 		for($i=0;$i<count($keys);$i++){
 			$sql.= $keys[$i]."='".$data[$keys[$i]]."',";
 		}
@@ -87,22 +87,19 @@ class m_knowledge_log extends wls implements dbtable,log{
 	}
 
 	/**
-	 * 创建这张数据库表
-	 * 创建过程中,会先尝试删除这张表,然后重新建立.
-	 * 因此在运行之前需要将数据备份
-	 * 如果配置文件中的state不是debug,无法执行这类函数
+	 * Create the db table
+	 * Will check if the table exists or not. If it existed , drop it first
 	 *
 	 * @return bool
 	 * */
 	public function create(){
-
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
-		$sql = "drop table if exists ".$pfx."wls_knowledge_log;";
+		$sql = "drop table if exists ".$pfx."wls_subject_knowledge_log;";
 		mysql_query($sql,$conn);
 		$sql = "
-			create table ".$pfx."wls_knowledge_log(
+			create table ".$pfx."wls_subject_knowledge_log(
 				 id int primary key auto_increment	
 				 
 				,date_created datetime default '1987-03-18'
@@ -144,7 +141,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 					$where .= " and id_level_knowledge like '".$search[$keys[$i]]."__' ";
 				}
 				if($keys[$i]=='lastDate'){
-					$sql = "select max(date_created) as date_created_max from ".$pfx."wls_knowledge_log where id_user = ".$search['id_user'];
+					$sql = "select max(date_created) as date_created_max from ".$pfx."wls_subject_knowledge_log where id_user = ".$search['id_user'];
 					$res = mysql_query($sql,$conn);
 					$temp = mysql_fetch_assoc($res);
 						
@@ -153,7 +150,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select ".$columns.",((count_right*100)/(count_right+count_wrong)) as proportion from ".$pfx."wls_knowledge_log ".$where." ".$orderby;
+		$sql = "select ".$columns.",((count_right*100)/(count_right+count_wrong)) as proportion from ".$pfx."wls_subject_knowledge_log ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
 		$res = mysql_query($sql,$conn);
@@ -162,7 +159,7 @@ class m_knowledge_log extends wls implements dbtable,log{
 			$arr[] = $temp;
 		}
 
-		$sql2 = "select count(*) as total from ".$pfx."wls_knowledge_log ".$where;
+		$sql2 = "select count(*) as total from ".$pfx."wls_subject_knowledge_log ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];
@@ -187,24 +184,24 @@ class m_knowledge_log extends wls implements dbtable,log{
 		$user = $userObj->getMyInfo();
 		
 		$sql = "		
-select * from pre_wls_knowledge
-left join pre_wls_knowledge_log 
-ON pre_wls_knowledge_log.id_level_knowledge = pre_wls_knowledge.id_level
+select * from pre_wls_subject_knowledge
+left join pre_wls_subject_knowledge_log 
+ON pre_wls_subject_knowledge_log.id_level_knowledge = pre_wls_subject_knowledge.id_level
 where 
-pre_wls_knowledge_log.id 
+pre_wls_subject_knowledge_log.id 
 in (
 SELECT 
-max(pre_wls_knowledge_log.id) as max_
+max(pre_wls_subject_knowledge_log.id) as max_
 
-FROM pre_wls_knowledge 
+FROM pre_wls_subject_knowledge 
  join
-pre_wls_knowledge_log
+pre_wls_subject_knowledge_log
 
-  ON pre_wls_knowledge_log.id_level_knowledge = pre_wls_knowledge.id_level
+  ON pre_wls_subject_knowledge_log.id_level_knowledge = pre_wls_subject_knowledge.id_level
 
 WHERE instr((select ids_level_knowledge from pre_wls_subject where id_level ='".$subjectid."'),id_level)>0 
-and pre_wls_knowledge_log.id_user = ".$user['id']."
-GROUP BY pre_wls_knowledge.id_level
+and pre_wls_subject_knowledge_log.id_user = ".$user['id']."
+GROUP BY pre_wls_subject_knowledge.id_level
 )
 		";
 		
@@ -229,14 +226,14 @@ GROUP BY pre_wls_knowledge.id_level
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		//Get it's sub knowledge ids
-		$sql = "select id_level_knowledge from ".$pfx."wls_knowledge_log where id_user = ".$user['id']." and id_level_knowledge like '".$id."__' group by id_level_knowledge ";
+		$sql = "select id_level_knowledge from ".$pfx."wls_subject_knowledge_log where id_user = ".$user['id']." and id_level_knowledge like '".$id."__' group by id_level_knowledge ";
 
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		$ids = "";
 		while ($temp = mysql_fetch_assoc($res)) {
 			
-			$sql_ = "select * from ".$pfx."wls_knowledge_log where id_user= ".$user['id']." and id_level_knowledge = '".$temp['id_level_knowledge']."' order by date_created desc  ";
+			$sql_ = "select * from ".$pfx."wls_subject_knowledge_log where id_user= ".$user['id']." and id_level_knowledge = '".$temp['id_level_knowledge']."' order by date_created desc  ";
 			$res_ = mysql_query($sql_,$conn);
 			$temp_ = mysql_fetch_assoc($res_);
 			$arr[$temp_['id_level_knowledge']] = $temp_;
@@ -244,7 +241,7 @@ GROUP BY pre_wls_knowledge.id_level
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
 
-		$sql = "select * from ".$pfx."wls_knowledge where id_level in (".$ids."); ";
+		$sql = "select * from ".$pfx."wls_subject_knowledge where id_level in (".$ids."); ";
 		$res = mysql_query($sql,$conn);
 		while($temp = mysql_fetch_assoc($res)){
 			$arr[$temp['id_level']]['name'] = $temp['name'];

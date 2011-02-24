@@ -73,7 +73,7 @@ class quiz_wrong extends quiz{
 	}
 
 	public function getAnswers(){
-		sleep(2);
+		sleep(1);
 
 		$ques_ = array();
 		for($i=0;$i<count($_POST['answersData']);$i++){

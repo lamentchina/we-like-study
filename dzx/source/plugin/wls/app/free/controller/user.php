@@ -2,7 +2,6 @@
 include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
-include_once dirname(__FILE__).'/../model/tools.php';
 include_once dirname(__FILE__).'/../model/subject.php';
 include_once dirname(__FILE__).'/../model/quiz/log.php';
 
@@ -10,7 +9,7 @@ class user extends wls{
 	private $m = null;
 
 	function user(){
-		parent::wls();		
+		parent::wls();
 		$this->m = new m_user();
 	}
 
@@ -30,69 +29,67 @@ class user extends wls{
 		if ($securimage->check($_POST['CAPTCHA']) == false) {
 			echo json_encode(array(
 				'msg'=>$this->lang['CAPTCHAFail']
-				,'state'=>'fail'
+			,'state'=>'fail'
 			));
 		}else{
 			if(isset($_SESSION['wls_user'])){
 				unset($_SESSION['wls_user']);
 				session_unregister('wls_user');
-			}					
+			}
 
 			$data = $this->m->login($_POST['username'],$_POST['password']);
-				
+
 			if($data['username']=='guest'){
 				echo json_encode(array(
 					'msg'=>$this->lang['loginFail']
-					,'state'=>'fail'
+				,'state'=>'fail'
 				));
 			}else{
 				echo json_encode(array(
 					'msg'=>$this->lang['loginSuccess']
-					,'state'=>'success'
+				,'state'=>'success'
 				));
 			}
 		}
 	}
-	
+
 	public function add(){
-		include_once $this->c->libsPath."securimage/securimage.php";
-		$securimage = new Securimage();
-		if ($securimage->check($_POST['CAPTCHA']) == false) {
+		if(isset($_POST['CAPTCHA'])){
+			include_once $this->c->libsPath."securimage/securimage.php";
+			$securimage = new Securimage();
+			if ($securimage->check($_POST['CAPTCHA']) == false) {
+				echo json_encode(array(
+					'msg'=>'CAPTCHA Code Dismatch!'
+					));
+				exit();
+			}			
+		}
+
+		$id = $this->m->insert(array(
+			 'username'=>$_POST['username']
+			,'password'=>$_POST['password']
+			,'money'=>'30'
+		));
+		if($id==0){
 			echo json_encode(array(
-				'msg'=>'CAPTCHA Code Dismatch!'
-				));
+						'msg'=>'username'
+						));
 		}else{
-			if(isset($_SESSION['wls_user'])){
-				unset($_SESSION['wls_user']);
-			}
-			session_destroy();
-			
-			$data = $_POST;
-			unset($data['CAPTCHA']);
-			$data['money'] = 30;
-			
-			$id = $this->m->insert($data);
-			if($id==0){
-				echo json_encode(array(
-					'msg'=>'username'
-				));
-			}else{
-				$data = array(
-					'id_level_group'=>12
-					,'username'=>$_POST['username']
-				);
+			$data = array(
+						'id_level_group'=>11
+						,'username'=>$_POST['username']
+			);
 				
-				$user_group = new m_user_group();
-				$user_group->linkUser($data);
+			$user_group = new m_user_group();
+			$user_group->linkUser($data);
 				
-				$this->m->login($_POST['username'],$_POST['password']);
-				echo json_encode(array(
-					'msg'=>'Login OK!'
-				));
-			}
+			$this->m->login($_POST['username'],$_POST['password']);
+			echo json_encode(array(
+						'msg'=>'success'
+						));
 		}
 	}
-	
+
 	public function logout(){
 		session_start();
 		if(isset($_SESSION['wls_user'])){
@@ -107,7 +104,7 @@ class user extends wls{
 	}
 
 	public function importAll(){
-		$html = '<html>		
+		$html = '<html>
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
@@ -142,13 +139,13 @@ class user extends wls{
 		if($this->m->update($data)){
 			echo "success";
 		}else{
-			echo "fail";			
+			echo "fail";
 		}
 	}
 
 	public function exportAll(){
 		$file = $this->m->exportExcel();
-			echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
+		echo "<a href='".$this->c->filePath.$file."'>".$this->lang['download']."</a>";
 	}
 
 	public function delete(){
@@ -195,21 +192,21 @@ class user extends wls{
 			'data'=>array_values($data)
 		));
 	}
-	
+
 	public function getSubjectTree(){
 		$username = $_REQUEST['username'];
 
 		$obj = new m_subject();
-		$data = $obj->getListForUser($username);		
+		$data = $obj->getListForUser($username);
 		$data = $this->t->getTreeData(null,$data);
 
-		echo json_encode($data);		
+		echo json_encode($data);
 	}
-	
+
 	public function getMyQuizLineData(){
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
-		
+
 		$obj = new m_quiz_log();
 		$search = array(
 			'id_user'=>$user['id']
@@ -223,8 +220,8 @@ class user extends wls{
 		for($i=0;$i<count($data);$i++){
 			$arr[] = array(
 				 'index' =>$i+1
-				,'proportion'=>$data[$i]['proportion']*100
-				,'id'=>$data[$i]['id']
+			,'proportion'=>$data[$i]['proportion']*100
+			,'id'=>$data[$i]['id']
 			);
 		}
 
@@ -232,9 +229,9 @@ class user extends wls{
 			'data'=>$arr
 		));
 	}
-	
+
 	public function getMyMenu4Desktop(){}
-	
+
 
 }
 ?>

@@ -8,8 +8,7 @@ class quiz_log extends quiz{
 	private $m = null;
 
 	function quiz_log(){
-		parent::wls();
-		
+		parent::wls();		
 		$this->m = new m_quiz_log();
 	}
 
