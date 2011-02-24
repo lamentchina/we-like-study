@@ -134,24 +134,23 @@ wls.user = Ext.extend(wls, {
 					Ext.Ajax.request({
 								method : 'POST',
 								url : thisObj.config.AJAXPATH
-										+ "?controller=user&action=register",
+										+ "?controller=user&action=add",
 								success : function(response) {
 									var obj = jQuery.parseJSON(response.responseText);
-									if (obj.msg == 'ok') {
-										location.reload();
-									}
-									$.blockUI({
-												message : '<h1>' + il8n.fail
-														+ '</h1>'
-											});
-									setTimeout($.unblockUI, 2000);
-
-									$('#captcha_reg')
-											.attr(
+									if (obj.msg == 'success') {
+										alert(il8n.success);
+										win.close();
+									}else{
+										$.blockUI({
+													message : '<h1>' + il8n.fail + '</h1>'
+												});
+										setTimeout($.unblockUI, 2000);
+										$('#captcha_reg').attr(
 													"src",
 													thisObj.config.libPath
 															+ 'securimage/securimage_show.php?wlstemp='
 															+ Math.random());
+									}
 								},
 								failure : function(response) {
 
@@ -175,7 +174,7 @@ wls.user = Ext.extend(wls, {
 					}
 				});
 
-		var window_l = new Ext.Window({
+		var win = new Ext.Window({
 					title : il8n.Register,
 					width : 250,
 					height : 200,
@@ -187,7 +186,7 @@ wls.user = Ext.extend(wls, {
 					modal : true
 				});
 
-		window_l.show();
+		win.show();
 	},
 	login : function() {
 

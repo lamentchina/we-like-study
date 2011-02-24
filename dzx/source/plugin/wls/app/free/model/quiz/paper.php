@@ -208,17 +208,22 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$conn = $this->conn();
 
 		$where = " where 1 =1  ";
+		$userObj = new m_user();
+		$me = $userObj->getMyInfo();
+		$temp = explode(',',$me['subject']);
+		$ids = '';
+		for($i=0;$i<count($temp);$i++){
+			$ids .= "'".$temp[$i]."',";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		$where .= " and id_level_subject in (".$ids.") ";
+		
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
-				if($keys[$i]=='type'){
-					$where .= " and type in (".$search[$keys[$i]].") ";
-				}
+				
 				if($keys[$i]=='id'){
 					$where .= " and ".$pfx."wls_quiz_paper.id in (".$search[$keys[$i]].") ";
-				}
-				if($keys[$i]=='id_level_subject'){
-					$where .= " and id_level_subject in (".$search[$keys[$i]].") ";
 				}
 				if($keys[$i]=='title'){
 					$where .= " and ".$pfx."wls_quiz.title like '%".$search[$keys[$i]]."%' ";

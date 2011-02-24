@@ -90,7 +90,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							+ '?controller=quiz_wrong&action=getList',
 					root : 'data',
 					idProperty : 'id',
-					fields : ['id', 'id_level_subject', 'id_quiz_paper',
+					fields : ['id', 'title', 
 							'date_created', 'timedif', 'count',
 							'id_user']
 				});
@@ -103,13 +103,8 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								header : il8n.id,
 								dataIndex : 'id'
 							}, {
-								header : il8n.subject,
-								dataIndex : 'id_level_subject',
-								hidden : true
-							}, {
-								header : il8n.id_paper,
-								dataIndex : 'id_quiz_paper',
-								hidden : true
+								header : il8n.title,
+								dataIndex : 'title',
 							}, {
 								header : il8n.date_created,
 								dataIndex : 'date_created',

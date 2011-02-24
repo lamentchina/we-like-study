@@ -213,7 +213,7 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			);
 			$this->insert($data);
 		}
-	}	
+	}
 
 	public function exportAll($path=null){
 		$objPHPExcel = new PHPExcel();
@@ -322,7 +322,7 @@ class m_user_group extends wls implements dbtable,fileLoad{
 	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -522,22 +522,68 @@ class m_user_group extends wls implements dbtable,fileLoad{
 				'description'=>$currentSheet->getCell($keys['description'].$i)->getValue(),
 				'money'=>$currentSheet->getCell($keys['money'].$i)->getValue(),
 			);
+
 			$accesssData[] = $data ;
 			$accessObj->insert($data);
 		}
 
-		$p2p = array();
-		for($i=4;$i<=$allRow;$i++){
-			for($i2=$grouppoint;$i2<=$allColmun;$i2++){
+		if($this->c->cmstype==''){
+			$data = array(
+				'name'=>$this->lang['Login'],
+				'id_level'=>'90',
+				'ismenu'=>1,
+				'isshortcut'=>1,
+				'isquickstart'=>1,
+				'icon'=>'key',
+				'description'=>'WLS was installed alone, user can login from here',
+				'money'=>'0'
+				);
+				$accesssData[] = $data ;
+				$accessObj->insert($data);
+		}else if($this->c->cmstype=='DiscuzX'){
+			$data = array(
+				'name'=>'DiscuzX',
+				'id_level'=>'90',
+				'ismenu'=>1,
+				'isshortcut'=>1,
+				'isquickstart'=>1,
+				'icon'=>'discuzx',
+				'description'=>'DiscuzX',
+				'money'=>'0'
+				);
+				$accesssData[] = $data ;
+				$accessObj->insert($data);
+		}else if($this->c->cmstype=='Joomla'){
+			$data = array(
+				'name'=>'Joomla',
+				'id_level'=>'90',
+				'ismenu'=>1,
+				'isshortcut'=>1,
+				'isquickstart'=>1,
+				'icon'=>'discuzx',
+				'description'=>'Joomla',
+				'money'=>'0'
+				);
+				$accesssData[] = $data ;
+				$accessObj->insert($data);
+		}
+
+
+		for($i2=$grouppoint;$i2<=$allColmun;$i2++){
+			for($i=4;$i<=$allRow;$i++){
 				if($currentSheet->getCell($i2.$i)->getValue()=='√'){
 					$data = array(
 						'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
 						'id_level_access'=>$accesssData[$i-4]['id_level']
 					);
-					$p2p[] = $data ;
 					$this->linkAccess($data);
 				}
 			}
+			$this->linkAccess(array(
+				'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
+				'id_level_access'=>'90'
+			));
+			$this->linkAccess($data);
 		}
 	}
 
@@ -568,7 +614,6 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			);
 			$groupsData[] = $data;
 		}
-
 
 		for($i='A';$i<$grouppoint;$i++){
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id']){
