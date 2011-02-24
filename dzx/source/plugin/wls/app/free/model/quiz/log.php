@@ -46,6 +46,8 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$conn = $this->conn();
 		$sql = "delete from ".$pfx."wls_quiz_log where id  in (".$ids.");";
 		mysql_query($sql,$conn);
+		$sql = "delete from ".$pfx."wls_question_log where id_quiz  in (".$ids.");";
+		mysql_query($sql,$conn);
 	}
 
 	public function update($data){
@@ -117,6 +119,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 
 		$quizlog = array();
 		$id_quiz = 0;
+		$id_user = null;
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
 				$title = $currentSheet->getCell($i.'3')->getValue();
@@ -125,9 +128,16 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 				$temp = mysql_fetch_assoc($res);
 				$id_quiz = $temp['id'];
 			}
-		}		
-		
-		$sql = "select 		
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['username']){
+				$value = $currentSheet->getCell($i.'3')->getValue();
+				$sql = "select id from ".$pfx."wls_user where username = '".$value."';";
+				$res = mysql_query($sql,$conn);
+				$temp = mysql_fetch_assoc($res);
+				$id_user = $temp['id'];
+			}
+		}
+
+		$sql = "select
 				
 				 answer
 				,id
@@ -163,21 +173,24 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['myAnswer']){
 				$keys['myAnswer'] = $i;
-			}			
+			}
 		}
-		
+
 		for($i=3;$i<=$allRow;$i++){
 			$value = $currentSheet->getCell($keys['index'].$i)->getValue();
-			if($value=='')continue;	
+			if($value=='')continue;
 			$questions[intval($value)-1]['myAnswer'] = $currentSheet->getCell($keys['myAnswer'].$i)->getValue();
 		}
-		
-		$this->addLog(array(
+
+		$logDta = array(
 			 'id_quiz'=>$id_quiz
 			,'answers'=>$questions
 			,'ids_question'=>$ids_question
-		));
-
+		);
+		if($id_user!=null){
+			$logDta['id_user'] = $id_user;
+		}
+		$this->addLog($logDta);
 	}
 
 	public function exportOne($path=null){}
@@ -191,13 +204,13 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$conn = $this->conn();
 		if($page==null)$page = 1;
 		if($pagesize==null)$pagesize = 100;
-		
+
 		$where = " where 1 =1  ";
 		if($search!=null){
 			$keys = array_keys($search);
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='id'){
-					$where .= " and id in (".$search[$keys[$i]].") ";
+					$where .= " and ".$pfx."wls_quiz_log.id in (".$search[$keys[$i]].") ";
 				}
 				if($keys[$i]=='id_user'){
 					$where .= " and id_user in (".$search[$keys[$i]].") ";
@@ -205,7 +218,21 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
-		$sql = "select ".$columns." from ".$pfx."wls_quiz_log ".$where." ".$orderby;
+		$sql = "select 
+			 ".$pfx."wls_quiz_log.id as id
+			,".$pfx."wls_quiz_log.id_user
+			,".$pfx."wls_quiz_log.cent
+			,".$pfx."wls_quiz_log.mycent
+			,".$pfx."wls_quiz_log.proportion
+			,".$pfx."wls_quiz_log.count_right
+			,".$pfx."wls_quiz_log.count_wrong
+			,".$pfx."wls_quiz_log.ids_question
+			,".$pfx."wls_quiz_log.application
+			,".$pfx."wls_quiz.title as title
+			from ".$pfx."wls_quiz_log 
+				join ".$pfx."wls_quiz on ".$pfx."wls_quiz.id = ".$pfx."wls_quiz_log.id_quiz
+			".$where." ".$orderby;
+
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
 		$res = mysql_query($sql,$conn);
@@ -231,17 +258,25 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 	}
 
 	public function addLog($whatHappened){
-		
+
 		$answers = $whatHappened['answers'];
 		$id_quiz = $whatHappened['id_quiz'];
 		$ids_question = $whatHappened['ids_question'];
+		$id_user = null;
+		if(isset($whatHappened['id_user'])){
+			$id_user = $whatHappened['id_user'];
+		}
 
-		$userObj = new m_user();
-		$me = $userObj->getMyInfo();
+		if($id_user==null){
+			$userObj = new m_user();
+			$me = $userObj->getMyInfo();
+			$id_user = $me['id'];
+		}
 
 		$data = array(
-			'ids_question'=>$ids_question,
-			'id_quiz'=>$id_quiz,
+			 'ids_question'=>$ids_question
+			,'id_quiz'=>$id_quiz
+			,'id_user'=>$id_user
 		);
 		$id_quiz_log = $this->insert($data);
 
@@ -261,14 +296,14 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			$cent += $answers[$i]['cent'];
 			$quesLogData = array(
 				 'id_quiz'=>$id_quiz
-			,'id_quiz_log'=>$id_quiz_log
-			,'myAnswer'=>$answers[$i]['myAnswer']
-			,'answer'=>$answers[$i]['answer']
-			,'id_question'=>$answers[$i]['id']
-			,'id_user'=>$me['id']
-			,'cent'=>$answers[$i]['cent']
-			,'type'=>$answers[$i]['type']
-			,'markingmethod'=>$answers[$i]['markingmethod']
+				,'id_quiz_log'=>$id_quiz_log
+				,'myAnswer'=>$answers[$i]['myAnswer']
+				,'answer'=>$answers[$i]['answer']
+				,'id_question'=>$answers[$i]['id']
+				,'id_user'=>$id_user
+				,'cent'=>$answers[$i]['cent']
+				,'type'=>$answers[$i]['type']
+				,'markingmethod'=>$answers[$i]['markingmethod']
 			);
 			$result = $quesLogObj->addLog($quesLogData);
 			if($result==1){
@@ -281,13 +316,13 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 
 		$this->update(array(
 			 'count_right'=>$count_right
-		,'count_wrong'=>$count_wrong
-		,'count_giveup'=>$count_giveup
-		,'count_total'=>$count_total
-		,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
-		,'mycent'=>$mycent
-		,'cent'=>$cent
-		,'id'=>$id_quiz_log
+			,'count_wrong'=>$count_wrong
+			,'count_giveup'=>$count_giveup
+			,'count_total'=>$count_total
+			,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
+			,'mycent'=>$mycent
+			,'cent'=>$cent
+			,'id'=>$id_quiz_log
 		));
 
 		$quizObj = new m_quiz();

@@ -15,11 +15,10 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						id : thisObj.id
 					},
 					type : "POST",
-					success : function(msg) {
-
+					success : function(msg) {						
 						var obj = jQuery.parseJSON(msg);
 						thisObj.logData = obj;
-						thisObj.questionsIds = obj.id_question;
+						thisObj.ids_questions = obj.ids_question;
 						thisObj.state = 1;
 						thisObj.addQuizBrief();
 						thisObj.addNavigation();
@@ -47,8 +46,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		$("#paperBrief").append(str);
 	},
 	submit : function(nextFunction) {
-		if (this.state == 4 || this.state == 42)
-			return;
+		if (this.state == 4 || this.state == 42)return;			
 
 		var thisObj = this;
 		$.ajax({
@@ -63,7 +61,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						var obj = thisObj.answersData = jQuery.parseJSON(msg);
 						for (var i = 0; i < obj.length; i++) {
 							thisObj.questions[i].answerData = obj[i];
-							thisObj.questions[i].setMyAnser();
+							thisObj.questions[i].setMyAnswer();
 						}
 						thisObj.addDescriptions();
 						eval(nextFunction);
@@ -76,18 +74,15 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						sortable : true
 					},
 					columns : [{
+								width:40,
 								header : il8n.id,
 								dataIndex : 'id'
 							}, {
-								header : il8n.id_level,
-								dataIndex : 'id_level_subject',
-								hidden : true
-							}, {
-								header : il8n.subject,
-								dataIndex : 'name_subject'
-							}, {
 								header : il8n.count_questions,
 								dataIndex : 'count_questions'
+							}, {
+								header : il8n.title,
+								dataIndex : 'title'
 							}, {
 								header : il8n.count_right,
 								dataIndex : 'count_right'
@@ -97,6 +92,10 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							}, {
 								header : il8n.Quiz_Proportion,
 								dataIndex : 'proportion',
+								hidden : true
+							}, {
+								header : il8n.user,
+								dataIndex : 'id_user',
 								hidden : true
 							}, {
 								header : il8n.score,
@@ -115,10 +114,10 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 
 		return {
 			cm : cm,
-			fields : ['id', 'date_created', 'id_level_subject', 'id_user',
+			fields : ['id', 'date_created',  'id_user',
 					'cent', 'mycent', 'count_right', 'count_wrong',
 					'count_giveup', 'count_total', 'name_subject',
-					'count_questions', 'name_application']
+					'count_questions', 'name_application','proportion','title']
 		};
 	},
 	getList : function(domid) {
@@ -153,7 +152,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '115101') {
+			if (access[i] == '165101') {
 				tb.add({
 					text : il8n.importFile,
 					handler : function() {
@@ -164,15 +163,16 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=viewUpload' width='100%' height='250' />"
+									+ "?controller=quiz_log&action=importOne' width='100%' height='250' />"
 						});
 						win.show(this);
 					}
 				});
-			} else if (access[i] == '115102') {
+			} else if (access[i] == '165102') {
 				tb.add({
 					text : il8n.exportFile,
 					handler : function() {
+						if(Ext.getCmp(domid).getSelectionModel().selections.items.length == 0)return;
 						var win = new Ext.Window({
 							id : 'w_q_p_l_e',
 							layout : 'fit',
@@ -180,15 +180,16 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=exportAll' width='100%' height='250' />"
+									+ "?controller=quiz_log&action=exportOne' width='100%' height='250' />"
 						});
 						win.show(this);
 					}
 				});
-			} else if (access[i] == '115103') {
+			} else if (access[i] == '165103') {
 				tb.add({
 					text : il8n.deleteItems,
 					handler : function() {
+						if(Ext.getCmp(domid).getSelectionModel().selections.items.length == 0)return;
 						Ext.Ajax.request({
 							method : 'POST',
 							url : thisObj.config.AJAXPATH
@@ -205,13 +206,39 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						});
 					}
 				});
-			} else if (access[i] == '115107') {
+			} else if (access[i] == '165107') {
 				tb.add({
 					text : il8n.log_review,
 					handler : function() {
-						window.open(thisObj.config.AJAXPATH
+						
+						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
+						var uid = user_.myUser.id;
+						var desktop = QoDesk.App.getDesktop();
+
+						var win = desktop.getWindow(lid + '_qdesk');
+						var winWidth = desktop.getWinWidth();
+						var winHeight = desktop.getWinHeight();
+
+						if (!win) {
+							win = desktop.createWindow({
+								id : lid + '_qdesk',
+								title : il8n.log_review,
+								width : winWidth,
+								height : winHeight,
+								layout : 'fit',
+								plain : false,
+								html : '<iframe src="'
+										+ thisObj.config.AJAXPATH
 										+ "?controller=quiz_log&action=viewQuiz&id="
-										+ Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
+										+ lid
+										+ "&uid="
+										+ uid
+										+ '&temp='
+										+ Math.random()
+										+ '" style="width:100%; height:100%;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+							});
+						}
+						win.show();
 					}
 				});
 			}
@@ -280,7 +307,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 								plain : false,
 								html : '<iframe src="'
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_log&action=viewOne&id="
+										+ "?controller=quiz_log&action=viewQuiz&id="
 										+ lid
 										+ "&uid="
 										+ uid

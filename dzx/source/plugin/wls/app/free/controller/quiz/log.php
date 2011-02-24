@@ -37,14 +37,14 @@ class quiz_log extends quiz{
 		echo json_encode($data);
 	}
 
-	public function viewUpload(){
+	public function importOne(){
 		echo '<html>
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
 					'.$this->lang['importExcel'].'
-					<form action="wls.php?controller=quiz_log&action=saveUpload" method="post"
+					<form action="wls.php?controller=quiz_log&action=saveImportOne" method="post"
 					enctype="multipart/form-data">
 						<label for="file">Excel :</label>
 						<input type="file" name="file" id="file" />
@@ -55,14 +55,15 @@ class quiz_log extends quiz{
 			</html>';
 	}
 
-	public function saveUpload(){
+	public function saveImportOne(){
 		if ($_FILES["file"]["error"] > 0){
 			$this->error(array('description'=>'error'));
 		}else{
 			$file = $this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"];
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
-			$this->m->importExcel($file);
+			$this->m->importOne($file);
 		}
+		echo 'success';
 	}
 
 	public function saveUpdate(){
@@ -77,7 +78,7 @@ class quiz_log extends quiz{
 		}
 	}
 
-	public function viewExport(){
+	public function exportOne(){
 		$this->m->id = $_REQUEST['id'];
 		$file = $this->m->exportExcel();
 		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
