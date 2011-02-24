@@ -49,6 +49,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		$sql = "select 
 			".$pfx."common_member.username
 			,".$pfx."common_member.password
+			,".$pfx."common_member.adminid
 			,".$pfx."common_member_count.extcredits2 as money 
 			,".$pfx."common_session.sid
 			 from 
@@ -63,8 +64,7 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 
-		if($temp==false){
-			
+		if($temp==false){			
 			return 'guest';
 		}
 
@@ -77,12 +77,23 @@ class m_integration_DiscuzX extends m_integration implements integrate{
 		if($temp2==false){//Check the user info has synchrod , if not , synchrod
 			unset($temp['sid']);
 		
-			$uid = $userObj->insert($temp);
+			$uid = $userObj->insert(array(
+				 'username'=>$temp['username']
+				,'password'=>'password'
+				,'money'=>$temp['money']
+			));
 			$usergroupObj = new m_user_group();
-			$data = array(
-				 'id_level_group'=>'11'
-				,'username'=>$temp['username']
-			);
+			if($temp['adminid']==0){
+				$data = array(
+					 'id_level_group'=>'11'
+					,'username'=>$temp['username']
+				);
+			}else{
+				$data = array(
+					 'id_level_group'=>'10'
+					,'username'=>$temp['username']
+				);
+			}
 			$usergroupObj->linkUser($data);
 		}else{//Synchrod the money. the DiscuzX's money system is complex
 			$data = array(
