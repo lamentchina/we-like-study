@@ -126,7 +126,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'index', 'name_subject', 'title', 'money',
-							'questions', 'count_used', 'date_created2']
+							'ids_questions', 'count_used', 'date_created2']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -158,7 +158,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 										})
 							}, {
 								header : il8n.count_questions,
-								dataIndex : 'questions',
+								dataIndex : 'ids_questions',
 								renderer : function(value) {
 									var json = '[' + value + ']';
 									var arr = jQuery.parseJSON(json);
