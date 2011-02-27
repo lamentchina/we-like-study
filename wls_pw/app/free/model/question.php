@@ -11,12 +11,13 @@ class m_question extends wls implements dbtable{
 		if(!isset($data['title'])){
 			$data['title'] = 'question title missed';
 		}
-		if(!isset($data['cent']) && $data['cent']==''){
+
+		if( !isset($data['cent']) || $data['cent']==''){
 			$data['cent'] = '0';
 		}
-		if(!isset($data['optionlength']) && $data['optionlength']==''){
+		if(!isset($data['optionlength']) || $data['optionlength']==''){
 			$data['optionlength'] = '0';
-		}		
+		}
 		if(!isset($data['answer'])){
 			$data['answer'] = 'A';
 		}
@@ -134,20 +135,20 @@ class m_question extends wls implements dbtable{
 		mysql_query($sql,$conn);
 		return true;
 	}
-	
+
 	/**
 	 * Get questions by ids.
-	 * Each type of quiz, like quiz-paper , quiz-wrongs, quiz-random 
+	 * Each type of quiz, like quiz-paper , quiz-wrongs, quiz-random
 	 * These's client-side will call this
-	 * 
+	 *
 	 * @param $ids Database table wls_question's id
 	 * @return $data
 	 * */
 	public function getByIds($ids){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
-		$sql = "select 
+
+		$sql = "select
 			id,type,title,optionlength,
 			option1,option2,option3,option4,option5,option6,option7,
 			description,cent,id_quiz,id_parent,layout,path_listen
@@ -161,25 +162,25 @@ class m_question extends wls implements dbtable{
 			$temp['title'] = str_replace("__IMAGEPATH__",$this->c->filePath."images/",$temp['title']);
 			$data[] = $temp;
 		}
-		
+
 		return $data;
 	}
-	
+
 	/**
-	 * The client-side post user's quiz result to the server, 
+	 * The client-side post user's quiz result to the server,
 	 * The server check the answers.
-	 * 
+	 *
 	 * @param $myAnswers See this in each controller file , it's mostly from $_POST
 	 * @return $data
 	 * */
 	public function getAnswers($myAnswers){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$keys = array_keys($myAnswers);
 		$ids = implode(",",$keys);
-		
-		$sql = "select 		
+
+		$sql = "select
 				 answer
 				,id
 				,id_parent
@@ -197,18 +198,18 @@ class m_question extends wls implements dbtable{
 			 from ".$pfx."wls_question where id in (".$ids.") order by id ; ";
 		$res = mysql_query($sql,$conn);
 		if($res==false)echo $sql;
-		$data = array();		
+		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$temp['myAnswer'] = $myAnswers[$temp['id']];
 			$data[] = $temp;
 		}
-				
+
 		return $data;
-	}	
-	
+	}
+
 
 	/**
-	 * Cumulative one column, 
+	 * Cumulative one column,
 	 * Like:
 	 *  comment_ywrong_1
 	 *  comment_ywrong_2
@@ -289,6 +290,9 @@ class m_question extends wls implements dbtable{
 		$indexs = array_keys($questions);
 		$mainIds = '';
 		for($i=0;$i<count($indexs);$i++){
+			if(!isset($questions[$indexs[$i]]['belongto'])){
+				$questions[$indexs[$i]]['belongto'] = '0';
+			}
 			$data = $questions[$indexs[$i]];
 
 			unset($data['index']);
@@ -299,7 +303,7 @@ class m_question extends wls implements dbtable{
 			if(isset($data['type'])){
 				$data['type'] = $this->t->formatQuesType($questions[$indexs[$i]]['type'],true);
 			}
-			
+				
 			$data['date_created'] = date('Y-m-d H:i:s');
 			if($questions[$indexs[$i]]['belongto']=='0'){
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = 0;

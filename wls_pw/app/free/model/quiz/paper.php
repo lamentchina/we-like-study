@@ -95,11 +95,25 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 
 	public function importAll($path){}
 
-	public function exportAll($path=null){}
+	public function exportAll($path=null){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+		
+		$sql = "select id from ".$pfx."wls_quiz_paper; ";
+		$res = mysql_query($sql,$conn);
+		$ids = '';
+		while($temp = mysql_fetch_assoc($res)){
+			$ids .= $temp['id'].',';
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		
+		return $ids;
+	}
 
 	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
+		
 
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -109,9 +123,10 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
-		$imagePath = "";
+		
 		$quizData = array();
 		$paperData = array();
+		$quizData['imagePath'] = '';
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['title']){
 				$quizData['title'] = $currentSheet->getCell($i."2")->getValue();
@@ -220,13 +235,32 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		
 		if($search!=null){
 			$keys = array_keys($search);
-			for($i=0;$i<count($keys);$i++){
-				
+			for($i=0;$i<count($keys);$i++){				
 				if($keys[$i]=='id'){
 					$where .= " and ".$pfx."wls_quiz_paper.id in (".$search[$keys[$i]].") ";
 				}
 				if($keys[$i]=='title'){
-					$where .= " and ".$pfx."wls_quiz.title like '%".$search[$keys[$i]]."%' ";
+					if(count($search[$keys[$i]])==1){
+						$where .= " and ".$pfx."wls_quiz.title like '%".$search[$keys[$i]][0]."%' ";
+					}else{
+						$where .= " and (";
+						for($i2=0;$i2<count($search[$keys[$i]]);$i2++){
+							$where .= " ".$pfx."wls_quiz.title like '%".$search[$keys[$i]][$i2]."%' or";
+						}
+						$where = substr($where,0,strlen($where)-2);
+						$where .= " ) ";
+					}					
+				}else if($keys[$i]=='money'){
+					if(count($search[$keys[$i]])==1){
+						$where .= " and ".$pfx."wls_quiz_paper.money ".$search[$keys[$i]][0][0]." ".$search[$keys[$i]][0][1]." ";
+					}else{
+						$where .= " and (";
+						for($i2=0;$i2<count($search[$keys[$i]]);$i2++){
+							$where .= " ".$pfx."wls_quiz_paper.money ".$search[$keys[$i]][$i2][0]." ".$search[$keys[$i]][$i2][1]." or";
+						}
+						$where = substr($where,0,strlen($where)-2);
+						$where .= " ) ";
+					}	
 				}
 			}
 		}
@@ -257,6 +291,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 			'sql'=>$sql,
 			'total'=>$total,
 			'pagesize'=>$pagesize,
+			'search'=>json_encode($search)
 		);
 	}
 

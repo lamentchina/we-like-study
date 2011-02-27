@@ -164,7 +164,7 @@ class tools {
 
 		return $config[$key];
 	}
-	
+
 	public function formatApplicationType($key,$bool=false){
 		$config = array(
 			'0'=>$this->lang['Quiz_Paper'],
@@ -195,19 +195,25 @@ class tools {
 			$title = str_replace('&nbsp;',' ',$title);
 			$title = str_replace('<br>',"\n",$title);
 			$title = str_replace('<br/>',"\n",$title);
+			$title = str_replace("<input width=\"100\" class=\"w_blank\" index=\"","[___",$title);
+			$title = str_replace("\"/>","___]",$title);
 			return $title;
 		}else{
 			$title = str_replace("<img src=\"","TEMP1",$title);
 			$title = str_replace(".gif\" />","TEMP2",$title);
-			$title = str_replace(".png\">","TEMP2",$title);			
+			$title = str_replace(".png\">","TEMP2",$title);
 			$title = str_replace(".gif\">","TEMP2",$title);
-				
+
 			$title = str_replace("'","&acute;",$title);
 			$title = str_replace('"','&quot;',$title);
 			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
-				
+
 			$title = str_replace("TEMP1","<img src=\"",$title);
 			$title = str_replace("TEMP2",".gif\" />",$title);
+			$title = str_replace("=","&#61;",$title);
+				
+			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
+			$title = str_replace("___]","\"/>",$title);
 			$title = trim($title);
 			return $title;
 		}
@@ -251,7 +257,7 @@ class tools {
 								$data_all[$i]['children'][$i2]['menupath'] =  $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							}
 							$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
-								
+
 							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							unset($data_all[$i]['children']);
 							$this->desktopMenu[] = $data_all[$i];
@@ -371,6 +377,32 @@ class tools {
 		}else{
 			echo "111";
 		}
+	}
+
+	public function getAllFiles($filedir) {
+		$allfiles = array(); //文件名数组
+		$tempArr = array(); //临时文件名数组
+		if (is_dir($filedir)) {//判断要遍历的是否是目录
+			if ($dh = opendir($filedir)) {//打开目录并赋值一个目录句柄(directory handle)
+				while (FALSE !== ($filestring = readdir($dh))) {//读取目录中的文件名
+					if ($filestring != '.' && $filestring != '..') {//如果不是.和..(每个目录下都默认有.和..)
+						if (is_dir($filedir . $filestring)) {//该文件名是一个目录时
+							$tempArr = $this->getAllFiles($filedir . $filestring . '/');//继续遍历该子目录
+							$allfiles = array_merge($allfiles, $tempArr); //把临时文件名和临时文件名组合
+						} else if (is_file($filedir . $filestring)) {
+							$allfiles[] = $filedir . $filestring; //如果该文件名是一个文件不是目录,直接赋值给文件名数组
+						}
+					}
+				}
+			} else {//打开目录失败
+				exit('Open the directory failed');
+			}
+			closedir($dh);//关闭目录句柄
+			return $allfiles;//返回文件名数组
+		} else {//目录不存在
+			exit('The directory is not exist');
+		}
+
 	}
 }
 ?>
