@@ -112,6 +112,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$imagePath = "";
 		$quizData = array();
 		$paperData = array();
+		$quizData['imagePath'] = '';
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."1")->getValue()==$this->lang['title']){
 				$quizData['title'] = $currentSheet->getCell($i."2")->getValue();

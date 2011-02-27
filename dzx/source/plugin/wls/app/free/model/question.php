@@ -52,7 +52,7 @@ class m_question extends wls implements dbtable{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_question (".$keys.") values ('".$values."')";
-
+//		echo $sql;exit();
 		mysql_query($sql,$conn);
 		$id = mysql_insert_id($conn);
 		return $id;

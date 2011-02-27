@@ -197,6 +197,7 @@ class tools {
 			$title = str_replace('<br/>',"\n",$title);
 			return $title;
 		}else{
+			$title = str_replace("=","&#61;",$title);
 			$title = str_replace("<img src=\"","TEMP1",$title);
 			$title = str_replace(".gif\" />","TEMP2",$title);
 			$title = str_replace(".png\">","TEMP2",$title);			

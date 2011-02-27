@@ -183,8 +183,7 @@ class m_quiz extends wls implements dbtable{
 			$title = $this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());
 			$title = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$title);
 			$title = str_replace("[/".$this->lang['image']."]","\">",$title);
-			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
-			$title = str_replace("___]","\"/>",$title);
+
 				
 			$question = array(
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
@@ -390,6 +389,8 @@ class m_quiz extends wls implements dbtable{
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['question']);
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['belongto']);
@@ -422,22 +423,20 @@ class m_quiz extends wls implements dbtable{
 		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->lang['difficulty']);
 		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->lang['markingmethod']);
 		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->lang['ids_level_knowledge']);
-		for($i=1;$i<=23;$i++){
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($i+64).'1', $i);
-		}
-
+//		return;
 		$index = 3;
 		for($i=0;$i<count($data);$i++){
+//			if($index==29)continue;
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));
 			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $data[$i]['title']);
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
 			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $data[$i]['option1']);
-			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $data[$i]['option2']);
-			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $data[$i]['option3']);
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $data[$i]['option4']);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $this->t->formatTitle($data[$i]['option1']) );
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $this->t->formatTitle($data[$i]['option2']) );
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $this->t->formatTitle($data[$i]['option3']) );
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $this->t->formatTitle($data[$i]['option4']) );
 			$objPHPExcel->getActiveSheet()->setCellValue('K'.$index, $data[$i]['option5']);
 			$objPHPExcel->getActiveSheet()->setCellValue('L'.$index, $data[$i]['option6']);
 			$objPHPExcel->getActiveSheet()->setCellValue('M'.$index, $data[$i]['option7']);
@@ -453,6 +452,8 @@ class m_quiz extends wls implements dbtable{
 			$objPHPExcel->getActiveSheet()->setCellValue('W'.$index, $data[$i]['ids_level_knowledge']);
 
 			$index ++;
+			
+//			if($index==30)return;
 		}
 		$objStyle = $objPHPExcel->getActiveSheet()->getStyle('E2');
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
