@@ -147,6 +147,7 @@ wls.quiz = Ext.extend(wls, {
 	},
 	wls_quiz_nav : function(id) {
 		$("#wls_quiz_main").scrollTop($("#wls_quiz_main").scrollTop() * (-1));
+		//console.debug("#w_qs_" + id);
 		var num = $("#w_qs_" + id).offset().top - 150;
 		$("#wls_quiz_main").scrollTop(num);
 	},

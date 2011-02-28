@@ -7,6 +7,7 @@ wls.question.blank = Ext.extend(wls.question, {
 					+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
 					+ this.questionData.title + "</div>");
 		}else{
+			$("[class=w_qw_tool]",$("#w_qs_"+this.questionData.id_parent)).append(this.index+"&nbsp;");
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("id","w_qs_"+this.id);
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("name","w_qs_"+this.id);
 		}

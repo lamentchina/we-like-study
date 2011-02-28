@@ -85,10 +85,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 			}
 		});
 	}
-
 	,
 	showResult : function() {
-
 		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.score
 				+ "</td>" + "<td>" + this.mycent + "</td>" + "</tr>" + "<tr>"
 				+ "<td>" + il8n.score_total + "</td>" + "<td>" + this.cent
@@ -126,7 +124,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'index', 'name_subject', 'title', 'money',
-							'questions', 'count_used', 'date_created2']
+							'ids_questions', 'count_used', 'date_created2']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -158,7 +156,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 										})
 							}, {
 								header : il8n.count_questions,
-								dataIndex : 'questions',
+								dataIndex : 'ids_questions',
 								renderer : function(value) {
 									var json = '[' + value + ']';
 									var arr = jQuery.parseJSON(json);
@@ -175,7 +173,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 
 		var search = new Ext.form.TextField({
 					id : domid + '_search',
-					width : 135,
+					width : 170,
 					enableKeyEvents : true
 				});
 		search.on('keyup', function(a, b, c) {
@@ -267,7 +265,45 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							win.show(this);
 						}
 					});
-				} else if (access[i] == '1103') {
+				}else if (access[i] == '1108') {
+					tb.add({
+						text : il8n.exportAll,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_q_p_l_e',
+								layout : 'fit',
+								title : il8n.exportAll,
+								modal : true,
+								width : 500,
+								height : 200,
+								html : "<iframe src ='"
+										+ thisObj.config.AJAXPATH
+										+ "?controller=quiz_paper&action=exportAll"
+										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+							});
+							win.show(this);
+						}
+					});
+				}else if (access[i] == '1109') {
+					tb.add({
+						text : il8n.importAll,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_q_p_l_e',
+								layout : 'fit',
+								title : il8n.importAll,
+								modal : true,
+								width : 500,
+								height : 200,
+								html : "<iframe src ='"
+										+ thisObj.config.AJAXPATH
+										+ "?controller=quiz_paper&action=importAll"
+										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+							});
+							win.show(this);
+						}
+					});
+				}else if (access[i] == '1103') {
 					tb.add({
 						text : il8n.deleteItems,
 						handler : function() {

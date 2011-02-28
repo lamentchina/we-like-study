@@ -261,6 +261,29 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 						$where = substr($where,0,strlen($where)-2);
 						$where .= " ) ";
 					}	
+				}else if($keys[$i]=='subject'){
+					if(count($search[$keys[$i]])==1){
+						$sql_subject = "select id_level from ".$pfx."wls_subject where name = '".$search[$keys[$i]][0][1]."' ;";
+						$res_subject = mysql_query($sql_subject,$conn);
+						$temp_subject = mysql_fetch_assoc($res_subject);
+						
+						$where .= " and ".$pfx."wls_quiz.id_level_subject = ".$temp_subject['id_level']." ";
+					}else{
+						$name_subjects = '';
+						for($i2=0;$i2<count($search[$keys[$i]]);$i2++){
+							$name_subjects .= "'".$search[$keys[$i]][$i2][1]."',";
+						}
+						$name_subjects = substr($name_subjects,0,strlen($name_subjects)-1);
+						$sql_subject = "select id_level from ".$pfx."wls_subject where name in (".$name_subjects.") ;";
+						$res_subject = mysql_query($sql_subject,$conn);
+						$ids_subject = '';
+						while($temp_subject = mysql_fetch_assoc($res_subject)){
+							$ids_subject .= "'".$temp_subject['id_level']."',";
+						}
+						$ids_subject = substr($ids_subject,0,strlen($ids_subject)-1);
+						
+						$where .= " and ".$pfx."wls_quiz.id_level_subject in (".$ids_subject.")  ";
+					}	
 				}
 			}
 		}

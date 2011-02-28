@@ -211,7 +211,7 @@ class tools {
 			$title = str_replace("TEMP1","<img src=\"",$title);
 			$title = str_replace("TEMP2",".gif\" />",$title);
 			$title = str_replace("=","&#61;",$title);
-				
+
 			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
 			$title = str_replace("___]","\"/>",$title);
 			$title = trim($title);
@@ -403,6 +403,27 @@ class tools {
 			exit('The directory is not exist');
 		}
 
+	}
+
+	public function iswriteable($file){
+		if(is_dir($file)){
+			$dir=$file;
+			if($fp = @fopen("$dir/test.txt", 'w')){
+				@fclose($fp);
+				@unlink("$dir/test.txt");
+				$writeable = 1;
+			}else{
+				$writeable = 0;
+			}
+		}else{
+			if($fp = @fopen($file, 'a+')){
+				@fclose($fp);
+				$writeable = 1;
+			}else{
+				$writeable = 0;
+			}
+		}
+		return $writeable;
 	}
 }
 ?>

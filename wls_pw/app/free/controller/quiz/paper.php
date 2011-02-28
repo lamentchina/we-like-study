@@ -62,7 +62,11 @@ class quiz_paper extends quiz{
 					if($temp1[0]==$this->lang['author']){
 						if(!isset($search['author']))$search['author'] = array();
 						$search['author'][] = array('=',$temp1[1]);
-					}								
+					}	
+					if($temp1[0]==$this->lang['subject']){
+						if(!isset($search['subject']))$search['subject'] = array();
+						$search['subject'][] = array('=',$temp1[1]);
+					}												
 				}else if(count($temp2)==2){
 					//Money is more expensive than
 					if($temp2[0]==$this->lang['money']){
@@ -177,7 +181,7 @@ down();
 		$userObj = new m_user();
 		if($userObj->checkMyaccess("1109",false)==false)return;
 
-		$folder = $this->c->filePath.'import/JSJ_GJ_2J_CPP/';
+		$folder = $this->c->filePath.'import/';
 		if(isset($_REQUEST['id'])){
 			$this->m->importOne($_REQUEST['id']);
 			echo 'ok';

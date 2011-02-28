@@ -133,8 +133,7 @@ QoDesk.App = new Ext.app.App({
  	?>
 
 <script type="text/javascript">
- alert('Install fail! Contact me : QQ 467480903');
-
+ alert('<?php echo $this->c->lang['installError']; ?>');
  <?php 
  }
  ?>
