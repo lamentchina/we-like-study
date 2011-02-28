@@ -14,54 +14,54 @@ include_once dirname(__FILE__).'/../model/quiz/wrong.php';
 
 class install extends wls {
 
-	public function createTables(){		
+	public function createTables(){
 		$obj = new m_subject();
 		$obj->create();
-//		$obj->importAll("F:/subject.xls");
-		
+		//		$obj->importAll("F:/subject.xls");
+
 		$obj = new m_question();
-		$obj->create();		
-		
+		$obj->create();
+
 		$obj = new m_quiz();
-		$obj->create();	
-		
+		$obj->create();
+
 		$obj = new m_quiz_paper();
-		$obj->create();		
-//		$obj->importOne("F:/paper.xls");
-//		$obj->importOne("F:/paper2.xls");
-		
+		$obj->create();
+		//		$obj->importOne("F:/paper.xls");
+		//		$obj->importOne("F:/paper2.xls");
+
 		$obj = new m_subject();
-		$obj->create();		
-		
-//		$obj = new m_subject_knowledge();
-//		$obj->create();	
-//
-//		$obj = new m_subject_knowledge_log();
-//		$obj->create();			
+		$obj->create();
+
+		//		$obj = new m_subject_knowledge();
+		//		$obj->create();
+		//
+		//		$obj = new m_subject_knowledge_log();
+		//		$obj->create();
 
 		$obj = new m_user();
 		$obj->create();
 
 		$obj = new m_user_access();
 		$obj->create();
-		
+
 		$obj = new m_user_group();
 		$obj->create();
-//		$obj->importExcelWithU("F:/config.xls");
-//		$obj->importExcelWithS("F:/config.xls");
-//		$obj->importExcelWithG("F:/config.xls");	
-		
+		//		$obj->importExcelWithU("F:/config.xls");
+		//		$obj->importExcelWithS("F:/config.xls");
+		//		$obj->importExcelWithG("F:/config.xls");
+
 		$obj = new m_quiz_wrong();
-		$obj->create();			
+		$obj->create();
 
 		$obj = new m_question_log();
-		$obj->create();	
-		
+		$obj->create();
+
 		$obj = new m_quiz_log();
-		$obj->create();	
-//		$obj->importOne('F:/quizlog.xls');
-//		$obj->importOne('F:/quizlog2.xls');
-//		$obj->importOne('F:/quizlog4.xls');
+		$obj->create();
+		//		$obj->importOne('F:/quizlog.xls');
+		//		$obj->importOne('F:/quizlog2.xls');
+		//		$obj->importOne('F:/quizlog4.xls');
 
 		echo '
 		<html>
@@ -105,17 +105,17 @@ class install extends wls {
 	public function saveUpload(){
 		$file = $this->c->filePath."upload/upload".date('Ymdims').".xls";
 		move_uploaded_file($_FILES["file"]["tmp_name"],$file);
-		
+
 		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();
-		$obj->importExcelWithG($file);		
+		$obj->importExcelWithG($file);
 		$obj->importExcelWithS($file);
 		$obj->importExcelWithU($file);
-		
-//		include_once $this->c->license.'/model/knowledge.php';
-//		$obj = new m_knowledge();
-//		$obj->importExcel($file);
-		
+
+		//		include_once $this->c->license.'/model/knowledge.php';
+		//		$obj = new m_knowledge();
+		//		$obj->importExcel($file);
+
 		echo '
 		<html>
 		<head>
@@ -130,7 +130,7 @@ class install extends wls {
 		</html>
 		';	
 	}
-	
+
 	public function setLanguage(){
 		$html = "
 			<html>
@@ -141,10 +141,11 @@ class install extends wls {
 			<form method='post' action='wls.php?controller=install&action=saveLanguage'>
 			<table width='100%'>			
 				<tr>
-					<td width='30%'>Language(语言,言語,taal,gjuhën,언어)</td>
+					<td width='30%'>Language(语言,語系,日本語,taal,gjuhën,언어)</td>
 					<td width='30%'>
 						<select name='language' style='width:90%'>							
 							<option value='zh-cn'>简体中文</option>
+							<option value='zh-tw'>繁體中文</option>
 							<option value='en'>English</option>
 						</select>
 					</td>
@@ -157,7 +158,74 @@ class install extends wls {
 		";
 		echo $html;
 	}
-	
+
+	public function checkEnvironment(){
+		$paths = array(
+			$this->c->filePath.'download/',
+			$this->c->filePath.'export/',
+			$this->c->filePath.'import/',
+			$this->c->filePath.'log/error.txt',
+			$this->c->filePath.'upload/',
+			'config.php',
+		);
+		$console = $this->lang['checkEnvironment'].'<br/><br/>';
+		$error = 0;
+		for($i=0;$i<count($paths);$i++){
+			if($this->t->iswriteable($paths[$i])){
+				$console .= $paths[$i].' &nbsp;&nbsp;&nbsp; OK <br/>';
+			}else{
+				$error = 1;
+				$console .= $paths[$i].' &nbsp;&nbsp;&nbsp; Not Writable! <br/>';
+			}
+		}
+			
+		if($this->c->cmstype=='DiscuzX'){
+			if(!file_exists(dirname(__FILE__).'/../../../../../../config/config_global.php')){
+				$error = 1;
+				$console .= $this->lang['integrationError'];
+			}
+		}
+		if($this->c->cmstype=='Joomla'){
+			if(!file_exists( dirname(__FILE__).'/../../../../../configuration.php' )){
+				$error = 1;
+				$console .= $this->lang['integrationError'];
+			}
+		}
+		if($this->c->cmstype=='PhpWind'){
+			if(!file_exists( dirname(__FILE__).'/../../../../../data/sql_config.php' )){
+				$error = 1;
+				$console .= $this->lang['integrationError'];
+			}
+		}
+		if($error==0){
+			echo '
+			<html>
+			<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			</head>
+			<body>
+			'.$console.'
+			<br/><br/><br/>
+			<a href="wls.php?controller=install&action=createTables">'.$this->lang['createTables'].'</a>
+			</body>
+			</html>
+			';	
+		}else{
+			echo '
+			<html>
+			<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			</head>
+			<body>
+			'.$console.'
+			<br/><br/><br/>
+			'.$this->lang['environmentError'].'
+			</body>
+			</html>
+			';	
+		}
+	}
+
 	public function saveLanguage(){
 		$this->rewirteConfig($_POST);
 		echo '
@@ -173,7 +241,7 @@ class install extends wls {
 		</html>
 		';	
 	}
-	
+
 	public function setCMS(){
 		$html = "
 			<html>
@@ -215,8 +283,8 @@ class install extends wls {
 		";
 		echo $html;
 	}
-	
-	public function saveCMS(){	
+
+	public function saveCMS(){
 		if($_POST['cmstype']=='DiscuzX'){
 			include_once dirname(__FILE__).'/../../../../../../config/config_global.php';
 			$config = array(
@@ -228,11 +296,11 @@ class install extends wls {
 				'cmstype'=>'DiscuzX',
 				'state'=>'running',
 			);
-			$this->rewirteConfig($config);					
+			$this->rewirteConfig($config);
 		}else if($_POST['cmstype']=='Joomla'){
 			include_once dirname(__FILE__).'/../../../../../configuration.php';
 			$jconfig = new JConfig();
-			
+				
 			$config = array(
 				'dbname'=>$jconfig->db,
 				'dbhost'=>$jconfig->host,
@@ -265,8 +333,8 @@ class install extends wls {
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script language="javascript">
-		alert("'.$this->lang['settedConfig'].','.$this->lang['createTables'].'");
-		self.location=("wls.php?controller=install&action=createTables");
+		alert("'.$this->lang['settedConfig'].'");
+		self.location=("wls.php?controller=install&action=checkEnvironment");
 		</script>
 		</head>
 		<body>
@@ -331,8 +399,8 @@ class install extends wls {
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script language="javascript">
-		alert("'.$this->lang['settedConfig'].','.$this->lang['createTables'].'");
-		self.location=("wls.php?controller=install&action=createTables");
+		alert("'.$this->lang['settedConfig'].'");
+		self.location=("wls.php?controller=install&action=checkEnvironment");
 		</script>
 		</head>
 		<body>
@@ -374,6 +442,6 @@ class wlsconfig{
 ?>";
 		fwrite($file_handle,$content);
 		fclose($file_handle);
-	}	
+	}
 }
 ?>

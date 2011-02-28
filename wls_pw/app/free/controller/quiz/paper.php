@@ -169,11 +169,15 @@ down();
 		
 	}
 
+	/**
+	 * Not import all the data in a sudden.
+	 * By Ajax , import one by one
+	 * */
 	public function importAll(){
 		$userObj = new m_user();
 		if($userObj->checkMyaccess("1109",false)==false)return;
 
-		$folder = $this->c->filePath.'import/';
+		$folder = $this->c->filePath.'import/JSJ_GJ_2J_CPP/';
 		if(isset($_REQUEST['id'])){
 			$this->m->importOne($_REQUEST['id']);
 			echo 'ok';
@@ -272,27 +276,27 @@ down();
 	}
 
 	public function viewQuiz(){
-		//		include_once $this->c->license.'/model/user.php';
-		//		$userObj = new m_user();
-		//
-		//		//IE6 is special
-		//		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == true ){
-		//			$userObj->id = $_REQUEST['uid'];
-		//		}else{
-		//			$me = $userObj->getMyInfo();
-		//		    $userObj->id = $me['id'];
-		//		}
-		//		$foo = $userObj->checkMyaccess('1107');
-		//
-		//		if($foo==false){
-		//			echo "access request";
-		//			exit();
-		//		}else{
-		//			if($this->m->checkMoney($_REQUEST['id'])==false){
-		//				echo "money request";
-		//				exit();
-		//			}
-		//		}
+		include_once $this->c->license.'/model/user.php';
+		$userObj = new m_user();
+
+		//IE6 is special
+		if( strpos($_SERVER['HTTP_USER_AGENT'],'MSIE 6') == true ){
+			$userObj->id = $_REQUEST['uid'];
+		}else{
+			$me = $userObj->getMyInfo();
+		    $userObj->id = $me['id'];
+		}
+		$foo = $userObj->checkMyaccess('1107');
+
+		if($foo==false){
+			echo "access request";
+			exit();
+		}else{
+			if($this->m->checkMoney($_REQUEST['id'])==false){
+				echo "money request";
+				exit();
+			}
+		}
 
 		$html = "
 <!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
