@@ -17,7 +17,6 @@ class_23 = Ext.extend(Ext.app.Module, {
 				layout : 'fit',
 				modal : true,
 				items : [user_.getLogin()]
-				,
 			});
 		}
 		win.show();

@@ -20,7 +20,7 @@ class_1906 = Ext.extend(Ext.app.Module, {
 				modal : true,
 				layout : 'fit',
 				items : [obj.modifySystemSettings()]
-				,
+				
 			});
 		}
 		win.show();

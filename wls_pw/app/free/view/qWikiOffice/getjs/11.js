@@ -25,7 +25,6 @@ class_11 = Ext.extend(Ext.app.Module, {
 								constrainHeader : true,
 								layout : 'fit',
 								items : [quiz_paper.getList('qd_w_q_p_l')]
-								,
 							});
 				}
 				win.show();

@@ -23,7 +23,7 @@ class_1907 = Ext.extend(Ext.app.Module, {
 
 								layout : 'fit',
 								items : [obj.getList('qd_w_u_l')]
-								,
+								
 							});
 				}
 				win.show();

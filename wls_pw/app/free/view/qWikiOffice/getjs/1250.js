@@ -22,7 +22,6 @@ class_1250 = Ext.extend(Ext.app.Module, {
 
 								layout : 'fit',
 								items : [obj.getMyList('qd_w_q_w_ml')]
-								,
 							});
 				}
 				win.show();
