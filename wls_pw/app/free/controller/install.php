@@ -85,10 +85,10 @@ class install extends wls {
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					'.$this->lang['importSysConfig'].',<a href="../file/test/wls_config_demo_dzx.xls">'.$this->lang['seeExampleFile'].'</a>
+					'.$this->lang['importSysConfig'].',<a href="../file/test/config_'.$this->c->language.'.xls">'.$this->lang['seeExampleFile'].'</a>
 					<br/>
 					<br/>
-					<form action="wls.php?controller=install&action=saveUpload" 
+					<form action="wls.php?controller=install&action=saveSysConfig" 
 					method="post"
 					enctype="multipart/form-data">
 						<label for="file">'.$this->lang['ExcelFilePath'].':</label>
@@ -96,39 +96,98 @@ class install extends wls {
 						<br />
 						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
 					</form>
+					
+					<hr/>
+					<br/>
+					<a href="wls.php?controller=install&action=installDemoData">'.$this->lang['installDemoData'].'</a>
 				</body>
 			</html>				
 		';
 		echo $html;
 	}
 
-	public function saveUpload(){
+	public function saveSysConfig(){
 		$file = $this->c->filePath."upload/upload".date('Ymdims').".xls";
 		move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 
-		include_once $this->c->license.'/model/user/group.php';
 		$obj = new m_user_group();
 		$obj->importExcelWithG($file);
 		$obj->importExcelWithS($file);
 		$obj->importExcelWithU($file);
 
-		//		include_once $this->c->license.'/model/knowledge.php';
 		//		$obj = new m_knowledge();
 		//		$obj->importExcel($file);
-
-		echo '
+		
+		$html = "
 		<html>
 		<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<script language="javascript">
-		alert("'.$this->lang['installDone'].'");
-		self.location=("wls.php");
-		</script>
+		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
 		</head>
-		<body>
+		<body>		
+		<a href='wls.php'>".$this->lang['installDone']."</a>
 		</body>
 		</html>
-		';	
+		";
+		
+		echo $html;
+	}
+	
+	public function installDemoData(){		
+		$folder = $this->c->filePath.'demodata/import/';
+		$paperObj = new m_quiz_paper();
+		if(isset($_REQUEST['id'])){
+			$paperObj->importOne($_REQUEST['id']);
+			echo 'ok';
+		}else{
+			$file = $this->c->filePath."demodata/config.xls";
+			$obj = new m_user_group();
+			$obj->importExcelWithG($file);
+			$obj->importExcelWithS($file);
+			$obj->importExcelWithU($file);			
+			
+			$filename = $this->t->getAllFiles($folder);
+//			print_r($filename);exit();
+			$html = "
+<html>
+<head>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+<script src=\"".$this->c->libsPath."jquery-1.4.2.js\" type=\"text/javascript\"></script>
+<script src=\"".$this->c->libsPath."jqueryextend.js\" type=\"text/javascript\"></script>
+<script type=\"text/javascript\">
+
+var ids = ".json_encode($filename).";
+
+var index = 0;
+var down = function(){
+	$.ajax({
+		type: 'post',
+		url: 'wls.php?controller=install&action=installDemoData',
+		data: {id:ids[index]},
+		success: function(msg){
+			if(index==ids.length ){
+				alert('".$this->lang['installDone']."');	
+				self.location=('wls.php');			
+			}
+			if(msg=='ok'){
+				$('#data').text('".$this->lang['installDemoData']."...<br/>index:'+index+'/'+ids.length+';  file:'+ids[index]);
+			}else{
+				$('#data').text('wrong!');
+			}
+			down();			
+			index++;
+		}
+	});
+}
+down();
+</script>
+</head>
+<body>
+<div id='data'><div>
+</body>
+</html>			
+			";
+			echo $html;
+		}
 	}
 
 	public function setLanguage(){
@@ -286,6 +345,9 @@ class install extends wls {
 
 	public function saveCMS(){
 		if($_POST['cmstype']=='DiscuzX'){
+			if(!file_exists(dirname(__FILE__).'/../../../../../../config/config_global.php')){
+				die($this->lang['environmentError']);
+			}
 			include_once dirname(__FILE__).'/../../../../../../config/config_global.php';
 			$config = array(
 				'dbname'=>$_config['db'][1]['dbname'],
@@ -298,6 +360,9 @@ class install extends wls {
 			);
 			$this->rewirteConfig($config);
 		}else if($_POST['cmstype']=='Joomla'){
+			if(!file_exists(dirname(__FILE__).'/../../../../../configuration.php') ){
+				die($this->lang['environmentError']);
+			}
 			include_once dirname(__FILE__).'/../../../../../configuration.php';
 			$jconfig = new JConfig();
 				
@@ -312,6 +377,9 @@ class install extends wls {
 			);
 			$this->rewirteConfig($config);
 		}else if($_POST['cmstype']=='PhpWind'){
+			if(!file_exists(dirname(__FILE__).'/../../../../../data/sql_config.php') ){
+				die($this->lang['environmentError']);
+			}
 			include_once dirname(__FILE__).'/../../../../../data/sql_config.php';
 			$config = array(
 				'dbname'=>$dbname,
