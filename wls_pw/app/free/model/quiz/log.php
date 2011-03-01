@@ -215,6 +215,9 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 				if($keys[$i]=='id_user'){
 					$where .= " and id_user in (".$search[$keys[$i]].") ";
 				}
+				if($keys[$i]=='id_level_subject'){
+					$where .= " and ".$pfx."wls_quiz.id_level_subject in (".$search[$keys[$i]].") ";
+				}				
 			}
 		}
 		if($orderby==null)$orderby = " order by id";
@@ -234,7 +237,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			".$where." ".$orderby;
 
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-
+//		echo $sql;exit();
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -243,7 +246,10 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			$arr[] = $temp;
 		}
 
-		$sql2 = "select count(*) as total from ".$pfx."wls_quiz_log ".$where;
+		$sql2 = "select count(*) as total
+				from ".$pfx."wls_quiz_log 
+				join ".$pfx."wls_quiz on ".$pfx."wls_quiz.id = ".$pfx."wls_quiz_log.id_quiz
+				 ".$where;
 		$res = mysql_query($sql2,$conn);
 		$temp = mysql_fetch_assoc($res);
 		$total = $temp['total'];

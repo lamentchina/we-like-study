@@ -118,7 +118,7 @@ class subject extends wls{
 		$user = $userObj->getMyInfo();
 		$search = array('id_user'=>$user['id']);
 		if(isset($_REQUEST['id_level_subject_']) && $_REQUEST['id_level_subject_']!=''){
-			$search['id_level_subject_'] = $_REQUEST['id_level_subject_'];
+			$search['id_level_subject'] = $_REQUEST['id_level_subject_'];
 		}
 		$data = $log->getList(1,100,$search);
 		$data = $data['data'];
