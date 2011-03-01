@@ -64,7 +64,7 @@ class_".$actionid." = Ext.extend(Ext.app.Module, {
                 title: il8n.unDone,
                 width: winWidth,
                 height: winHeight,
-
+				modal:true,
                 layout: 'fit',
                 items:[ new Ext.BoxComponent({
 	                    html:'//TODO '+il8n.unDone
