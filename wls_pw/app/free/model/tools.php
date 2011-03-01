@@ -68,6 +68,10 @@ class tools {
 
 	/**
 	 * Cut a long string into  short string , and add 3 '.' at bottom
+	 * Like:
+	 *   A very long titile that can't display in a narrow div
+	 * Change into:
+	 *   A very long ...
 	 *
 	 * @param $title A long string
 	 * @param $num Cut into this num's length
@@ -219,7 +223,9 @@ class tools {
 		}
 	}
 
+	//Store all the qWikiOffice-Menu here,it's used in the function below
 	public $desktopMenu = array();
+
 	/**
 	 * To fit the qWikiOffice's menu rule.
 	 * It's recursion
@@ -227,20 +233,26 @@ class tools {
 	public function treeMenuToDesktopMenu($id=null,$data_all){
 		if($id==null){
 			$len = 2;
+			//Level 1
 			for($i=0;$i<count($data_all);$i++){
 				if(strlen($data_all[$i]['id_level'])==$len){
+					//It contains submenus
 					if(isset($data_all[$i]['children'])){
 						$data_all[$i]['menupath'] = '/';
 						for($i2=0;$i2<count($data_all[$i]['children']);$i2++){
 							$data_all[$i]['children'][$i2]['menupath'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 						}
+						//Get the submenus
 						$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
 
 						$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 						unset($data_all[$i]['children']);
+						unset($data_all[$i]['menupath']);
+						//Add this menu to qWikiOffice-Menu
 						$this->desktopMenu[] = $data_all[$i];
-					}else{
+					}else{//It's the root menu
 						$data_all[$i]['startmenu'] = "/";
+						unset($data_all[$i]['menupath']);
 						$this->desktopMenu[] = $data_all[$i];
 					}
 				}
@@ -252,17 +264,23 @@ class tools {
 
 				}else{
 					if(strlen($data_all[$i]['id_level'])==$len){
+						//If it contains submenus
 						if(isset($data_all[$i]['children'])){
 							for($i2=0;$i2<count($data_all[$i]['children']);$i2++){
+								//Add all the submenus to the current menuitem
 								$data_all[$i]['children'][$i2]['menupath'] =  $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							}
 							$this->treeMenuToDesktopMenu($data_all[$i]['id_level'],$data_all[$i]['children']);
 
 							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'].$data_all[$i]['text']."/";
 							unset($data_all[$i]['children']);
-							$this->desktopMenu[] = $data_all[$i];
+							unset($data_all[$i]['menupath']);
+							if($data_all[$i]['type']!='subject'){
+								$this->desktopMenu[] = $data_all[$i];
+							}
 						}else{
 							$data_all[$i]['startmenu'] = $data_all[$i]['menupath'];
+							unset($data_all[$i]['menupath']);
 							$this->desktopMenu[] = $data_all[$i];
 						}
 					}
@@ -279,28 +297,38 @@ class tools {
 	 * @param $data_all
 	 * @return $data
 	 * */
-	public function getTreeData($id=null,$data_all){
+	public function getTreeData($id=null,$data_all,$addRootToSub=true){
 		if($id==null){
+			//Level 1
 			$len = 2;
 			$data = array();
 			for($i=0;$i<count($data_all);$i++){
+				//If this item is level 1, check by it's id_level's length
 				if(strlen($data_all[$i]['id_level'])==$len){
+					//Get this item's sub level tree
 					$data_all[$i]['children'] = $this->getTreeData($data_all[$i]['id_level'],$data_all);
+					//If this item has no sub level tree,set the attribute 'leaf=true'
+					//Or ,set the attribute 'expanded=true'
 					if(count($data_all[$i]['children'])==0){
 						unset($data_all[$i]['children']);
 						$data_all[$i]['leaf'] = true;
 					}else{
 						$data_all[$i]['expanded'] = true;
 					}
-					$data_all[$i]['text'] = $data_all[$i]['name'];
-					unset($data_all[$i]['name']);
+						
+					//Modify the item's each attribute,delete the useless stuff
+					if(isset($data_all[$i]['name'])){
+						$data_all[$i]['text'] = $data_all[$i]['name'];
+						unset($data_all[$i]['name']);
+					}
 					if(isset($data_all[$i]['money']))unset($data_all[$i]['money']);
 					if(isset($data_all[$i]['id']))unset($data_all[$i]['id']);
-					if($data_all[$i]['checked']==0){
+					if($data_all[$i]['checked']==0||$data_all[$i]['checked']=='false'){
 						$data_all[$i]['checked'] = false;
 					}else{
 						$data_all[$i]['checked'] = true;
 					}
+						
 					$data[] = $data_all[$i];
 				}
 			}
@@ -405,6 +433,11 @@ class tools {
 
 	}
 
+	/**
+	 * Check a folder or a file is writeable or not
+	 *
+	 * @return boolen
+	 * */
 	public function iswriteable($file){
 		if(is_dir($file)){
 			$dir=$file;

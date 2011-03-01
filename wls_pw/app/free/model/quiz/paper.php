@@ -284,6 +284,9 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 						
 						$where .= " and ".$pfx."wls_quiz.id_level_subject in (".$ids_subject.")  ";
 					}	
+				}else if($keys[$i]=='id_level_subject'){
+//					print_r($search);
+					$where .= " and ".$pfx."wls_quiz.id_level_subject = '".$search[$keys[$i]][0][1]."'";
 				}
 			}
 		}

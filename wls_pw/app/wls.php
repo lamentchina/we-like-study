@@ -74,6 +74,7 @@ class wls{
 		$handle=fopen($fileName,"a");
 		fwrite($handle,$whatHappened."\n");
 		fclose($handle);
+		exit();
 	}
 
 	/** 

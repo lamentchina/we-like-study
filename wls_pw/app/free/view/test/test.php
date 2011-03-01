@@ -1,4 +1,5 @@
 <?php
+print_r($_SERVER);exit();
 session_start();
 
 //$_SESSION = null;

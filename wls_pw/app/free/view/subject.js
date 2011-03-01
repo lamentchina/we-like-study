@@ -303,12 +303,10 @@ wls.subject = Ext.extend(wls, {
 					id : "w_s_gp_l_tb" + domid
 				});
 
-		var grid = new Ext.grid.EditorGridPanel({
+		var grid = new Ext.grid.GridPanel({
 					store : store,
 					cm : cm,
 					id : domid,
-
-					clicksToEdit : 2,
 					tbar : tb,
 					bbar : new Ext.PagingToolbar({
 								store : store,
@@ -318,55 +316,17 @@ wls.subject = Ext.extend(wls, {
 				});
 
 		var access = user_.myUser.access.split(",");
-		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '1102') {
-				tb.add({
-					text : il8n.exportFile,
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_s_gp_l_e',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=subject&action=exportAll' width='100%' height='250' />"
-						});
-						win.show(this);
-					}
-				});
-			} else if (access[i] == '1103') {
-				tb.add({
-					text : il8n.deleteItems,
-					handler : function() {
-						Ext.Ajax.request({
-							method : 'POST',
-							url : thisObj.config.AJAXPATH
-									+ "?controller=subject&action=delete",
-							success : function(response) {
-								store.load();
-							},
-							failure : function(response) {
-								Ext.Msg.alert('failure', response.responseText);
-							},
-							params : {
-								id : Ext.getCmp(domid).getSelectionModel().selection.record.id
-							}
-						});
-					}
-				});
-			} else if (access[i] == '1104') {
-				grid.on("afteredit", afteredit, grid);
-			} else if (access[i] == '1107') {
+		for (var i = 0; i < access.length; i++) {			
+			if (access[i] == '1107') {
 				tb.add({
 					text : il8n.Quiz_Paper,
 					handler : function() {
-
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
 							return;
 						}
-						var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
+						var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+						var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();
@@ -378,14 +338,14 @@ wls.subject = Ext.extend(wls, {
 						if (!win) {
 							win = desktop.createWindow({
 								id : pid + '_qdesk',
-								title : Ext.getCmp(domid).getSelectionModel().selection.record.data.title,
+								title : Ext.getCmp(domid).getSelectionModel().selections.items[0].data.title,
 								width : winWidth,
 								height : winHeight,
 								layout : 'fit',
 								plain : false,
 								html : '<iframe src="'
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=viewOne&id="
+										+ "?controller=quiz_paper&action=viewQuiz&id="
 										+ pid
 										+ "&uid="
 										+ uid
@@ -395,29 +355,9 @@ wls.subject = Ext.extend(wls, {
 							});
 						}
 						win.show();
-
-						// window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id);
 					}
 				});
 			}
-		}
-		function afteredit(e) {
-			Ext.Ajax.request({
-						method : 'POST',
-						url : thisObj.config.AJAXPATH
-								+ "?controller=quiz_paper&action=saveUpdate",
-						success : function(response) {
-							// TODO
-						},
-						failure : function(response) {
-							Ext.Msg.alert('failure', response.responseText);
-						},
-						params : {
-							field : e.field,
-							value : e.value,
-							id : e.record.data.id
-						}
-					});
 		}
 		store.load({
 					params : {

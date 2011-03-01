@@ -419,66 +419,93 @@ class m_user extends wls implements dbtable{
 
 	/**
 	 * This function will cost a lot of memory.
-	 * TODO the algorithm should be upgraded
+	 * TODO the algorithm should be upgraded,
+	 * It should be based on cache
 	 * 
 	 * @return $data An array.
 	 * */
 	public function getMyMenu(){
-		$me = $this->getMyInfo();
-		
+		$me = $this->getMyInfo();		
 		$username = $me['username'];
 		
 		$obj = new m_user_access();
-		$data = $obj->getListForUser($username);
+		$myAccessMenus = $obj->getListForUser($username);
 
-		$data2 = array();
-		for($i=0;$i<count($data);$i++){
-			if($data[$i]['ismenu']==1){
-				if($data[$i]['checked']==true || $data[$i]['checked']=='true' || $data[$i]['checked']==1){
-					$data[$i]['type'] = 'menu';
-					$data2[] = $data[$i];
+		//filter the AccessMenus by 'checked=true'
+		$myAccessMenus2 = array();
+		for($i=0;$i<count($myAccessMenus);$i++){
+			if($myAccessMenus[$i]['ismenu']==1){
+				//Some php consider the 'true'!=1
+				//And some mysql consider the same way
+				if($myAccessMenus[$i]['checked']==true || $myAccessMenus[$i]['checked']=='true' || $myAccessMenus[$i]['checked']==1){
+					$myAccessMenus[$i]['type'] = 'menu';
+					$myAccessMenus2[] = $myAccessMenus[$i];
 				}
 			}
 		}
-
-		$data = $this->t->getTreeData(null,$data2);
-		for($i=0;$i<count($data);$i++){
+		unset($myAccessMenus);		
+		
+		//Transform the access from list to tree.
+		//But the treeMenus is not onley formed by access, 
+		//it also contains subject-list, recent-exam-list, myusergroup-list
+		$accessTree = $this->t->getTreeData(null,$myAccessMenus2);
+		for($i=0;$i<count($accessTree);$i++){
+			
 			//How many subjects do this user participate in?
-			if($data[$i]['id_level']=='11'){
+			if($accessTree[$i]['id_level']=='11'){
 				$obj = new m_subject();
 				$data_ = $obj->getListForUser($username);
 
-				if(count($data_)>0){
+				if(count($data_)>0){					
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
+						unset($data_[$ii]['ids_level_knowledge']);
+						unset($data_[$ii]['icon']);
 						$data_[$ii]['type'] = 'subject';
 						$data_[$ii]['id_level_s'] = $data_[$ii]['id_level'];
 						
+						/* Copy all the subject into access
+						 * Like: 
+						 * Subject:
+						 * 10		s1
+						 * 11		s1
+						 * 1101		s11
+						 * 12		s3
+						 * Change into
+						 * 1110		s1
+						 * 1111		s1
+						 * 111101	s11
+						 * 1112		s3
+						 * 
+						 * Because in access , the id '10' , '12' is already used
+						 * */
 						$data_[$ii]['id_level'] = '11'.$data_[$ii]['id_level'];
 						if($data_[$ii]['checked']==1){
 							$data_[$ii]['ismenu'] = 1;
 							$data__[] = $data_[$ii];
 						}
-					}
+					}					
+					//Transform the subject from list to tree
 					$subject = $this->t->getTreeData('11',$data__);
 						
+					//To fit the qWikiOffice-Menu structure
+					//TODO it sucks!
 					$arr = array();
-					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
-						$arr = $data[$i]['children'];
+					if(isset($accessTree[$i]['children']) && count($accessTree[$i]['children'])>0){
+						$arr = $accessTree[$i]['children'];
 					}
-					$data[$i]['children'] = $subject;
-
+					$accessTree[$i]['children'] = $subject;
 					if(count($arr)>0){
-						$data[$i]['children'][] = array('text'=>'slide');
+						$accessTree[$i]['children'][] = array('text'=>'slide');
 						for($ii=0;$ii<count($arr);$ii++){
-							$data[$i]['children'][] = $arr[$ii];
+							$accessTree[$i]['children'][] = $arr[$ii];
 						}
 					}
 				}
 			}
 			
 			//How many groups do this user in?
-			if($data[$i]['id_level']=='13'){				
+			if($accessTree[$i]['id_level']=='13'){				
 				$obj = new m_user_group();
 				$data_ = $obj->getListForUser($username);
 				if(count($data_)>0){
@@ -501,21 +528,21 @@ class m_user extends wls implements dbtable{
 					$subject = $this->t->getTreeData('13',$data__);
 						
 					$arr = array();
-					if(isset($data[$i]['children']) && count($data[$i]['children'])>0){
-						$arr = $data[$i]['children'];
+					if(isset($accessTree[$i]['children']) && count($accessTree[$i]['children'])>0){
+						$arr = $accessTree[$i]['children'];
 					}
-					$data[$i]['children'] = $subject;
+					$accessTree[$i]['children'] = $subject;
 
 					if(count($arr)>0){
-						$data[$i]['children'][] = array('text'=>'slide');
+						$accessTree[$i]['children'][] = array('text'=>'slide');
 						for($ii=0;$ii<count($arr);$ii++){
-							$data[$i]['children'][] = $arr[$ii];
+							$accessTree[$i]['children'][] = $arr[$ii];
 						}
 					}
 				}
 			}
 		}
-		return $data;
+		return $accessTree;
 	}
 
 	/**
@@ -524,11 +551,11 @@ class m_user extends wls implements dbtable{
 	 * @return $data Array
 	 * */
 	public function getMyMenuForDesktop(){
-
 		$data = $this->getMyMenu();
-
+//		print_r($data);exit();
 		$this->t->treeMenuToDesktopMenu(null,$data);
 		$data = $this->t->desktopMenu;
+//		print_r($data);exit();
 		return $data;
 	}
 	
