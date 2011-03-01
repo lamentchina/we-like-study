@@ -486,7 +486,16 @@ down();
 	public function rewirteConfig($foo=null){
 		$file_name = "config.php";
 		if(!$file_handle = fopen($file_name,"w")){
-			die($this->lang['configFileError']);
+		echo '
+		<html>
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		</head>
+		<body>
+		'.$this->lang['configFileError'].'
+		</body>
+		</html>
+		';
 		}
 		$arr = array();
 		$cfg = (array)$this->c;
