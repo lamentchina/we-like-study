@@ -68,7 +68,7 @@ class install extends wls {
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script language="javascript">
-		alert("'.$this->lang['createdTables'].','.$this->lang['importSysConfig'].'");
+		alert("'.$this->lang['createdTables'].'");
 		self.location=("wls.php?controller=install&action=importSysConfig");
 		</script>
 		</head>
@@ -85,6 +85,14 @@ class install extends wls {
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
+					'.$this->lang['ImNewAboutThis'].'
+					<br/>
+					<br/>
+					<a href="wls.php?controller=install&action=installDemoData">'.$this->lang['installDemoData'].'</a>
+					
+					<hr style="height:5px;color:gray"/>
+					'.$this->lang['ImFamiliarAboutThis'].'
+					<br/><br/>
 					'.$this->lang['importSysConfig'].',<a href="../file/test/config_'.$this->c->language.'.xls">'.$this->lang['seeExampleFile'].'</a>
 					<br/>
 					<br/>
@@ -95,11 +103,7 @@ class install extends wls {
 						<input type="file" name="file" id="file" />
 						<br />
 						<input type="submit" name="submit" value="'.$this->lang['submit'].'" />
-					</form>
-					
-					<hr/>
-					<br/>
-					<a href="wls.php?controller=install&action=installDemoData">'.$this->lang['installDemoData'].'</a>
+					</form>					
 				</body>
 			</html>				
 		';
@@ -135,6 +139,7 @@ class install extends wls {
 	public function installDemoData(){		
 		$folder = $this->c->filePath.'demodata/import/';
 		$paperObj = new m_quiz_paper();
+		
 		if(isset($_REQUEST['id'])){
 			$paperObj->importOne($_REQUEST['id']);
 			echo 'ok';
@@ -166,10 +171,11 @@ var down = function(){
 		success: function(msg){
 			if(index==ids.length ){
 				alert('".$this->lang['installDone']."');	
+				$('#data').text('".$this->lang['success'].','.$this->lang['pageIsJumpping']."');				
 				self.location=('wls.php');			
 			}
 			if(msg=='ok'){
-				$('#data').text('".$this->lang['installDemoData']."...<br/>index:'+index+'/'+ids.length+';  file:'+ids[index]);
+				$('#data').text('".$this->lang['installDemoPapers']."index:'+index+'/'+ids.length+';  file:'+ids[index]);
 			}else{
 				$('#data').text('wrong!');
 			}
@@ -200,15 +206,15 @@ down();
 			<form method='post' action='wls.php?controller=install&action=saveLanguage'>
 			<table width='100%'>			
 				<tr>
-					<td width='30%'>Language(语言,語系,日本語,taal,gjuhën,언어)</td>
-					<td width='30%'>
+					<td width='40%'>Language(语言,語系,日本語,taal,gjuhën,언어):</td>
+					<td width='40%'>
 						<select name='language' style='width:90%'>							
 							<option value='zh-cn'>简体中文</option>
 							<option value='zh-tw'>繁體中文</option>
 							<option value='en'>English</option>
 						</select>
 					</td>
-					<td width='30%'><input type='submit' value='&nbsp;&nbsp;Next&nbsp;&nbsp;' /></td>
+					<td width='20%'><input type='submit' value='&nbsp;&nbsp;Next&nbsp;&nbsp;' /></td>
 				</tr>																												
 			</table>			
 			</form>

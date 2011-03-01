@@ -397,8 +397,8 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 			 'id_quiz'=>$temp['id_quiz']
 			,'answers'=>$answers
 			,'ids_question'=>$ids_question
-		));
-		
+		));		
+
 		return $answers;
 	}
 }
