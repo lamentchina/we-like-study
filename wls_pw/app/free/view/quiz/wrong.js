@@ -178,9 +178,29 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 							+ '?controller=quiz_wrong&action=getMyList',
 					root : 'data',
 					idProperty : 'id',
-					fields : ['id', 'id_quiz_paper',
-							'date_created', 'timedif',  'count',
-							'id_user']
+					fields : ['id'
+					          ,'id_quiz_paper'
+					          ,'date_created' 
+					          ,'timedif'
+					          ,'count'
+					          ,'title_question'							
+					          ,'id_user'
+					          ,'type'
+					          ,'count_right'
+					          ,'count_wrong'
+					          ,'count_giveup'
+					          ,'comment_ywrong_1'
+					          ,'comment_ywrong_2'
+					          ,'comment_ywrong_3'
+					          ,'comment_ywrong_4'
+					          ,'difficulty'
+					          ,'markingmethod'
+					          ,'title_quiz'
+					          ,'author'
+					          ,'name_subject'
+					          ,'id_level_subject'
+					          ,'count_used'
+					]
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -192,14 +212,19 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								dataIndex : 'id'
 							}, {
 								header : il8n.subject,
+								dataIndex : 'name_subject',
+							}, {
+								header : il8n.subject+'(id)',
 								dataIndex : 'id_level_subject',
 								hidden : true
 							}, {
-								header : il8n.id_paper,
-								dataIndex : 'id_quiz_paper',
-								hidden : true
+								header : il8n.paper,
+								dataIndex : 'title_quiz',
 							}, {
-								header : il8n.date_created,
+								header : il8n.question,
+								dataIndex : 'title_question',
+							}, {
+								header : il8n.date_created+(2),
 								dataIndex : 'date_created',
 								hidden : true
 							}, {
@@ -209,8 +234,8 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								header : il8n.count_wrong,
 								dataIndex : 'count'
 							}, {
-								header : il8n.user,
-								dataIndex : 'id_user',
+								header : il8n.Qes_Type,
+								dataIndex : 'type',
 								hidden : true
 							}]
 				});
