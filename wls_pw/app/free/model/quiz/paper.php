@@ -112,8 +112,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 
 	public function importOne($path){
 		$conn = $this->conn();
-		$pfx = $this->c->dbprefix;
-		
+		$pfx = $this->c->dbprefix;		
 
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -122,7 +121,6 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$currentSheet = $this->phpexcel->getSheetByName($this->lang['paper']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
-
 		
 		$quizData = array();
 		$paperData = array();
@@ -338,7 +336,6 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$sql = "select money,id from ".$pfx."wls_quiz_paper where id= ".$id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
-
 
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
