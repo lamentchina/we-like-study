@@ -26,7 +26,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_subject (".$keys.") values ('".$values."')";
-		$this->error($sql);
+//		echo $sql;
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}

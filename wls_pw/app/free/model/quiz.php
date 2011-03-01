@@ -351,7 +351,7 @@ class m_quiz extends wls implements dbtable{
 
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
-			if($temp['score_top']<=$this->mycent){
+			if($temp['score_top']< intval($this->mycent) ){
 				$userObj = new m_user();
 				$user = $userObj->getMyInfo();
 
@@ -359,11 +359,11 @@ class m_quiz extends wls implements dbtable{
 					score_top_user = '".$user['username']."',
 					score_top = '".$this->mycent."' 
 					where id = ".$this->id_quiz;
-				$this->error($sql);
+
 				mysql_query($sql,$conn);
 			}
 			$sql = "update ".$pfx."wls_quiz set score_avg = (score_avg*count_used+".$this->mycent.")/(count_used+1) where id = ".$this->id_quiz;
-			//echo $sql;
+
 		}else{
 			$sql = "update ".$pfx."wls_quiz set ".$column." = ".$column."+1 where id = ".$this->id_quiz;
 		}
