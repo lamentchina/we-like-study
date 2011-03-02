@@ -119,19 +119,18 @@ wls.quiz = Ext.extend(wls, {
 			var temp = index + 1;
 			if (temp < 10) {
 				temp = '0' + temp;
-				str += "<div class='w_q_subQuesNav_i' id='w_q_subQuesNav_"
-						+ this.questions[i].id + "' onclick='" + this.naming
-						+ ".wls_quiz_nav(" + this.questions[i].id
-						+ ")'><a href='#' style='border:0px;'>" + temp
-						+ "</a></div>";
+				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_" + this.questions[i].id 
+					+ "' onclick='" + this.naming + ".wls_quiz_nav(" + this.questions[i].id
+					+ ")'><a href='#' style='border:0px;'>" + temp
+					+ "</a></div>";
 			} else if (temp >= 10 && temp < 100) {
-				str += "<div class='w_q_subQuesNav_i' id='w_q_subQuesNav_"
+				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_"
 						+ this.questions[i].id + "' onclick='" + this.naming
 						+ ".wls_quiz_nav(" + this.questions[i].id
 						+ ")'><a href='#' style='border:0px;'>" + temp
 						+ "</a></div>";
 			} else {
-				str += "<div class='w_q_subQuesNav_i' id='w_q_subQuesNav_"
+				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_"
 						+ this.questions[i].id
 						+ "' onclick='"
 						+ this.naming

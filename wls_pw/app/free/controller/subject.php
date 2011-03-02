@@ -165,6 +165,9 @@ class subject extends wls{
 	<data> 
 		<chart>
 			<series>';
+		if(count($arr)>0){
+			
+	
 		for($i=0;$i<count($arr);$i++){
 $xml .= '		<value xid="'.$i.'">'.$arr[$i]['index'].'</value>';
 		}
@@ -173,6 +176,14 @@ $xml .='	</series>
 				<graph gid="1">';
 		for($i=0;$i<count($arr);$i++){
 $xml .= '			<value xid="'.$i.'">'.$arr[$i]['proportion'].'</value>';
+		}
+		}else{
+$xml .= '		<value xid="1">1</value>
+			</series>
+			<graphs>
+				<graph gid="1">
+					<value xid="1">1<value>
+			';
 		}
 $xml .= '		</graph>
 			</graphs>

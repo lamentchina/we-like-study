@@ -32,7 +32,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 		if($res2==false || (mysql_fetch_assoc($res2)==false) ){//这个用户的信息还没有同步过来,需要实施数据插入
 			
 			$userObj = new m_user();
-			$temp['money']=100;
+			$temp['money']=10000;
 			$temp['password']=$temp['username'];
 			$temp['name']=$temp['username'];
 			unset($temp['guest']);
@@ -40,7 +40,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 			
 			$usergroupObj = new m_user_group();
 			$data = array(
-				 'id_level_group'=>'11'
+				 'id_level_group'=>'10'
 				 ,'username'=>$temp['username']
 			);
 			$usergroupObj->linkUser($data);

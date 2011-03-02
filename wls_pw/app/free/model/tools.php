@@ -1,7 +1,7 @@
 <?php
 /**
- * Some functions which is really usefull,
- * but has nothing to do with the system's logic ,
+ * Some functions which are really usefull,
+ * but has nothing to do with system's logic ,
  * and it's hard to decide which controller should it be.....
  * So , I just put them here.
  * */

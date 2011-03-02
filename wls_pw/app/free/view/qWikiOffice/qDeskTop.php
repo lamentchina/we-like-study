@@ -87,7 +87,7 @@ QoDesk.App = new Ext.app.App({
    desktopConfig: {
       appearance: {
     	"fontColor":"333333",
-    	"taskbarTransparency":50,
+    	"taskbarTransparency":60,
     	"theme":{
 			"id":1,
 			"name":"Blue",
@@ -106,7 +106,7 @@ QoDesk.App = new Ext.app.App({
       launchers: {
 		  "shortcut":<?php echo json_encode($shortcut)?>,
 		  "quickstart":<?php echo json_encode($quickstart)?>
-	 },
+		},
       taskbarConfig: {
          buttonScale: 'large',
          position: 'bottom',
@@ -126,14 +126,13 @@ QoDesk.App = new Ext.app.App({
    }
 });
 
-
-
 <?php 
  }else{
- 	?>
+?>
 
 <script type="text/javascript">
  alert('<?php echo $this->c->lang['installError']; ?>');
+ 
  <?php 
  }
  ?>

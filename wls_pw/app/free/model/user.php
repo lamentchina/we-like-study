@@ -75,12 +75,10 @@ class m_user extends wls implements dbtable{
 		}
 		$sql = substr($sql,0,strlen($sql)-1);
 		$sql .= " where id =".$id;
-		try{
-			mysql_query($sql,$conn);
-			return true;
-		}catch (Exception $ex){
-			return false;
-		}
+		
+//		$this->error($sql);
+		mysql_query($sql,$conn);
+
 	}
 
 	/**

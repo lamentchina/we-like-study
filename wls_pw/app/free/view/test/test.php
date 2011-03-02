@@ -2,8 +2,8 @@
 print_r($_SERVER);exit();
 session_start();
 
-//$_SESSION = null;
-//session_destroy();
+$_SESSION = null;
+session_destroy();
 
 
 

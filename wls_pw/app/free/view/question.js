@@ -9,9 +9,7 @@ wls.question = Ext.extend(wls, {
 	mycent : null,
 	type : null,
 	parent : null,
-	quiz : null
-
-	,
+	quiz : null,
 	addWhyImWrong : function() {
 		$('#w_qs_' + this.id)
 				.append("<div class='WhyImWrong'>"
@@ -37,18 +35,6 @@ wls.question = Ext.extend(wls, {
 						+ "<td width='20%'><input type='radio' onchange='wls_question_saveComment(this)' value='4' name='"
 						+ this.id + "' />" + il8n.whyImWrong_WrongAnswer
 						+ "</td>" + "</tr></table>" + "</div>");
-	},
-	addCommenter : function() {
-		$('.w_q_d', $('#w_qs_' + this.id))
-				.append("<div style='height:40px;'><input class='rating' value='1' /></div>");
-		$('.rating', $('.w_q_d', $('#w_qs_' + this.id))).rating({
-					callback : function(value, link) {
-
-					}
-				});
-	},
-	addListening : function() {
-
 	}
 
 });
@@ -104,4 +90,9 @@ var wls_question_saveComment = function(dom) {
 var wls_question_toogle = function(id) {
 	$('#w_qs_d_t_' + id, $('#w_qs_' + id)).toggleClass('w_q_d_t_2');
 	$(".w_q_d", $('#w_qs_' + id)).toggleClass('w_q_d_h');
+}
+var wls_question_done = function(id){
+	if($('#w_q_subQuesNav_' + id).hasClass('w_q_sn_undone')){
+		$('#w_q_subQuesNav_' + id).attr('class','w_q_sn_done');
+	}
 }

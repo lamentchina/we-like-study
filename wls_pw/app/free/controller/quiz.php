@@ -11,14 +11,14 @@ class quiz extends wls{
 	
 	public function about(){
 		$html = "
-			<html>		
-			<head>
-				<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-			</head>
-			<body>
+<html>		
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+</head>
+<body>
 <p>
 This is an open-source project, you can update this system by downloading the most
-recent code from http://code.google.com/p/we-like-study/downloads/list 
+recent code from <a href='http://code.google.com/p/we-like-study/downloads/list'>project center</a> 
 <br/>
 If you have any suggestions, contact me: wei1224hf@gmail.com
 </p>
@@ -52,7 +52,7 @@ Authors:
 <li>xiaoyong8000</li>
 <li>范小延</li>
 </ul>
-			
+<br/><br/><br/>			
 </body>
 </html>
 		";

@@ -104,7 +104,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								dataIndex : 'id'
 							}, {
 								header : il8n.title,
-								dataIndex : 'title',
+								dataIndex : 'title'
 							}, {
 								header : il8n.date_created,
 								dataIndex : 'date_created',
@@ -212,17 +212,17 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								dataIndex : 'id'
 							}, {
 								header : il8n.subject,
-								dataIndex : 'name_subject',
+								dataIndex : 'name_subject'
 							}, {
 								header : il8n.subject+'(id)',
 								dataIndex : 'id_level_subject',
 								hidden : true
 							}, {
 								header : il8n.paper,
-								dataIndex : 'title_quiz',
+								dataIndex : 'title_quiz'
 							}, {
 								header : il8n.question,
-								dataIndex : 'title_question',
+								dataIndex : 'title_question'
 							}, {
 								header : il8n.date_created+(2),
 								dataIndex : 'date_created',

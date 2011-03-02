@@ -122,6 +122,7 @@ class m_integration_PhpWind extends m_integration implements integrate{
 				,'money'=>$me['money']
 				,'password'=>$me['password']
 			);
+			
 			$userObj->update($data);
 		}
 		return $me['username'];

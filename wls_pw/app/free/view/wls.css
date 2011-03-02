@@ -52,12 +52,6 @@
 	font-size:15px;
 	margin-bottom:3px;
 }
-.w_q_subQuesNav_i{
-	border:1px solid rgb(221,221,221);
-	float:left;
-	width:20px;
-	font-size:15px;
-}
 .w_q_p_clock{
 	width:98%;
 	border:1px solid #B8D0D6;
@@ -131,15 +125,50 @@ A:hover {text-decoration: none}
 	font-size:15px;
 	width:98%;
 }
+/**
+ * WLS question navigator item
+ *  White:	Undone
+ *  Red:	Wrong
+ *	Green:	Done
+ *	Blue:	Right
+ *	Yellow:	Giveup
+ */
+.w_q_sn_undone{
+	background-color: rgb(250,250,250);
+	border:1px solid rgb(221,221,221);
+	float:left;
+	width:20px;
+	font-size:15px;
+}
+.w_q_sn_done{
+	background-color: rgb(100,255,100);
+	border:1px solid rgb(221,221,221);
+	float:left;
+	width:20px;
+	font-size:15px;
+}
 .w_q_sn_w{
-	background-color: rgb(255,215,123);
+	background-color: rgb(255,100,100);
+	border:1px solid rgb(221,221,221);
+	float:left;
+	width:20px;
+	font-size:15px;
+}
+.w_q_sn_r{
+	background-color: rgb(100,100,255);
+	border:1px solid rgb(221,221,221);
+	float:left;
+	width:20px;
+	font-size:15px;
 }
 .w_q_sn_g{
-	background-color: rgb(255,200,200);
+	background-color: rgb(255,255,100);
+	border:1px solid rgb(221,221,221);
+	float:left;
+	width:20px;
+	font-size:15px;
 }
-.w_q_sn_m{
-	background-color: rgb(200,200,255);
-}
+
 .w_u_k{
 	margin-top:1px;
 	border:1px solid #B8D0D6;

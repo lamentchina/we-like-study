@@ -13,6 +13,7 @@ include_once dirname(__FILE__).'/../model/quiz/log.php';
 include_once dirname(__FILE__).'/../model/quiz/wrong.php';
 
 class install extends wls {
+	
 
 	public function createTables(){
 		$obj = new m_subject();
@@ -137,6 +138,9 @@ class install extends wls {
 	}
 	
 	public function installDemoData(){		
+		$userObj = new m_user();
+		$userObj->login('admin');
+		
 		$folder = $this->c->filePath.'demodata/import/';
 		$paperObj = new m_quiz_paper();
 		
@@ -171,7 +175,8 @@ var down = function(){
 		success: function(msg){
 			if(index==ids.length ){
 				alert('".$this->lang['installDone']."');	
-				$('#data').text('".$this->lang['success'].','.$this->lang['pageIsJumpping']."');				
+				$('#data').text('".$this->lang['success'].','.$this->lang['pageIsJumpping']."');	
+							
 				self.location=('wls.php');			
 			}
 			if(msg=='ok'){
@@ -197,6 +202,20 @@ down();
 	}
 
 	public function setLanguage(){
+		if($this->c->state!='uninstall'){
+			echo '
+			<html>
+			<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			</head>
+			<body>
+			'.$this->lang['checkEnvironment'].'
+			</body>
+			</html>
+			';	
+			exit();
+		}
+		
 		$html = "
 			<html>
 				<head>
@@ -314,6 +333,7 @@ down();
 					<meta http-equiv='content-type' content='text/html; charset=UTF-8'>
 				</head>
 			<body>
+			".$this->lang['loginAsAdminFirst']."
 			<form method='post' action='wls.php?controller=install&action=saveCMS'>
 			<table width='90%'>			
 				<tr>
