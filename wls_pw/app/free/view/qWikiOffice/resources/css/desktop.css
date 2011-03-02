@@ -2,7 +2,7 @@ html, body { background-position:center center; background-repeat:no-repeat; bor
 
 /* icons */
 .x-btn-medium .icon-qwikioffice { background-image:url(../images/default/icons/qWikiOffice24x24.png) !important; }
-.x-btn-large .icon-qwikioffice { background-image:url(../images/default/icons/qWikiOffice32x32.png) !important; }
+.x-btn-large .icon-qwikioffice { background-image:url(../images/default/icons/startbutton-icon.png) !important; }
 .icon-user-48 { background-image:url(../images/default/icons/48x48/user.png) !important; }
 .icon-user { background-image:url(../images/default/icons/16x16/user.png) !important; }
 .icon-logout { background-image:url(../images/default/icons/16x16/logout.png) !important; }
