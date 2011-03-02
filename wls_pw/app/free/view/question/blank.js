@@ -10,6 +10,7 @@ wls.question.blank = Ext.extend(wls.question, {
 			$("[class=w_qw_tool]",$("#w_qs_"+this.questionData.id_parent)).append(this.index+"&nbsp;");
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("id","w_qs_"+this.id);
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("name","w_qs_"+this.id);
+			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("onchange","wls_question_done("+this.id+")");
 		}
 		this.cent = this.questionData.cent;
 		this.questionData = null;
@@ -25,18 +26,21 @@ wls.question.blank = Ext.extend(wls.question, {
 			$('#w_qs_' + this.id).attr("class","w_blank_dontknow");
 			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_g');
 			$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.cent + ':' + (this.cent));
+					il8n.giveup + ',' + il8n.cent + ':' + (this.cent));
 			wls_question_toogle(this.id);
 		} else if (obj.answer == obj.myAnswer) {			
 			this.quiz.count.right++;
 			this.quiz.mycent += parseFloat(obj.cent);
+			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_r');
+			$('#w_q_subQuesNav_' + this.id).attr('title',
+				il8n.right + ',' + il8n.cent + ':' + (this.cent));
 			wls_question_toogle(this.id);
 		} else {
 			this.quiz.count.wrong++;
 			$('#w_qs_' + this.id).attr("class","w_blank_wrong");
 			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_w');
 			$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.cent + ':' + (this.cent));
+					il8n.wrong + ',' + il8n.cent + ':' + (this.cent));
 			if (this.quiz.type == 'paper')
 				this.addWhyImWrong();
 		}
