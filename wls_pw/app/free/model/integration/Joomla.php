@@ -44,8 +44,7 @@ class m_integration_Joomla extends m_integration implements integrate{
 				 ,'username'=>$temp['username']
 			);
 			$usergroupObj->linkUser($data);
-		}else{//No money to synchro
-				
+		}else{//No money to synchro, intergrate with JoomSocial or other popular JoomlPlugins?
 		}
 
 		return $temp['username'];

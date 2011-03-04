@@ -372,7 +372,9 @@ down();
 	public function saveCMS(){
 		if($_POST['cmstype']=='DiscuzX'){
 			if(!file_exists(dirname(__FILE__).'/../../../../../../config/config_global.php')){
-				die($this->lang['environmentError']);
+				$html = "<html><head><meta http-equiv='content-type' content='text/html; charset=UTF-8'></head>
+			<body>".$this->lang['environmentError']."</body></html>";
+				echo $html;
 			}
 			include_once dirname(__FILE__).'/../../../../../../config/config_global.php';
 			$config = array(
@@ -387,7 +389,9 @@ down();
 			$this->rewirteConfig($config);
 		}else if($_POST['cmstype']=='Joomla'){
 			if(!file_exists(dirname(__FILE__).'/../../../../../configuration.php') ){
-				die($this->lang['environmentError']);
+				$html = "<html><head><meta http-equiv='content-type' content='text/html; charset=UTF-8'></head>
+			<body>".$this->lang['environmentError']."</body></html>";
+				echo $html;
 			}
 			include_once dirname(__FILE__).'/../../../../../configuration.php';
 			$jconfig = new JConfig();
@@ -404,7 +408,9 @@ down();
 			$this->rewirteConfig($config);
 		}else if($_POST['cmstype']=='PhpWind'){
 			if(!file_exists(dirname(__FILE__).'/../../../../../data/sql_config.php') ){
-				die($this->lang['environmentError']);
+				$html = "<html><head><meta http-equiv='content-type' content='text/html; charset=UTF-8'></head>
+			<body>".$this->lang['environmentError']."</body></html>";
+				echo $html;
 			}
 			include_once dirname(__FILE__).'/../../../../../data/sql_config.php';
 			$config = array(
@@ -488,6 +494,20 @@ down();
 		$_POST['state']= 'running';
 		$this->rewirteConfig($_POST);
 
+		$conn = $this->conn();
+		if($conn==false){
+			echo '
+			<html>
+			<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			</head>
+			<body>
+			'.$this->lang['dbConfigWrong'].'
+			</body>
+			</html>
+			';	
+			exit();
+		}
 		echo '
 		<html>
 		<head>

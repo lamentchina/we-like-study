@@ -198,13 +198,14 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['money']);	
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['money']);				
 		}	
+		$quizObj = new m_quiz();
 		if(!($temp['imagePath']==''||$temp['imagePath']=='0')){
 			$chr++;
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['imagePath']);	
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);				
-		}	
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);	
+			$quizObj->imagePath = $temp['imagePath'];		
+		}			
 		
-		$quizObj = new m_quiz();
 		$quizObj->exportOne($temp['qid'],$objPHPExcel);		
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		
@@ -340,7 +341,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 
-		if($user['money']>$temp['money']){
+		if(intval($user['money'])>intval($temp['money'])){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
 
 			if(!isset($_SESSION)){

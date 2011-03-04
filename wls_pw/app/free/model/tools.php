@@ -201,6 +201,9 @@ class tools {
 			$title = str_replace('<br/>',"\n",$title);
 			$title = str_replace("<input width=\"100\" class=\"w_blank\" index=\"","[___",$title);
 			$title = str_replace("\"/>","___]",$title);
+			
+
+						
 			return $title;
 		}else{
 			$title = str_replace("<img src=\"","TEMP1",$title);

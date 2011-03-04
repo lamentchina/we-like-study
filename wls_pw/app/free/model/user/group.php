@@ -560,7 +560,7 @@ class m_user_group extends wls implements dbtable,fileLoad{
 				'ismenu'=>1,
 				'isshortcut'=>1,
 				'isquickstart'=>1,
-				'icon'=>'discuzx',
+				'icon'=>'joomla',
 				'description'=>'Joomla',
 				'money'=>'0'
 				);

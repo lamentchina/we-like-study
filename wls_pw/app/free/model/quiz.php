@@ -14,6 +14,7 @@ class m_quiz extends wls implements dbtable{
 	public $ids_questions = '';
 	public $cent = 0;
 	public $mycent = 0;	
+	public $imagePath = "";
 	
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
@@ -430,7 +431,12 @@ class m_quiz extends wls implements dbtable{
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
 			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $this->t->formatTitle($data[$i]['title'],true));
+			$title = $this->t->formatTitle($data[$i]['title'],true);
+			
+			$title = str_replace("<img src=\"".$this->imagePath,"[图]",$title);
+			$title = str_replace("\" />","[/图]",$title);
+			
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $title);
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
 			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
 			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $data[$i]['option1']);
