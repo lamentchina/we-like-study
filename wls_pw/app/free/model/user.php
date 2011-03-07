@@ -391,13 +391,13 @@ class m_user extends wls implements dbtable{
 
 		if(in_array($access,$accesss)){
 			if($withMoney){
-				if($user['money']>$user['accesss'][$access]){
+				if(intval($user['money'])>intval($user['accesss'][$access])){
 					$sql = "update ".$pfx."wls_user set money = money - ".$user['accesss'][$access]." where id = ".$user['id'];
 					mysql_query($sql,$conn);
 					if(!isset($_SESSION))session_start();
 					$_SESSION['wls_user']['money'] -= $user['accesss'][$access];
 	
-					if($this->c->cmstype!=''){//Synchro money
+					if($this->c->cmstype!='' && $user['username']!='guest'){//Synchro money
 						$obj = null;
 						eval("include_once dirname(__FILE__).'/integration/".$this->c->cmstype.".php';");
 						eval('$obj = new m_integration_'.$this->c->cmstype.'();');

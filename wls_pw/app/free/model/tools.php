@@ -185,6 +185,19 @@ class tools {
 
 		return $config[$key];
 	}
+	
+	public function formatImagePath($str,$path,$bool=false){
+		if($bool){
+
+								
+			return $str;
+		}else{
+			$str = str_replace("<img src=\"".$path,"[".$this->lang['image']."]",$str);
+			$str = str_replace("\" />","[/".$this->lang['image']."]",$str);
+			$str = str_replace("\"/>","[/".$this->lang['image']."]",$str);
+			return $str;
+		}
+	}
 
 	/**
 	 * When import some data from .html files , have to handle some html tags
@@ -200,24 +213,18 @@ class tools {
 			$title = str_replace('<br>',"\n",$title);
 			$title = str_replace('<br/>',"\n",$title);
 			$title = str_replace("<input width=\"100\" class=\"w_blank\" index=\"","[___",$title);
-			$title = str_replace("\"/>","___]",$title);
-			
-
-						
+			$title = str_replace("\"/>","___]",$title);						
 			return $title;
 		}else{
 			$title = str_replace("<img src=\"","TEMP1",$title);
-			$title = str_replace(".gif\" />","TEMP2",$title);
-			$title = str_replace(".png\">","TEMP2",$title);
-			$title = str_replace(".gif\">","TEMP2",$title);
-
+			$title = str_replace("\"/>","TEMP2",$title);
+			$title = str_replace("\" />","TEMP2",$title);
 			$title = str_replace("'","&acute;",$title);
 			$title = str_replace('"','&quot;',$title);
 			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
-
+			$title = str_replace("=","&#61;",$title);			
 			$title = str_replace("TEMP1","<img src=\"",$title);
-			$title = str_replace("TEMP2",".gif\" />",$title);
-			$title = str_replace("=","&#61;",$title);
+			$title = str_replace("TEMP2","\" />",$title);
 
 			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
 			$title = str_replace("___]","\"/>",$title);
@@ -433,7 +440,6 @@ class tools {
 		} else {//目录不存在
 			exit('The directory is not exist');
 		}
-
 	}
 
 	/**

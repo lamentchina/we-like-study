@@ -13,7 +13,7 @@ include_once dirname(__FILE__).'/../model/quiz/log.php';
 include_once dirname(__FILE__).'/../model/quiz/wrong.php';
 
 class install extends wls {
-	
+
 
 	public function createTables(){
 		$obj = new m_subject();
@@ -48,9 +48,9 @@ class install extends wls {
 
 		$obj = new m_user_group();
 		$obj->create();
-		//		$obj->importExcelWithU("F:/config.xls");
-		//		$obj->importExcelWithS("F:/config.xls");
-		//		$obj->importExcelWithG("F:/config.xls");
+		$obj->importExcelWithU("E:/Projects/WEBS/PHP/phpwind_UTF8_8_3/upload/apps/wls/file/demodata/config.xls");
+		$obj->importExcelWithS("E:/Projects/WEBS/PHP/phpwind_UTF8_8_3/upload/apps/wls/file/demodata/config.xls");
+		$obj->importExcelWithG("E:/Projects/WEBS/PHP/phpwind_UTF8_8_3/upload/apps/wls/file/demodata/config.xls");
 
 		$obj = new m_quiz_wrong();
 		$obj->create();
@@ -63,7 +63,7 @@ class install extends wls {
 		//		$obj->importOne('F:/quizlog.xls');
 		//		$obj->importOne('F:/quizlog2.xls');
 		//		$obj->importOne('F:/quizlog4.xls');
-
+		exit();
 		echo '
 		<html>
 		<head>
@@ -122,7 +122,7 @@ class install extends wls {
 
 		//		$obj = new m_knowledge();
 		//		$obj->importExcel($file);
-		
+
 		$html = "
 		<html>
 		<head>
@@ -133,17 +133,17 @@ class install extends wls {
 		</body>
 		</html>
 		";
-		
+
 		echo $html;
 	}
-	
-	public function installDemoData(){		
+
+	public function installDemoData(){
 		$userObj = new m_user();
 		$userObj->login('admin');
-		
+
 		$folder = $this->c->filePath.'demodata/import/';
 		$paperObj = new m_quiz_paper();
-		
+
 		if(isset($_REQUEST['id'])){
 			$paperObj->importOne($_REQUEST['id']);
 			echo 'ok';
@@ -152,10 +152,10 @@ class install extends wls {
 			$obj = new m_user_group();
 			$obj->importExcelWithG($file);
 			$obj->importExcelWithS($file);
-			$obj->importExcelWithU($file);			
-			
+			$obj->importExcelWithU($file);
+				
 			$filename = $this->t->getAllFiles($folder);
-//			print_r($filename);exit();
+			//			print_r($filename);exit();
 			$html = "
 <html>
 <head>
@@ -215,7 +215,7 @@ down();
 			';	
 			exit();
 		}
-		
+
 		$html = "
 			<html>
 				<head>
@@ -229,8 +229,11 @@ down();
 					<td width='40%'>
 						<select name='language' style='width:90%'>							
 							<option value='zh-cn'>简体中文</option>
+							<!--
 							<option value='zh-tw'>繁體中文</option>
 							<option value='en'>English</option>
+							<option value='zh-jp'>日本語</option>
+							-->
 						</select>
 					</td>
 					<td width='20%'><input type='submit' value='&nbsp;&nbsp;Next&nbsp;&nbsp;' /></td>
@@ -245,11 +248,11 @@ down();
 
 	public function checkEnvironment(){
 		$paths = array(
-			$this->c->filePath.'download/',
-			$this->c->filePath.'export/',
-			$this->c->filePath.'import/',
-			$this->c->filePath.'log/error.txt',
-			$this->c->filePath.'upload/',
+		$this->c->filePath.'download/',
+		$this->c->filePath.'export/',
+		$this->c->filePath.'import/',
+		$this->c->filePath.'log/error.txt',
+		$this->c->filePath.'upload/',
 			'config.php',
 		);
 		$console = $this->lang['checkEnvironment'].'<br/><br/>';
@@ -342,8 +345,10 @@ down();
 						<select name='cmstype' style='width:90%' >
 							<option value=''>".$this->lang['NOCMS']."</option>
 							<option value='DiscuzX'>DiscuzX</option>
+							<!--
 							<option value='Joomla'>Joomla</option>
 							<option value='PhpWind'>PhpWind</option>
+							-->
 						</select>
 					</td>
 				</tr>	
@@ -395,7 +400,7 @@ down();
 			}
 			include_once dirname(__FILE__).'/../../../../../configuration.php';
 			$jconfig = new JConfig();
-				
+
 			$config = array(
 				'dbname'=>$jconfig->db,
 				'dbhost'=>$jconfig->host,
@@ -526,7 +531,7 @@ down();
 	public function rewirteConfig($foo=null){
 		$file_name = "config.php";
 		if(!$file_handle = fopen($file_name,"w")){
-		echo '
+			echo '
 		<html>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

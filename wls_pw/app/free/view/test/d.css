@@ -1,0 +1,916 @@
+/*
+ * Ext Gantt 1.1
+ * Copyright(c) 2009-2010 Mats Bryntse Consulting
+ * 
+ * info@ext-scheduler.com
+ * 
+ * http://www.ext-scheduler.com/license.html
+ * 
+ * 
+ */
+
+
+ 
+.sch-weekview .sch-schedulerpanel .x-grid3-hd
+{
+    cursor:pointer;
+}
+
+.weekHeader
+{
+    display:block;
+    margin-bottom:2px;
+}
+
+table.sch-dayIndicator
+{
+    height:auto;
+    width:100%;
+}
+
+table.sch-dayIndicator td {
+    text-align:center;
+}
+
+table.sch-dayIndicator td.sch-headercell-last {
+	border-right-color:transparent;
+}
+
+tr.days td
+{
+    text-align:left;
+}
+
+.sch-weekheader .x-grid3-hd-inner
+{
+	padding-left:2px !important;
+	padding-right:0px !important;
+}
+
+
+
+ 
+.sch-monthview .sch-schedulerpanel .x-grid3-hd
+{
+    cursor:pointer;
+}
+
+
+ 
+.sch-dayview .sch-schedulerpanel .x-grid3-hd
+{
+    cursor:pointer;
+}
+
+
+.ext-ie.sch-dayview .x-resizable-handle-east
+{
+    right: 1px;
+}
+
+table.quarterMinuteIndicator
+{
+    height:auto;
+    width:100%;
+}
+
+table.quarterMinuteIndicator td {
+    text-align:left;
+	border:0 none;
+}
+
+.sch-quarterminuteheader .x-grid3-hd-inner
+{
+	padding-left:2px !important;
+	padding-right:2px !important;
+}
+
+ 
+ .sch-dayview .sch-schedulerpanel .x-grid3-hd
+{
+    cursor:pointer;
+}
+
+
+.ext-ie.sch-dayview .x-resizable-handle-east
+{
+    right: 1px;
+}
+
+table.hourIndicator
+{
+    height:auto;
+    width:100%;
+}
+
+table.hourIndicator td {
+    text-align:left;
+	border:0 none;
+}
+
+.sch-dayheader .x-grid3-hd-inner
+{
+	padding-left:0px !important;
+	padding-right:0px !important;
+}
+
+ 
+
+td.ux-grid-hd-group-cell,
+td.ux-grid-hd-nogroup-cell {
+	background: url(http://extjs.cachefly.net/ext-3.1.1/resources/images/default/grid/grid3-hrow.gif) repeat-x bottom;
+}
+
+
+td.ux-grid-hd-group-cell,
+td.ux-grid-hd-nogroup-cell {
+	background: url(http://extjs.cachefly.net/ext-3.1.1/resources/images/default/grid/grid3-hrow.gif) repeat-x bottom;
+}
+
+.sch-schedulerpanel table.sch-dayIndicator
+{
+	width:100%;
+}
+
+.sch-schedulerpanel .sch-daytableheader .x-grid3-hd-inner
+{
+	padding:0 !important;
+}
+
+.sch-schedulerpanel .sch-daytableheader td
+{
+	padding:4px 0 !important;
+}
+
+.sch-schedulerpanel .sch-dayIndicator td
+{
+	text-align:center;
+}
+
+.sch-schedulerpanel .sch-dayIndicator td:last-child
+{
+	border: 0 none;
+}
+
+
+ 
+
+.sch-schedulerpanel .x-grid3-cell,
+.ext-strict .ext-ie .sch-schedulerpanel .x-grid3-cell
+{
+	height: 16px;
+}
+
+
+.ext-ie .sch-schedulerpanel .x-grid3-cell
+{
+	height: 20px;
+}
+
+.sch-schedulerpanel .x-grid3-cell-inner
+{
+	height:inherit;
+}
+
+.sch-timetd,
+.ext-strict .ext-ie .sch-timetd .x-grid3-cell-inner
+{
+	height:auto;
+	padding-right:0 !important;
+}
+
+.ext-ie .sch-timetd .x-grid3-cell-inner
+{
+	height:100%;
+}
+
+.sch-timetd .x-grid3-cell-inner
+{
+	overflow:visible !important;
+    position:relative;
+	left:-1px; 
+    text-align:left;    
+}
+
+
+.sch-schedulerpanel .x-grid3-hd-inner{
+	-o-text-overflow: clip;
+	text-overflow: clip;
+}
+
+
+.x-view-selector {
+	z-index:5000;
+}
+
+
+.sch-schedulerpanel .x-grid3-row-alt {
+	background:transparent url(../images/altrow.png) repeat;
+}
+
+
+.sch-schedulerpanel .x-grid3-row {
+	position:relative;
+	z-index:3;
+}
+
+.ext-ie .sch-timeheader .x-grid3-hd-btn,
+.ext-ie .sch-timeheader .x-grid3-sort-icon
+{
+	display:none;
+}
+
+.sch-zone
+{
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  background: url(../images/zonebg.png) repeat;
+}
+
+
+.ext-ie .sch-schedulerpanel .x-grid3-body
+{
+	position:relative;
+	z-index:2;
+}
+
+
+.sch-gantt-item .x-resizable-handle
+{
+	opacity:0;
+	display:none;
+}
+
+.sch-gantt-item .x-resizable-handle-east
+{
+	right:-2px;
+}
+
+.ext-ie .sch-gantt-item .x-resizable-handle-east
+{
+	right:0;
+}
+
+.ext-ie .sch-gantt-item .x-resizable-handle-east,
+.ext-ie .sch-gantt-item .x-resizable-handle-west
+{
+	height:13px;
+}
+
+.sch-event-wrap .sch-event-hover .x-resizable-handle
+{
+	display:block;
+	opacity:1 !important;
+	filter: alpha(opacity=100);
+	background-position: left;
+	background-image: url(http://extjs.cachefly.net/ext-3.1.1/resources/images/default/sizer/e-handle.gif);
+}
+
+.x-resizable-over .sch-dependency
+{
+	display:none;
+}
+
+
+
+.sch-dragproxy .sch-gantt-item
+{
+	max-width:auto !important;
+    position:static !important;
+    margin-top:2px;
+	opacity:0.6;
+	filter: alpha(opacity=60);
+	border-style:dashed !important;
+}
+
+.sch-dragproxy .sch-gantt-item .x-resizable-handle
+{
+	opacity:0 !important;
+	filter: alpha(opacity=0);
+}
+
+.sch-dragproxy .x-dd-drag-ghost {
+	background-color:transparent;
+	border: 0 none;
+	color:#000000;
+	font:11px arial,helvetica,sans-serif;
+}
+
+.sch-dragproxy .x-dd-drag-ghost {
+	border: 0 none;
+	padding:3px 0;
+	white-space:nowrap;
+}
+
+
+
+
+ 
+
+.sch-schedulerpanel .x-grid3
+{
+  overflow:visible !important;
+}
+
+.sch-verticalLine
+{
+  cursor:pointer;
+  width:1px;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  border-left:1px dotted #aaa;
+  z-index:101;
+}
+
+div.sch-verticalLine:hover
+{
+  border-left-style:solid !important;
+}
+
+.sch-schedulerpanel .x-grid-group-hd
+{
+    position:relative;
+    z-index:101;
+}
+
+.sch-schedulerpanel .x-grid-group-hd
+{
+     
+}
+
+.sch-schedulerpanel .x-grid3-scroller
+{
+    z-index:101;
+}
+
+
+.sch-eventeditor
+{
+	background:#fff;
+    z-index:10000;
+    top:-1000px;
+    left:-1000px;
+    position:absolute;
+    -webkit-box-shadow: 1px 1px 1px rgba(100, 100, 100, 0.5);
+    -moz-box-shadow: 1px 1px 1px rgba(100, 100, 100, 0.5); 
+    -moz-border-radius-bottomleft:11px;
+    -moz-border-radius-bottomright:11px;
+    -moz-border-radius-topright:11px;
+    -webkit-border-bottom-right-radius: 11px;
+    -webkit-border-bottom-left-radius: 11px;
+    -webkit-border-top-right-radius: 11px;
+	border: 1px solid #DDDDDD;
+}
+
+.sch-eventeditor .x-border-layout-ct
+{
+	background:transparent;
+}
+
+.sch-eventeditor-timefields
+{
+	background:transparent;
+}
+
+.sch-eventeditor-timefields .x-panel-body
+{
+    -moz-border-radius-topright:11px;
+    -webkit-border-top-right-radius: 11px;
+	background:#DFE8F6;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.sch-eventeditor.x-panel-collapsed
+{
+	border: 0px none;
+}
+
+ 
+.sch-timetipwrap .sch-clock
+{
+    white-space:nowrap;
+    padding-left:26px;
+    min-height:17px;
+    position:relative;
+	height:20px;
+    background: url(../images/clock-bare.png) no-repeat left top !important;
+    display:block;
+}
+
+.ext-ie .sch-timetipwrap .sch-clock
+{
+    padding-left:6px;
+    background-image:none !important;
+}
+
+img.sch-hourIndicator
+{
+    background: url(../images/hourimg.png) no-repeat left top !important;
+    position:absolute;
+    left:10px;
+    top:0;
+    width:3px;
+    height:20px;
+}
+
+img.sch-minuteIndicator
+{
+    background: url(../images/minuteIndicator.png) no-repeat left top !important;
+    position:absolute;
+    left:10px;
+    top:0;
+    width:3px;
+    height:20px;
+}
+
+
+.ext-ie .sch-clock img
+{
+	display:none;
+}
+
+.sch-tip-ok
+{
+  padding-left:20px;
+  background: url(http://extjs.cachefly.net/ext-3.1.1/resources/images/default/dd/drop-yes.gif) no-repeat left top;
+}
+
+.sch-tip-notok
+{
+  padding-left:20px;
+  background: url(http://extjs.cachefly.net/ext-3.1.1/resources/images/default/dd/drop-no.gif) no-repeat left top;
+}
+
+
+.sch-dependency-line.sch-dependency-selected
+{
+	border-color:red !important;
+	z-index:2;
+}
+
+.sch-dependency-line
+ {
+	position:absolute;
+	border:1px solid blue;
+	overflow:hidden;
+	width:0;
+	height:0;
+ }
+ 
+.sch-dependency-arrow
+{
+	position:absolute;
+	height:9px;
+	width:10px;
+	overflow:hidden;
+}
+
+.sch-dependency-arrow.sch-dependency-selected
+{
+	background-position: 0 -9px;
+} 
+
+.sch-dependency-arrow-left
+ {
+	background: url(../images/dependencyarrowleft.png) no-repeat left top;
+ }
+ 
+ .sch-dependency-arrow-right
+ {
+	background: url(../images/dependencyarrowright.png) no-repeat left top;
+ }
+  
+.sch-dependency-arrow-down
+{
+	height:8px !important;
+	background: url(../images/dependencyarrowdown.png) no-repeat left top;
+}
+ 
+.x-dd-drag-proxy .sch-dependency-arrow-left,
+.x-dd-drag-proxy .sch-dependency-arrow-down,
+.x-dd-drag-proxy .sch-dependency-arrow-right
+{
+    position:static !important;
+    padding-top:5px;
+}
+ 
+.sch-gantt-terminal
+{
+	display:none;
+	background: url(../images/dependencyterminal.png) no-repeat;
+	height:16px;
+	width:16px;
+	position:absolute;
+	top: 0;
+	z-index:10000;
+	background-position: -6px 0;
+}
+
+.sch-gantt-terminal-start
+{
+	left: -15px;
+}
+
+.sch-gantt-terminal-end
+{
+	right: -15px;
+}
+
+.sch-gantt-terminal-end
+{
+	right: -15px;
+}
+
+.sch-event-hover .sch-gantt-terminal
+{
+	cursor:pointer !important;
+	display:block;
+}
+
+div.sch-gantt-terminal:hover
+{
+	background-position: -6px -16px;
+}
+
+.sch-event-wrap .sch-event-hover
+{
+	z-index:2000;
+}
+
+.x-dd-drag-proxy .sch-gantt-terminal
+{
+	display:none;
+}
+
+.x-dd-drag-proxy .sch-dependency
+{
+	display:none;
+}
+
+.sch-gantt-terminal-start-drophover
+{
+	background-position: 0 -48px !important;
+	width: 28px;
+	left:-21px;
+}
+ 
+.sch-gantt-terminal-end-drophover
+{
+	background-position: 0 -32px !important;
+	width: 28px;
+	right:-21px;
+}
+
+.sch-gantt-terminal-showall .sch-gantt-terminal
+{
+	display:block !important;
+}
+
+
+ 
+.sch-gantt-item
+{
+	position:static;
+}
+
+.sch-event-wrap
+{
+    z-index:1000;
+    min-width:1px;			 
+    position : absolute;
+    overflow:visible;
+}
+
+.sch-gantt-item
+{
+    cursor:pointer;
+}
+
+.sch-gantt-task .sch-event-selected
+{
+	border-color:red !important;
+}
+
+.sch-event-endsoutside .sch-gantt-task
+{
+	border-right:0 none;
+}
+
+
+.sch-event-startsoutside .sch-gantt-task
+{
+	border-left:0 none;
+}
+
+
+.sch-gantt-parenttask-bar
+{
+	cursor:pointer;
+    height:9px;
+	border:1px solid #3172D7;
+	background: #E5ECF5 url(../images/progressbg.gif) repeat-x 0 0;
+}
+
+
+.ext-strict .ext-ie .sch-gantt-parenttask-bar .sch-gantt-progress-bar,
+.sch-gantt-parenttask-bar .sch-gantt-progress-bar {
+	height:9px;
+	margin:0;
+}
+
+
+.ext-ie .sch-gantt-parenttask-bar .sch-gantt-progress-bar {
+	height:7px;
+	margin:0;
+	left:0; 
+	top:0;
+}
+
+.sch-gantt-parenttask-leftarrow
+{
+	border:0;
+	width:12px;
+	height:6px;
+	bottom:-6px;
+	left:0;
+	position:absolute;
+	background:url(../images/parentdownarrow.png) no-repeat 0 0;
+	overflow:hidden;
+}
+
+.sch-gantt-parenttask-rightarrow
+{
+	border:0;
+	width:12px;
+	height:6px;
+	bottom:-6px;
+	right:-2px;
+	position:absolute;
+	background:url(../images/parentdownarrow.png) no-repeat 0 0;
+	overflow:hidden;
+}
+
+.ext-ie .sch-gantt-parenttask-rightarrow
+{
+	right:0;
+}
+
+
+.ext-strict .ext-ie .sch-gantt-task-bar,
+.sch-gantt-task-bar
+{
+	border:1px solid #3172D7;
+    height:13px;
+    border-radius:2px;
+    -moz-border-radius:2px;
+    -webkit-border-radius: 2px;
+	overflow:hidden;
+	cursor:move;
+	background: #E5ECF5 url(../images/progressbg.gif) repeat-x 0 0;
+}
+
+.ext-ie .sch-gantt-task-bar
+{
+	overflow:visible;
+    height:15px;
+}
+
+.sch-gantt-progress-bar {
+	height:11px;
+	margin:1px;
+	background: #9CBFEE url(../images/progress.gif) repeat-x 0 -4px;
+	overflow:hidden;
+}
+
+.ext-strict .ext-ie .sch-gantt-progress-bar {
+	height:11px;
+}
+
+.ext-ie .sch-gantt-progress-bar {
+	margin:0;
+	position:relative;
+	left:1px;
+	top:1px;
+}
+
+.sch-gantt-label
+{
+    color: #888;
+    white-space:nowrap;
+}
+
+.sch-gantt-labelct-left
+{
+	position: absolute;
+    left: -600px;
+    width: 570px;
+    text-align: right;
+    top: 0;
+    margin-right:30px;
+}
+
+.sch-gantt-labelct-right
+{
+	position: absolute;
+    top: 0;
+    margin-left: 20px;
+}
+
+ 
+.sch-gantt-milestone .sch-gantt-label-right
+{
+	position: absolute;
+    left: 40px;
+}
+
+.sch-gantt-milestone-diamond
+{
+	background-image:url(../images/milestone.png);
+	background-color:transparent !important;	
+	border:0 none !important;
+	height:16px;
+	width:16px;
+	cursor:move;
+}
+
+.sch-gantt-milestone-diamond.sch-event-selected,
+.sch-gantt-milestone-diamond.sch-event-hover
+{
+	background-position: 0 -16px;	
+}
+
+
+.x-dd-drag-proxy .sch-gantt-label-left,
+.x-dd-drag-proxy .sch-gantt-label-right
+{
+    display:none;
+}
+
+
+
+.sch-gantt-prio-low .sch-gantt-progress-bar
+{
+	background-position:0 -44px;
+}
+
+.sch-gantt-parent-task .sch-gantt-prio-low,
+.sch-gantt-task .sch-gantt-prio-low
+{
+	border-color:#888;
+	background-position:0 -156px;
+}
+
+.sch-gantt-milestone .sch-gantt-prio-low
+{
+	background-position:0 -48px;
+}
+
+.sch-gantt-prio-low .sch-gantt-parenttask-leftarrow,
+.sch-gantt-prio-low .sch-gantt-parenttask-rightarrow
+{
+	background-position:0 -12px;
+}
+
+
+
+.sch-gantt-prio-high .sch-gantt-progress-bar
+{
+	background-position:0 -24px;
+}
+
+.sch-gantt-parent-task .sch-gantt-prio-high,
+.sch-gantt-task .sch-gantt-prio-high
+{
+	border-color:red;
+	background-position:0 -78px;
+}
+
+.sch-gantt-milestone .sch-gantt-prio-high
+{
+	background-position:0 -32px;
+}
+
+.sch-gantt-prio-high .sch-gantt-parenttask-leftarrow,
+.sch-gantt-prio-high .sch-gantt-parenttask-rightarrow
+{
+	background-position:0 -6px;
+}
+
+
+
+ 
+.sch-ganttpanel-highlightweekends .sch-dayheadercell-6,	
+.sch-ganttpanel-highlightweekends .sch-dayheadercell-0	
+ {
+	background: url(../images/grid3-hrow-weekend.gif) repeat-x;
+ }
+ 
+.sch-ganttpanel .x-grid3-row-alt {
+	background:transparent url(../images/altrow.png) repeat-x;
+}
+
+
+.sch-ganttpanel .x-grid3-unlocked .x-grid3-row {
+	position:relative;
+	z-index:auto;
+}
+
+.sch-ganttpanel .x-grid3-body {
+	overflow:hidden;
+}
+
+.sch-ganttpanel .x-grid3-row .x-grid3-cell, 
+.ext-strict .ext-ie .sch-ganttpanel .x-grid3-row .x-grid3-cell
+{
+    height:16px;
+}
+
+.ext-ie .sch-ganttpanel .x-grid3-row .x-grid3-cell{
+    height:22px;
+}
+
+.sch-todayLine
+{
+	border-left:2px dashed #999 !important;
+}
+
+.x-grid3-row {
+	border-bottom:0;
+	border-top:0;
+}
+
+.sch-gantt-parent-cell
+{
+	font-weight: bold !important;
+}
+
+.sch-loading
+{
+	background: url(http://extjs.cachefly.net/ext-3.1.1/resources/images/default/grid/loading.gif) no-repeat 0 0 !important;
+}
+
+
+
+
+div.ux-maximgb-tg-mastercell-wrap
+{
+    border: 0px none !important;
+    padding: 2px 0 !important;
+    margin: 0px !important;
+    height:18px;
+    overflow:hidden;
+}
+
+.ux-maximgb-tg-mastercell-wrap .x-grid3-cell-inner
+{
+	padding-left:3px;
+}
+
+.ux-maximgb-tg-uiwrap
+{
+	float: left; 
+	position: relative;
+	height: 18px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.ux-maximgb-tg-elbow-active
+{
+	cursor: pointer;
+}
+
+.sch-gantt-parent
+{
+	float:right;
+	height: 16px; 
+	width: 16px;
+	overflow: hidden;
+	background: url(../images/tree-arrows.gif) no-repeat;
+}
+
+.ux-maximgb-tg-elbow-minus
+{
+	background-position: 0 1px;
+}
+
+div.ux-maximgb-tg-elbow-minus:hover
+{
+	background-position: 0 -15px;
+}
+
+.ux-maximgb-tg-elbow-plus
+{
+	background-position: 0 -31px;
+}
+
+div.ux-maximgb-tg-elbow-plus:hover
+{
+	background-position: 0 -47px;
+}
+
+

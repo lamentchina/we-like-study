@@ -69,7 +69,7 @@ class wls{
 	 * @param $whatHappened It's an array
 	 * */
 	public function error($whatHappened,$arr=null){
-		//TODO
+		//TODO, should do something in database
 		$fileName = $this->c->filePath.'/log/error.txt';
 		$handle=fopen($fileName,"a");
 		fwrite($handle,$whatHappened."\n");

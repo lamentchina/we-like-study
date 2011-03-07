@@ -228,8 +228,6 @@ class m_subject extends wls implements dbtable,fileLoad{
 	public function importOne($path){}
 	
 	public function exportOne($path=null){}
-	
-	public function cumulative($column){}
 
 	/**
 	 * It's normally used for client-side's grid and table stuff.

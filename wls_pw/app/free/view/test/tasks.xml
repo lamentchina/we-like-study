@@ -1,237 +1,243 @@
 <Tasks>
   <Task>
     <Id>1</Id>
-    <Name>Planning</Name>
-    <StartDate>2010-01-18T00:00:00-08:00</StartDate>
-    <EndDate>2010-02-02T00:00:00-08:00</EndDate>
-    <PercentDone>40</PercentDone>
+    <Name>开发V1</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2010-09-01T00:00:00-08:00</StartDate>
+    <EndDate>2011-02-09T00:00:00-08:00</EndDate>
+    <PercentDone>100</PercentDone>
     <ParentId>null</ParentId>
     <IsLeaf>false</IsLeaf>
-    <Responsible></Responsible>
+    <Responsible>1</Responsible>
   </Task><Task>
     <Id>11</Id>
-    <Name>Investigate</Name>
-    <StartDate>2010-01-18T00:00:00-08:00</StartDate>
-    <EndDate>2010-01-28T00:00:00-08:00</EndDate>
-    <PercentDone>30</PercentDone>
+    <Name>基于JqueryUI,V0.8</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2010-09-01T12:00:00-07:00</StartDate>
+    <EndDate>2010-09-20T12:00:00-07:00</EndDate>
+    <PercentDone>80</PercentDone>
     <ParentId>1</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
     <Id>12</Id>
-    <Name>Assign resources</Name>
-    <StartDate>2010-01-28T00:00:00-08:00</StartDate>
-    <EndDate>2010-02-02T00:00:00-08:00</EndDate>
-    <PercentDone>0</PercentDone>
+    <Name>基于DWZ,V0.9</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2010-09-20T12:00:00-07:00</StartDate>
+    <EndDate>2010-10-20T12:00:00-07:00</EndDate>
+    <PercentDone>60</PercentDone>
     <ParentId>1</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
     <Id>13</Id>
-    <Name>Gather documents</Name>
-    <StartDate>2010-01-28T00:00:00-08:00</StartDate>
-    <EndDate>2010-02-02T00:00:00-08:00</EndDate>
-    <PercentDone>40</PercentDone>
+    <Name>基于EXT,V0.95</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2010-10-20T12:00:00-07:00</StartDate>
+    <EndDate>2011-02-09T00:00:00-08:00</EndDate>
+    <PercentDone>90</PercentDone>
     <ParentId>1</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>17</Id>
-    <Name>Report to management</Name>
-    <StartDate>2010-02-02T00:00:00-08:00</StartDate>
-    <EndDate>2010-02-02T00:00:00-08:00</EndDate>
-    <PercentDone>0</PercentDone>
-    <ParentId>1</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>4</Id>
-    <Name>Implementation Phase 1</Name>
-    <StartDate>2010-01-25T00:00:00-08:00</StartDate>
-    <EndDate>2010-03-20T12:00:00-07:00</EndDate>
-    <PercentDone>50</PercentDone>
-    <ParentId>null</ParentId>
     <IsLeaf>false</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>34</Id>
-    <Name>Preparation work</Name>
-    <StartDate>2010-01-25T00:00:00-08:00</StartDate>
-    <EndDate>2010-01-30T00:00:00-08:00</EndDate>
-    <PercentDone>0</PercentDone>
-    <ParentId>4</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>15</Id>
-    <Name>Build prototype</Name>
-    <StartDate>2010-01-30T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-08T00:00:00-08:00</EndDate>
-    <PercentDone>40</PercentDone>
-    <ParentId>4</ParentId>
-    <IsLeaf>false</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>20</Id>
-    <Name>Step 1</Name>
-    <StartDate>2010-01-30T12:00:00-08:00</StartDate>
-    <EndDate>2010-02-09T12:00:00-08:00</EndDate>
-    <PercentDone>30</PercentDone>
-    <ParentId>15</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>19</Id>
-    <Name>Step 2</Name>
-    <StartDate>2010-02-17T12:00:00-08:00</StartDate>
-    <EndDate>2010-02-22T00:00:00-08:00</EndDate>
-    <PercentDone>40</PercentDone>
-    <ParentId>15</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>18</Id>
-    <Name>Step 3</Name>
-    <StartDate>2010-02-25T00:00:00-08:00</StartDate>
-    <EndDate>2010-03-07T00:00:00-08:00</EndDate>
+    <Id>1301</Id>
+    <Name>传统界面</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2010-10-20T12:00:00-07:00</StartDate>
+    <EndDate>2010-11-20T12:00:00-07:00</EndDate>
     <PercentDone>100</PercentDone>
-    <ParentId>15</ParentId>
+    <ParentId>13</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>21</Id>
-    <Name>Follow up with customer</Name>
-    <StartDate>2010-03-04T00:00:00-08:00</StartDate>
-    <EndDate>2010-03-08T00:00:00-08:00</EndDate>
-    <PercentDone>60</PercentDone>
-    <ParentId>15</ParentId>
+    <Id>1302</Id>
+    <Name>集成qWiki</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2010-11-20T12:00:00-07:00</StartDate>
+    <EndDate>2011-01-01T12:00:00-07:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>13</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>14</Id>
-    <Name>Evaluate chipsets</Name>
-    <StartDate>2010-02-25T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-07T12:00:00-08:00</EndDate>
-    <PercentDone>30</PercentDone>
-    <ParentId>4</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>16</Id>
-    <Name>Choose technology suite</Name>
-    <StartDate>2010-03-10T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-20T12:00:00-07:00</EndDate>
-    <PercentDone>30</PercentDone>
-    <ParentId>4</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>5</Id>
-    <Name>Customer approval</Name>
-    <StartDate>2010-03-08T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-08T12:00:00-08:00</EndDate>
-    <PercentDone>0</PercentDone>
-    <ParentId>null</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>6</Id>
-    <Name>Implementation Phase 2</Name>
-    <StartDate>2010-03-08T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-18T12:00:00-07:00</EndDate>
-    <PercentDone>50</PercentDone>
-    <ParentId>null</ParentId>
+    <Id>1303</Id>
+    <Name>集成CMS</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-01-01T12:00:00-07:00</StartDate>
+    <EndDate>2011-01-30T12:00:00-07:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>13</ParentId>
     <IsLeaf>false</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>25</Id>
-    <Name>Task 3</Name>
-    <StartDate>2010-03-08T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-18T12:00:00-07:00</EndDate>
+    <Id>130301</Id>
+    <Name>DiscuzX</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-01-01T12:00:00-07:00</StartDate>
+    <EndDate>2011-01-10T12:00:00-07:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>1303</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>130302</Id>
+    <Name>Joomla</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-01-10T12:00:00-07:00</StartDate>
+    <EndDate>2011-01-20T12:00:00-07:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>1303</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>130303</Id>
+    <Name>PhpWind</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-01-20T12:00:00-07:00</StartDate>
+    <EndDate>2011-01-28T12:00:00-07:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>1303</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>1304</Id>
+    <Name>导入测试数据</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-01-30T12:00:00-07:00</StartDate>
+    <EndDate>2011-02-09T00:00:00-08:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>13</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>2</Id>
+    <Name>开发V2</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-02-09T00:00:00-08:00</StartDate>
+    <EndDate>2011-12-09T00:00:00-08:00</EndDate>
     <PercentDone>10</PercentDone>
-    <ParentId>6</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>26</Id>
-    <Name>Task 2</Name>
-    <StartDate>2010-03-08T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-18T12:00:00-07:00</EndDate>
-    <PercentDone>20</PercentDone>
-    <ParentId>6</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>27</Id>
-    <Name>Task 1</Name>
-    <StartDate>2010-03-08T12:00:00-08:00</StartDate>
-    <EndDate>2010-03-18T12:00:00-07:00</EndDate>
-    <PercentDone>20</PercentDone>
-    <ParentId>6</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>10</Id>
-    <Name>Customer approval 2</Name>
-    <StartDate>2010-03-17T12:00:00-07:00</StartDate>
-    <EndDate>2010-03-17T12:00:00-07:00</EndDate>
-    <PercentDone>0</PercentDone>
-    <ParentId>null</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>8</Id>
-    <Name>Production phase 1</Name>
-    <StartDate>2010-03-22T12:00:00-07:00</StartDate>
-    <EndDate>2010-05-08T11:00:00-07:00</EndDate>
-    <PercentDone>40</PercentDone>
     <ParentId>null</ParentId>
     <IsLeaf>false</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>22</Id>
-    <Name>Assemble</Name>
-    <StartDate>2010-03-22T12:00:00-07:00</StartDate>
-    <EndDate>2010-04-07T12:00:00-07:00</EndDate>
+    <Id>2001</Id>
+    <Name>搭建测试站点</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-02-09T00:00:00-08:00</StartDate>
+    <EndDate>2011-06-09T00:00:00-08:00</EndDate>
+    <PercentDone>30</PercentDone>
+    <ParentId>2</ParentId>
+    <IsLeaf>false</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>200101</Id>
+    <Name>公务员考试</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-02-09T00:00:00-08:00</StartDate>
+    <EndDate>2011-03-01T00:00:00-08:00</EndDate>
     <PercentDone>50</PercentDone>
-    <ParentId>8</ParentId>
+    <ParentId>2001</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>23</Id>
-    <Name>Load SW</Name>
-    <StartDate>2010-04-06T00:00:00-07:00</StartDate>
-    <EndDate>2010-04-21T23:00:00-07:00</EndDate>
-    <PercentDone>20</PercentDone>
-    <ParentId>8</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>24</Id>
-    <Name>Basic testing (inc some test)</Name>
-    <StartDate>2010-04-22T12:00:00-07:00</StartDate>
-    <EndDate>2010-05-08T11:00:00-07:00</EndDate>
-    <PercentDone>50</PercentDone>
-    <ParentId>8</ParentId>
-    <IsLeaf>true</IsLeaf>
-    <Responsible></Responsible>
-  </Task><Task>
-    <Id>9</Id>
-    <Name>Final testing</Name>
-    <StartDate>2010-05-07T12:00:00-07:00</StartDate>
-    <EndDate>2010-05-15T12:00:00-07:00</EndDate>
+    <Id>200102</Id>
+    <Name>GRE考试</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-03-01T00:00:00-08:00</StartDate>
+    <EndDate>2011-03-20T00:00:00-08:00</EndDate>
     <PercentDone>0</PercentDone>
-    <ParentId>null</ParentId>
+    <ParentId>2001</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
   </Task><Task>
-    <Id>7</Id>
-    <Name>Delivery</Name>
-    <StartDate>2010-05-14T12:00:00-07:00</StartDate>
-    <EndDate>2010-05-14T12:00:00-07:00</EndDate>
-    <PercentDone>40</PercentDone>
-    <ParentId>null</ParentId>
+    <Id>200103</Id>
+    <Name>高中环境</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-03-20T00:00:00-08:00</StartDate>
+    <EndDate>2011-04-05T00:00:00-08:00</EndDate>
+    <PercentDone>0</PercentDone>
+    <ParentId>2001</ParentId>
     <IsLeaf>true</IsLeaf>
     <Responsible></Responsible>
-  </Task>
+  </Task><Task>
+    <Id>200104</Id>
+    <Name>培训结构环境</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-04-05T00:00:00-08:00</StartDate>
+    <EndDate>2011-04-30T00:00:00-08:00</EndDate>
+    <PercentDone>10</PercentDone>
+    <ParentId>2001</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>2002</Id>
+    <Name>提供多国语言包</Name>
+    <Who>范小严</Who>
+    <StartDate>2011-02-11T00:00:00-08:00</StartDate>
+    <EndDate>2011-06-09T00:00:00-08:00</EndDate>
+    <PercentDone>30</PercentDone>
+    <ParentId>2</ParentId>
+    <IsLeaf>false</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>200201</Id>
+    <Name>简体中文</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-02-11T00:00:00-08:00</StartDate>
+    <EndDate>2011-04-09T00:00:00-08:00</EndDate>
+    <PercentDone>90</PercentDone>
+    <ParentId>2002</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>200202</Id>
+    <Name>繁体中文</Name>
+    <Who>范小严 </Who>
+    <StartDate>2011-03-01T00:00:00-08:00</StartDate>
+    <EndDate>2011-03-15T00:00:00-08:00</EndDate>
+    <PercentDone>30</PercentDone>
+    <ParentId>2002</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>200203</Id>
+    <Name>日语</Name>
+    <Who>范小严 </Who>
+    <StartDate>2011-03-02T00:00:00-08:00</StartDate>
+    <EndDate>2011-04-10T00:00:00-08:00</EndDate>
+    <PercentDone>30</PercentDone>
+    <ParentId>2002</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>200204</Id>
+    <Name>英语</Name>
+    <Who>wei1224hf</Who>
+    <StartDate>2011-04-15T00:00:00-08:00</StartDate>
+    <EndDate>2011-05-01T00:00:00-08:00</EndDate>
+    <PercentDone>10</PercentDone>
+    <ParentId>2002</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>2003</Id>
+    <Name>BUG纠正</Name>
+    <Who>First Eye</Who>
+    <StartDate>2011-02-11T00:00:00-08:00</StartDate>
+    <EndDate>2011-06-09T00:00:00-08:00</EndDate>
+    <PercentDone>30</PercentDone>
+    <ParentId>2</ParentId>
+    <IsLeaf>false</IsLeaf>
+    <Responsible></Responsible>
+  </Task><Task>
+    <Id>200301</Id>
+    <Name>IE6兼容</Name>
+    <Who>First Eye</Who>
+    <StartDate>2011-02-11T00:00:00-08:00</StartDate>
+    <EndDate>2011-03-01T00:00:00-08:00</EndDate>
+    <PercentDone>100</PercentDone>
+    <ParentId>2003</ParentId>
+    <IsLeaf>true</IsLeaf>
+    <Responsible></Responsible>
+  </Task>  
 </Tasks>

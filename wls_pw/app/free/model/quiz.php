@@ -2,10 +2,10 @@
 include_once dirname(__FILE__).'/question.php';
 
 class m_quiz extends wls implements dbtable{
-	
-	public $id_quiz = 0;	
+
+	public $id_quiz = 0;
 	public $quizData = array();
-	public $count_giveup = 0;		
+	public $count_giveup = 0;
 	public $count_right = 0;
 	public $count_wrong = 0;
 	public $count_manual = 0;
@@ -13,9 +13,9 @@ class m_quiz extends wls implements dbtable{
 	public $questions = array();
 	public $ids_questions = '';
 	public $cent = 0;
-	public $mycent = 0;	
+	public $mycent = 0;
 	public $imagePath = "";
-	
+
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -30,9 +30,9 @@ class m_quiz extends wls implements dbtable{
 		}
 		if(!isset($data['author'])){
 			$user = new m_user();
-			$me = $user->getMyInfo();			
+			$me = $user->getMyInfo();
 			$data['author'] = $me['username'];
-		}				
+		}
 
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -42,9 +42,9 @@ class m_quiz extends wls implements dbtable{
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
-	
+
 	public function delete($ids){}
-	
+
 	public function update($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -60,10 +60,10 @@ class m_quiz extends wls implements dbtable{
 		$sql = substr($sql,0,strlen($sql)-1);
 		$sql .= " where id =".$id;
 
-		$res = mysql_query($sql,$conn);		
+		$res = mysql_query($sql,$conn);
 		return $res;
 	}
-	
+
 	public function create(){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
@@ -96,9 +96,9 @@ class m_quiz extends wls implements dbtable{
 		mysql_query($sql,$conn);
 		return true;
 	}
-	
+
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){}
-	
+
 	public function importOne($phpexcel){
 		$currentSheet = $phpexcel->getSheetByName($this->lang['question']);
 		$allRow = $currentSheet->getHighestRow();
@@ -177,7 +177,7 @@ class m_quiz extends wls implements dbtable{
 			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['layout']){
 				$keys['layout'] = $i;
-			}			
+			}
 		}
 
 		for($i=3;$i<=$allRow;$i++){
@@ -186,15 +186,15 @@ class m_quiz extends wls implements dbtable{
 			$title = str_replace("[/".$this->lang['image']."]","\">",$title);
 			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
 			$title = str_replace("___]","\"/>",$title);
-				
+
 			$question = array(
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
 				'title'=>$title,
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
 				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
 				'id_quiz'=>$this->id_quiz	
-			);			
-				
+			);
+
 			if(isset($keys['belongto'])){
 				$question['belongto']=$currentSheet->getCell($keys['belongto'].$i)->getValue();
 			}else{
@@ -208,7 +208,7 @@ class m_quiz extends wls implements dbtable{
 			if(isset($keys['cent'])){
 				$question['cent']=$currentSheet->getCell($keys['cent'].$i)->getValue();
 			}
-			
+				
 			$optionlength = 1;
 			if(isset($keys['option2']) ){
 				$value = $this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
@@ -263,20 +263,23 @@ class m_quiz extends wls implements dbtable{
 					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
 					$question['option7'] = $value;
 				}
-			}				
+			}
 			if(isset($keys['optionlength']) && ( $currentSheet->getCell($keys['optionlength'].$i)->getValue()!='') ){
 				$optionlength = $currentSheet->getCell($keys['optionlength'].$i)->getValue();
 			}
 			$question['optionlength'] = $optionlength;
-				
+
 			if(isset($keys['description'])){
-				$question['description']=$this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
+				$description = $this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
+				$description = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$description);
+				$description = str_replace("[/".$this->lang['image']."]","\">",$description);
+				$question['description'] = $description;
 			}
 			if(isset($keys['path_listen'])){
 				$value = $currentSheet->getCell($keys['path_listen'].$i)->getValue();
 				if($value!=''){
 					$question['path_listen']=$this->quizData['imagePath'].$value;
-				}				
+				}
 			}
 			if(isset($keys['count_used'])){
 				$question['count_used']=$currentSheet->getCell($keys['count_used'].$i)->getValue();
@@ -312,14 +315,14 @@ class m_quiz extends wls implements dbtable{
 				$value = $currentSheet->getCell($keys['layout'].$i)->getValue();
 				if($value!=''){
 					$question['layout']=$this->t->formatLayout($value,true);
-				}				
-			}			
+				}
+			}
 			$this->questions[$question['index']] = $question;
 		}
-		
+
 		$this->saveQuestions();
 	}
-	
+
 	public function saveQuestions(){
 		$quesObj = new m_question();
 		$questions = $this->questions;
@@ -342,8 +345,8 @@ class m_quiz extends wls implements dbtable{
 			$temp = $this->update($data);
 			return $temp;
 		}
-	}	
-	
+	}
+
 	public function cumulative($column){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -370,17 +373,17 @@ class m_quiz extends wls implements dbtable{
 		}
 		mysql_query($sql,$conn);
 	}
-	
+
 	/**
 	 * Export all the questions of one quiz to an Excel
 	 * TODO export to a PDF ?
-	 * 
-	 * @param $id 
+	 *
+	 * @param $id
 	 * */
 	public function exportOne($id,$objPHPExcel){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "select * from ".$pfx."wls_question where id_quiz = ".$id;
 		$res = mysql_query($sql,$conn);
 		$data = array();
@@ -391,7 +394,7 @@ class m_quiz extends wls implements dbtable{
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['question']);
-		
+
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
@@ -409,6 +412,7 @@ class m_quiz extends wls implements dbtable{
 		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->lang['option'].'G');
 		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->lang['optionlength']);
 		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->lang['ques_description']);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(20);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(5);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(5);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(5);
@@ -430,24 +434,21 @@ class m_quiz extends wls implements dbtable{
 		for($i=0;$i<count($data);$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));
-			$title = $this->t->formatTitle($data[$i]['title'],true);
-			
-			$title = str_replace("<img src=\"".$this->imagePath,"[图]",$title);
-			$title = str_replace("\" />","[/图]",$title);
-			
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $title);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));			
+				
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['title'],true),$this->imagePath) );
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
 			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $data[$i]['option1']);
-			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $data[$i]['option2']);
-			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $data[$i]['option3']);
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $data[$i]['option4']);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option1'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option2'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option3'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option4'],true),$this->imagePath) );
 			$objPHPExcel->getActiveSheet()->setCellValue('K'.$index, $data[$i]['option5']);
 			$objPHPExcel->getActiveSheet()->setCellValue('L'.$index, $data[$i]['option6']);
 			$objPHPExcel->getActiveSheet()->setCellValue('M'.$index, $data[$i]['option7']);
 			$objPHPExcel->getActiveSheet()->setCellValue('N'.$index, $data[$i]['optionlength']);
-			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $data[$i]['description']);
+			
+			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['description'],true),$this->imagePath) );
 			$objPHPExcel->getActiveSheet()->setCellValue('P'.$index, $data[$i]['path_listen']);
 			$objPHPExcel->getActiveSheet()->setCellValue('Q'.$index, $data[$i]['count_used']);
 			$objPHPExcel->getActiveSheet()->setCellValue('R'.$index, $data[$i]['count_right']);

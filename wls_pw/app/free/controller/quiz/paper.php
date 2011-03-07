@@ -289,14 +289,14 @@ down();
 			$me = $userObj->getMyInfo();
 		    $userObj->id = $me['id'];
 		}
+		
 		$foo = $userObj->checkMyaccess('1107');
-
 		if($foo==false){
-			echo "access request";
+			echo $this->lang['accessDenied'];
 			exit();
 		}else{
 			if($this->m->checkMoney($_REQUEST['id'])==false){
-				echo "money request";
+				echo $this->lang['moneyRequest'];
 				exit();
 			}
 		}

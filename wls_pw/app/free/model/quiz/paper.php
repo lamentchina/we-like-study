@@ -341,6 +341,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 
+		if(intval($temp['money'])>0 && $user['username']=='guest')return false;
 		if(intval($user['money'])>intval($temp['money'])){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
 
@@ -350,7 +351,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 			$_SESSION['wls_user']['money'] -= $temp['money'];
 			mysql_query($sql,$conn);
 
-			if($this->c->cmstype!=''){
+			if($this->c->cmstype!='' && $user['username']!='guest' ){
 				$obj = null;
 				eval("include_once dirname(__FILE__).'/../integration/".$this->c->cmstype.".php';");
 				eval('$obj = new m_integration_'.$this->c->cmstype.'();');
