@@ -1,7 +1,7 @@
 <?php
 include_once dirname(__FILE__).'/../model/subject.php';
-//include_once dirname(__FILE__).'/../model/subject/knowledge.php';
-//include_once dirname(__FILE__).'/../model/subject/knowledge/log.php';
+include_once dirname(__FILE__).'/../model/subject/knowledge.php';
+include_once dirname(__FILE__).'/../model/subject/knowledge/log.php';
 include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
@@ -34,11 +34,12 @@ class install extends wls {
 		$obj = new m_subject();
 		$obj->create();
 
-		//		$obj = new m_subject_knowledge();
-		//		$obj->create();
-		//
-		//		$obj = new m_subject_knowledge_log();
-		//		$obj->create();
+		$obj = new m_subject_knowledge();
+		$obj->create();
+		$obj->importAll($this->c->filePath."demodata/config.xls");
+
+		$obj = new m_subject_knowledge_log();
+		$obj->create();
 
 		$obj = new m_user();
 		$obj->create();
@@ -48,9 +49,9 @@ class install extends wls {
 
 		$obj = new m_user_group();
 		$obj->create();
-		$obj->importExcelWithU("E:/Projects/WEBS/PHP/phpwind_UTF8_8_3/upload/apps/wls/file/demodata/config.xls");
-		$obj->importExcelWithS("E:/Projects/WEBS/PHP/phpwind_UTF8_8_3/upload/apps/wls/file/demodata/config.xls");
-		$obj->importExcelWithG("E:/Projects/WEBS/PHP/phpwind_UTF8_8_3/upload/apps/wls/file/demodata/config.xls");
+		$obj->importExcelWithU($this->c->filePath."demodata/config.xls");
+		$obj->importExcelWithS($this->c->filePath."demodata/config.xls");
+		$obj->importExcelWithG($this->c->filePath."demodata/config.xls");
 
 		$obj = new m_quiz_wrong();
 		$obj->create();
@@ -153,7 +154,7 @@ class install extends wls {
 			$obj->importExcelWithG($file);
 			$obj->importExcelWithS($file);
 			$obj->importExcelWithU($file);
-				
+
 			$filename = $this->t->getAllFiles($folder);
 			//			print_r($filename);exit();
 			$html = "
