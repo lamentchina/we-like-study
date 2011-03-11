@@ -58,13 +58,17 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					type : "POST",
 					success : function(msg) {
 						thisObj.state = 4;
-						var obj = thisObj.answersData = jQuery.parseJSON(msg);
-						for (var i = 0; i < obj.length; i++) {
-							thisObj.questions[i].answerData = obj[i];
-							thisObj.questions[i].setMyAnswer();
+						if(msg=='wrong'){
+							alert(il8n.log_notfound);
+						}else{
+							var obj = thisObj.answersData = jQuery.parseJSON(msg);
+							for (var i = 0; i < obj.length; i++) {
+								thisObj.questions[i].answerData = obj[i];
+								thisObj.questions[i].setMyAnswer();
+							}
+							thisObj.addDescriptions();
+							eval(nextFunction);
 						}
-						thisObj.addDescriptions();
-						eval(nextFunction);
 					}
 				});
 	},
@@ -154,7 +158,8 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '165101') {
 				tb.add({
-					text : il8n.importFile,
+					iconCls: 'bt_importFile',
+					tooltip : il8n.importFile,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_q_p_l_i',
@@ -170,9 +175,13 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 				});
 			} else if (access[i] == '165102') {
 				tb.add({
-					text : il8n.exportFile,
+					iconCls: 'bt_exportFile',
+					tooltip : il8n.exportFile,
 					handler : function() {
-						if(Ext.getCmp(domid).getSelectionModel().selections.items.length == 0)return;
+						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
 						var win = new Ext.Window({
 							id : 'w_q_p_l_e',
 							layout : 'fit',
@@ -187,8 +196,13 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 				});
 			} else if (access[i] == '165103') {
 				tb.add({
-					text : il8n.deleteItems,
+					iconCls: 'bt_deleteItems',
+					tooltip : il8n.deleteItems,
 					handler : function() {
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 						if(Ext.getCmp(domid).getSelectionModel().selections.items.length == 0)return;
 						Ext.Ajax.request({
 							method : 'POST',
@@ -208,9 +222,13 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 				});
 			} else if (access[i] == '165107') {
 				tb.add({
-					text : il8n.log_review,
+					iconCls: 'bt_Quiz_Paper',
+					tooltip : il8n.log_review,
 					handler : function() {
-						
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();
@@ -286,9 +304,13 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '125301') {
 				tb.add({
-					text : il8n.log_review,
+					iconCls: 'bt_Quiz_Paper',
+					tooltip : il8n.log_review,
 					handler : function() {
-
+						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
 						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();

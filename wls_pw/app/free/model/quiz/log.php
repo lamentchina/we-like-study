@@ -336,13 +336,23 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$quizObj->mycent = $mycent;
 		$quizObj->cumulative('score');
 		$quizObj->cumulative('count_used');
-
 	}
 
-	public function getLogAnswers(){
+	/**
+	 * Read log from cache first. 
+	 * If cache do not exist, then create the cache ,then delete the question_log from table. 
+	 * */
+	public function getLogAnswers(){		
+		$cacheFilePath = $this->c->filePath.'cache/quizlog/'.$this->id.'.json';
+		if(file_exists($cacheFilePath)){	
+			$content = file( $cacheFilePath );		
+			$content = implode("\n", $content);
+			return json_decode($content,true);		
+		}	
+		
 		$pfx = $this->c->dbprefix;
-		$conn = $this->conn();
-
+		$conn = $this->conn();		
+		
 		$sql = "select application,id,ids_question from ".$pfx."wls_quiz_log where id = ".$this->id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
@@ -351,26 +361,35 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			
 			".$pfx."wls_question.id as id_question,
 			".$pfx."wls_question_log.myanswer
-			 from ".$pfx."wls_question
-			LEFT JOIN  
-			".$pfx."wls_question_log
-				ON ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
-			
-			where ".$pfx."wls_question.id in (".$temp['ids_question'].")
-			 order by ".$pfx."wls_question.id
+			 from ".$pfx."wls_question,".$pfx."wls_question_log
+			 
+			 where ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
+			 order by  ".$pfx."wls_question.id
+			 
+
 			  ";					
 		}else{
 			$sql = "select id,ids_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
 		}
 		$res = mysql_query($sql,$conn);
-		if($res==false){
-			echo $sql;
+		if($res==false || mysql_fetch_assoc($res)==false ){
+			$this->error("Question Log do not exist,about the quizlog ".$this->id);
+			return false;
 		}else{
 			$arr = array();
 			while($temp = mysql_fetch_assoc($res)){
 				if($temp['myanswer']==''||$temp['myanswer']==null)$temp['myanswer'] = 'I_DONT_KNOW';
 				$arr[$temp['id_question']] = $temp['myanswer'];
 			}
+			
+			$content = json_encode($arr);
+			$handle=fopen($cacheFilePath,"a");
+			fwrite($handle,$content);
+			fclose($handle);
+			
+			$sql = "delete from ".$pfx."wls_question_log where id_quiz_log = ".$this->id;
+			mysql_query($sql,$conn);
+	
 			return $arr;
 		}
 	}

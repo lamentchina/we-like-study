@@ -1,15 +1,15 @@
 <?php
-print_r($_SERVER);exit();
+//print_r($_SERVER);exit();
 session_start();
 
-$_SESSION = null;
-session_destroy();
+//$_SESSION = null;
+//session_destroy();
 
 
 
 //print_r(session_name('site'));
 print_r($_SESSION);
-print_r($_COOKIE);
+//print_r($_COOKIE);
 
 
 //$_SESSION['wls_user'] = array(

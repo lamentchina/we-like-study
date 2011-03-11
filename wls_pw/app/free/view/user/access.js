@@ -113,7 +113,8 @@ wls.user.access = Ext.extend(wls, {
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '190701') {
 					tb.add({
-						text : il8n.importFile,
+						iconCls: 'bt_importFile',
+						tooltip : il8n.importFile,
 						handler : function() {
 							var win = new Ext.Window({
 								title : il8n.importFile,
@@ -131,7 +132,8 @@ wls.user.access = Ext.extend(wls, {
 					});
 				} else if (access[i] == '190702') {
 					tb.add({
-						text : il8n.exportFile,
+						iconCls: 'bt_exportFile',
+						tooltip : il8n.exportFile,
 						handler : function() {
 							var win = new Ext.Window({
 								title : il8n.exportFile,

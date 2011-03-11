@@ -148,7 +148,8 @@ wls.subject = Ext.extend(wls, {
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '190701') {
 				tb.add({
-					text : il8n.importFile,
+					iconCls: 'bt_importFile',
+					tooltip : il8n.importFile,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_s_gp_l_i',
@@ -164,7 +165,8 @@ wls.subject = Ext.extend(wls, {
 				});
 			} else if (access[i] == '190702') {
 				tb.add({
-					text : il8n.exportFile,
+					iconCls: 'bt_exportFile',
+					tooltip : il8n.exportFile,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_s_gp_l_e',
@@ -180,7 +182,8 @@ wls.subject = Ext.extend(wls, {
 				});
 			} else if (access[i] == '190703') {
 				tb.add({
-					text : il8n.deleteItems,
+					iconCls: 'bt_deleteItems',
+					tooltip : il8n.deleteItems,
 					handler : function() {
 						Ext.Ajax.request({
 							method : 'POST',
@@ -202,7 +205,8 @@ wls.subject = Ext.extend(wls, {
 				grid.on("afteredit", afteredit, grid);
 			} else if (access[i] == '190705') {
 				tb.add({
-							text : il8n.add,
+							iconCls: 'bt_add',
+							tooltip : il8n.add,
 							handler : function() {
 								var form = thisObj.getAddItemForm();
 								var w = new Ext.Window({

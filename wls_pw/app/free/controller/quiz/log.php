@@ -93,6 +93,10 @@ class quiz_log extends quiz{
 
 		$this->m->id = $id;
 		$ques_ = $this->m->getLogAnswers();
+		if($ques_==false){
+			echo 'wrong';
+			return;
+		}
 
 		$questionObj = new m_question();
 		$answers = $questionObj->getAnswers($ques_);

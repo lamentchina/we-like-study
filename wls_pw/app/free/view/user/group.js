@@ -114,7 +114,8 @@ wls.user.group = Ext.extend(wls, {
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '1301') {
 				tb.add({
-					text : il8n.importFile,
+					iconCls: 'bt_importFile',
+					tooltip : il8n.importFile,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_u_g_l_i',
@@ -130,7 +131,8 @@ wls.user.group = Ext.extend(wls, {
 				});
 			} else if (access[i] == '1302') {
 				tb.add({
-					text : il8n.exportFile,
+					iconCls: 'bt_exportFile',
+					tooltip : il8n.exportFile,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_u_g_l_e',
@@ -146,10 +148,13 @@ wls.user.group = Ext.extend(wls, {
 				});
 			} else if (access[i] == '1303') {
 				tb.add({
-					text : il8n.deleteItems,
+					iconCls: 'bt_deleteItems',
+					tooltip : il8n.deleteItems,
 					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null)
-							return;// TODO
+						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
 						Ext.Ajax.request({
 							method : 'POST',
 							url : thisObj.config.AJAXPATH
@@ -170,10 +175,13 @@ wls.user.group = Ext.extend(wls, {
 				grid.on("afteredit", afteredit, grid);
 			} else if (access[i] == '130401') {
 				tb.add({
-					text : il8n.access,
+					iconCls: 'bt_access',
+					tooltip : il8n.access,
 					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null)
-							return;// TODO
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 						var id = Ext.getCmp(domid).getSelectionModel().selection.record.data.id_level;
 						var tree = new Ext.tree.TreePanel({
 							id : 'w_u_g_l_p_t',
@@ -241,8 +249,13 @@ wls.user.group = Ext.extend(wls, {
 				});
 			} else if (access[i] == '130402') {
 				tb.add({
-					text : il8n.subject,
+					iconCls: 'bt_subject',
+					tooltip : il8n.subject,
 					handler : function() {
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 						var id = Ext.getCmp(domid).getSelectionModel().selection.record.data.id_level;
 						var tree = new Ext.tree.TreePanel({
 							id : 'w_u_g_l_s_t',
@@ -310,7 +323,8 @@ wls.user.group = Ext.extend(wls, {
 				});
 			} else if (access[i] == '1305') {
 				tb.add({
-							text : il8n.add,
+							iconCls: 'bt_add',
+							tooltip : il8n.add,
 							handler : function() {
 								var form = thisObj.getAddItemForm();
 								var w = new Ext.Window({

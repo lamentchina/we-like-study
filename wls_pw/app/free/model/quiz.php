@@ -175,6 +175,9 @@ class m_quiz extends wls implements dbtable{
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
 			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['Qes_Type2']){
+				$keys['Qes_Type2'] = $i;
+			}			
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['layout']){
 				$keys['layout'] = $i;
 			}
@@ -317,6 +320,12 @@ class m_quiz extends wls implements dbtable{
 					$question['layout']=$this->t->formatLayout($value,true);
 				}
 			}
+			if(isset($keys['Qes_Type2'])){
+				$value = $currentSheet->getCell($keys['Qes_Type2'].$i)->getValue();
+				if($value!=''){
+					$question['type2']=$value;
+				}
+			}			
 			$this->questions[$question['index']] = $question;
 		}
 
@@ -327,6 +336,7 @@ class m_quiz extends wls implements dbtable{
 		$quesObj = new m_question();
 		$questions = $this->questions;
 		$ques = $quesObj->insertMany($questions);
+		
 		if($ques==false){
 			return false;
 		}else{
@@ -429,6 +439,8 @@ class m_quiz extends wls implements dbtable{
 		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->lang['difficulty']);
 		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->lang['markingmethod']);
 		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->lang['ids_level_knowledge']);
+		$objPHPExcel->getActiveSheet()->setCellValue('X2', $this->lang['Qes_Type2']);
+		$objPHPExcel->getActiveSheet()->setCellValue('Y2', $this->lang['layout']);
 
 		$index = 3;
 		for($i=0;$i<count($data);$i++){
@@ -457,6 +469,8 @@ class m_quiz extends wls implements dbtable{
 			$objPHPExcel->getActiveSheet()->setCellValue('U'.$index, $data[$i]['difficulty']);
 			$objPHPExcel->getActiveSheet()->setCellValue('V'.$index,$this->t->formatMarkingMethod($data[$i]['markingmethod']));
 			$objPHPExcel->getActiveSheet()->setCellValue('W'.$index, $data[$i]['ids_level_knowledge']);
+			$objPHPExcel->getActiveSheet()->setCellValue('X'.$index, $data[$i]['type2']);
+			$objPHPExcel->getActiveSheet()->setCellValue('Y'.$index, $this->t->formatLayout($data[$i]['layout']) );
 
 			$index ++;
 		}

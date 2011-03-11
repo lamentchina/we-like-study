@@ -305,3 +305,34 @@ A:hover {text-decoration: none}
 .icon_PhpWind_16_16{
 	background-image:url("images/PhpWind16x16.png") !important;
 }
+
+.bt_importFile{
+	background-image: url("images/up16x16.png") !important;
+}
+.bt_exportFile{
+	background-image: url("images/down16x16.png") !important;
+}
+.bt_importAll{
+	background-image: url("images/up216x16.png") !important;
+}
+.bt_exportAll{
+	background-image: url("images/down216x16.png") !important;
+}
+.bt_deleteItems{
+	background-image: url("images/delete16x16.png") !important;
+}
+.bt_Quiz_Paper{
+	background-image: url("images/do16x16.png") !important;
+}
+.bt_search{
+	background-image: url("images/search16x16.png") !important;
+}
+.bt_access{
+	background-image: url("images/action16x16.gif") !important;
+}
+.bt_subject{
+	background-image: url("images/excel16x16.png") !important;
+}
+.bt_add{
+	background-image: url("images/add16x16.png") !important;
+}

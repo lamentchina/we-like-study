@@ -313,6 +313,10 @@ wls.user = Ext.extend(wls, {
 			}, {
 				text : il8n.deleteItems,// TODO
 				handler : function() {
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 					Ext.Ajax.request({
 						method : 'POST',
 						url : thisObj.config.AJAXPATH
@@ -331,6 +335,10 @@ wls.user = Ext.extend(wls, {
 			}, {
 				text : il8n.usergroup,
 				handler : function() {
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 					var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
 					var tree = new Ext.tree.TreePanel({
 						id : 'u_l_g_t',
@@ -397,6 +405,10 @@ wls.user = Ext.extend(wls, {
 			}, {
 				text : il8n.access,
 				handler : function() {
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 					var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
 					var tree = new Ext.tree.TreePanel({
 						id : 'w_u_l_p_t',
@@ -435,6 +447,10 @@ wls.user = Ext.extend(wls, {
 			}, {
 				text : il8n.subject,
 				handler : function() {
+					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						alert(il8n.clickCellInGrid);
+						return;
+					}
 					var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
 					var tree = new Ext.tree.TreePanel({
 						id : 'w_u_l_s_t',

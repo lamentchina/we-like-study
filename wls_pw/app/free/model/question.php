@@ -93,7 +93,8 @@ class m_question extends wls implements dbtable{
 			create table ".$pfx."wls_question(
 				  id int primary key auto_increment	
 
-				,type int default 1					
+				,type int default 1				
+				,type2 varchar(200) default '0' /*User defined type, could be anything*/	
 				,title text not null				
 				,answer text not null				
 				,optionlength int default 0			
@@ -308,6 +309,9 @@ class m_question extends wls implements dbtable{
 			if($questions[$indexs[$i]]['belongto']=='0'){
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = 0;
 			}else{
+				if(!isset($questions[$questions[$indexs[$i]]['belongto']])){
+					return false;
+				}
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = $questions[$questions[$indexs[$i]]['belongto']]['id'];
 			}
 

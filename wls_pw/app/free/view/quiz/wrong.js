@@ -142,7 +142,8 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '115303') {
 				tb.add({
-					text : il8n.deleteItems,
+					iconCls: 'bt_deleteItems',
+					tooltip : il8n.deleteItems,
 					handler : function() {
 						Ext.Ajax.request({
 							method : 'POST',
@@ -261,7 +262,8 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '125003') {
 				tb.add({
-					text : il8n.deleteItems,
+					iconCls: 'bt_deleteItems',
+					tooltip : il8n.deleteItems,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
@@ -291,12 +293,9 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				});
 			} else if (access[i] == '125007') {
 				tb.add({
-					text : il8n.Quiz_Wrongs,
+					iconCls: 'bt_Quiz_Paper',
+					tooltip : il8n.Quiz_Wrongs,
 					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();
 

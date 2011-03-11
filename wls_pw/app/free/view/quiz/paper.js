@@ -122,6 +122,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					url : thisObj.config.AJAXPATH
 							+ '?controller=quiz_paper&action=getList',
 					root : 'data',
+					remoteSort:true, 
 					idProperty : 'id',
 					fields : ['id', 'index', 'name_subject', 'title', 'money',
 							'ids_questions', 'count_used', 'date_created2']
@@ -190,7 +191,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		var tb = new Ext.Toolbar({
 					id : "w_s_l_tb",
 					items : [search, {
-								text : il8n.search,
+								iconCls: 'bt_search',
+								tooltip : il8n.search,						
 								handler : function() {
 									store.load({
 												params : {
@@ -224,7 +226,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '1101') {
 					tb.add({
-						text : il8n.importFile,
+						iconCls: 'bt_importFile',
+						tooltip : il8n.importFile,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_i',
@@ -242,7 +245,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					});
 				} else if (access[i] == '1102') {
 					tb.add({
-						text : il8n.exportFile,
+						iconCls: 'bt_exportFile',
+						tooltip : il8n.exportFile,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -267,7 +271,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					});
 				}else if (access[i] == '1108') {
 					tb.add({
-						text : il8n.exportAll,
+						iconCls: 'bt_exportAll',
+						tooltip : il8n.exportAll,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_e',
@@ -286,7 +291,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					});
 				}else if (access[i] == '1109') {
 					tb.add({
-						text : il8n.importAll,
+						iconCls: 'bt_importAll',
+						tooltip : il8n.importAll,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_e',
@@ -305,7 +311,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					});
 				}else if (access[i] == '1103') {
 					tb.add({
-						text : il8n.deleteItems,
+						iconCls: 'bt_deleteItems',
+						tooltip : il8n.deleteItems,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -330,7 +337,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					});
 				} else if (access[i] == '1107') {
 					tb.add('-', {
-						text : il8n.Quiz_Paper,
+						iconCls: 'bt_Quiz_Paper',
+						tooltip : il8n.Quiz_Paper,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);

@@ -2,7 +2,6 @@
 include_once dirname(__FILE__).'/../../model/user/group.php';
 include_once dirname(__FILE__).'/../../model/subject.php';
 include_once dirname(__FILE__).'/../../model/user/access.php';
-include_once dirname(__FILE__).'/../../model/tools.php';
 
 class user_group extends wls{
 	
@@ -86,32 +85,23 @@ class user_group extends wls{
 		$id = $_REQUEST['id'];				
 		$obj = new m_user_access();
 		$data = $obj->getListForGroup($id);				
-		$t = new tools();
-		$data =  $t->getTreeData(null,$data);			
+		$data =  $this->t->getTreeData(null,$data);			
 		echo json_encode($data);
 	}
 	
 	public function getSubjectTree(){
-		$id = $_REQUEST['id'];		
-		
+		$id = $_REQUEST['id'];				
 		$obj = new m_subject();
 		$data = $obj->getListForGroup($id);
-
-		$t = new tools();
-		$data =  $t->getTreeData(null,$data);	
-		
+		$data = $this->t->getTreeData(null,$data);			
 		echo json_encode($data);
 	}	
 	
 	public function getCourseTree(){
-		$id = $_REQUEST['id'];		
-		
+		$id = $_REQUEST['id'];			
 		$obj = new m_subject();
 		$data = $obj->getListForGroup($id);
-
-		$t = new tools();
-		$data =  $t->getTreeData(null,$data);	
-		
+		$data =  $this->t->getTreeData(null,$data);			
 		echo json_encode($data);
 	}
 	
