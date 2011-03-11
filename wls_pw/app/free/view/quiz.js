@@ -70,6 +70,7 @@ wls.quiz = Ext.extend(wls, {
 				case '5' :
 					ques = new wls.question.big();
 					ques.type = "Qes_Big";
+					ques.title = obj[i].title;
 					ques.index = '';
 					ques.questionData = obj[i];
 					ques.id = obj[i].id;
@@ -114,8 +115,11 @@ wls.quiz = Ext.extend(wls, {
 		var str = '';
 		var index = 0;
 		for (var i = 0; i < this.questions.length; i++) {
-			if (this.questions[i].index == '')
+			
+			if (this.questions[i].index == ''){
+				str += "<div class='w_q_sn_undone' style='width:99%;'>"+this.questions[i].title+"</div>";
 				continue;
+			}
 			var temp = index + 1;
 			if (temp < 10) {
 				temp = '0' + temp;

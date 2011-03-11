@@ -98,6 +98,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 				,name varchar(200) default '' 		
 				,ordering int default 0				
 
+				,isshortcut int default 0			
 				,icon varchar(200) default ''		
 				,ids_level_knowledge varchar(200) default '0' 
 				,description text 					
@@ -143,6 +144,9 @@ class m_subject extends wls implements dbtable,fileLoad{
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
 			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['isshortcut']){
+				$keys['isshortcut'] = $i;
+			}
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
 			}			
@@ -170,6 +174,10 @@ class m_subject extends wls implements dbtable,fileLoad{
 				$value = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
 				if($value!='')$data['ids_level_knowledge']=$value;
 			}	
+			if(isset($keys['isshortcut'])){
+				$value = $currentSheet->getCell($keys['isshortcut'].$i)->getValue();
+				if($value!='')$data['isshortcut']=($currentSheet->getCell($keys['isshortcut'].$i)->getValue()=='√')?1:0;
+			}			
 			if(isset($keys['icon'])){
 				$value = $currentSheet->getCell($keys['icon'].$i)->getValue();
 				if($value!='')$data['icon']=$value;

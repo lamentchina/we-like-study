@@ -75,7 +75,7 @@ var wls_question_saveComment = function(dom) {
 							+ il8n.whyImWrong_IHaveNoIdea + "," + c3 + "'>";
 				} else if (i == 3) {
 					str += "<span style='background-color:yellow;color:yellow' title='"
-							+ il8n.wyImWrong_WrongAnswer + "," + c4 + "'>";
+							+ il8n.whyImWrong_WrongAnswer + "," + c4 + "'>";
 				}
 				for (ii = 0; ii < cc[i]; ii++) {
 					str += "|";

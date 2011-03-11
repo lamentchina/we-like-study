@@ -6,6 +6,12 @@
 <title><?php echo $this->c->siteName ?></title>
 <link rel="stylesheet" type="text/css"
 	href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/ext-all-notheme.css" />   
+<link rel="stylesheet" type="text/css" href="free/view/wls.css" />
+<link rel="stylesheet" type="text/css" href="free/view/qWikiOffice/resources/css/desktop.css" />
+<style type="text/css">
+<?php echo $css ?>
+</style>
+
 	
 <script type="text/javascript" src="wls.php?controller=system&action=translateIniToJsClass"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>jquery-1.4.2.js"></script>
@@ -14,8 +20,7 @@
 	src="<?php echo $this->c->libsPath ?>ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>ext_3_2_1/ext-all.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>ext_3_2_1/ext-lang-zh_CN.js"></script>
-<link rel="stylesheet" type="text/css" href="free/view/wls.css" />
-<link rel="stylesheet" type="text/css" href="free/view/qWikiOffice/resources/css/desktop.css" />
+
 
 <!--qWikiOffice Js API  -->
 <script type="text/javascript" src="free/view/qWikiOffice/client/App.js"></script>

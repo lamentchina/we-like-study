@@ -658,6 +658,9 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ordering']){
 				$keys['ordering']  = $i;
 			}
+			if($currentSheet->getCell($i."3")->getValue()==$this->lang['isshortcut']){
+				$keys['isshortcut'] = $i;
+			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ids_level_knowledge']){
 				$keys['ids_level_knowledge']  = $i;
 			}
@@ -679,6 +682,10 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			}
 			if(isset($keys['ordering'])){
 				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();
+			}
+			if(isset($keys['isshortcut'])){
+				$value = $currentSheet->getCell($keys['isshortcut'].$i)->getValue();
+				if($value!='')$data['isshortcut']=($currentSheet->getCell($keys['isshortcut'].$i)->getValue()=='√')?1:0;
 			}
 			if(isset($keys['ids_level_knowledge'])){
 				$data['ids_level_knowledge'] = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();

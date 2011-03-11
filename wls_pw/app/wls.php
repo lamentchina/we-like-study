@@ -158,7 +158,17 @@ class wls{
 				$modules = $menuStff['modules'];
 				$quickstart = $menuStff['quickstart'];
 				$shortcut = $menuStff['shortcut'];
-				$menus = $menuStff['menus'];				
+				$icons = array_keys($menuStff['icons']);
+				$css = '';
+				for($i=0;$i<count($icons);$i++){
+					$css .= '.icon_'.$icons[$i].'_48_48{
+	background-image:url("free/view/images/'.$icons[$i].'48x48.png") !important;
+}
+.icon_'.$icons[$i].'_16_16{
+	background-image:url("free/view/images/'.$icons[$i].'16x16.png") !important;
+}';
+				}
+				
 				include_once "free/view/qWikiOffice/qDeskTop.php";
 			}
 		}

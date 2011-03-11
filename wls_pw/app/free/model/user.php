@@ -458,7 +458,7 @@ class m_user extends wls implements dbtable{
 					$data__ = array();
 					for($ii=0;$ii<count($data_);$ii++){
 						unset($data_[$ii]['ids_level_knowledge']);
-						unset($data_[$ii]['icon']);
+//						unset($data_[$ii]['icon']);
 						$data_[$ii]['type'] = 'subject';
 						$data_[$ii]['id_level_s'] = $data_[$ii]['id_level'];
 						
@@ -563,6 +563,7 @@ class m_user extends wls implements dbtable{
 		$modules = array();
 		$shortcut = array();
 		$quickstart = array();
+		$icons = array();
 		for($i=0;$i<count($menus);$i++){
 			$menuItem = array(
 				'id'=>"id_".$menus[$i]['id_level'],
@@ -577,6 +578,7 @@ class m_user extends wls implements dbtable{
 			);
 			
 			if(isset($menus[$i]['icon'])){
+				$icons[$menus[$i]['icon']] =1;
 				$menuItem['launcher']['iconCls'] = 'icon_'.$menus[$i]['icon'].'_16_16';
 				$menuItem['launcher']['shortcutIconCls'] = 'icon_'.$menus[$i]['icon'].'_48_48';
 			}
@@ -597,6 +599,7 @@ class m_user extends wls implements dbtable{
 			,'modules'=>$modules
 			,'quickstart'=>$quickstart
 			,'shortcut'=>$shortcut
+			,'icons'=>$icons
 		);
 	}
 }

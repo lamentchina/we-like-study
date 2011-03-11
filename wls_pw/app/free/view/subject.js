@@ -78,7 +78,7 @@ wls.subject = Ext.extend(wls, {
 					root : 'data',
 					idProperty : 'id',
 					fields : ['id', 'id_level', 'name', 'description', 'icon',
-							'ids_level_knowledge', 'ordering']
+							'ids_level_knowledge', 'ordering','isshortcut']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -122,6 +122,12 @@ wls.subject = Ext.extend(wls, {
 											allowBlank : false
 										}),
 								hidden : true
+							}, {
+								header : il8n.isshortcut,
+								dataIndex : 'isshortcut',
+								editor : new Ext.form.TextField({
+											allowBlank : false
+										})
 							}]
 				});
 
@@ -323,7 +329,8 @@ wls.subject = Ext.extend(wls, {
 		for (var i = 0; i < access.length; i++) {			
 			if (access[i] == '1107') {
 				tb.add({
-					text : il8n.Quiz_Paper,
+					iconCls: 'bt_Quiz_Paper',
+					tooltip : il8n.Quiz_Paper,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);

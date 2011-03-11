@@ -1,4 +1,5 @@
 wls.question.big = Ext.extend(wls.question, {
+			title:'',
 			initDom : function() {
 				$("#wls_quiz_main").append("<div id='w_qs_" + this.id
 						+ "'></div>");
