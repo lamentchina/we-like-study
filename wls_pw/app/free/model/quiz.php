@@ -33,6 +33,7 @@ class m_quiz extends wls implements dbtable{
 			$me = $user->getMyInfo();
 			$data['author'] = $me['username'];
 		}
+		if(!isset($data['id_level_subject']))return false;
 
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -60,8 +61,7 @@ class m_quiz extends wls implements dbtable{
 		$sql = substr($sql,0,strlen($sql)-1);
 		$sql .= " where id =".$id;
 
-		$res = mysql_query($sql,$conn);
-		return $res;
+		return mysql_query($sql,$conn);
 	}
 
 	public function create(){
@@ -329,7 +329,7 @@ class m_quiz extends wls implements dbtable{
 			$this->questions[$question['index']] = $question;
 		}
 
-		$this->saveQuestions();
+		return $this->saveQuestions();
 	}
 
 	public function saveQuestions(){
@@ -338,6 +338,7 @@ class m_quiz extends wls implements dbtable{
 		$ques = $quesObj->insertMany($questions);
 		
 		if($ques==false){
+			$this->error("quiz::saveQuestions, error");
 			return false;
 		}else{
 			$values = array_values($ques);
@@ -351,9 +352,9 @@ class m_quiz extends wls implements dbtable{
 				'id'=>$this->id_quiz,
 				'ids_questions'=>$ids
 			);
-
-			$temp = $this->update($data);
-			return $temp;
+			
+			$this->update($data);
+			return true;
 		}
 	}
 

@@ -17,6 +17,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					type : "POST",
 					success : function(msg) {						
 						var obj = jQuery.parseJSON(msg);
+						
 						thisObj.logData = obj;
 						thisObj.ids_questions = obj.ids_question;
 						thisObj.state = 1;
@@ -62,9 +63,16 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							alert(il8n.log_notfound);
 						}else{
 							var obj = thisObj.answersData = jQuery.parseJSON(msg);
-							for (var i = 0; i < obj.length; i++) {
-								thisObj.questions[i].answerData = obj[i];
-								thisObj.questions[i].setMyAnswer();
+							console.debug(obj.length);
+							
+							var index = 0;
+							for (var i = 0; i < thisObj.questions.length; i++) {
+								if(thisObj.questions[i].index==''){
+									continue;
+								}
+								thisObj.questions[i].answerData = obj[index];
+								//thisObj.questions[i].setMyAnswer();
+								index++;
 							}
 							thisObj.addDescriptions();
 							eval(nextFunction);

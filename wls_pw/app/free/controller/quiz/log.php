@@ -89,10 +89,11 @@ class quiz_log extends quiz{
 
 	public function getAnswers(){
 		sleep(1);
-		$id = $_POST['id'];
+		$id = $_REQUEST['id'];
 
-		$this->m->id = $id;
+		$this->m->id = 1;
 		$ques_ = $this->m->getLogAnswers();
+		
 		if($ques_==false){
 			echo 'wrong';
 			return;
@@ -100,6 +101,7 @@ class quiz_log extends quiz{
 
 		$questionObj = new m_question();
 		$answers = $questionObj->getAnswers($ques_);
+//		print_r($answers);exit();
 		echo json_encode($answers);
 	}
 	

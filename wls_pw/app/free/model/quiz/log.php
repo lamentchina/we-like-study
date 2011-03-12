@@ -364,24 +364,28 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			 from ".$pfx."wls_question,".$pfx."wls_question_log
 			 
 			 where ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
-			 order by  ".$pfx."wls_question.id
-			 
-
-			  ";					
+			 order by  ".$pfx."wls_question.id  ";		
+			
 		}else{
+			
 			$sql = "select id,ids_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
+			
 		}
 		$res = mysql_query($sql,$conn);
-		if($res==false || mysql_fetch_assoc($res)==false ){
+		if($res==false  ){
 			$this->error("Question Log do not exist,about the quizlog ".$this->id);
 			return false;
 		}else{
 			$arr = array();
+
 			while($temp = mysql_fetch_assoc($res)){
-				if($temp['myanswer']==''||$temp['myanswer']==null)$temp['myanswer'] = 'I_DONT_KNOW';
+
+				if($temp['myanswer']==''||$temp['myanswer']==null){
+					$temp['myanswer'] = 'I_DONT_KNOW';
+				}
 				$arr[$temp['id_question']] = $temp['myanswer'];
 			}
-			
+
 			$content = json_encode($arr);
 			$handle=fopen($cacheFilePath,"a");
 			fwrite($handle,$content);

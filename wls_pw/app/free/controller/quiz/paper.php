@@ -210,7 +210,10 @@ var down = function(){
 		url: 'wls.php?controller=quiz_paper&action=importAll',
 		data: {id:ids[index]},
 		success: function(msg){
-			if(index==ids.length )return;
+			if(index==ids.length ){
+				$('#data').text('done')
+				return;
+			}
 			if(msg=='ok'){
 				$('#data').text('index:'+index+'/'+ids.length+';  file:'+ids[index]);
 			}else{
@@ -241,13 +244,14 @@ down();
 			$file = $this->c->filePath."upload/upload".rand(1,1000).date('YmdHis').".xls";
 			move_uploaded_file($_FILES["file"]["tmp_name"],$file);
 			if($this->m->importOne($file)==false){
-			echo "<html>
-<head>
-<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
-</head>
-<body>".$this->lang['importFormatWrong']."</body></html>";
+				echo "<html>
+				<head>
+				<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
+				</head>
+				<body>".$this->lang['importFormatWrong']."</body></html>";
+			}else{
+				echo 'success';
 			}
-			echo 'success';
 		}
 	}
 

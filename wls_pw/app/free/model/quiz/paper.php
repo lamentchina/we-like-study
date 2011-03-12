@@ -21,6 +21,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
+		
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
@@ -34,21 +35,18 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
+		$sql = "delete from ".$pfx."wls_question where id_quiz in (
+			select id_quiz from ".$pfx."wls_quiz_paper where id in (".$ids.")
+		) ";
+		mysql_query($sql,$conn);	
+		
+		$sql = "delete from ".$pfx."wls_quiz where id in (
+			select id_quiz from ".$pfx."wls_quiz_paper where id in (".$ids.")
+		) ";
+		mysql_query($sql,$conn);
+		
 		$sql = "delete from ".$pfx."wls_quiz_paper where id in (".$ids.") ";
-		try {
-			mysql_query($sql,$conn);
-			$sql = "delete from ".$pfx."wls_question where id_quiz_paper in (".$ids.") ";
-			try{
-				mysql_query($sql,$conn);
-				return true;
-			}
-			catch (Exception $ex2){
-				return false;
-			}
-		}
-		catch (Exception $ex){
-			return false;
-		}
+		mysql_query($sql,$conn);
 	}
 
 	public function update($data){
@@ -98,7 +96,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 	public function exportAll($path=null){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
+
 		$sql = "select id from ".$pfx."wls_quiz_paper; ";
 		$res = mysql_query($sql,$conn);
 		$ids = '';
@@ -106,13 +104,13 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 			$ids .= $temp['id'].',';
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
-		
+
 		return $ids;
 	}
 
 	public function importOne($path){
 		$conn = $this->conn();
-		$pfx = $this->c->dbprefix;		
+		$pfx = $this->c->dbprefix;
 
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
@@ -121,7 +119,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$currentSheet = $this->phpexcel->getSheetByName($this->lang['paper']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
-		
+
 		$quizData = array();
 		$paperData = array();
 		$quizData['imagePath'] = '';
@@ -144,25 +142,36 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$quizData['id_level_subject']."'; ";
 				$res = mysql_query($sql_,$conn);
 				$temp = mysql_fetch_assoc($res);
+				if($temp==false){
+					$this->error("quiz_paper::importOne, subject name not found");
+					return false;
+				}
 				$quizData['name_subject'] = $temp['name'];
 			}
 		}
 
 		$quizObj = new m_quiz();
 		$quizData['id'] = $quizObj->insert($quizData);
+		if($quizData['id']==false)return false;
 		$quizObj->id_quiz = $quizData['id'];
 		$quizObj->quizData = $quizData;
-		$quizObj->importOne($this->phpexcel);
+		$return = $quizObj->importOne($this->phpexcel);
+		if($return==false){
+			$this->error("quiz_paper::importOne, quiz::importOne , error");
+			return false;
+		}
 
 		$paperData['id_quiz'] = $quizData['id'];
 		$this->insert($paperData);
+		
+		return true;
 	}
 
-	public function exportOne($path=null){		
+	public function exportOne($path=null){
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
-		
-		$sql = "select 
+
+		$sql = "select
 			 ".$pfx."wls_quiz_paper.id as pid
 			,".$pfx."wls_quiz.id as qid
 			,money
@@ -191,24 +200,24 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $temp['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $temp['id_level_subject']);
 		$objPHPExcel->getActiveSheet()->setCellValue('C2', $temp['author']);
-		
+
 		$chr = 66;
 		if(!($temp['money']==''||$temp['money']=='0')){
 			$chr++;
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['money']);	
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['money']);				
-		}	
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['money']);
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['money']);
+		}
 		$quizObj = new m_quiz();
 		if(!($temp['imagePath']==''||$temp['imagePath']=='0')){
 			$chr++;
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['imagePath']);	
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);	
-			$quizObj->imagePath = $temp['imagePath'];		
-		}			
-		
-		$quizObj->exportOne($temp['qid'],$objPHPExcel);		
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['imagePath']);
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);
+			$quizObj->imagePath = $temp['imagePath'];
+		}
+
+		$quizObj->exportOne($temp['qid'],$objPHPExcel);
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
-		
+
 		$file =  "download/".date('YmdHis').".xls";
 		if($path==null){
 			$path = $this->c->filePath.$file;
@@ -231,10 +240,10 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
 		$where .= " and id_level_subject in (".$ids.") ";
-		
+
 		if($search!=null){
 			$keys = array_keys($search);
-			for($i=0;$i<count($keys);$i++){				
+			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='id'){
 					$where .= " and ".$pfx."wls_quiz_paper.id in (".$search[$keys[$i]].") ";
 				}
@@ -248,7 +257,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 						}
 						$where = substr($where,0,strlen($where)-2);
 						$where .= " ) ";
-					}					
+					}
 				}else if($keys[$i]=='money'){
 					if(count($search[$keys[$i]])==1){
 						$where .= " and ".$pfx."wls_quiz_paper.money ".$search[$keys[$i]][0][0]." ".$search[$keys[$i]][0][1]." ";
@@ -259,13 +268,13 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 						}
 						$where = substr($where,0,strlen($where)-2);
 						$where .= " ) ";
-					}	
+					}
 				}else if($keys[$i]=='subject'){
 					if(count($search[$keys[$i]])==1){
 						$sql_subject = "select id_level from ".$pfx."wls_subject where name = '".$search[$keys[$i]][0][1]."' ;";
 						$res_subject = mysql_query($sql_subject,$conn);
 						$temp_subject = mysql_fetch_assoc($res_subject);
-						
+
 						$where .= " and ".$pfx."wls_quiz.id_level_subject = ".$temp_subject['id_level']." ";
 					}else{
 						$name_subjects = '';
@@ -280,11 +289,11 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 							$ids_subject .= "'".$temp_subject['id_level']."',";
 						}
 						$ids_subject = substr($ids_subject,0,strlen($ids_subject)-1);
-						
+
 						$where .= " and ".$pfx."wls_quiz.id_level_subject in (".$ids_subject.")  ";
-					}	
+					}
 				}else if($keys[$i]=='id_level_subject'){
-//					print_r($search);
+					//					print_r($search);
 					$where .= " and ".$pfx."wls_quiz.id_level_subject = '".$search[$keys[$i]][0][1]."'";
 				}
 			}
@@ -394,9 +403,9 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$quizLogObj = new m_quiz_log();
 		$quizLogObj->addLog(array(
 			 'id_quiz'=>$temp['id_quiz']
-			,'answers'=>$answers
-			,'ids_question'=>$ids_question
-		));		
+		,'answers'=>$answers
+		,'ids_question'=>$ids_question
+		));
 
 		return $answers;
 	}

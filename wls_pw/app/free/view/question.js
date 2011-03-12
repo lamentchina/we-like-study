@@ -13,8 +13,8 @@ wls.question = Ext.extend(wls, {
 	addWhyImWrong : function() {
 		$('#w_qs_' + this.id)
 				.append("<div class='WhyImWrong'>"
-						+ "<table><tr>"
-						+ "<td width='20%' style='color:red;font-weight:18px;'>"
+						+ "<table><tr style='color:red;font-size:11px;'>"
+						+ "<td width='20%' >"
 						+ il8n.whyImWrong
 						+ ":&nbsp;&nbsp;</td>"
 						+ "<td width='20%'><input type='radio' onchange='wls_question_saveComment(this)' value='1' name='"

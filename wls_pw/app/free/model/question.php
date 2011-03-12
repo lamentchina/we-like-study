@@ -288,6 +288,9 @@ class m_question extends wls implements dbtable{
 	 * @return $questions A big array
 	 * */
 	public function insertMany($questions){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
 		$indexs = array_keys($questions);
 		$mainIds = '';
 		for($i=0;$i<count($indexs);$i++){
@@ -310,6 +313,12 @@ class m_question extends wls implements dbtable{
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = 0;
 			}else{
 				if(!isset($questions[$questions[$indexs[$i]]['belongto']])){
+					$this->error("question::insertMany belongto error");
+					
+					$sql = "delete from ".$pfx."wls_question where id_quiz =  ".$questions[$indexs[0]]['id_quiz'];
+					mysql_query($sql,$conn);
+					$sql = "delete from ".$pfx."wls_quiz where id =  ".$questions[$indexs[0]]['id_quiz'];
+					mysql_query($sql,$conn);
 					return false;
 				}
 				$questions[$indexs[$i]]['id_parent'] = $data['id_parent'] = $questions[$questions[$indexs[$i]]['belongto']]['id'];
@@ -317,6 +326,12 @@ class m_question extends wls implements dbtable{
 
 			$id = $this->insert($data);
 			if($id===false){
+				$this->error("question::insertMany question error");
+				
+				$sql = "delete from ".$pfx."wls_question where id_quiz =  ".$questions[$indexs[0]]['id_quiz'];
+				mysql_query($sql,$conn);
+				$sql = "delete from ".$pfx."wls_quiz where id =  ".$questions[$indexs[0]]['id_quiz'];
+				mysql_query($sql,$conn);
 				return false;
 			}else{
 				$questions[$indexs[$i]]['id'] = $id;
