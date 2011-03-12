@@ -88,9 +88,9 @@ wls.quiz = Ext.extend(wls, {
 					ques = new wls.question.blank();
 					ques.type = "Qes_Blank";					
 					if(parseInt(obj[i].id_parent)!=0){
-						index++;
 						ques.index = index;
-					}else{
+						index++;
+					}else{						
 						ques.index = '';
 					}
 					ques.questionData = obj[i];
@@ -103,6 +103,7 @@ wls.quiz = Ext.extend(wls, {
 			if (ques != null) {
 				ques.initDom();		
 				this.questions.push(ques);
+				console.debug(ques.type + ' ' + ques.index + ' ' +index);
 			}
 		}
 		this.addNavigation();
@@ -116,8 +117,11 @@ wls.quiz = Ext.extend(wls, {
 		var index = 0;
 		for (var i = 0; i < this.questions.length; i++) {
 			
-			if (this.questions[i].index == ''){
+			if (this.questions[i].type == 'Qes_Big'){
 				str += "<div class='w_q_sn_undone' style='width:99%;'>"+this.questions[i].title+"</div>";
+				continue;
+			}
+			if(this.questions[i].index == ''){
 				continue;
 			}
 			var temp = index + 1;

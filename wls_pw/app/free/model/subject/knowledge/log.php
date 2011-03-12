@@ -11,20 +11,29 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 	 * @param $data The keys must fit the columns
 	 * */
 	public function insert($data){
+
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
 		if(!isset($data['id_user'])){
-			
+				
 			$userObj = new m_user();
 			$user = $userObj->getMyInfo();
 			$data['id_user'] = $user['id'];
+		}
+		if(!isset($data['date_created'])){
+			$data['date_created'] = date('Y-m-d');
+		}
+		if(!isset($data['date_slide'])){
+			$data['date_slide'] = '86400';
 		}
 		if(isset($data['id_question'])){
 			$sql = "select ids_level_knowledge from ".$pfx."wls_question where id = ".$data['id_question'];
 			$res = mysql_query($sql,$conn);
 			$temp = mysql_fetch_assoc($res);
-
+			if($temp['ids_level_knowledge']=='0' || $temp['ids_level_knowledge']==0 || $temp['ids_level_knowledge']=='' ){
+				return;
+			}
 			$arr = explode(",",$temp['ids_level_knowledge']);
 			for($i=0;$i<count($arr);$i++){
 				$data2 = $data;
@@ -36,13 +45,12 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 			return;
 		}
 
-		if($data['id_level_knowledge']==0)return;
-
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_subject_knowledge_log (".$keys.") values ('".$values."')";
+
 		$done = mysql_query($sql,$conn);
 		if($done===false){
 			if(isset($data['count_right'])){
@@ -58,6 +66,7 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 				 id_level_knowledge = '".$data['id_level_knowledge']."'
 				"; 
 			}
+
 			mysql_query($sql2,$conn);
 		}
 	}
@@ -106,7 +115,7 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 				,date_slide int default 86400				 
 				,id_user int default 0				
 				,id_level_user_group varchar(200) default '0' 	
-				,id_level_knowledge int default 0 	
+				,id_level_knowledge varchar(200) default '0' 	
 				,count_right int default 0			
 				,count_wrong int default 0
 
@@ -116,12 +125,6 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 		mysql_query($sql,$conn);
 		return true;
 	}
-
-	public function importExcel($path){}
-
-	public function exportExcel(){}
-
-	public function cumulative($column){}
 
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
@@ -144,7 +147,7 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 					$sql = "select max(date_created) as date_created_max from ".$pfx."wls_subject_knowledge_log where id_user = ".$search['id_user'];
 					$res = mysql_query($sql,$conn);
 					$temp = mysql_fetch_assoc($res);
-						
+
 					$where .= " and date_created = '".$temp['date_created_max']."' ";
 				}
 			}
@@ -173,17 +176,19 @@ class m_subject_knowledge_log extends wls implements dbtable,log{
 		);
 	}
 
-	public function addLog($whatHappened){}
-	
+	public function addLog($whatHappened){
+
+	}
+
 	public function getMyRecentAboutOneSubject($subjectid){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 
-		
+
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
-		
-		$sql = "		
+
+		$sql = "
 select * from pre_wls_subject_knowledge
 left join pre_wls_subject_knowledge_log 
 ON pre_wls_subject_knowledge_log.id_level_knowledge = pre_wls_subject_knowledge.id_level
@@ -204,7 +209,7 @@ and pre_wls_subject_knowledge_log.id_user = ".$user['id']."
 GROUP BY pre_wls_subject_knowledge.id_level
 )
 		";
-		
+
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -222,7 +227,7 @@ GROUP BY pre_wls_subject_knowledge.id_level
 	public function getMyRecent($id){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		//Get it's sub knowledge ids
@@ -232,7 +237,7 @@ GROUP BY pre_wls_subject_knowledge.id_level
 		$arr = array();
 		$ids = "";
 		while ($temp = mysql_fetch_assoc($res)) {
-			
+				
 			$sql_ = "select * from ".$pfx."wls_subject_knowledge_log where id_user= ".$user['id']." and id_level_knowledge = '".$temp['id_level_knowledge']."' order by date_created desc  ";
 			$res_ = mysql_query($sql_,$conn);
 			$temp_ = mysql_fetch_assoc($res_);

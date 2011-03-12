@@ -225,10 +225,10 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					iconCls: 'bt_Quiz_Paper',
 					tooltip : il8n.log_review,
 					handler : function() {
-					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-						alert(il8n.clickCellInGrid);
-						return;
-					}
+						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
 						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();
@@ -307,7 +307,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					iconCls: 'bt_Quiz_Paper',
 					tooltip : il8n.log_review,
 					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
 							return;
 						}

@@ -1,6 +1,7 @@
 <?php
 include_once dirname(__FILE__)."/../user.php";
 include_once dirname(__FILE__)."/../quiz/wrong.php";
+include_once dirname(__FILE__)."/../subject/knowledge/log.php";
 
 class m_question_log extends wls implements dbtable,log{
 
@@ -173,7 +174,7 @@ class m_question_log extends wls implements dbtable,log{
 	 * */
 	public function addLog($whatHappened){
 		$answerData = $whatHappened;
-		
+		$knowledgeLogObj = new m_subject_knowledge_log();
 		$return = 0;
 		$wrongObj = new m_quiz_wrong();
 		if($answerData['myAnswer']=='I_DONT_KNOW'){
@@ -182,12 +183,24 @@ class m_question_log extends wls implements dbtable,log{
 		}else if($answerData['myAnswer']==$answerData['answer']){
 			$answerData['correct'] = 1;
 			$answerData['mycent'] = $answerData['cent'];
+			
+			$knowledgeLogObj->insert(array(
+				 'id_user'=>$answerData['id_user']
+				,'count_right'=>1
+				,'id_question'=>$answerData['id_question']
+			));
+			
 			$return = 1;
 		}else{
 			$wrongData = array(
 				 'id_user'=>$answerData['id_user']
 				,'id_question'=>$answerData['id_question']
 			);
+			$knowledgeLogObj->insert(array(
+				 'id_user'=>$answerData['id_user']
+				,'count_wrong'=>1
+				,'id_question'=>$answerData['id_question']
+			));
 			$wrongObj->insert($wrongData);
 			$answerData['correct'] = 0;
 			$return = 0;
