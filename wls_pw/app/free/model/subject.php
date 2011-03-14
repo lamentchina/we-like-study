@@ -17,7 +17,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 	public function insert($data){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-		
+
 		if(!isset($data['description'])){
 			$data['description'] = '0';
 		}
@@ -26,7 +26,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$values = array_values($data);
 		$values = implode("','",$values);
 		$sql = "insert into ".$pfx."wls_subject (".$keys.") values ('".$values."')";
-//		echo $sql;
+		
 		mysql_query($sql,$conn);
 		return mysql_insert_id($conn);
 	}
@@ -34,20 +34,17 @@ class m_subject extends wls implements dbtable,fileLoad{
 	/**
 	 * Delete one or more rows by id. Only by id!
 	 *
-	 * @param $ids Every table has this column. 
+	 * @param $ids Every table has this column.
 	 * @return bool
 	 * */
 	public function delete($ids){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
-
-		$sql = "delete from ".$pfx."wls_subject where id  in (".$ids.");";
-		try{
-			mysql_query($sql,$conn);
-			return true;
-		}catch (Exception $ex){
-			return false;
-		}
+		$sql = "select * from ".$pfx."wls_subject where id = ".$ids;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$sql = "delete from ".$pfx."wls_subject where id_level like '".$temp['id_level']."%'";
+		mysql_query($sql,$conn);
 	}
 
 	/**
@@ -67,6 +64,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 
 		$sql = "update ".$pfx."wls_subject set ";
 		for($i=0;$i<count($keys);$i++){
+
 			$sql.= $keys[$i]."='".$data[$keys[$i]]."',";
 		}
 		$sql = substr($sql,0,strlen($sql)-1);
@@ -100,14 +98,45 @@ class m_subject extends wls implements dbtable,fileLoad{
 
 				,isshortcut int default 0			
 				,icon varchar(200) default ''		
-				,ids_level_knowledge varchar(200) default '0' 
+				,isknowledge int default 0
+				,isleaf int default 1
+				,count_subs int default 0
+				,count_papers int default 0
+				,count_exams int default 0
+				
 				,description text 					
 							
 			) DEFAULT CHARSET=utf8;
 			";
-		
+
 		mysql_query($sql,$conn);
 		return true;
+	}
+
+	public function setLeaf(){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+
+		$sql = "select * from ".$pfx."wls_subject order by id";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+
+		$ids = '';
+		for($i=0;$i<count($data)-1;$i++){
+			if(substr($data[$i+1]['id_level'],0,strlen($data[$i+1]['id_level'])-2) == $data[$i]['id_level']){
+				$ids.= "'".$data[$i]['id_level']."',";
+			}
+		}
+		if(strlen($data[count($data)-1]['id_level'])== $data[count($data)-2]['id_level']){
+			$ids.= "'".$data[count($data)-1]['id_level']."',";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		
+		$sql = "update ".$pfx."wls_subject set isleaf = 0 where id_level in (".$ids.") ";
+		mysql_query($sql,$conn);
 	}
 
 	/**
@@ -118,46 +147,54 @@ class m_subject extends wls implements dbtable,fileLoad{
 	 * @return bool
 	 * */
 	public function importAll($path){
-		$objPHPExcel = new PHPExcel();
-		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
-		$PHPReader->setReadDataOnly(true);
-		$this->phpexcel = $PHPReader->load($path);
+		if($this->phpexcel==null){
+			$objPHPExcel = new PHPExcel();
+			$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+			$PHPReader->setReadDataOnly(true);
+			$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['subject']);
-		$allRow = array($currentSheet->getHighestRow());
-		$allColmun = $currentSheet->getHighestColumn();
+			$currentSheet = $this->phpexcel->getSheetByName($this->lang['subject']);
+			$allRow = array($currentSheet->getHighestRow());
+			$allColmun = $currentSheet->getHighestColumn();
+		}else{
+			$currentSheet = $this->phpexcel['currentSheet'];
+			$allRow = intval($this->phpexcel['allRow']);
+			$allColmun = $this->phpexcel['allColmun'];
+			$keysRow = intval($this->phpexcel['keysRow']);
+		}
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['id_level']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['id_level']){
 				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['description']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['name']){
 				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['icon']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['icon']){
 				$keys['icon'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
-				$keys['ids_level_knowledge'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['isshortcut']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['isshortcut']){
 				$keys['isshortcut'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ordering']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['isknowledge']){
+				$keys['isknowledge'] = $i;
+			}
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['ordering']){
 				$keys['ordering'] = $i;
-			}			
-		}	
+			}
+		}
+
 		if( !(isset($keys['name'])&&isset($keys['id_level'])) ){
 			$error = "Wrong Structrue of Excel";
 			$this->error($error);
 		}
-		
-		$data = array();
-		for($i=3;$i<=$allRow[0];$i++){
+
+		$datas = array();
+		for($i=($keysRow+1);$i<=$allRow;$i++){
 			$data = array(
 				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
 				'name'=> $this->t->formatTitle( $currentSheet->getCell($keys['name'].$i)->getValue() ),
@@ -169,23 +206,27 @@ class m_subject extends wls implements dbtable,fileLoad{
 			if(isset($keys['description']) ){
 				$value = $currentSheet->getCell($keys['description'].$i)->getValue();
 				if($value!='')$data['description']=$value;
-			}	
-			if(isset($keys['ids_level_knowledge'])){
-				$value = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
-				if($value!='')$data['ids_level_knowledge']=$value;
-			}	
+			}
 			if(isset($keys['isshortcut'])){
 				$value = $currentSheet->getCell($keys['isshortcut'].$i)->getValue();
 				if($value!='')$data['isshortcut']=($currentSheet->getCell($keys['isshortcut'].$i)->getValue()=='√')?1:0;
-			}			
+			}
+			if(isset($keys['isknowledge'])){
+				$value = $currentSheet->getCell($keys['isknowledge'].$i)->getValue();
+				if($value!='')$data['isknowledge']=($currentSheet->getCell($keys['isknowledge'].$i)->getValue()=='√')?1:0;
+			}
 			if(isset($keys['icon'])){
 				$value = $currentSheet->getCell($keys['icon'].$i)->getValue();
 				if($value!='')$data['icon']=$value;
-			}								
+			}
+			$datas[] = $data;
 			$this->insert($data);
 		}
+		
+		$this->setLeaf();
+		return $datas;
 	}
-	
+
 	/**
 	 * Export an Excel file , with all the subject data.
 	 *
@@ -199,7 +240,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle($this->lang['subject']);
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->c->siteName.'_'.$this->lang['exportFile']);
-		
+
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
@@ -224,7 +265,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$objStyle->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 		$objPHPExcel->getActiveSheet()->duplicateStyle($objStyle, 'A1:A'.(count($data)+1));
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
-		
+
 		$file = "download/".date('YmdHis').".xls";
 		if($path==null){
 			$path = $this->c->filePath.$file;
@@ -232,9 +273,9 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$objWriter->save($path);
 		return $file;
 	}
-	
+
 	public function importOne($path){}
-	
+
 	public function exportOne($path=null){}
 
 	/**
@@ -252,12 +293,26 @@ class m_subject extends wls implements dbtable,fileLoad{
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
 				}
+				if($keys[$i]=='id_level_'){
+					$where .= " and id_level like '".$search[$keys[$i]]."__' ";
+				}		
+				if($keys[$i]=='id_'){
+					if($search[$keys[$i]]!=''){
+						$sql = "select * from ".$pfx."wls_subject where id = ".$search[$keys[$i]];
+						$res = mysql_query($sql,$conn);
+						$temp = mysql_fetch_assoc($res);
+						$where .= " and id_level like '".$temp['id_level']."__' ";
+					}else{
+						$where .= " and id_level like '__' ";
+					}
+
+				}			
 			}
 		}
 		if($orderby==null)$orderby = " order by id_level ";
 		$sql = "select ".$columns." from ".$pfx."wls_subject ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-
+		
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -277,13 +332,13 @@ class m_subject extends wls implements dbtable,fileLoad{
 			'pagesize'=>$pagesize,
 		);
 	}
-	
+
 	public function getLevelList($root){}
 
 	/**
 	 * One usergroup has participated in more than one subjects
-	 * There is a many-to-many database table handle this 
-	 * 
+	 * There is a many-to-many database table handle this
+	 *
 	 * @param $id_level_group
 	 * @return $data
 	 * */
@@ -294,7 +349,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$sql = "
 		SELECT *,(id_level in (
 			select id_level_subject from ".$pfx."wls_user_group2subject where id_level_group = '".$id_level_group."' 
-		))as checked FROM ".$pfx."wls_subject order by id;
+		))as checked FROM ".$pfx."wls_subject where isknowledge = 0 order by id;
 		";
 		$res = mysql_query($sql,$conn);
 		$data = array();
@@ -308,8 +363,8 @@ class m_subject extends wls implements dbtable,fileLoad{
 	/**
 	 * Can't get one user's subject list directly from user's infomation.
 	 * First, get user's group data, then get subject list from the group.
-	 * 
-	 * @param $username See database table wls_user 
+	 *
+	 * @param $username See database table wls_user
 	 * @return $data a list contains id_level , username ,
 	 * */
 	public function getListForUser($username){
@@ -321,7 +376,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 			select id_level_subject from ".$pfx."wls_user_group2subject where id_level_group in ( 
 				select id_level_group from ".$pfx."wls_user_group2user where username = '".$username."'
 			)
-		) as checked from ".$pfx."wls_subject;";
+		) as checked from ".$pfx."wls_subject where isknowledge = 0;";
 
 		$res = mysql_query($sql,$conn);
 		$data = array();

@@ -640,59 +640,16 @@ class m_user_group extends wls implements dbtable,fileLoad{
 				$c_level = $i;
 			}
 		}
-
-		$keys = array();
-		for($i='A';$i<$grouppoint;$i++){
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['name']){
-				$keys['name']  = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id_level']){
-				$keys['id_level']  = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['icon']){
-				$keys['icon'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['description']){
-				$keys['description']  = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ordering']){
-				$keys['ordering']  = $i;
-			}
-			if($currentSheet->getCell($i."3")->getValue()==$this->lang['isshortcut']){
-				$keys['isshortcut'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['ids_level_knowledge']){
-				$keys['ids_level_knowledge']  = $i;
-			}
-		}
-		$subjectsData = array();
-
+		
 		$subjectObj = new m_subject();
 		$subjectObj->create();
-		for($i=4;$i<=$allRow;$i++){
-			$data = array(
-				'name'=>$this->t->formatTitle($currentSheet->getCell($keys['name'].$i)->getValue()),
-				'id_level'=>$currentSheet->getCell($keys['id_level'].$i)->getValue(),
-			);
-			if(isset($keys['icon'])){
-				$data['icon'] = $currentSheet->getCell($keys['icon'].$i)->getValue();
-			}
-			if(isset($keys['description'])){
-				$data['description'] = $currentSheet->getCell($keys['description'].$i)->getValue();
-			}
-			if(isset($keys['ordering'])){
-				$data['ordering'] = $currentSheet->getCell($keys['ordering'].$i)->getValue();
-			}
-			if(isset($keys['isshortcut'])){
-				$value = $currentSheet->getCell($keys['isshortcut'].$i)->getValue();
-				if($value!='')$data['isshortcut']=($currentSheet->getCell($keys['isshortcut'].$i)->getValue()=='√')?1:0;
-			}
-			if(isset($keys['ids_level_knowledge'])){
-				$data['ids_level_knowledge'] = $currentSheet->getCell($keys['ids_level_knowledge'].$i)->getValue();
-			}
-			$subjectsData[] = $data ;
-			$subjectObj->insert($data);
-		}
+		$subjectObj->phpexcel = array(
+			 'currentSheet'=>$currentSheet
+			,'allRow'=>$allRow
+			,'allColmun'=> chr(ord($grouppoint)-2)
+			,'keysRow'=>3
+		);
+		$subjectsData = $subjectObj->importAll(null);		
 
 		$p2s = array();
 		for($i=4;$i<=$allRow;$i++){

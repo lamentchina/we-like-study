@@ -550,10 +550,10 @@ class m_user extends wls implements dbtable{
 	 * */
 	public function getMyMenuForDesktop(){
 		$data = $this->getMyMenu();
-//		print_r($data);exit();
+
 		$this->t->treeMenuToDesktopMenu(null,$data);
 		$data = $this->t->desktopMenu;
-//		print_r($data);exit();
+
 		return $data;
 	}
 	

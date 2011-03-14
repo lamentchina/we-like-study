@@ -1,7 +1,7 @@
 <?php
 include_once dirname(__FILE__)."/../user.php";
 include_once dirname(__FILE__)."/../quiz/wrong.php";
-include_once dirname(__FILE__)."/../subject/knowledge/log.php";
+include_once dirname(__FILE__)."/../subject/log.php";
 
 class m_question_log extends wls implements dbtable,log{
 
@@ -102,7 +102,8 @@ class m_question_log extends wls implements dbtable,log{
 				 id int primary key auto_increment	
 				 
 				,date_created datetime default '1987-03-18'					 
-				,id_user int default 0				
+				,id_user int default 0		
+				,ids_level_user_group varchar(200) default '0'		
 				,id_quiz int default 0
 				,id_quiz_log int default 0	
 				,type int default 0
@@ -174,7 +175,7 @@ class m_question_log extends wls implements dbtable,log{
 	 * */
 	public function addLog($whatHappened){
 		$answerData = $whatHappened;
-		$knowledgeLogObj = new m_subject_knowledge_log();
+		$knowledgeLogObj = new m_subject_log();
 		$return = 0;
 		$wrongObj = new m_quiz_wrong();
 		if($answerData['myAnswer']=='I_DONT_KNOW'){
@@ -184,11 +185,16 @@ class m_question_log extends wls implements dbtable,log{
 			$answerData['correct'] = 1;
 			$answerData['mycent'] = $answerData['cent'];
 			
-			$knowledgeLogObj->insert(array(
+			$knowledgeLogData = array(
 				 'id_user'=>$answerData['id_user']
-				,'count_right'=>1
+				,'result'=>'right'
+				,'ids_level_user_group'=>$answerData['ids_level_user_group']
 				,'id_question'=>$answerData['id_question']
-			));
+			);
+			if(isset($whatHappened['date_created'])){
+				$knowledgeLogData['date_created'] = substr($whatHappened['date_created'],0,13).":00:00";
+			}
+			$knowledgeLogObj->addLog($knowledgeLogData);
 			
 			$return = 1;
 		}else{
@@ -196,11 +202,16 @@ class m_question_log extends wls implements dbtable,log{
 				 'id_user'=>$answerData['id_user']
 				,'id_question'=>$answerData['id_question']
 			);
-			$knowledgeLogObj->insert(array(
+			$knowledgeLogData = array(
 				 'id_user'=>$answerData['id_user']
-				,'count_wrong'=>1
+				,'result'=>'wrong'
+				,'ids_level_user_group'=>$answerData['ids_level_user_group']
 				,'id_question'=>$answerData['id_question']
-			));
+			);
+			if(isset($whatHappened['date_created'])){
+				$knowledgeLogData['date_created'] = substr($whatHappened['date_created'],0,13).":00:00";
+			}
+			$knowledgeLogObj->addLog($knowledgeLogData);
 			$wrongObj->insert($wrongData);
 			$answerData['correct'] = 0;
 			$return = 0;

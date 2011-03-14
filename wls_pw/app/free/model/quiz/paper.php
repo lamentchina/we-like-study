@@ -403,8 +403,8 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$quizLogObj = new m_quiz_log();
 		$quizLogObj->addLog(array(
 			 'id_quiz'=>$temp['id_quiz']
-		,'answers'=>$answers
-		,'ids_question'=>$ids_question
+			,'answers'=>$answers
+			,'ids_question'=>$ids_question
 		));
 
 		return $answers;

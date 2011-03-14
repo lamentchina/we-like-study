@@ -120,6 +120,8 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$quizlog = array();
 		$id_quiz = 0;
 		$id_user = null;
+		$usergroups = '';
+		$time = date('Y-m-d H:i:s');
 		for($i='A';$i<=$allColmun;$i++){
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
 				$title = $currentSheet->getCell($i.'3')->getValue();
@@ -128,12 +130,22 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 				$temp = mysql_fetch_assoc($res);
 				$id_quiz = $temp['id'];
 			}
+			if($currentSheet->getCell($i."2")->getValue()==$this->lang['time']){
+				$time = $currentSheet->getCell($i.'3')->getValue();
+			}			
 			if($currentSheet->getCell($i."2")->getValue()==$this->lang['username']){
 				$value = $currentSheet->getCell($i.'3')->getValue();
 				$sql = "select id from ".$pfx."wls_user where username = '".$value."';";
 				$res = mysql_query($sql,$conn);
 				$temp = mysql_fetch_assoc($res);
 				$id_user = $temp['id'];
+				
+				$sql = "select * from ".$pfx."wls_user_group2user where username = '".$value."' ";
+				$res = mysql_query($sql,$conn);
+				while($temp = mysql_fetch_assoc($res)){
+					$usergroups .= $temp['id_level_group'].",";
+				}
+				$usergroups = substr($usergroups,0,strlen($usergroups)-1);
 			}
 		}
 
@@ -184,16 +196,69 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 
 		$logDta = array(
 			 'id_quiz'=>$id_quiz
+			,'date_created'=>$time
 			,'answers'=>$questions
 			,'ids_question'=>$ids_question
 		);
 		if($id_user!=null){
 			$logDta['id_user'] = $id_user;
+			$logDta['ids_level_user_group'] = $usergroups;
 		}
 		$this->addLog($logDta);
 	}
 
-	public function exportOne($path=null){}
+	public function exportOne($path=null){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+		
+//		$sql = "select * from ".$pfx."wls_question WHERE instr((select ids_question from ".$pfx."wls_quiz_log where id = 1),id)>0 ";
+		$sql = "select * from ".$pfx."wls_quiz,".$pfx."wls_user,".$pfx."wls_quiz_log 
+				where 
+				".$pfx."wls_quiz.id = ".$pfx."wls_quiz_log.id_quiz and  
+				".$pfx."wls_quiz_log.id = ".$this->id." and 
+				".$pfx."wls_user.id = ".$pfx."wls_quiz_log.id_user ";
+//		echo $sql;
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$id_question_start = intval( substr($temp['ids_questions'],0,strpos($temp['ids_questions'],',')) );
+		
+		
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['main']);
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['username']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['time']);
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('A3', $temp["title"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('B3', $temp["username"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('C3', $temp["date_created"]);
+		
+		$data = $this->getLogAnswers();
+//		print_r($data);
+//		echo $id_question_start;
+//		exit();
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(1);
+		$objPHPExcel->getActiveSheet()->setTitle($this->lang['quizLog']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['myAnswer']);
+		
+		$keys = array_keys($data);
+		$index = 3;
+		for($i=0;$i<count($keys);$i++){
+			if($data[$keys[$i]]=='I_DONT_KNOW')continue;
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index,(intval($keys[$i]) - $id_question_start)+1 );
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index,$data[$keys[$i]]);
+			$index++;
+		}
+		
+		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+		$path = $this->c->filePath."download/quizlog".$this->id.".xls";
+		$objWriter->save($path);
+		return basename($path);
+	}
 
 	public function exportAll($path=null){}
 
@@ -264,26 +329,31 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 	}
 
 	public function addLog($whatHappened){
-
 		$answers = $whatHappened['answers'];
 		$id_quiz = $whatHappened['id_quiz'];
 		$ids_question = $whatHappened['ids_question'];
 		$id_user = null;
 		if(isset($whatHappened['id_user'])){
 			$id_user = $whatHappened['id_user'];
+			$ids_level_user_group = $whatHappened['ids_level_user_group'];
 		}
 
 		if($id_user==null){
 			$userObj = new m_user();
 			$me = $userObj->getMyInfo();
 			$id_user = $me['id'];
+			$ids_level_user_group = $me['group'];
 		}
 
 		$data = array(
 			 'ids_question'=>$ids_question
 			,'id_quiz'=>$id_quiz
 			,'id_user'=>$id_user
+			,'ids_level_user_group'=>$ids_level_user_group
 		);
+		if(isset($whatHappened['date_created'])){
+			$data['date_created'] = $whatHappened['date_created'];
+		}
 		$id_quiz_log = $this->insert($data);
 
 		$count_right = 0;
@@ -307,10 +377,14 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 				,'answer'=>$answers[$i]['answer']
 				,'id_question'=>$answers[$i]['id']
 				,'id_user'=>$id_user
+				,'ids_level_user_group'=>$ids_level_user_group
 				,'cent'=>$answers[$i]['cent']
 				,'type'=>$answers[$i]['type']
 				,'markingmethod'=>$answers[$i]['markingmethod']
 			);
+			if(isset($whatHappened['date_created'])){
+				$quesLogData['date_created'] = $whatHappened['date_created'];
+			}
 			$result = $quesLogObj->addLog($quesLogData);
 			if($result==1){
 				$count_right++;
@@ -358,18 +432,13 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$temp = mysql_fetch_assoc($res);
 		if($temp['application']==0){
 			$sql = "select
-			
 			".$pfx."wls_question.id as id_question,
 			".$pfx."wls_question_log.myanswer
 			 from ".$pfx."wls_question,".$pfx."wls_question_log
-			 
 			 where ".$pfx."wls_question.id = ".$pfx."wls_question_log.id_question
 			 order by  ".$pfx."wls_question.id  ";		
-			
-		}else{
-			
+		}else{			
 			$sql = "select id,ids_question,myanswer from ".$pfx."wls_question_log where id_quiz_log = ".$this->id." order by id_question;";
-			
 		}
 		$res = mysql_query($sql,$conn);
 		if($res==false  ){
@@ -377,15 +446,12 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			return false;
 		}else{
 			$arr = array();
-
 			while($temp = mysql_fetch_assoc($res)){
-
 				if($temp['myanswer']==''||$temp['myanswer']==null){
 					$temp['myanswer'] = 'I_DONT_KNOW';
 				}
 				$arr[$temp['id_question']] = $temp['myanswer'];
 			}
-
 			$content = json_encode($arr);
 			$handle=fopen($cacheFilePath,"a");
 			fwrite($handle,$content);

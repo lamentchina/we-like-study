@@ -185,11 +185,11 @@ class tools {
 
 		return $config[$key];
 	}
-	
+
 	public function formatImagePath($str,$path,$bool=false){
 		if($bool){
 
-								
+
 			return $str;
 		}else{
 			$str = str_replace("<img src=\"".$path,"[".$this->lang['image']."]",$str);
@@ -213,7 +213,7 @@ class tools {
 			$title = str_replace('<br>',"\n",$title);
 			$title = str_replace('<br/>',"\n",$title);
 			$title = str_replace("<input width=\"100\" class=\"w_blank\" index=\"","[___",$title);
-			$title = str_replace("\"/>","___]",$title);						
+			$title = str_replace("\"/>","___]",$title);
 			return $title;
 		}else{
 			$title = str_replace("<img src=\"","TEMP1",$title);
@@ -222,7 +222,7 @@ class tools {
 			$title = str_replace("'","&acute;",$title);
 			$title = str_replace('"','&quot;',$title);
 			$title = str_replace("\n","<br/>&nbsp;&nbsp;",$title);
-			$title = str_replace("=","&#61;",$title);			
+			$title = str_replace("=","&#61;",$title);
 			$title = str_replace("TEMP1","<img src=\"",$title);
 			$title = str_replace("TEMP2","\" />",$title);
 
@@ -325,7 +325,7 @@ class tools {
 					}else{
 						$data_all[$i]['expanded'] = true;
 					}
-						
+
 					//Modify the item's each attribute,delete the useless stuff
 					if(isset($data_all[$i]['name'])){
 						$data_all[$i]['text'] = $data_all[$i]['name'];
@@ -338,7 +338,7 @@ class tools {
 					}else{
 						$data_all[$i]['checked'] = true;
 					}
-						
+
 					$data[] = $data_all[$i];
 				}
 			}
@@ -466,6 +466,23 @@ class tools {
 			}
 		}
 		return $writeable;
+	}
+
+	public function removeDir($dirName){
+		if(! is_dir($dirName)){
+			@unlink($dirName);
+			return false;
+		}
+		$handle = @opendir($dirName);
+		while(($file = @readdir($handle)) !== false){
+			if($file != '.' && $file != '..'){
+				$dir = $dirName . '/' . $file;
+				is_dir($dir) ? $this->removeDir($dir) : @unlink($dir);
+			}
+		}
+		closedir($handle);
+		 
+		return rmdir($dirName) ;
 	}
 }
 ?>
