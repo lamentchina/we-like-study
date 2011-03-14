@@ -11,8 +11,8 @@ class_1907 = Ext.extend(Ext.app.Module, {
 				var obj = new wls.subject();
 
 				if (!win) {
-					var winWidth = 550;
-					var winHeight = 300;
+					var winWidth = 650;
+					var winHeight = 400;
 					var obj = new wls.subject();
 
 					win = desktop.createWindow({
@@ -22,7 +22,7 @@ class_1907 = Ext.extend(Ext.app.Module, {
 								height : winHeight,
 
 								layout : 'fit',
-								items : [obj.getList('qd_w_u_l')]
+								items : [obj.getTreeGrid('qd_w_u_l')]
 								
 							});
 				}
