@@ -108,7 +108,8 @@ class quiz_wrong extends quiz{
 <link rel=\"stylesheet\" type=\"text/css\"
 	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."star-rating/jquery.rating.css\" />
+	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/".$this->c->theme."\" />	
+	
 <link rel=\"stylesheet\" type=\"text/css\"
 	href=\"".$this->c->license."/view/wls.css\" />	
 <script type=\"text/javascript\"

@@ -68,7 +68,7 @@ class subject extends wls{
 		
 		$data = array(
 			'id'=>$_POST['id'],
-		$_POST['field']=>$_POST['value']
+			$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
 			echo "success";
@@ -209,7 +209,27 @@ $xml .= '		</graph>
 		
 		sleep(1);
 		$id = $this->m->insert($_POST);
+		$this->m->setLeaf();
 		echo $id;
+	}
+	
+	public function getTreeGrid(){
+		$id = $_REQUEST['anode'];
+		$data = $this->m->getList(1,500,array('id_'=>$id));
+		
+		for($i=0;$i<count($data['data']);$i++){
+			$data['data'][$i]['_is_leaf'] = $data['data'][$i]['isleaf'];
+			$data['data'][$i]['id_level'] = intval($data['data'][$i]['id_level']);
+			$data['data'][$i]['_parent'] = ($_REQUEST['anode']=='')?null:intval($_REQUEST['anode']);
+		}		
+		
+		$arr = array(
+			 'success'=>true
+			,'total'=>count($data['data'])
+			,'data'=>$data['data']
+		);
+		
+		echo json_encode($arr);
 	}
 }
 ?>

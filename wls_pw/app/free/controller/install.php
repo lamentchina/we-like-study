@@ -1,7 +1,6 @@
 <?php
 include_once dirname(__FILE__).'/../model/subject.php';
-include_once dirname(__FILE__).'/../model/subject/knowledge.php';
-include_once dirname(__FILE__).'/../model/subject/knowledge/log.php';
+include_once dirname(__FILE__).'/../model/subject/log.php';
 include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
@@ -34,11 +33,11 @@ class install extends wls {
 		$obj = new m_subject();
 		$obj->create();
 
-		$obj = new m_subject_knowledge();
-		$obj->create();
-		$obj->importAll($this->c->filePath."demodata/config.xls");
+//		$obj = new m_subject_knowledge();
+//		$obj->create();
+//		$obj->importAll($this->c->filePath."demodata/config.xls");
 
-		$obj = new m_subject_knowledge_log();
+		$obj = new m_subject_log();
 		$obj->create();
 
 		$obj = new m_user();
@@ -64,6 +63,9 @@ class install extends wls {
 		//		$obj->importOne('F:/quizlog.xls');
 		//		$obj->importOne('F:/quizlog2.xls');
 		//		$obj->importOne('F:/quizlog4.xls');
+		
+		$this->t->removeDir($this->c->filePath."cache/quizlog/");
+		mkdir($this->c->filePath."cache/quizlog/", 0777);
 		exit();
 		echo '
 		<html>

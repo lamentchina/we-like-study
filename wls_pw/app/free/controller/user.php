@@ -229,9 +229,5 @@ class user extends wls{
 			'data'=>$arr
 		));
 	}
-
-	public function getMyMenu4Desktop(){}
-
-
 }
 ?>

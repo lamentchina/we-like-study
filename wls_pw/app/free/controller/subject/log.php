@@ -1,12 +1,12 @@
 <?php 
-include_once dirname(__FILE__).'/../../model/knowledge/log.php';
+include_once dirname(__FILE__).'/../../model/subject/log.php';
 
-class knowledge_log extends wls{
+class subject_log extends wls{
 	private $m = null;
 	
-	function knowledge_log(){
+	function subject_log(){
 		
-		$this->m = new m_knowledge_log();		 
+		$this->m = new m_subject_log();		 
 	}
 	
 	/**

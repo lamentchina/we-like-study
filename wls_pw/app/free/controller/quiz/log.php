@@ -79,8 +79,10 @@ class quiz_log extends quiz{
 
 	public function exportOne(){
 		$this->m->id = $_REQUEST['id'];
-		$file = $this->m->exportExcel();
-		echo "<a href='/".$file."'>".$this->lang['download']."</a>";
+		$file = $this->m->exportOne();
+		
+		echo "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
+		</head><body><a href='".$this->c->filePath."download/".$file."'>".$this->lang['download']."</a></body></html>";
 	}
 
 	public function delete(){
@@ -91,7 +93,7 @@ class quiz_log extends quiz{
 		sleep(1);
 		$id = $_REQUEST['id'];
 
-		$this->m->id = 1;
+		$this->m->id = $id;
 		$ques_ = $this->m->getLogAnswers();
 		
 		if($ques_==false){
@@ -101,7 +103,7 @@ class quiz_log extends quiz{
 
 		$questionObj = new m_question();
 		$answers = $questionObj->getAnswers($ques_);
-//		print_r($answers);exit();
+
 		echo json_encode($answers);
 	}
 	
@@ -124,7 +126,8 @@ class quiz_log extends quiz{
 <link rel=\"stylesheet\" type=\"text/css\"
 	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."star-rating/jquery.rating.css\" />
+	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/".$this->c->theme."\" />	
+
 <link rel=\"stylesheet\" type=\"text/css\"
 	href=\"".$this->c->license."/view/wls.css\" />	
 <script type=\"text/javascript\"
@@ -136,9 +139,7 @@ class quiz_log extends quiz{
 
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>
-<script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."star-rating/jquery.rating.pack.js\"></script>		
-	
+		
 <script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz.js\"></script>
