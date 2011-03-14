@@ -165,7 +165,12 @@ wls.quiz = Ext.extend(wls, {
 		this.count.giveup = 0;
 		this.count.total = 0;
 		for (var i = 0; i < this.questions.length; i++) {
-			this.questions[i].showDescription();
+			if(this.questions[i].type=='Qes_Choice'||
+			this.questions[i].type=='Qes_MultiChoice'||
+			this.questions[i].type=='Qes_Check'||
+			this.questions[i].type=='Qes_Blank'){
+				this.questions[i].showDescription();
+			}
 		}
 		this.state = 42;
 	},

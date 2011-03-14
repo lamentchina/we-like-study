@@ -199,7 +199,6 @@ wls.user.group = Ext.extend(wls, {
 								expanded : true
 							},
 
-							// auto create TreeLoader
 							dataUrl : thisObj.config.AJAXPATH
 									+ "?controller=user_group&action=getAccessTree&id="
 									+ id,

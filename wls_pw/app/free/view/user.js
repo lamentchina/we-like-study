@@ -283,7 +283,8 @@ wls.user = Ext.extend(wls, {
 			clicksToEdit : 2,
 			loadMask : true,
 			tbar : [{
-				text : il8n.importFile,
+				iconCls: 'bt_importFile',
+				tooltip : il8n.importFile,
 				handler : function() {
 					var win = new Ext.Window({
 						id : 'w_u_l_i',
@@ -297,7 +298,8 @@ wls.user = Ext.extend(wls, {
 					win.show();
 				}
 			}, {
-				text : il8n.exportFile,
+				iconCls: 'bt_exportFile',
+				tooltip : il8n.exportFile,
 				handler : function() {
 					var win = new Ext.Window({
 						id : 'w_u_l_e',
@@ -311,7 +313,8 @@ wls.user = Ext.extend(wls, {
 					win.show(this);
 				}
 			}, {
-				text : il8n.deleteItems,// TODO
+				iconCls: 'bt_deleteItems',
+				tooltip : il8n.deleteItems,
 				handler : function() {
 					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 						alert(il8n.clickCellInGrid);
@@ -333,7 +336,8 @@ wls.user = Ext.extend(wls, {
 					});
 				}
 			}, {
-				text : il8n.usergroup,
+				iconCls: 'bt_usergroup',
+				tooltip : il8n.usergroup,
 				handler : function() {
 					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 						alert(il8n.clickCellInGrid);
@@ -403,7 +407,8 @@ wls.user = Ext.extend(wls, {
 					win.show(this);
 				}
 			}, {
-				text : il8n.access,
+				tooltip : il8n.access,
+				iconCls: 'bt_access',
 				handler : function() {
 					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 						alert(il8n.clickCellInGrid);
@@ -445,7 +450,8 @@ wls.user = Ext.extend(wls, {
 
 				}
 			}, {
-				text : il8n.subject,
+				iconCls: 'bt_subject',
+				tooltip : il8n.subject,
 				handler : function() {
 					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 						alert(il8n.clickCellInGrid);

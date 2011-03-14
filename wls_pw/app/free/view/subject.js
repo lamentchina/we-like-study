@@ -32,6 +32,18 @@ wls.subject = Ext.extend(wls, {
 						vtype : "alphanum",
 						name : 'icon',
 						allowBlank : false
+					}, {
+						fieldLabel : il8n.description,
+						width : 150,
+						name : 'description',
+						allowBlank : true
+					}, {
+						fieldLabel : il8n.isknowledge,
+						width : 150,
+						name : 'isknowledge',
+						maxLength : 1,
+						regex:/^[10]/,
+						allowBlank : false
 					}],
 
 			buttons : [{
@@ -69,87 +81,82 @@ wls.subject = Ext.extend(wls, {
 		});
 		return form;
 	},
-	getList : function(domid) {
+	
+	getTreeGrid:function(domid){
 		var thisObj = this;
-		var store = new Ext.data.JsonStore({
-					autoDestroy : true,
-					url : thisObj.config.AJAXPATH
-							+ '?controller=subject&action=getList',
-					root : 'data',
-					idProperty : 'id',
-					fields : ['id', 'id_level', 'name', 'description', 'icon',
-							'ids_level_knowledge', 'ordering','isshortcut']
-				});
-
-		var cm = new Ext.grid.ColumnModel({
-					defaults : {
-						sortable : true
-					},
-					columns : [{
-								header : il8n.id_level,
-								dataIndex : 'id_level'
-							}, {
-								header : il8n.name,
-								dataIndex : 'name',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										})
-							}, {
-								header : il8n.description,
-								dataIndex : 'description',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										}),
-								hidden : true
-							}, {
-								header : il8n.icon,
-								dataIndex : 'icon',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										}),
-								hidden : true
-							}, {
-								header : il8n.ids_level_knowledge,
-								dataIndex : 'ids_level_knowledge',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										}),
-								hidden : true
-							}, {
-								header : il8n.ordering,
-								dataIndex : 'ordering',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										}),
-								hidden : true
-							}, {
-								header : il8n.isshortcut,
-								dataIndex : 'isshortcut',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										})
-							}]
-				});
-
+		var record = Ext.data.Record.create([
+		{name: 'name'},
+		{name: 'icon'},
+		{name: 'description'},	
+		{name: 'isshortcut'},	
+		{name: 'isknowledge'},	
+		{name: 'id_level'},
+		{name: 'id',type:'int'},
+		{name: '_parent', type: 'auto'},
+		{name: '_is_leaf', type: 'bool'}
+		]);
+		var store = new Ext.ux.maximgb.tg.AdjacencyListStore({
+		 	autoLoad : true,
+		 	url: thisObj.config.AJAXPATH
+				+ "?controller=subject&action=getTreeGrid&temp="
+				+ Math.random(),
+			reader: new Ext.data.JsonReader({
+				id: 'id',
+				root: 'data',
+				totalProperty: 'total',
+				successProperty: 'success'
+			}, 
+			record)
+		});
 		var tb = new Ext.Toolbar({
 					id : "w_s_l_tb" + domid
 				});
-
-		var grid = new Ext.grid.EditorGridPanel({
-					store : store,
-					cm : cm,
-					id : domid,
-					width : 600,
-					height : 300,
-					clicksToEdit : 2,
-					tbar : tb,
-					bbar : new Ext.PagingToolbar({
-								store : store,
-								pageSize : 15,
-								displayInfo : true
-							})
-				});
-
+		var grid = new Ext.ux.maximgb.tg.EditorGridPanel({
+		   store: store,
+		   id : domid,
+		   tbar : tb,
+		   master_column_id : 'name',
+		   columns: [
+		   	{
+		   		 id:'name'
+		   		,header: il8n.name
+		   		//,sortable: true
+		   		,width: 75
+		   		,dataIndex: 'name'
+		   		,editor: new Ext.form.TextField()
+		   		,renderer : function(v, meta, record, row_idx, col_idx, store){
+		   			if(record.data.isknowledge==1){
+		   				return '<span style="color:red">'+v+'</span>';
+		   			}
+               		return v;
+            	}
+			},{
+			    header: il8n.icon, 
+				width: 75, 
+				//sortable: true, 
+				dataIndex: 'icon',
+				editor: new Ext.form.TextField()
+			},{
+			    header: il8n.id_level, 
+				width: 75, 
+				//sortable: true, 
+				dataIndex: 'id_level',
+				editor: new Ext.form.TextField()
+			},{
+			    header: il8n.description, 
+				width: 75, 
+				//sortable: true, 
+				dataIndex: 'description',
+				editor: new Ext.form.TextField()
+			},{
+			    header: il8n.isshortcut, 
+				width: 75, 
+				//sortable: true, 
+				dataIndex: 'isshortcut',
+				editor: new Ext.form.TextField()
+			}],
+			autoExpandColumn: 'name'
+		});
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '190701') {
@@ -191,24 +198,53 @@ wls.subject = Ext.extend(wls, {
 					iconCls: 'bt_deleteItems',
 					tooltip : il8n.deleteItems,
 					handler : function() {
-						Ext.Ajax.request({
-							method : 'POST',
-							url : thisObj.config.AJAXPATH
-									+ "?controller=subject&action=delete",
-							success : function(response) {
-								store.load();
-							},
-							failure : function(response) {
-								Ext.Msg.alert('failure', response.responseText);
-							},
-							params : {
-								id : Ext.getCmp(domid).getSelectionModel().selection.record.id
-							}
-						});
+						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
+						Ext.MessageBox.confirm( Ext.MessageBox.buttonText.ok+'?', il8n.sureToDelete+"?<br/>"+il8n.cascadingDelete, function(button,text){  
+               				if(button=='yes'){
+               					Ext.Ajax.request({
+									method : 'POST',
+									url : thisObj.config.AJAXPATH
+											+ "?controller=subject&action=delete",
+									success : function(response) {
+										store.load();
+									},
+									failure : function(response) {
+										Ext.Msg.alert('failure',
+												response.responseText);
+									},
+									params : {
+										id : Ext.getCmp(domid)
+												.getSelectionModel().selection.record.id
+									}
+								});
+               				}
+            			});
+
 					}
 				});
 			} else if (access[i] == '190704') {
-				grid.on("afteredit", afteredit, grid);
+				grid.on("afteredit",function(e){
+						Ext.Ajax.request({
+									method : 'POST',
+									url : thisObj.config.AJAXPATH
+											+ "?controller=subject&action=saveUpdate",
+									success : function(response) {
+										// Ext.Msg.alert('success',response.responseText);
+									},
+									failure : function(response) {
+										Ext.Msg.alert('failure', response.responseText);
+									},
+									params : {
+										field : e.field,
+										value : e.value,
+										id : e.record.data.id
+									}
+								});
+					
+			 	});
 			} else if (access[i] == '190705') {
 				tb.add({
 							iconCls: 'bt_add',
@@ -229,35 +265,10 @@ wls.subject = Ext.extend(wls, {
 							}
 						});
 			}
-			function afteredit(e) {
-				Ext.Ajax.request({
-							method : 'POST',
-							url : thisObj.config.AJAXPATH
-									+ "?controller=subject&action=saveUpdate",
-							success : function(response) {
-								// Ext.Msg.alert('success',response.responseText);
-							},
-							failure : function(response) {
-								Ext.Msg.alert('failure', response.responseText);
-							},
-							params : {
-								field : e.field,
-								value : e.value,
-								id : e.record.data.id
-							}
-						});
-			}
 		}
-
-		store.load({
-					params : {
-						start : 0,
-						limit : 15
-					}
-				});
+		
 		return grid;
 	}
-
 	,
 	getPaperList : function(domid) {
 		var thisObj = this;
@@ -268,7 +279,7 @@ wls.subject = Ext.extend(wls, {
 					+ thisObj.id_level,
 			root : 'data',
 			idProperty : 'id',
-			fields : ['id', 'title', 'questions', 'count_used', 'money',
+			fields : ['id', 'title', 'ids_questions', 'count_used', 'money',
 					'score_avg', 'score_top', 'score_top_user', 'time_limit']
 		});
 
@@ -300,7 +311,7 @@ wls.subject = Ext.extend(wls, {
 								hidden : true
 							}, {
 								header : il8n.count_questions,
-								dataIndex : 'questions',
+								dataIndex : 'ids_questions',
 								renderer : function(value) {
 									var json = '[' + value + ']';
 									var arr = jQuery.parseJSON(json);

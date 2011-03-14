@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml" 
+    xml:lang="en" 
+    lang="en">
+<head>
+ <title>Ext.ux.maximgb.tg client editable tree grid.</title>
+ <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+ <link rel="stylesheet" type="text/css" href="/apps/wls/libs/ext_3_2_1__/resources/css/ext-all.css" />
+ <link rel="stylesheet" type="text/css" href="/apps/wls/libs/ux.maximgb.tg/css/TreeGrid.css" />  
+</head>
+<body> 
+ <!-- <div id="grid-example"></div>-->
+ <!-- ########################################################################################## -->
+ <script type='text/javascript' src='/apps/wls/libs/ext_3_2_1__/adapter/ext/ext-base.js'></script>
+ <script type='text/javascript' src='/apps/wls/libs/ext_3_2_1__/ext-all.js'></script>
+ <script type='text/javascript' src='/apps/wls/libs/ux.maximgb.tg/TreeGrid.packed.js'></script>
+
+ <script type='text/javascript'>
+Ext.onReady(function(){
+
+
+
+		
+	    var record = Ext.data.Record.create([
+	                                    		{name: 'name'},
+	                                    		{name: 'icon'},
+	                                      	{name: 'id_level', type: 'int'},
+	                                      	{name: '_parent', type: 'auto'},
+	                                      	{name: '_is_leaf', type: 'bool'}
+	                                    	]);
+	                                     var store = new Ext.ux.maximgb.tg.AdjacencyListStore({
+	                                     	autoLoad : true,
+	                                     	url: 'pager.php',
+	                                 			reader: new Ext.data.JsonReader(
+	                                 				{
+	                                 					id: 'id_level',
+	                                 					root: 'data',
+	                                 					totalProperty: 'total',
+	                                 					successProperty: 'success'
+	                                 				}, 
+	                                 				record
+	                                 			)
+
+	 });
+	 // create the Grid
+	 var grid = new Ext.ux.maximgb.tg.EditorGridPanel({
+	   store: store,
+	   master_column_id : 'company',
+	   columns: [
+		{id:'company',header: "Company", width: 160, sortable: true, dataIndex: 'name',
+			editor: new Ext.form.TextField()
+
+			}, {
+	            header: "Price", 
+	            width: 75, 
+	            sortable: true, 
+	            dataIndex: 'icon',
+	            editor: new Ext.form.TextField()
+	        }
+	     
+	   ],
+	   //stripeRows: true,
+	   autoExpandColumn: 'company',
+	   title: 'Nested set server grid.',
+
+	 });
+	 var vp = new Ext.Viewport({
+	 	layout : 'fit',
+	 	items : grid
+	 });
+	 grid.on("afteredit",function(e){
+		 console.debug(e);
+	 });
+	// grid.getSelectionModel().selectFirstRow();
+});
+</script>
+</body>
+</html>

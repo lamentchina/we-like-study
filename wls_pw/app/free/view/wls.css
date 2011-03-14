@@ -245,3 +245,9 @@ A:hover {text-decoration: none}
 .bt_add{
 	background-image: url("images/add16x16.png") !important;
 }
+.bt_usergroup{
+	background-image: url("images/group16x16.png") !important;
+}
+.bt_subject{
+	background-image: url("images/subject16x16.png") !important;
+}

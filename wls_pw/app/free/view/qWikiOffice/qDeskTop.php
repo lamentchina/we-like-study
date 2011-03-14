@@ -4,14 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <title><?php echo $this->c->siteName ?></title>
-<link rel="stylesheet" type="text/css"
-	href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/ext-all-notheme.css" />   
+<link rel="stylesheet" type="text/css" href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $this->c->libsPath ?>ext_3_2_1/resources/css/<?php echo $this->c->theme ?>" />
 <link rel="stylesheet" type="text/css" href="free/view/wls.css" />
 <link rel="stylesheet" type="text/css" href="free/view/qWikiOffice/resources/css/desktop.css" />
+
 <style type="text/css">
 <?php echo $css ?>
 </style>
-
 	
 <script type="text/javascript" src="wls.php?controller=system&action=translateIniToJsClass"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>jquery-1.4.2.js"></script>
@@ -20,7 +20,6 @@
 	src="<?php echo $this->c->libsPath ?>ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>ext_3_2_1/ext-all.js"></script>
 <script type="text/javascript" src="<?php echo $this->c->libsPath ?>ext_3_2_1/ext-lang-zh_CN.js"></script>
-
 
 <!--qWikiOffice Js API  -->
 <script type="text/javascript" src="free/view/qWikiOffice/client/App.js"></script>
@@ -43,7 +42,9 @@
 <script type="text/javascript" src="free/view/quiz/wrong.js"></script>
 <script type="text/javascript" src="free/view/quiz/log.js"></script>
 <script type="text/javascript" src="free/view/subject.js"></script>
-<script type="text/javascript" src="free/view/knowledge.js"></script>
+
+<link rel="stylesheet" type="text/css" href="<?php echo $this->c->libsPath ?>ux.maximgb.tg/css/TreeGrid.css" />  
+<script type='text/javascript' src='<?php echo $this->c->libsPath ?>ux.maximgb.tg/TreeGrid.packed.js'></script>
 
 <script type="text/javascript">
 var user_ = new wls.user();
@@ -53,7 +54,6 @@ if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){
 ?>
 <script type="text/javascript">
 <?php 
- 
 echo "user_.myUser.access = '".$_SESSION['wls_user']['access']."';\n";
 echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
 echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
@@ -61,8 +61,7 @@ echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
 echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
 echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
 echo "user_.myUser.photo = '".$_SESSION['wls_user']['photo']."';\n";
- 
- ?>
+?>
  
 Ext.namespace('Ext.ux','QoDesk');
 
@@ -92,12 +91,7 @@ QoDesk.App = new Ext.app.App({
    desktopConfig: {
       appearance: {
     	"fontColor":"333333",
-    	"taskbarTransparency":60,
-    	"theme":{
-			"id":1,
-			"name":"Blue",
-			"file":"free/view/qWikiOffice/resources/css/<?php echo $this->c->theme ?>.css"
-		}
+    	"taskbarTransparency":70
 	  },
       background: {
 	      "color":"f9f9f9",
