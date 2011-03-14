@@ -140,14 +140,25 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				});
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '115303') {
+			if (access[i] == '165303') {
 				tb.add({
 					iconCls: 'bt_deleteItems',
 					tooltip : il8n.deleteItems,
 					handler : function() {
+						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
+						var ids = '';
+						var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+						for (var i = 0; i < items.length; i++) {
+							ids += items[i].data.id + ',';
+						}
+						ids = ids.substring(0, ids.length - 1);
 						Ext.Ajax.request({
 							method : 'POST',
-							url : thisObj.config.AJAXPATH + "?controller=quiz_paper&action=delete",
+							url : thisObj.config.AJAXPATH
+									+ "?controller=quiz_wrong&action=delete",
 							success : function(response) {
 								store.load();
 							},
@@ -156,7 +167,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								// Ext.Msg.alert('failure',response.responseText);
 							},
 							params : {
-								id : Ext.getCmp(domid).getSelectionModel().selection.record.id
+								ids : ids
 							}
 						});
 					}

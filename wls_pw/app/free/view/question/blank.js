@@ -1,6 +1,8 @@
 wls.question.blank = Ext.extend(wls.question, {
-	initDom : function() {
+	id_parent : 1
+	,initDom : function() {
 		if(this.questionData.id_parent==0){
+			this.id_parent = 0;
 			$("#wls_quiz_main").append("<div id='w_qs_" + this.id
 					+ "'></div>");
 			$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
@@ -23,12 +25,13 @@ wls.question.blank = Ext.extend(wls.question, {
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("id","w_qs_"+this.id);
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("name","w_qs_"+this.id);
 			$("[index="+this.questionData.title+"]",$("#w_qs_"+this.questionData.id_parent)).attr("onchange","wls_question_done("+this.id+")");
-		
 		}
 		this.cent = this.questionData.cent;
 		this.questionData = null;
 	},
 	showDescription : function() {
+		//console.debug(this.questionData);
+		if(this.id_parent==0)return;
 		var obj = this.answerData;
 		this.quiz.cent += parseFloat(obj.cent);
 		this.quiz.count.total++;		

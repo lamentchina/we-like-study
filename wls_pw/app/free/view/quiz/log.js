@@ -1,5 +1,4 @@
 wls.quiz.log = Ext.extend(wls.quiz, {
-
 	type : 'log',
 	id : null,
 	logData : null,
@@ -63,7 +62,6 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							alert(il8n.log_notfound);
 						}else{
 							var obj = thisObj.answersData = jQuery.parseJSON(msg);
-							console.debug(obj.length);
 							
 							var index = 0;
 							for (var i = 0; i < thisObj.questions.length; i++) {
@@ -71,7 +69,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 									continue;
 								}
 								thisObj.questions[i].answerData = obj[index];
-								//thisObj.questions[i].setMyAnswer();
+								thisObj.questions[i].setMyAnswer();
 								index++;
 							}
 							thisObj.addDescriptions();
@@ -186,7 +184,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					iconCls: 'bt_exportFile',
 					tooltip : il8n.exportFile,
 					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
 							return;
 						}
@@ -197,7 +195,12 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							height : 300,
 							html : "<iframe src ='"
 									+ thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=exportOne' width='100%' height='250' />"
+									+ "?controller=quiz_log&action=exportOne"									
+									+ "&temp="
+									+ Math.random()
+									+ "&id="
+									+ Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id
+									+ "' style='width:100%; height:100%;' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 						});
 						win.show(this);
 					}
@@ -207,11 +210,16 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					iconCls: 'bt_deleteItems',
 					tooltip : il8n.deleteItems,
 					handler : function() {
-					if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-						alert(il8n.clickCellInGrid);
-						return;
-					}
-						if(Ext.getCmp(domid).getSelectionModel().selections.items.length == 0)return;
+						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+							alert(il8n.clickCellInGrid);
+							return;
+						}
+						var ids = '';
+						var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+						for (var i = 0; i < items.length; i++) {
+							ids += items[i].data.id + ',';
+						}
+						ids = ids.substring(0, ids.length - 1);
 						Ext.Ajax.request({
 							method : 'POST',
 							url : thisObj.config.AJAXPATH
@@ -223,7 +231,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 								Ext.Msg.alert('failure', response.responseText);
 							},
 							params : {
-								id : Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id
+								ids : ids
 							}
 						});
 					}
@@ -323,13 +331,13 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();
 
-						var win = desktop.getWindow(lid + '_qdesk');
+						var win = desktop.getWindow(lid + '_log_qdesk');
 						var winWidth = desktop.getWinWidth();
 						var winHeight = desktop.getWinHeight();
 
 						if (!win) {
 							win = desktop.createWindow({
-								id : lid + '_qdesk',
+								id : lid + '_log_qdesk',
 								title : il8n.log_review,
 								width : winWidth,
 								height : winHeight,
