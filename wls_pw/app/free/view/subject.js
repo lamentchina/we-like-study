@@ -90,7 +90,7 @@ wls.subject = Ext.extend(wls, {
 		{name: 'description'},	
 		{name: 'isshortcut'},	
 		{name: 'isknowledge'},	
-		{name: 'id_level'},
+		{name: 'id_level',type:'string'},
 		{name: 'id',type:'int'},
 		{name: '_parent', type: 'auto'},
 		{name: '_is_leaf', type: 'bool'}
@@ -138,7 +138,7 @@ wls.subject = Ext.extend(wls, {
 				editor: new Ext.form.TextField()
 			},{
 			    header: il8n.id_level, 
-				width: 75, 
+				//width: 75, 
 				//sortable: true, 
 				dataIndex: 'id_level',
 				editor: new Ext.form.TextField()
