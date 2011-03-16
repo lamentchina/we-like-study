@@ -121,6 +121,7 @@ class subject extends wls{
 			$search['id_level_subject'] = $_REQUEST['id_level_subject_'];
 		}
 		$data = $log->getList(1,100,$search);
+//		print_r($data);exit();
 		$data = $data['data'];
 		$arr = array();
 		for($i=0;$i<count($data);$i++){
@@ -219,7 +220,7 @@ $xml .= '		</graph>
 		
 		for($i=0;$i<count($data['data']);$i++){
 			$data['data'][$i]['_is_leaf'] = $data['data'][$i]['isleaf'];
-			$data['data'][$i]['id_level'] = intval($data['data'][$i]['id_level']);
+			
 			$data['data'][$i]['_parent'] = ($_REQUEST['anode']=='')?null:intval($_REQUEST['anode']);
 		}		
 		

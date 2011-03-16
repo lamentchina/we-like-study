@@ -204,6 +204,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			$logDta['id_user'] = $id_user;
 			$logDta['ids_level_user_group'] = $usergroups;
 		}
+//		print_r($logDta);exit();
 		$this->addLog($logDta);
 	}
 
@@ -354,7 +355,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		if(isset($whatHappened['date_created'])){
 			$data['date_created'] = $whatHappened['date_created'];
 		}
-		$id_quiz_log = $this->insert($data);
+		$this->id = $this->insert($data);
 
 		$count_right = 0;
 		$count_wrong = 0;
@@ -372,7 +373,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			$cent += $answers[$i]['cent'];
 			$quesLogData = array(
 				 'id_quiz'=>$id_quiz
-				,'id_quiz_log'=>$id_quiz_log
+				,'id_quiz_log'=>$this->id
 				,'myAnswer'=>$answers[$i]['myAnswer']
 				,'answer'=>$answers[$i]['answer']
 				,'id_question'=>$answers[$i]['id']
@@ -402,7 +403,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			,'proportion'=>( ($count_right*100)/($count_right+$count_wrong) )
 			,'mycent'=>$mycent
 			,'cent'=>$cent
-			,'id'=>$id_quiz_log
+			,'id'=>$this->id
 		));
 
 		$quizObj = new m_quiz();
@@ -410,6 +411,8 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$quizObj->mycent = $mycent;
 		$quizObj->cumulative('score');
 		$quizObj->cumulative('count_used');
+		
+		$this->getLogAnswers();
 	}
 
 	/**

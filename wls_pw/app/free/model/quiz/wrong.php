@@ -153,7 +153,7 @@ class m_quiz_wrong extends wls implements dbtable{
 		$userObj = new m_user();
 		$me = $userObj->getMyInfo();
 			
-		$sql = "select id_question from ".$pfx."wls_quiz_wrong where id_user = ".$me['id'];
+		$sql = "select id_question from ".$pfx."wls_quiz_wrong where id_user = ".$me['id']." limit 0,50" ;
 		$res = mysql_query($sql,$conn);
 		$ids = '';
 		while($temp = mysql_fetch_assoc($res)){
