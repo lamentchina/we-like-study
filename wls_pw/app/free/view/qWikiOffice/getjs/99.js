@@ -1,5 +1,5 @@
-class_20 = Ext.extend(Ext.app.Module, {
-	id : 'id_20',
+class_99 = Ext.extend(Ext.app.Module, {
+	id : 'id_99',
 
 	init : function() {
 
@@ -16,7 +16,7 @@ class_20 = Ext.extend(Ext.app.Module, {
 				title : 'About Us',
 				width : 400,
 				height : 350,
-				iconCls : 'tab-icon',
+				iconCls : 'icon_doquiz_16_16',
 				shim : false,
 				constrainHeader : true,
 				layout : 'fit',
