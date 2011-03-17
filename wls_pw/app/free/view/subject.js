@@ -159,10 +159,12 @@ wls.subject = Ext.extend(wls, {
 		});
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '190701') {
-				tb.add({
-					iconCls: 'bt_importFile',
-					tooltip : il8n.importFile,
+			if (access[i] == '190701'){
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_s_gp_l_i',
@@ -177,9 +179,11 @@ wls.subject = Ext.extend(wls, {
 					}
 				});
 			} else if (access[i] == '190702') {
-				tb.add({
-					iconCls: 'bt_exportFile',
-					tooltip : il8n.exportFile,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_s_gp_l_e',
@@ -194,9 +198,11 @@ wls.subject = Ext.extend(wls, {
 					}
 				});
 			} else if (access[i] == '190703') {
-				tb.add({
-					iconCls: 'bt_deleteItems',
-					tooltip : il8n.deleteItems,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 							alert(il8n.clickCellInGrid);
@@ -245,9 +251,11 @@ wls.subject = Ext.extend(wls, {
 					
 			 	});
 			} else if (access[i] == '190705') {
-				tb.add({
-							iconCls: 'bt_add',
-							tooltip : il8n.add,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
 							handler : function() {
 								var form = thisObj.getAddItemForm();
 								var w = new Ext.Window({
@@ -338,9 +346,11 @@ wls.subject = Ext.extend(wls, {
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {			
 			if (access[i] == '1107') {
-				tb.add({
-					iconCls: 'bt_Quiz_Paper',
-					tooltip : il8n.Quiz_Paper,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);

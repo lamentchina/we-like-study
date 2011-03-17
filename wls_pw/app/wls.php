@@ -166,8 +166,23 @@ class wls{
 }
 .icon_'.$icons[$i].'_16_16{
 	background-image:url("free/view/images/'.$icons[$i].'16x16.png") !important;
+}
+.icon_'.$icons[$i].'_32_32{
+	background-image:url("free/view/images/'.$icons[$i].'32x32.png") !important;
 }';
 				}
+				$access = $_SESSION['wls_user']['access2'];
+				$keys = array_keys($access);
+//				print_r($access);exit();
+				$btnIcon = array();
+				for($i=0;$i<count($keys);$i++){
+					if(!in_array($access[$keys[$i]][1],$btnIcon)){
+					$css .= '.bt_'.$access[$keys[$i]][1].'_16_16{
+	background-image:url("free/view/images/'.$access[$keys[$i]][1].'16x16.png") !important;
+}
+';					array_push($btnIcon,$access[$keys[$i]][1]);
+					}
+				}				
 				
 				include_once "free/view/qWikiOffice/qDeskTop.php";
 			}

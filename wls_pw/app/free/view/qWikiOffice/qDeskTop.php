@@ -41,6 +41,7 @@
 <script type="text/javascript" src="free/view/quiz/paper.js"></script>
 <script type="text/javascript" src="free/view/quiz/wrong.js"></script>
 <script type="text/javascript" src="free/view/quiz/log.js"></script>
+<script type="text/javascript" src="free/view/quiz/exam.js"></script>
 <script type="text/javascript" src="free/view/subject.js"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo $this->c->libsPath ?>ux.maximgb.tg/css/TreeGrid.css" />  
@@ -55,6 +56,7 @@ if(isset($_SESSION['wls_user']) && isset($_SESSION['wls_user']['id'])){
 <script type="text/javascript">
 <?php 
 echo "user_.myUser.access = '".$_SESSION['wls_user']['access']."';\n";
+echo "user_.myUser.access2 = ".json_encode($_SESSION['wls_user']['access2']).";\n";
 echo "user_.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
 echo "user_.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
 echo "user_.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
@@ -62,7 +64,7 @@ echo "user_.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
 echo "user_.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
 echo "user_.myUser.photo = '".$_SESSION['wls_user']['photo']."';\n";
 ?>
- 
+var modules = <?php echo json_encode($modules) ?>;
 Ext.namespace('Ext.ux','QoDesk');
 
 QoDesk.App = new Ext.app.App({
@@ -83,7 +85,7 @@ QoDesk.App = new Ext.app.App({
     * An array of the module definitions.
     * The definitions are used until the module is loaded on demand.
     */
-    modules: <?php echo json_encode($modules) ?> ,
+    modules: modules ,
 
    /**
     * The desktop config object.

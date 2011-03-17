@@ -117,13 +117,15 @@ wls.user.group = Ext.extend(wls, {
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '1301') {
-				tb.add(this.importFile());
+				tb.add(this.importFile(access[i]));
 			}else if (access[i] == '1302') {
-				tb.add(this.exportFile());
+				tb.add(this.exportFile(access[i]));
 			}  else if (access[i] == '130401') {
-				tb.add({
-					iconCls: 'bt_access',
-					tooltip : il8n.access,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 							alert(il8n.clickCellInGrid);
@@ -135,9 +137,11 @@ wls.user.group = Ext.extend(wls, {
 					}
 				});
 			} else if (access[i] == '130402') {
-				tb.add({
-					iconCls: 'bt_subject',
-					tooltip : il8n.subject,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 							alert(il8n.clickCellInGrid);
@@ -148,9 +152,11 @@ wls.user.group = Ext.extend(wls, {
 					}
 				});
 			} else if (access[i] == '1305') {
-				tb.add({
-					iconCls: 'bt_add',
-					tooltip : il8n.add,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						var form = thisObj.getAddItemForm();
 						var w = new Ext.Window({
@@ -192,9 +198,11 @@ wls.user.group = Ext.extend(wls, {
 					});
 				});
 			} else if (access[i] == '1303') {
-				tb.add({
-					iconCls: 'bt_deleteItems',
-					tooltip : il8n.deleteItems,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add( {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 							alert(il8n.clickCellInGrid);
@@ -228,11 +236,13 @@ wls.user.group = Ext.extend(wls, {
 		}
 		return grid;
 	}
-	,importFile:function(){
+	,importFile:function(access){
 		var thisObj = this;
+		eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access+"[1]+'_16_16';");
+		eval("var tooltip = user_.myUser.access2.p"+access+"[2];");
 		return {
-			iconCls: 'bt_importFile',
-			tooltip : il8n.importFile,
+			iconCls: iconCls,
+			tooltip : tooltip,
 			handler : function() {
 				var win = new Ext.Window({
 					id : 'w_u_g_l_i',
@@ -247,11 +257,13 @@ wls.user.group = Ext.extend(wls, {
 			}
 		}
 	}
-	,exportFile:function(){
+	,exportFile:function(access){
 		var thisObj = this;
+		eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access+"[1]+'_16_16';");
+		eval("var tooltip = user_.myUser.access2.p"+access+"[2];");
 		return {
-			iconCls: 'bt_exportFile',
-			tooltip : il8n.exportFile,
+			iconCls: iconCls,
+			tooltip : tooltip,
 			handler : function() {
 				var win = new Ext.Window({
 					id : 'w_u_g_l_e',

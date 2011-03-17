@@ -112,9 +112,11 @@ wls.user.access = Ext.extend(wls, {
 
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '190701') {
-					tb.add({
-						iconCls: 'bt_importFile',
-						tooltip : il8n.importFile,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add('-', {
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
 								title : il8n.importFile,
@@ -131,9 +133,11 @@ wls.user.access = Ext.extend(wls, {
 						}
 					});
 				} else if (access[i] == '190702') {
-					tb.add({
-						iconCls: 'bt_exportFile',
-						tooltip : il8n.exportFile,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add('-', {
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
 								title : il8n.exportFile,
