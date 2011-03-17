@@ -345,16 +345,16 @@ class m_user extends wls implements dbtable,fileLoad{
 
 		
 		$ids = '';
-		$accesss = array();
+		$access2 = array();
 		for($i=0;$i<count($d);$i++){
 			if($d[$i]['checked']=='1'){
 				$ids .= $d[$i]['id_level'].",";
-				$accesss[$d[$i]['id_level']] = $d[$i]['money'];
+				$access2['p'.$d[$i]['id_level']] = array($d[$i]['money'],$d[$i]['icon'],$d[$i]['name']);
 			}
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
 		$data['access'] = $ids;
-		$data['accesss'] = $accesss;
+		$data['access2'] = $access2;
 
 		//One user can belong to more than two groups.
 		//And one user at least belong to one group.

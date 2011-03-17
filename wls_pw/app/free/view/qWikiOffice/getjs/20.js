@@ -8,22 +8,25 @@ class_20 = Ext.extend(Ext.app.Module, {
 	createWindow : function() {
 		var desktop = this.app.getDesktop();
 		var win = desktop.getWindow(this.id);
-		var obj = new wls();
-		
+		var obj = new wls.quiz.exam();
+		var title = '';
+		for(var i=0;i<modules.length;i++){
+			if(modules[i].id=='id_20'){
+				title = modules[i].launcher.text;
+			}
+		}
 		if (!win) {
 			win = desktop.createWindow({
 				id : this.id,
-				title : 'About Us',
-				width : 400,
+				title : title,
+				width : 600,
 				height : 350,
 				iconCls : 'icon_doquiz_16_16',
+				iconClsGhostBar : 'icon_doquiz_32_32',
 				shim : false,
 				constrainHeader : true,
 				layout : 'fit',
-				modal : true,
-				html : "<iframe src ='"
-					+ obj.config.AJAXPATH
-					+ "?controller=quiz&action=about' width='100%' height='350' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+				items : [obj.getList('qd_w_u_l')]				
 			});
 		}
 		win.show();				

@@ -187,7 +187,7 @@ down();
 		$userObj = new m_user();
 		if($userObj->checkMyaccess("1109",false)==false)return;
 
-		$folder = $this->c->filePath.'import/';
+		$folder = $this->c->filePath.'import/paper/';
 		if(isset($_REQUEST['id'])){
 			$this->m->importOne($_REQUEST['id']);
 			echo 'ok';

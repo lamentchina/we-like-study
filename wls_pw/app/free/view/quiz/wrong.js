@@ -141,9 +141,11 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '165303') {
-				tb.add({
-					iconCls: 'bt_deleteItems',
-					tooltip : il8n.deleteItems,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
@@ -272,9 +274,11 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '125003') {
-				tb.add({
-					iconCls: 'bt_deleteItems',
-					tooltip : il8n.deleteItems,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
@@ -303,9 +307,11 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					}
 				});
 			} else if (access[i] == '125007') {
-				tb.add({
-					iconCls: 'bt_Quiz_Paper',
-					tooltip : il8n.Quiz_Wrongs,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
 					handler : function() {
 						var uid = user_.myUser.id;
 						var desktop = QoDesk.App.getDesktop();

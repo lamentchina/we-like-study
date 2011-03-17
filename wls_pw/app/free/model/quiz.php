@@ -102,6 +102,7 @@ class m_quiz extends wls implements dbtable{
 	public function importOne($phpexcel){
 		$currentSheet = $phpexcel->getSheetByName($this->lang['question']);
 		$allRow = $currentSheet->getHighestRow();
+		
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();

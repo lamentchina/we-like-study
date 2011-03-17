@@ -35,6 +35,15 @@ class m_user_group extends wls implements dbtable,fileLoad{
 		$sql = "update ".$pfx."wls_user_group set count_user = (select count(*) from ".$pfx."wls_user_group2user  where id_level_group = '".$data['id_level_group']."' ) where id_level = '".$data['id_level_group']."'";
 		mysql_query($sql,$conn);
 	}
+	
+	public function linkExam($data){
+		$pfx = $this->c->dbprefix;
+		$conn = $this->conn();
+
+		$sql = "insert into ".$pfx."wls_user_group2exam (id_level_group,id_exam) values ('".$data['id_level_group']."','".$data['id_exam']."');";
+		mysql_query($sql,$conn);
+
+	}
 
 	public function linkAccess($data){
 		$pfx = $this->c->dbprefix;
@@ -226,6 +235,22 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			mysql_query($sql,$conn);
 		}
 
+		if($table==null||$table=='wls_user_group2exam'){
+			$sql = "drop table if exists ".$pfx."wls_user_group2exam;";
+			mysql_query($sql,$conn);
+			$sql = "
+				create table ".$pfx."wls_user_group2exam(
+					 id int primary key auto_increment	
+					,id_level_group varchar(200) default '0'		
+					,id_exam int default 0
+				) DEFAULT CHARSET=utf8;
+				";
+			mysql_query($sql,$conn);	
+	
+			$sql = "ALTER TABLE ".$pfx."wls_user_group2exam ADD INDEX idx_u_g2e (id_level_group,id_exam);";
+			mysql_query($sql,$conn);
+		}
+		
 		return true;
 	}
 

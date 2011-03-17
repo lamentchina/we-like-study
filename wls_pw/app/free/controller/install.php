@@ -10,6 +10,7 @@ include_once dirname(__FILE__).'/../model/quiz/paper.php';
 include_once dirname(__FILE__).'/../model/question/log.php';
 include_once dirname(__FILE__).'/../model/quiz/log.php';
 include_once dirname(__FILE__).'/../model/quiz/wrong.php';
+include_once dirname(__FILE__).'/../model/quiz/exam.php';
 
 class install extends wls {
 
@@ -51,6 +52,7 @@ class install extends wls {
 		$obj->importExcelWithU($this->c->filePath."demodata/config.xls");
 		$obj->importExcelWithS($this->c->filePath."demodata/config.xls");
 		$obj->importExcelWithG($this->c->filePath."demodata/config.xls");
+		$obj->setLeaf();
 
 		$obj = new m_quiz_wrong();
 		$obj->create();
@@ -64,8 +66,12 @@ class install extends wls {
 		//		$obj->importOne('F:/quizlog2.xls');
 		//		$obj->importOne('F:/quizlog4.xls');
 		
+		$obj = new m_quiz_exam();
+		$obj->create();
+		
 		$this->t->removeDir($this->c->filePath."cache/quizlog/");
 		mkdir($this->c->filePath."cache/quizlog/", 0777);
+
 		exit();
 		echo '
 		<html>

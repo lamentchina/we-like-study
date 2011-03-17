@@ -1,8 +1,8 @@
-wls.quiz.paper = Ext.extend(wls.quiz, {
+wls.quiz.exam = Ext.extend(wls.quiz, {
 
-	type : 'paper',
+	type : 'exam',
 	id : null,
-	paperData : null,
+	examData : null,
 	time : {
 		start : null,
 		stop : null,
@@ -15,14 +15,14 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				});
 		$.ajax({
 					url : thisObj.config.AJAXPATH
-							+ "?controller=quiz_paper&action=getOne",
+							+ "?controller=quiz_exam&action=getOne",
 					data : {
 						id : thisObj.id
 					},
 					type : "POST",
 					success : function(msg) {
 						var obj = jQuery.parseJSON(msg);
-						thisObj.paperData = obj;
+						thisObj.examData = obj;
 						thisObj.ids_questions = obj.ids_questions;
 						thisObj.state = 1;
 						thisObj.addQuizBrief();
@@ -47,21 +47,21 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	},
 	addQuizBrief : function() {
 		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.name + "</td>"
-				+ "<td>" + this.paperData.title + "</td>" + "</tr>" + "<tr>"
+				+ "<td>" + this.examData.title + "</td>" + "</tr>" + "<tr>"
 				+ "<td>" + il8n.time_limit + "</td>" + "<td>"
-				+ this.get_elapsed_time_string(this.paperData.time_limit)
+				+ this.get_elapsed_time_string(this.examData.time_limit)
 				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.score_top
-				+ "</td>" + "<td>" + this.paperData.score_top + "</td>"
+				+ "</td>" + "<td>" + this.examData.score_top + "</td>"
 				+ "</tr>" + "<tr>" + "<td>" + il8n.score_avg + "</td>" + "<td>"
-				+ this.paperData.score_avg + "</td>" + "</tr>" + "<tr>"
-				+ "<td>" + il8n.money + "</td>" + "<td>" + this.paperData.money
+				+ this.examData.score_avg + "</td>" + "</tr>" + "<tr>"
+				+ "<td>" + il8n.money + "</td>" + "<td>" + this.examData.money
 				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.time_spent
 				+ "</td>" + "<td><span id='clock'>00</span></td>" + "</tr>"
 				+ "</table>";
-		$("#paperBrief").append(str);
+		$("#examBrief").append(str);
 		var thisObj = this;
 		Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Brief');
-		wls_quiz_paper_clock = setInterval(function() {
+		wls_quiz_exam_clock = setInterval(function() {
 					thisObj.time.used++;
 					$('#clock').text(thisObj
 							.get_elapsed_time_string(thisObj.time.used));
@@ -72,7 +72,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					message : '<h1>' + il8n.loading + '</h1>......'
 				});
 
-		window.clearInterval(wls_quiz_paper_clock);
+		window.clearInterval(wls_quiz_exam_clock);
 		this.answersData = [];
 		for (var i = 0; i < this.questions.length; i++) {
 			// if(this.questions[i].type=='Qes_Big')continue;
@@ -117,10 +117,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					}
 				});
 	}
-
 	,
 	showResult : function() {
-
 		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.score
 				+ "</td>" + "<td>" + this.mycent + "</td>" + "</tr>" + "<tr>"
 				+ "<td>" + il8n.score_total + "</td>" + "<td>" + this.cent
@@ -137,14 +135,14 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		ac.layout.activeItem.collapse(false);
 
 		ac.add({
-					id : 'ext_PaperResult',
-					title : il8n.Quiz_Paper_Result,
-					html : '<div id="paperresult">aaa</div>'
+					id : 'ext_examResult',
+					title : il8n.Quiz_exam_Result,
+					html : '<div id="examresult">aaa</div>'
 				});
 		ac.doLayout();
 
-		$("#paperresult").empty();
-		$("#paperresult").append(str);
+		$("#examresult").empty();
+		$("#examresult").append(str);
 
 		$.blockUI({
 					message : str
@@ -176,16 +174,15 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
 					url : thisObj.config.AJAXPATH
-							+ '?controller=quiz_paper&action=getList',
+							+ '?controller=quiz_exam&action=getList',
 					root : 'data',
 					idProperty : 'id',
-					fields : ['id', 'index', 'name_subject', 'title', 'money',
-							'questions', 'count_used', 'date_created2']
+					fields : ['id', 'index', 'title','time_start','time_stop','passline','count_groups','count_users']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
 					defaults : {
-						sortable : true
+						sortable : false
 					},
 					columns : [{
 								header : '&nbsp;',
@@ -196,34 +193,23 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								dataIndex : 'id',
 								hidden : true
 							}, {
-								header : il8n.subject,
-								dataIndex : 'name_subject'
-							}, {
 								header : il8n.title,
-								dataIndex : 'title',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										})
+								dataIndex : 'title'
 							}, {
-								header : il8n.money,
-								dataIndex : 'money',
-								editor : new Ext.form.TextField({
-											allowBlank : false
-										})
+								header : il8n.time_start,
+								dataIndex : 'time_start'
 							}, {
-								header : il8n.count_questions,
-								dataIndex : 'questions',
-								renderer : function(value) {
-									var json = '[' + value + ']';
-									var arr = jQuery.parseJSON(json);
-									return arr.length;
-								}
+								header : il8n.time_stop,
+								dataIndex : 'time_stop'
 							}, {
-								header : il8n.count_used,
-								dataIndex : 'count_used'
+								header : il8n.examPassLine,
+								dataIndex : 'passline'
 							}, {
-								header : il8n.date_created,
-								dataIndex : 'date_created2'
+								header : il8n.exam_count_groups,
+								dataIndex : 'count_groups'
+							}, {
+								header : il8n.exam_count_users,
+								dataIndex : 'count_users'
 							}]
 				});
 
@@ -259,13 +245,12 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							}, '-']
 				});
 
-		var grid = new Ext.grid.EditorGridPanel({
+		var grid = new Ext.grid.GridPanel({
 					store : store,
 					cm : cm,
 					id : domid,
 					width : 600,
 					height : 300,
-					clicksToEdit : 2,
 					tbar : tb,
 					bbar : new Ext.PagingToolbar({
 								store : store,
@@ -279,7 +264,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		} else {
 			var access = user_.myUser.access.split(",");
 			for (var i = 0; i < access.length; i++) {
-				if (access[i] == '1101') {
+				if (access[i] == '2001') {
 					tb.add({
 						text : il8n.importFile,
 						handler : function() {
@@ -292,12 +277,12 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								modal : true,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=viewUpload' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+										+ "?controller=quiz_exam&action=importOne' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
 					});
-				} else if (access[i] == '1102') {
+				} else if (access[i] == '2002') {
 					tb.add({
 						text : il8n.exportFile,
 						handler : function() {
@@ -315,14 +300,14 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								height : 300,
 								html : "<iframe src ='"
 										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=viewExport&id="
+										+ "?controller=quiz_exam&action=viewExport&id="
 										+ pid
 										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 							win.show(this);
 						}
 					});
-				} else if (access[i] == '1103') {
+				} else if (access[i] == '2003') {
 					tb.add({
 						text : il8n.deleteItems,
 						handler : function() {
@@ -333,7 +318,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							Ext.Ajax.request({
 								method : 'POST',
 								url : thisObj.config.AJAXPATH
-										+ "?controller=quiz_paper&action=delete",
+										+ "?controller=quiz_exam&action=delete",
 								success : function(response) {
 									store.load();
 								},
@@ -347,9 +332,10 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							});
 						}
 					});
-				} else if (access[i] == '1107') {
+				} else if (access[i] == '2006') {
 					tb.add('-', {
-						text : il8n.Quiz_Paper,
+						iconCls : 'bt_Quiz_Paper',
+						tooltip : il8n.Quiz_Paper,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -375,7 +361,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 									plain : false,
 									html : '<iframe src="'
 											+ thisObj.config.AJAXPATH
-											+ "?controller=quiz_paper&action=viewOne&id="
+											+ "?controller=quiz_exam&action=viewOne&id="
 											+ pid
 											+ "&uid="
 											+ uid
@@ -386,35 +372,16 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							}
 							win.show();
 
-							// window.open(thisObj.config.AJAXPATH+"?controller=quiz_paper&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selection.record.id+"&uid="+user_.myUser.id);
 						}
 					});
-				} else if (access[i] == '1104') {
-					grid.on("afteredit", afteredit, grid);
+				} else if (access[i] == '2004') {
+					
 				} else if (access[i] == '1105') {
-					// TODO
+
 				}
 			}
 		}
-		function afteredit(e) {
-			Ext.Ajax.request({
-						method : 'POST',
-						url : thisObj.config.AJAXPATH
-								+ "?controller=quiz_paper&action=saveUpdate",
-						success : function(response) {
-							// TODO
-						},
-						failure : function(response) {
-							// TODO
-							// Ext.Msg.alert('failure',response.responseText);
-						},
-						params : {
-							field : e.field,
-							value : e.value,
-							id : e.record.data.id
-						}
-					});
-		}
+
 		store.on('beforeload', function() {
 					Ext.apply(this.baseParams, {
 								search : Ext.getCmp(domid + '_search')
@@ -431,4 +398,4 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	}
 
 });
-var wls_quiz_paper_clock = null;
+var wls_quiz_exam_clock = null;

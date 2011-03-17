@@ -183,6 +183,7 @@ Ext.ux.TaskBar = Ext.extend(Ext.Container, {
 	 * @param {Ext.Window}
 	 */
 	addTaskButton : function(win) {
+		win.iconCls = win.iconClsGhostBar;
 		return this.taskButtonPanel.add(win, {
 					scale : this.buttonScale
 				});

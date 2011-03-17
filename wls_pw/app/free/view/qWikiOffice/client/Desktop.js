@@ -223,7 +223,6 @@ Ext.Desktop = Ext.extend(Ext.util.Observable, {
 				if (!ms) {
 					return false;
 				}
-				// console.debug(ms);
 				for (var i = 0, len = ms.length; i < len; i++) {
 					if (ms[i].launcher) {
 

@@ -163,9 +163,11 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '165101') {
-				tb.add({
-					iconCls: 'bt_importFile',
-					tooltip : il8n.importFile,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add('-', {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						var win = new Ext.Window({
 							id : 'w_q_p_l_i',
@@ -180,9 +182,11 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					}
 				});
 			} else if (access[i] == '165102') {
-				tb.add({
-					iconCls: 'bt_exportFile',
-					tooltip : il8n.exportFile,
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add('-', {
+					iconCls: iconCls,
+					tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
@@ -205,10 +209,56 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 						win.show(this);
 					}
 				});
-			} else if (access[i] == '165103') {
-				tb.add({
-					iconCls: 'bt_deleteItems',
-					tooltip : il8n.deleteItems,
+			}else if (access[i] == '165108') {
+				eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+				tb.add('-', {
+					iconCls: iconCls,
+					tooltip : tooltip,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_q_p_l_e',
+								layout : 'fit',
+								title : il8n.exportAll,
+								modal : true,
+								width : 500,
+								height : 200,
+								html : "<iframe src ='"
+										+ thisObj.config.AJAXPATH
+										+ "?controller=quiz_log&action=exportAll"
+										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+							});
+							win.show(this);
+						}
+					});
+				}else if (access[i] == '165109') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add('-', {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_q_p_l_e',
+								layout : 'fit',
+								title : il8n.importAll,
+								modal : true,
+								width : 500,
+								height : 200,
+								html : "<iframe src ='"
+										+ thisObj.config.AJAXPATH
+										+ "?controller=quiz_log&action=importAll"
+										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+							});
+							win.show(this);
+						}
+					});
+				} else if (access[i] == '165103') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add('-', {
+						iconCls: iconCls,
+						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
@@ -237,9 +287,11 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					}
 				});
 			} else if (access[i] == '165107') {
-				tb.add({
-					iconCls: 'bt_Quiz_Paper',
-					tooltip : il8n.log_review,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add('-', {
+						iconCls: iconCls,
+						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);
@@ -319,9 +371,11 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		var access = user_.myUser.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '125301') {
-				tb.add({
-					iconCls: 'bt_Quiz_Paper',
-					tooltip : il8n.log_review,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add('-', {
+						iconCls: iconCls,
+						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 							alert(il8n.clickCellInGrid);

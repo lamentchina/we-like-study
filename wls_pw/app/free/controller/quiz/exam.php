@@ -1,14 +1,14 @@
 <?php
 include_once dirname(__FILE__).'/../quiz.php';
-include_once dirname(__FILE__).'/../../model/quiz/paper.php';
+include_once dirname(__FILE__).'/../../model/quiz/exam.php';
 include_once dirname(__FILE__).'/../../model/user.php';
 
-class quiz_paper extends quiz{
+class quiz_exam extends quiz{
 	private $m = null;
 
-	function quiz_paper(){
+	function quiz_exam(){
 		parent::wls();
-		$this->m = new m_quiz_paper();
+		$this->m = new m_quiz_exam();
 	}
 	
 	public function getOne(){
@@ -58,7 +58,7 @@ class quiz_paper extends quiz{
 			</head>
 			<body>
 				'.$this->lang['importExcel'].'
-				<form action="wls.php?controller=quiz_paper&action=saveImportOne" method="post"
+				<form action="wls.php?controller=quiz_exam&action=saveImportOne" method="post"
 				enctype="multipart/form-data">
 					<label for="file">'.$this->lang['ExcelFilePath'].'</label>
 					<input type="file" name="file" id="file" />
@@ -116,7 +116,7 @@ class quiz_paper extends quiz{
 		//faster than the client-side's JavaScript parsing , there would be an error
 		//So let the server sleep 2 senconds whatever
 		sleep(2);
-		echo $this->m->checkMyPaper($_POST['answersData'],$_POST['id'],$_POST['time']);
+		echo $this->m->checkMyexam($_POST['answersData'],$_POST['id'],$_POST['time']);
 	}
 
 	public function viewQuiz(){
@@ -171,7 +171,7 @@ class quiz_paper extends quiz{
 <script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz.js\"></script>
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/paper.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->c->license."/view/quiz/exam.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/choice.js\"></script>
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/check.js\"></script>
@@ -182,14 +182,14 @@ class quiz_paper extends quiz{
 <script type=\"text/javascript\" src=\"".$this->c->license."/view/question/depict.js\"></script>
 
 <script type=\"text/javascript\">
-var quiz_paper;
+var quiz_exam;
 Ext.onReady(function(){
-	quiz_paper = new wls.quiz.paper();
+	quiz_exam = new wls.quiz.exam();
 	
-	quiz_paper.id = ".$_REQUEST['id'].";
-	quiz_paper.naming = 'quiz_paper';
-	quiz_paper.initLayout();
-	quiz_paper.ajaxIds(\"quiz_paper.ajaxQuestions('quiz_paper.addQuestions()');\");
+	quiz_exam.id = ".$_REQUEST['id'].";
+	quiz_exam.naming = 'quiz_exam';
+	quiz_exam.initLayout();
+	quiz_exam.ajaxIds(\"quiz_exam.ajaxQuestions('quiz_exam.addQuestions()');\");
 });
 </script>
 </head>
@@ -199,6 +199,11 @@ Ext.onReady(function(){
 </html>
 		";
 		echo $html;
+	}
+	
+	public function test(){
+		$this->m->importOne($this->c->filePath."import/exam/examlog.xls");
+//		echo 141234123;
 	}
 }
 ?>

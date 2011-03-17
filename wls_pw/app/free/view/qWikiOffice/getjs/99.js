@@ -9,14 +9,21 @@ class_99 = Ext.extend(Ext.app.Module, {
 		var desktop = this.app.getDesktop();
 		var win = desktop.getWindow(this.id);
 		var obj = new wls();
+		var title = '';
+		for(var i=0;i<modules.length;i++){
+			if(modules[i].id=='id_99'){
+				title = modules[i].launcher.text;
+			}
+		}
 		
 		if (!win) {
 			win = desktop.createWindow({
 				id : this.id,
-				title : 'About Us',
+				title : title,
 				width : 400,
 				height : 350,
-				iconCls : 'icon_doquiz_16_16',
+				iconCls : 'icon_author_16_16',
+				iconClsGhostBar : 'icon_author_32_32',
 				shim : false,
 				constrainHeader : true,
 				layout : 'fit',

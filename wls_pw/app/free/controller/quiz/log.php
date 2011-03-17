@@ -172,5 +172,62 @@ Ext.onReady(function(){
 		";
 		echo $html;
 	}
+	
+	/**
+	 * Not import all the data in a sudden.
+	 * By Ajax , import one by one
+	 * */
+	public function importAll(){
+		$userObj = new m_user();
+		if($userObj->checkMyaccess("165109",false)==false)return;
+
+		$folder = $this->c->filePath.'import/quizlog/';
+		if(isset($_REQUEST['id'])){
+			$this->m->importOne($_REQUEST['id']);
+			echo 'ok';
+		}else{
+			$filename = $this->t->getAllFiles($folder);
+			$html = "
+<html>
+<head>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+<script src=\"".$this->c->libsPath."jquery-1.4.2.js\" type=\"text/javascript\"></script>
+<script src=\"".$this->c->libsPath."jqueryextend.js\" type=\"text/javascript\"></script>
+<script type=\"text/javascript\">
+
+var ids = ".json_encode($filename).";
+
+var index = 0;
+var down = function(){
+	$.ajax({
+		type: 'post',
+		url: 'wls.php?controller=quiz_log&action=importAll',
+		data: {id:ids[index]},
+		success: function(msg){
+			if(index==ids.length ){
+				$('#data').text('done')
+				return;
+			}
+			if(msg=='ok'){
+				index++;
+				$('#data').text('index:'+index+'/'+ids.length+';  file:'+ids[index]);
+			}else{
+				$('#data').text('wrong!');
+			}
+			down();
+		}
+	});
+}
+down();
+</script>
+</head>
+<body>
+<div id='data'><div>
+</body>
+</html>			
+			";
+			echo $html;
+		}
+	}
 }
 ?>

@@ -45,13 +45,19 @@ That's because its foundations are great:
 <li>securimage </li>
 </ul>
 
-Authors:
+At last , thank all these authors:
 <ul>
 <li>wei1224hf</li>
 <li>First Eyes </li>
-<li>xiaoyong8000</li>
 <li>范小延</li>
 </ul>
+
+The main author is we1224hf , me , who wrote the 99% code.
+<br/>I'm from China Mainland , graduated from Si Chuan Normal University .
+<br/>This software is free , and open-source. 
+<br/>If you plan to use thie software , but need some additional functionalities , I can write some extra codes for you.
+But the fee must be higer than 3000$.
+
 <br/><br/><br/>			
 </body>
 </html>

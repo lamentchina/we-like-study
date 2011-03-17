@@ -225,9 +225,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 			var access = user_.myUser.access.split(",");
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '1101') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						iconCls: 'bt_importFile',
-						tooltip : il8n.importFile,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_i',
@@ -244,9 +246,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '1102') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						iconCls: 'bt_exportFile',
-						tooltip : il8n.exportFile,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -270,9 +274,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				}else if (access[i] == '1108') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						iconCls: 'bt_exportAll',
-						tooltip : il8n.exportAll,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_e',
@@ -290,9 +296,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				}else if (access[i] == '1109') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						iconCls: 'bt_importAll',
-						tooltip : il8n.importAll,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_e',
@@ -310,9 +318,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				}else if (access[i] == '1103') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						iconCls: 'bt_deleteItems',
-						tooltip : il8n.deleteItems,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -336,9 +346,11 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '1107') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add('-', {
-						iconCls: 'bt_Quiz_Paper',
-						tooltip : il8n.Quiz_Paper,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
