@@ -19,7 +19,7 @@ class_20 = Ext.extend(Ext.app.Module, {
 			win = desktop.createWindow({
 				id : this.id,
 				title : title,
-				width : 600,
+				width : desktop.getWinWidth() / 1.1,
 				height : 350,
 				iconCls : 'icon_doquiz_16_16',
 				iconClsGhostBar : 'icon_doquiz_32_32',

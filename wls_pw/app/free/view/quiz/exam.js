@@ -47,18 +47,17 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 	},
 	addQuizBrief : function() {
 		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.name + "</td>"
-				+ "<td>" + this.examData.title + "</td>" + "</tr>" + "<tr>"
-				+ "<td>" + il8n.time_limit + "</td>" + "<td>"
-				+ this.get_elapsed_time_string(this.examData.time_limit)
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.score_top
-				+ "</td>" + "<td>" + this.examData.score_top + "</td>"
-				+ "</tr>" + "<tr>" + "<td>" + il8n.score_avg + "</td>" + "<td>"
-				+ this.examData.score_avg + "</td>" + "</tr>" + "<tr>"
-				+ "<td>" + il8n.money + "</td>" + "<td>" + this.examData.money
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.time_spent
+				+ "<td>" + this.examData.title + "</td>" + "</tr>" 
+				 + "<tr>" + "<td>" + il8n.time_start + "</td>"
+				+ "<td>" + this.examData.time_start.substring(0,10) + "</td>" + "</tr>"
+				 + "<tr>" + "<td>" + il8n.time_stop + "</td>"
+				+ "<td>" + this.examData.time_stop.substring(0,10) + "</td>" + "</tr>"
+				 + "<tr>" + "<td>" + il8n.examPassLine + "</td>"
+				+ "<td>" + this.examData.passline + "</td>" + "</tr>"				
+				+ "<tr>" + "<td>" + il8n.time_spent
 				+ "</td>" + "<td><span id='clock'>00</span></td>" + "</tr>"
 				+ "</table>";
-		$("#examBrief").append(str);
+		$("#paperBrief").append(str);
 		var thisObj = this;
 		Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Brief');
 		wls_quiz_exam_clock = setInterval(function() {
@@ -97,12 +96,13 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 		thisObj.time.stop = year + "-" + month + "-" + day + " " + hour + ":"
 				+ minute + ":" + second;
 		$.ajax({
-					url : thisObj.config.AJAXPATH
-							+ "?controller=question&action=getByIds",
+					url : thisObj.config.AJAXPATH + "?controller=quiz_exam&action=getAnswers",
 					data : {
 						answersData : thisObj.answersData,
 						id : thisObj.id,
-						time : thisObj.time
+						time_start : thisObj.time.start,
+						time_stop : thisObj.time.stop,
+						time_used : thisObj.time.used
 					},
 					type : "POST",
 					success : function(msg) {
@@ -111,24 +111,31 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						for (var i = 0; i < obj.length; i++) {
 							thisObj.questions[i].answerData = obj[i];
 						}
-
+						
 						eval(nextFunction);
-						thisObj.showResult();
+						thisObj.showResult(obj[0].msg);
+						
 					}
 				});
 	}
 	,
-	showResult : function() {
-		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.score
-				+ "</td>" + "<td>" + this.mycent + "</td>" + "</tr>" + "<tr>"
-				+ "<td>" + il8n.score_total + "</td>" + "<td>" + this.cent
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_right
-				+ "</td>" + "<td>" + this.count.right + "</td>" + "</tr>"
-				+ "<tr>" + "<td>" + il8n.count_wrong + "</td>" + "<td>"
-				+ this.count.wrong + "</td>" + "</tr>" + "<tr>" + "<td>"
-				+ il8n.count_giveup + "</td>" + "<td>" + this.count.giveup
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_questions
-				+ "</td>" + "<td>" + this.count.total + "</td>" + "</tr>"
+	showResult : function(msg) {
+		var passed = il8n.exam_passed;
+		if(this.mycent<this.examData.passline){
+			passed = il8n.exam_failed;
+		}
+		passed = "<span style='color:red'>"+passed+"</span>"
+
+		var str = "<table width='90%'>" 
+				+ "<tr>" + "<td colspan='2'>" + msg + "</td>" + "</tr>" 
+				+ "<tr>" + "<td colspan='2'>&nbsp;</td>" + "</tr>" 
+				+ "<tr>" + "<td>" + il8n.score + "</td>" + "<td>" + this.mycent + "</td>" + "</tr>" 
+				+ "<tr>" + "<td>" + il8n.Quiz_Paper_Result + "</td>" + "<td>" + passed + "</td>" + "</tr>"
+				+ "<tr>" + "<td>" + il8n.examPassLine + "</td>" + "<td>" + this.examData.passline + "</td>" + "</tr>"
+				+ "<tr>" + "<td>" + il8n.count_right + "</td>" + "<td>" + this.count.right + "</td>" + "</tr>"
+				+ "<tr>" + "<td>" + il8n.count_wrong + "</td>" + "<td>" + this.count.wrong + "</td>" + "</tr>" 
+				+ "<tr>" + "<td>" + il8n.count_giveup + "</td>" + "<td>" + this.count.giveup + "</td>" + "</tr>" 
+				+ "<tr>" + "<td>" + il8n.count_questions + "</td>" + "<td>" + this.count.total + "</td>" + "</tr>"
 				+ "</table>";
 		var ac = Ext.getCmp('ext_Operations');
 
@@ -177,7 +184,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 							+ '?controller=quiz_exam&action=getList',
 					root : 'data',
 					idProperty : 'id',
-					fields : ['id', 'index', 'title','time_start','time_stop','passline','count_groups','count_users']
+					fields : ['id', 'index', 'title','time_start','time_stop','passline','count_groups','count_users','cent','mycent']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -210,6 +217,12 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 							}, {
 								header : il8n.exam_count_users,
 								dataIndex : 'count_users'
+							}, {
+								header : il8n.score,
+								dataIndex : 'cent'
+							}, {
+								header : il8n.myScore,
+								dataIndex : 'mycent'
 							}]
 				});
 
@@ -265,8 +278,11 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 			var access = user_.myUser.access.split(",");
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '2001') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						text : il8n.importFile,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
 								id : 'w_q_p_l_i',
@@ -283,8 +299,11 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2002') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						text : il8n.exportFile,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -308,8 +327,11 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2003') {
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
 					tb.add({
-						text : il8n.deleteItems,
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
 							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
 								alert(il8n.clickCellInGrid);
@@ -333,15 +355,17 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2006') {
-					tb.add('-', {
-						iconCls : 'bt_Quiz_Paper',
-						tooltip : il8n.Quiz_Paper,
+					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					tb.add({
+						iconCls: iconCls,
+						tooltip : tooltip,
 						handler : function() {
-							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+							if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 								alert(il8n.clickCellInGrid);
 								return;
 							}
-							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
+							var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 
 							var uid = user_.myUser.id;
 							var desktop = QoDesk.App.getDesktop();
@@ -353,15 +377,14 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 							if (!win) {
 								win = desktop.createWindow({
 									id : pid + '_qdesk',
-									title : Ext.getCmp(domid)
-											.getSelectionModel().selection.record.data.title,
+									title : Ext.getCmp(domid).getSelectionModel().selections.items[0].data.title,
 									width : winWidth,
 									height : winHeight,
 									layout : 'fit',
 									plain : false,
 									html : '<iframe src="'
 											+ thisObj.config.AJAXPATH
-											+ "?controller=quiz_exam&action=viewOne&id="
+											+ "?controller=quiz_exam&action=viewQuiz&id="
 											+ pid
 											+ "&uid="
 											+ uid

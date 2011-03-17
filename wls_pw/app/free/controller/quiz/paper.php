@@ -346,10 +346,6 @@ echo "</body></html>";
 	src=\"".$this->c->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."jqueryextend.js\"></script>	
-<!--  
-<script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/adapter/ext/ext-base.js\"></script>	
--->
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>
 <script type=\"text/javascript\"

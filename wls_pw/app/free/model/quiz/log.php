@@ -338,6 +338,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			$id_user = $whatHappened['id_user'];
 			$ids_level_user_group = $whatHappened['ids_level_user_group'];
 		}
+		
 
 		if($id_user==null){
 			$userObj = new m_user();
@@ -352,9 +353,18 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			,'id_user'=>$id_user
 			,'ids_level_user_group'=>$ids_level_user_group
 		);
+		
+		if(isset($whatHappened['time_start'])){
+			$data['time_start'] = $whatHappened['time_start'];
+			$data['time_stop'] = $whatHappened['time_stop'];
+			$data['time_used'] = $whatHappened['time_used'];
+		}
+		
 		if(isset($whatHappened['date_created'])){
 			$data['date_created'] = $whatHappened['date_created'];
 		}
+//		print_r($whatHappened);
+//		print_r($data);
 		$this->id = $this->insert($data);
 
 		$count_right = 0;

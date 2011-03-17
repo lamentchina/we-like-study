@@ -116,7 +116,9 @@ class quiz_exam extends quiz{
 		//faster than the client-side's JavaScript parsing , there would be an error
 		//So let the server sleep 2 senconds whatever
 		sleep(2);
-		echo $this->m->checkMyexam($_POST['answersData'],$_POST['id'],$_POST['time']);
+		$data = $this->m->checkMyExam($_POST['answersData'],$_POST['id'],$_POST['time_start'],$_POST['time_stop'],$_POST['time_used']);
+//		print_r($data);exit();
+		echo json_encode($data);
 	}
 
 	public function viewQuiz(){
@@ -143,14 +145,14 @@ class quiz_exam extends quiz{
 //		}
 		
 		$html = "
-<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
 <html>
 <head>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
 <link rel=\"stylesheet\" type=\"text/css\"
 	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."star-rating/jquery.rating.css\" />
+	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/".$this->c->theme."\" />	
+
 <link rel=\"stylesheet\" type=\"text/css\"
 	href=\"".$this->c->license."/view/wls.css\" />	
 <script type=\"text/javascript\"
@@ -159,10 +161,6 @@ class quiz_exam extends quiz{
 	src=\"".$this->c->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."jqueryextend.js\"></script>	
-<!--  
-<script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/adapter/ext/ext-base.js\"></script>	
--->
 <script type=\"text/javascript\"
 	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>
 <script type=\"text/javascript\"

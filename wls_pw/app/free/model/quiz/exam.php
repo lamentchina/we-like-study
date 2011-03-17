@@ -264,7 +264,10 @@ class m_quiz_exam extends wls implements dbtable,fileLoad{
 		$userObj = new m_user();
 		$me = $userObj->getMyInfo();
 
-		$sql = "select * 
+		$sql = "select 
+*
+,w_wls_quiz_exam.time_start as time_start
+,w_wls_quiz_exam.time_stop as time_stop
 ,(select count(*) from w_wls_user_group2exam where id_exam = w_wls_quiz_exam.id  ) as count_groups  
 ,(select count(*) from w_wls_user_group2user where id_level_group in  (
  select id_level_group from w_wls_user_group2exam where  id_exam = w_wls_quiz_exam.id 
@@ -272,11 +275,16 @@ class m_quiz_exam extends wls implements dbtable,fileLoad{
 
  from w_wls_quiz_exam,w_wls_quiz
 
+LEFT JOIN w_wls_quiz_log 
+ON w_wls_quiz_log.id_quiz=w_wls_quiz.id and  w_wls_quiz_log.id_user = ".$me['id']."
+
+
 where w_wls_quiz_exam.id in (
 select id_exam from w_wls_user_group2exam where id_level_group in (
 select id_level_group from w_wls_user_group2user where username = '".$me['username']."'
 )
-) and w_wls_quiz.id = w_wls_quiz_exam.id_quiz";
+) and w_wls_quiz.id = w_wls_quiz_exam.id_quiz 
+		";
 		
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 
@@ -351,7 +359,7 @@ select id_level_group from w_wls_user_group2user where username = '".$me['userna
 		}
 	}
 
-	public function checkMyexam($answers,$examid){
+	public function checkMyexam($answers,$examid,$time_start,$time_stop,$time_used){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
 		$sql = "select * from ".$pfx."wls_quiz_exam where id=".$examid;
@@ -375,17 +383,33 @@ select id_level_group from w_wls_user_group2user where username = '".$me['userna
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		if($user['username']=='guest'){
+			$answers[0]['msg'] = $this->lang['exam_you_are_guest'];
 			return $answers;
+		}else{
+			$sql = "select * from ".$pfx."wls_quiz_log where id_user = ".$user['id']." and id_quiz = ".$temp['id_quiz'];
+			$res = mysql_query($sql,$conn);
+			$temp = mysql_fetch_assoc($res);
+			if($temp!=false){
+				$msg = $this->lang['exam_already_done'];
+				$msg = str_replace("{1}",$temp['time_stop'],$msg);
+				$msg = str_replace("{2}",$temp['mycent'],$msg);
+				$answers[0]['msg'] = $msg;
+				return $answers;
+			}
 		}
 
 		//Do quiz log.
 		$quizLogObj = new m_quiz_log();
 		$quizLogObj->addLog(array(
 			 'id_quiz'=>$temp['id_quiz']
+			,'time_start'=>$time_start
+			,'time_stop'=>$time_stop
+			,'time_used'=>$time_used			
 			,'answers'=>$answers
 			,'ids_question'=>$ids_question
 		));
 
+		$answers[0]['msg'] = $this->lang['over'];
 		return $answers;
 	}
 }
