@@ -222,7 +222,6 @@ wls.subject = Ext.extend(wls, {
 								});
                				}
             			});
-
 					}
 				});
 			} else if (access[i] == '190704') {

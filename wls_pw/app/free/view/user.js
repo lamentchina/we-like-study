@@ -168,11 +168,7 @@ wls.user = Ext.extend(wls, {
 				}
 			}]
 		});
-		Ext.getCmp('CAPTCHA').on('keyup', function(obj, e) {
-					if (e.getKey() == '13') {
-						thisObj.login();
-					}
-				});
+
 
 		var win = new Ext.Window({
 					title : il8n.Register,
@@ -189,7 +185,6 @@ wls.user = Ext.extend(wls, {
 		win.show();
 	},
 	login : function() {
-
 		var thisObj = this;
 		var form = Ext.getCmp('wls_user_login_form').getForm();
 
@@ -275,6 +270,12 @@ wls.user = Ext.extend(wls, {
 										})
 							}]
 				});
+				
+		var bbar = new Ext.PagingToolbar({
+						store : store,
+						pageSize : 15,
+						displayInfo : true
+					});
 		var grid = new Ext.grid.EditorGridPanel({
 			store : store,
 			cm : cm,
@@ -283,6 +284,84 @@ wls.user = Ext.extend(wls, {
 			clicksToEdit : 2,
 			loadMask : true,
 			tbar : [{
+				iconCls: 'x-tbar-loading',
+				tooltip : il8n.showAllColumns,
+				handler : function() {
+					Ext.Ajax.request({
+						method : 'GET',
+						url : thisObj.config.AJAXPATH
+								+ "?controller=user&action=getColumns",
+						success : function(response) {
+							var obj = jQuery.parseJSON(response.responseText);
+
+							var columns = [{
+								header : il8n.username,
+								dataIndex : 'username'
+							}, {
+								header : il8n.password,
+								dataIndex : 'password',
+								editor : new Ext.form.TextField({
+											allowBlank : false
+										})
+							}, {
+								header : il8n.money,
+								dataIndex : 'money',
+								editor : new Ext.form.TextField({
+											allowBlank : false
+										})
+							}, {
+								header : il8n.credits,
+								dataIndex : 'credits',
+								editor : new Ext.form.TextField({
+											allowBlank : false
+										})
+							}];
+							var fields = ['id', 'username', 'password', 'money', 'credits'];
+							for(var i=0;i<obj.length;i++){
+								fields.push('column'+(obj[i].id-1));
+								columns.push({
+									header : obj[i].title,
+									dataIndex : 'column'+(obj[i].id-1),
+									editor : new Ext.form.TextField()
+								});
+							}
+							store = new Ext.data.JsonStore({
+								autoDestroy : true,
+								url : thisObj.config.AJAXPATH
+										+ '?controller=user&action=getList',
+								root : 'data',
+								idProperty : 'id',
+								fields : fields
+							});
+							
+							cm = new Ext.grid.ColumnModel({
+									defaults : {
+										sortable : true
+									},
+									columns : columns
+								});
+							Ext.getCmp(domid).reconfigure(store,cm);
+							bbar.bind(store);
+							store.load({
+								params : {
+									start : 0,
+									limit : 15
+								}
+							});
+
+						},
+						failure : function(response) {
+							Ext.Msg.alert('failure', response.responseText);
+						}
+					});
+				}
+			},{
+				iconCls: 'bt_add',
+				tooltip : il8n.add,
+				handler : function() {
+					thisObj.register();
+				}
+			},{
 				iconCls: 'bt_importFile',
 				tooltip : il8n.importFile,
 				handler : function() {
@@ -293,7 +372,7 @@ wls.user = Ext.extend(wls, {
 						height : 300,
 						html : "<iframe src ='"
 								+ thisObj.config.AJAXPATH
-								+ "?controller=user&action=viewUpload' width='100%' height='250' />"
+								+ "?controller=user&action=importAll' width='100%' height='250' />"
 					});
 					win.show();
 				}
@@ -360,7 +439,6 @@ wls.user = Ext.extend(wls, {
 							expanded : true
 						},
 
-						// auto create TreeLoader
 						dataUrl : thisObj.config.AJAXPATH
 								+ "?controller=user&action=getGroupTree&username="
 								+ username,
@@ -473,7 +551,6 @@ wls.user = Ext.extend(wls, {
 							nodeType : 'async',
 							expanded : true
 						},
-
 						dataUrl : thisObj.config.AJAXPATH
 								+ "?controller=user&action=getSubjectTree&username="
 								+ username
@@ -489,15 +566,10 @@ wls.user = Ext.extend(wls, {
 								modal : true,
 								items : [tree]
 							});
-
 					win.show();
 				}
 			}],
-			bbar : new Ext.PagingToolbar({
-						store : store,
-						pageSize : 15,
-						displayInfo : true
-					})
+			bbar : bbar
 		});
 		grid.on("afteredit", afteredit, grid);
 		function afteredit(e) {

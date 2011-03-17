@@ -21,7 +21,7 @@ class_13 = Ext.extend(Ext.app.Module, {
 								height : winHeight,
 
 								layout : 'fit',
-								items : [obj.getList('qd_w_u_g_l')]
+								items : [obj.getTreeGrid('qd_w_u_g_l')]
 							});
 				}
 				win.show();

@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/
  * User's operations.
  * It's associated with the databast table wls_user
  * */
-class m_user extends wls implements dbtable{
+class m_user extends wls implements dbtable,fileLoad{
 
 	public $phpexcel;
 	public $id = null;
@@ -30,9 +30,21 @@ class m_user extends wls implements dbtable{
 		$keys = implode(",",$keys);
 		$values = array_values($data);
 		$values = implode("','",$values);
-		$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
-		mysql_query($sql,$conn);
-		return mysql_insert_id($conn);
+		
+		$sql = "select * from ".$pfx."wls_user where username = '".$data['username']."';";
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		if($temp===false){		
+			
+			$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+			$this->error($sql);
+			return mysql_insert_id($conn);
+		}else{
+			echo $temp;
+			$data['id'] = $temp['id'];
+			$this->update($data);
+		}
 	}
 
 	/**
@@ -76,7 +88,7 @@ class m_user extends wls implements dbtable{
 		$sql = substr($sql,0,strlen($sql)-1);
 		$sql .= " where id =".$id;
 		
-//		$this->error($sql);
+		$this->error($sql);
 		mysql_query($sql,$conn);
 
 	}
@@ -112,44 +124,75 @@ class m_user extends wls implements dbtable{
 			) DEFAULT CHARSET=utf8;
 			";
 		mysql_query($sql,$conn);
+		
+		$sql = "drop table if exists ".$pfx."wls_user_columns;";
+		mysql_query($sql,$conn);
+		$sql = "create table ".$pfx."wls_user_columns (
+			id int primary key auto_increment	
+			,title varchar(200) 
+			);";
+		mysql_query($sql,$conn);
 		return true;
 	}
+	public function importOne($path){}
 
-	/**
-	 * Import an Excel file into the user's database table
-	 * But the Excel must fit some ruls.
-	 *
-	 * @param $path Excel Path
-	 * @return bool
-	 * */
-	public function importExcel($path){
-		$objPHPExcel = new PHPExcel();
-		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
-		$PHPReader->setReadDataOnly(true);
-		$this->phpexcel = $PHPReader->load($path);
+	public function importAll($path){
+		
+		if($this->phpexcel==null){
+			$objPHPExcel = new PHPExcel();
+			$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+			$PHPReader->setReadDataOnly(true);
+			$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['user']);
-		$allRow = array($currentSheet->getHighestRow());	
-		$allColmun = $currentSheet->getHighestColumn();	
+			$currentSheet = $this->phpexcel->getSheetByName($this->lang['user']);
+			$allRow = array($currentSheet->getHighestRow());
+			$allRow = $allRow[0];
+			$allColmun = $currentSheet->getHighestColumn();
+			$keysRow = 2;
+		}else{
+			$currentSheet = $this->phpexcel['currentSheet'];
+			$allRow = intval($this->phpexcel['allRow']);
+			$allColmun = $this->phpexcel['allColmun'];
+			$keysRow = intval($this->phpexcel['keysRow']);
+		}
 	
 		$keys = array();
+		$extendColumns = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['username']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['username']){
 				$keys['username'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['password']){
+			}else if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['password']){
 				$keys['password'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['money']){
+			}else if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['money']){
 				$keys['money'] = $i;
-			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['photo']){
+			}else if($currentSheet->getCell($i.$keysRow)->getValue()==$this->lang['photo']){
 				$keys['photo'] = $i;
+			}else{
+				$index = count($extendColumns);
+				$extendColumns[] = array(
+					'title'=> $currentSheet->getCell($i.$keysRow)->getValue()
+					,'name'=>'column'.$index
+				);
+				$keys['column'.$index] = $i;				
 			}
 		}		
 		
-		$data = array();
-		for($i=3;$i<=$allRow[0];$i++){
+		if(count($extendColumns)!=0){
+			$conn = $this->conn();
+			$pfx = $this->c->dbprefix;
+
+			for($i=0;$i<count($extendColumns);$i++){
+				$sql ="alter table ".$pfx."wls_user add column column".$i." varchar(200) ;";
+				mysql_query($sql,$conn); 
+				$sql ="insert into ".$pfx."wls_user_columns (title) values(
+					'".$extendColumns[$i]['title']."'
+				) ";
+				mysql_query($sql,$conn); 
+			}			
+		}		
+		
+		$datas = array();
+		for($i=($keysRow+1);$i<=$allRow;$i++){
 			$data = array(
 				'username'=>$currentSheet->getCell($keys['username'].$i)->getValue(),
 				'password'=>$currentSheet->getCell($keys['password'].$i)->getValue(),				
@@ -159,19 +202,19 @@ class m_user extends wls implements dbtable{
 			}
 			if(isset($keys['money'])){
 				$data['money'] = $currentSheet->getCell($keys['money'].$i)->getValue();
-			}			
+			}	
+			for($i2=0;$i2<count($extendColumns);$i2++){
+				$data['column'.$i2] = $currentSheet->getCell($keys['column'.$i2].$i)->getValue();
+			}		
 			$this->insert($data);
+			$datas[] = $data;
 		}
+		return $datas;
 	}
+	
+	public function exportOne($path=null){}
 
-	/**
-	 * Export an Excel file , with all the user data.
-	 * Do this when you want to upgrade or move your site ;
-	 * The Excel file could also be importted to another site.
-	 *
-	 * @return $path filepath
-	 * */
-	public function exportExcel(){
+	public function exportAll($path=null){
 		$objPHPExcel = new PHPExcel();
 		$data = $this->getList(1,1000);
 		$data = $data['data'];
@@ -340,20 +383,6 @@ class m_user extends wls implements dbtable{
 		
 		return $data;
 	}
-
-	/**
-	 * Export some user's Transcripts
-	 *
-	 * @param $id If $id is null , will export the current user's stuff.
-	 * */
-	public function exportTranscripts($id){}
-
-	/**
-	 * Import one student's transcripts
-	 *
-	 * @param $id Get the current user's stuff if id is null
-	 * */
-	public function importTranscripts($id){}
 
 	public function updateGroup($username,$ids_group){
 		$pfx = $this->c->dbprefix;
@@ -601,6 +630,19 @@ class m_user extends wls implements dbtable{
 			,'shortcut'=>$shortcut
 			,'icons'=>$icons
 		);
+	}
+	
+	public function getColumns(){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+
+		$sql = " select * from ".$pfx."wls_user_columns ";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		return $data;
 	}
 }
 ?>

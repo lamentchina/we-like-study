@@ -117,7 +117,7 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$conn = $this->conn();
 		$pfx = $this->c->dbprefix;
 
-		$sql = "select * from ".$pfx."wls_subject order by id";
+		$sql = "select * from ".$pfx."wls_subject order by id_level";
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -134,6 +134,9 @@ class m_subject extends wls implements dbtable,fileLoad{
 			$ids.= "'".$data[count($data)-1]['id_level']."',";
 		}
 		$ids = substr($ids,0,strlen($ids)-1);
+		
+		$sql = "update ".$pfx."wls_subject set isleaf = 1 ;";
+		mysql_query($sql,$conn);
 		
 		$sql = "update ".$pfx."wls_subject set isleaf = 0 where id_level in (".$ids.") ";
 		mysql_query($sql,$conn);
@@ -155,7 +158,9 @@ class m_subject extends wls implements dbtable,fileLoad{
 
 			$currentSheet = $this->phpexcel->getSheetByName($this->lang['subject']);
 			$allRow = array($currentSheet->getHighestRow());
+			$allRow = $allRow[0];
 			$allColmun = $currentSheet->getHighestColumn();
+			$keysRow = 2;
 		}else{
 			$currentSheet = $this->phpexcel['currentSheet'];
 			$allRow = intval($this->phpexcel['allRow']);

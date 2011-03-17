@@ -83,7 +83,7 @@ class user extends wls{
 			$user_group = new m_user_group();
 			$user_group->linkUser($data);
 				
-			$this->m->login($_POST['username'],$_POST['password']);
+//			$this->m->login($_POST['username'],$_POST['password']);
 			echo json_encode(array(
 						'msg'=>'success'
 						));
@@ -109,7 +109,7 @@ class user extends wls{
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				</head>
 				<body>
-					<form action="wls.php?controller=user&action=saveUpload" method="post"
+					<form action="wls.php?controller=user&action=saveImportAll" method="post"
 					enctype="multipart/form-data">
 						<label for="file">Excel :</label>
 						<input type="file" name="file" id="file" />
@@ -127,7 +127,7 @@ class user extends wls{
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
 			move_uploaded_file($_FILES["file"]["tmp_name"],$this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			$this->m->importExcel($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$this->m->importAll($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
 	}
 
@@ -228,6 +228,11 @@ class user extends wls{
 		echo json_encode(array(
 			'data'=>$arr
 		));
+	}
+	
+	public function getColumns(){
+		sleep(1);
+		echo json_encode($this->m->getColumns());
 	}
 }
 ?>

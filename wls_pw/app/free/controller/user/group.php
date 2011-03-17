@@ -22,6 +22,24 @@ class user_group extends wls{
 		echo json_encode($data);
 	}
 	
+	public function getTreeGrid(){
+		$id = $_REQUEST['anode'];
+		$data = $this->m->getList(1,500,array('id_'=>$id));
+		
+		for($i=0;$i<count($data['data']);$i++){
+			$data['data'][$i]['_is_leaf'] = $data['data'][$i]['isleaf'];			
+			$data['data'][$i]['_parent'] = ($_REQUEST['anode']=='')?null:intval($_REQUEST['anode']);
+		}		
+		
+		$arr = array(
+			 'success'=>true
+			,'total'=>count($data['data'])
+			,'data'=>$data['data']
+		);
+		
+		echo json_encode($arr);
+	}
+	
 	public function importAll(){
 		echo '<html>		
 				<head>
@@ -57,22 +75,31 @@ class user_group extends wls{
 	
 	public function delete(){
 		if($this->m->delete($_POST['id'])){
-			echo 'success';
+			$msg = $this->lang['serverDataDeleted'];
+			$msg = str_replace("{1}",$_POST['id'],$msg);
+			echo json_encode(array('result'=>'success','msg'=>$msg));
 		}else{
 			echo 'fail';
 		}
+		$this->m->setLeaf();
 	}
 	
 	public function saveUpdate(){
+		sleep(1);
 		$data = array(
 			'id'=>$_POST['id'],
 			$_POST['field']=>$_POST['value']
 		);
 		if($this->m->update($data)){
-			echo 'success';
+			$msg = $this->lang['serverDataUpdated'];
+			$msg = str_replace("{1}",$_POST['originalValue'],$msg);
+			$msg = str_replace("{2}",$_POST['value'],$msg);
+			echo json_encode(array('result'=>'success','msg'=>$msg));
 		}else{
 			echo 'fail';			
 		}
+		
+		$this->m->setLeaf();
 	}
 	
 	public function exportAll(){
@@ -121,6 +148,12 @@ class user_group extends wls{
 		sleep(1);
 		$id = $this->m->insert($_POST);
 		echo $id;
+		$this->m->setLeaf();
 	}
+	
+	public function setLeaf(){
+		$this->m->setLeaf();
+	}
+	
 }
 ?>

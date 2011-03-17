@@ -118,6 +118,38 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			return false;
 		}
 	}
+	
+	public function setLeaf(){
+		$conn = $this->conn();
+		$pfx = $this->c->dbprefix;
+
+		$sql = "select * from ".$pfx."wls_user_group order by id_level";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){			
+			$data[] = $temp;
+			$sql2 = "update w_wls_user_group set count_user = (select count(*) from w_wls_user_group2user where id_level_group = '".$temp['id_level']."') where id_level = '".$temp['id_level']."';";
+			mysql_query($sql2,$conn);
+		}
+
+		$ids = '';
+		for($i=0;$i<count($data)-1;$i++){
+			if(substr($data[$i+1]['id_level'],0,strlen($data[$i+1]['id_level'])-2) == $data[$i]['id_level']){
+				$ids.= "'".$data[$i]['id_level']."',";
+			}
+		}
+		if(strlen($data[count($data)-1]['id_level'])== $data[count($data)-2]['id_level']){
+			$ids.= "'".$data[count($data)-1]['id_level']."',";
+		}
+		$ids = substr($ids,0,strlen($ids)-1);
+		
+		$sql = "update ".$pfx."wls_user_group set isleaf = 1 ;";
+		mysql_query($sql,$conn);
+		
+		$sql = "update ".$pfx."wls_user_group set isleaf = 0 where id_level in (".$ids.") ";
+//		echo $sql;
+		mysql_query($sql,$conn);
+	}
 
 	public function create($table=null){
 
@@ -132,9 +164,11 @@ class m_user_group extends wls implements dbtable,fileLoad{
 				
 					 id int primary key auto_increment	
 					,id_level varchar(200) unique		
+					,icon varchar(200) default ''		
 					,name varchar(200) default '' 		
 					,ordering int default 0				
 					,count_user int default 0
+					,isleaf int default 1
 								
 				) DEFAULT CHARSET=utf8;
 				";
@@ -389,8 +423,6 @@ class m_user_group extends wls implements dbtable,fileLoad{
 		}
 	}
 
-	public function cumulative($column){}
-
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->c->dbprefix;
 		$conn = $this->conn();
@@ -401,6 +433,16 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			for($i=0;$i<count($keys);$i++){
 				if($keys[$i]=='type'){
 					$where .= " and type in (".$search[$keys[$i]].") ";
+				}
+				if($keys[$i]=='id_'){
+					if($search[$keys[$i]]!=''){
+						$sql = "select * from ".$pfx."wls_user_group where id = ".$search[$keys[$i]];
+						$res = mysql_query($sql,$conn);
+						$temp = mysql_fetch_assoc($res);
+						$where .= " and id_level like '".$temp['id_level']."__' ";
+					}else{
+						$where .= " and id_level like '__' ";
+					}
 				}
 			}
 		}
@@ -685,7 +727,6 @@ class m_user_group extends wls implements dbtable,fileLoad{
 				break;
 			}
 		}
-
 		$groupsData = array();
 		for($i=$grouppoint;$i<=$allColmun;$i++){
 			$data = array(
@@ -693,80 +734,28 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			);
 			$groupsData[] = $data;
 		}
-
-
 		for($i='A';$i<$grouppoint;$i++){
 			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['id']){
 				$c_level = $i;
 			}
-		}
-
-		$columns = array();
-		for($i='A';$i<$grouppoint;$i++){
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['username']){
-				$columns['username'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['birthday']){
-				$columns['birthday'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()=='QQ'){
-				$columns['qq'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['sex']){
-				$columns['sex'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['realname']){
-				$columns['name'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['photo']){
-				$columns['photo'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['money']){
-				$columns['money'] = $i;
-			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->lang['password']){
-				$columns['password'] = $i;
-			}
-		}
-
-		$userData = array();
-
+		}		
+		
 		$userObj = new m_user();
 		$userObj->create();
-		for($i=4;$i<=$allRow;$i++){
-			$data = array(
-				'username'=>$currentSheet->getCell($columns['username'].$i)->getValue(),
-				'password'=>$currentSheet->getCell($columns['password'].$i)->getValue(),
-			);
-			if(isset($columns['qq'])){
-				$data['qq'] = $currentSheet->getCell($columns['qq'].$i)->getValue();
-			}
-			if(isset($columns['birthday'])){
-				$data['birthday'] = $currentSheet->getCell($columns['birthday'].$i)->getValue();
-			}
-			if(isset($columns['sex'])){
-				$data['sex'] = $currentSheet->getCell($columns['sex'].$i)->getValue();
-			}
-			if(isset($columns['name'])){
-				$data['name'] = $currentSheet->getCell($columns['name'].$i)->getValue();
-			}
-			if(isset($columns['photo'])){
-				$data['photo'] = $currentSheet->getCell($columns['photo'].$i)->getValue();
-			}
-			if(isset($columns['money'])){
-				$data['money'] = $currentSheet->getCell($columns['money'].$i)->getValue();
-			}
-			$userData[] = $data ;
-			$userObj->insert($data);
-		}
-
+		$userObj->phpexcel = array(
+			 'currentSheet'=>$currentSheet
+			,'allRow'=>$allRow
+			,'allColmun'=> chr(ord($grouppoint)-2)
+			,'keysRow'=>3
+		);
+		$usersData = $userObj->importAll(null);
 
 		for($i=4;$i<=$allRow;$i++){
 			for($i2=$grouppoint;$i2<=$allColmun;$i2++){
 				if($currentSheet->getCell($i2.$i)->getValue()=='√'){
 					$data = array(
 						'id_level_group'=>$groupsData[ord($i2) - ord($grouppoint)]['id_level'],
-						'username'=>$userData[$i-4]['username']
+						'username'=>$usersData[$i-4]['username']
 					);
 
 					$this->linkUser($data);
