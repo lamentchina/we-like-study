@@ -29,11 +29,11 @@ class_".$actionid." = Ext.extend(Ext.app.Module, {
 				iconCls : 'icon_paper_16_16',
 				iconClsGhostBar : 'icon_paper_32_32',
                 layout: 'fit',
-                items:[ obj.getSubjectCenter('qd_w_s_c')]
+                items:[ obj.getSubjectCenter('qd_w_s_c_".$actionid."')]
             });
         }
         win.show();
-        obj.getMyQuizLine('qd_w_s_cchart');
+        obj.getMyQuizLine('qd_w_s_c_".$actionid."chart');
     }
 });	
 	";
