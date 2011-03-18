@@ -266,6 +266,7 @@ class m_quiz_exam extends wls implements dbtable,fileLoad{
 
 		$sql = "select 
 *
+,w_wls_quiz_exam.id as id
 ,w_wls_quiz_exam.time_start as time_start
 ,w_wls_quiz_exam.time_stop as time_stop
 ,(select count(*) from w_wls_user_group2exam where id_exam = w_wls_quiz_exam.id  ) as count_groups  
@@ -388,11 +389,15 @@ select id_level_group from w_wls_user_group2user where username = '".$me['userna
 		}else{
 			$sql = "select * from ".$pfx."wls_quiz_log where id_user = ".$user['id']." and id_quiz = ".$temp['id_quiz'];
 			$res = mysql_query($sql,$conn);
-			$temp = mysql_fetch_assoc($res);
-			if($temp!=false){
+			if($res==false){
+				print_r($temp);
+				$this->error($sql);exit();
+			}
+			$temp2 = mysql_fetch_assoc($res);
+			if($temp2!=false){
 				$msg = $this->lang['exam_already_done'];
-				$msg = str_replace("{1}",$temp['time_stop'],$msg);
-				$msg = str_replace("{2}",$temp['mycent'],$msg);
+				$msg = str_replace("{1}",$temp2['time_stop'],$msg);
+				$msg = str_replace("{2}",$temp2['mycent'],$msg);
 				$answers[0]['msg'] = $msg;
 				return $answers;
 			}

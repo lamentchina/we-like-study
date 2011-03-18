@@ -26,7 +26,8 @@ class_".$actionid." = Ext.extend(Ext.app.Module, {
                 title: il8n.paper,
                 width: winWidth,
                 height: winHeight,
-
+				iconCls : 'icon_paper_16_16',
+				iconClsGhostBar : 'icon_paper_32_32',
                 layout: 'fit',
                 items:[ obj.getSubjectCenter('qd_w_s_c')]
             });

@@ -143,7 +143,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 
 		ac.add({
 					id : 'ext_examResult',
-					title : il8n.Quiz_exam_Result,
+					title : il8n.Quiz_Paper_Result,
 					html : '<div id="examresult">aaa</div>'
 				});
 		ac.doLayout();
@@ -156,7 +156,6 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 				});
 		$('.blockOverlay').attr('title', il8n.click2unblock).click($.unblockUI);
 	}
-
 	,
 	get_elapsed_time_string : function(total_seconds) {
 		function pretty_time_string(num) {
@@ -305,7 +304,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						iconCls: iconCls,
 						tooltip : tooltip,
 						handler : function() {
-							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+							if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
 								alert(il8n.clickCellInGrid);
 								return;
 							}
@@ -365,6 +364,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 								alert(il8n.clickCellInGrid);
 								return;
 							}
+//							console.debug(Ext.getCmp(domid).getSelectionModel().selections.items[0]);
 							var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 
 							var uid = user_.myUser.id;
