@@ -20,7 +20,8 @@ class_1907 = Ext.extend(Ext.app.Module, {
 								title : il8n.subject,
 								width : winWidth,
 								height : winHeight,
-
+								iconCls : 'icon_excel_16_16',
+								iconClsGhostBar : 'icon_excel_32_32',
 								layout : 'fit',
 								items : [obj.getTreeGrid('qd_w_u_l')]
 								

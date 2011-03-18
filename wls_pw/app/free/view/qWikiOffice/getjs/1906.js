@@ -16,7 +16,9 @@ class_1906 = Ext.extend(Ext.app.Module, {
 				id : this.id,
 				title : il8n.systemSettings,
 				width : winWidth,
-				height : winHeight,
+				height : winHeight,				
+				iconCls : 'icon_server_16_16',
+				iconClsGhostBar : 'icon_server_32_32',
 				modal : true,
 				layout : 'fit',
 				items : [obj.modifySystemSettings()]

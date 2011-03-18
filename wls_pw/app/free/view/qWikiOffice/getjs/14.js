@@ -17,7 +17,8 @@ class_14 = Ext.extend(Ext.app.Module, {
 								title : il8n.user,
 								width : winWidth,
 								height : winHeight,
-
+								iconCls : 'icon_user_16_16',
+								iconClsGhostBar : 'icon_user_32_32',
 								layout : 'fit',
 								items : [user_.getList('qd_w_u_l')]
 							});

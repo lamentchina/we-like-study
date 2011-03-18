@@ -19,7 +19,8 @@ class_1250 = Ext.extend(Ext.app.Module, {
 								title : il8n.Quiz_Wrongs,
 								width : winWidth,
 								height : winHeight,
-
+								iconCls : 'icon_wrongbook_16_16',
+								iconClsGhostBar : 'icon_wrongbook_32_32',
 								layout : 'fit',
 								items : [obj.getMyList('qd_w_q_w_ml')]
 							});

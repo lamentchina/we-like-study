@@ -21,6 +21,7 @@ class_11 = Ext.extend(Ext.app.Module, {
 								width : winWidth,
 								height : winHeight,
 								iconCls : 'icon_paper_16_16',
+								iconClsGhostBar : 'icon_paper_32_32',
 								shim : false,
 								constrainHeader : true,
 								layout : 'fit',

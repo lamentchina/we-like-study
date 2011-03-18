@@ -19,7 +19,8 @@ class_1253 = Ext.extend(Ext.app.Module, {
 								title : il8n.log_allMyQuiz,
 								width : winWidth,
 								height : winHeight,
-
+								iconCls : 'icon_word_16_16',
+								iconClsGhostBar : 'icon_word_32_32',
 								layout : 'fit',
 								items : [obj.getMyList('qd_w_q_l_ml')]
 							});

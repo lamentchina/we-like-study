@@ -19,7 +19,8 @@ class_15 = Ext.extend(Ext.app.Module, {
 								title : il8n.access,
 								width : winWidth,
 								height : winHeight,
-
+								iconCls : 'icon_access_16_16',
+								iconClsGhostBar : 'icon_access_32_32',
 								layout : 'fit',
 								items : [obj.getList('qd_w_u_p_l')]
 							});

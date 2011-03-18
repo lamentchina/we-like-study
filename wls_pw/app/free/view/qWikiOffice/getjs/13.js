@@ -19,7 +19,8 @@ class_13 = Ext.extend(Ext.app.Module, {
 								title : il8n.usergroup,
 								width : winWidth,
 								height : winHeight,
-
+								iconCls : 'icon_group_16_16',
+								iconClsGhostBar : 'icon_group_32_32',
 								layout : 'fit',
 								items : [obj.getTreeGrid('qd_w_u_g_l')]
 							});
