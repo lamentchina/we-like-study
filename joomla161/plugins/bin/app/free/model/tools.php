@@ -481,8 +481,29 @@ class tools {
 			}
 		}
 		closedir($handle);
-		 
+			
 		return rmdir($dirName) ;
+	}
+}
+
+class xml2array{
+	public $str = '';
+	public $type = 1; //0为字符串，1为文件
+	function readxml(){
+		if($this->type==1){
+			$this->xmlstr = simplexml_load_file($this->str);//simplexml_load_file()作用是：将一个XML文档装载入一个对象中。
+
+		}else{
+			$this->xmlstr = simplexml_load_string($this->str);
+		}
+	}
+	function xarray(){
+		$this->readxml();
+		$arrstr = array();			
+		$str = serialize($this->xmlstr); //serialize()  产生一个可存储的值的表示 
+		$str = str_replace('O:16:"SimpleXMLElement"', 'a', $str);
+		$arrstr = unserialize($str); //unserialize()  从已存储的表示中创建 PHP 的值
+		return $arrstr;
 	}
 }
 ?>
