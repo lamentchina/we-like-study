@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript">
+
+var getTree = function(){
+	var tree = new Ext.tree.TreePanel({
+        //height: 500,
+        width: 150,
+        title: '菜单栏',
+
+		useArrows : false,
+		autoScroll : true,
+		animate : false,
+		enableDD : false,
+		containerScroll : true,
+		rootVisible : false,
+		frame : true,
+		root : {
+			nodeType : 'async',
+			expanded : true
+		},
+        
+        dataUrl: '../../wls.php?controller=user&action=getMenus'
+        
+
+    });
+	tree.on("click", function(node, event){
+            //console.debug(node);
+            //console.debug(event);
+            //menuHandler(node.attributes.id_level);
+            if(node.attributes.id_level=='30'){
+    			if(!Ext.getCmp('30')){
+    				var comp = Ext.getCmp('tabpanel').add(new Ext.Panel({
+    					id:'30',
+    					closable:true,
+    					title: '生词本',
+    					html:"<iframe src='glossary_list_with_access.html' width='100%' height='100%' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+    				}));
+    				Ext.getCmp('tabpanel').activate(comp);
+    			}
+            	return;
+            }
+            
+            if(node.attributes.id_level=='31'){
+    			if(!Ext.getCmp('31')){
+    				var comp = Ext.getCmp('tabpanel').add(new Ext.Panel({
+    					id:'31',
+    					closable:true,
+    					title: '错词本',
+    					html:"<iframe src='glossary_wrongs_list_with_access.html' width='100%' height='100%' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+    				}));
+    				Ext.getCmp('tabpanel').activate(comp);
+    			}
+            	return;
+            } 
+            
+            if(node.attributes.id_level=='32'){
+    			if(!Ext.getCmp('32')){
+    				var comp = Ext.getCmp('tabpanel').add(new Ext.Panel({
+    					id:'32',
+    					closable:true,
+    					title: '排名',
+    					html:"<iframe src='glossary_user_rankking.html' width='100%' height='100%' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+    				}));
+    				Ext.getCmp('tabpanel').activate(comp);
+    			}
+            	return;
+            }  
+            if(node.attributes.leaf==true && typeof(node.attributes.id_level_s)!='undefined '){
+    			if(!Ext.getCmp(node.attributes.id_level_s)){
+    				var comp = Ext.getCmp('tabpanel').add(new Ext.Panel({
+    					id:node.attributes.id_level_s,
+    					closable:true,
+    					title: '生词本',
+    					html:"<iframe src='glossary_quiz_questions.html?id_level="+node.attributes.id_level_s+"' width='100%' height='100%' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+    				}));
+    				Ext.getCmp('tabpanel').activate(comp);
+    			}
+            }
+    });
+	return tree;
+}
+
+var getTab = function(){
+	var tab = new Ext.TabPanel({
+		id: 'tabpanel',
+        border: true, // already wrapped so don't add another border
+        activeTab: 0, // second tab initially active
+
+        items: [{
+            html: '<p>单词练习中心</p>',
+            title: '单词练习',
+            autoScroll: true
+        }]
+    })
+	return tab;
+}
+
+Ext.onReady(function(){
+	//console.debug(123123);
+	var tree = getTree();
+	tree.region = 'east';
+	//console.debug(123123);
+	var tab = getTab();
+	tab.region = 'center';
+	//console.debug(123123);
+	var viewport = new Ext.Viewport({
+		layout: 'border',
+		items: [tree,tab]
+	});
+	//console.debug(123123);
+
+
+});
+</script>
+</head>
+<body>
+</body>

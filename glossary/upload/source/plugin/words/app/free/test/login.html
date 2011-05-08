@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	Ext.Ajax.request({
+		method : 'POST',
+		url : "../../wls.php?controller=user&action=testLogin",
+		success : function(response) {
+			
+		},
+		failure : function(response) {
+
+		},
+		params : {username:'admin',password:'admin'}
+	});
+});
+</script>
+</head>
+<body>
+<div id="tree-div"></div>
+
+</body>

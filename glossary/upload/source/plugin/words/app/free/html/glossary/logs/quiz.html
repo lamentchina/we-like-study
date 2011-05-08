@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../../view/wls.css" />
+<link rel="stylesheet" type="text/css" href="../../../view/modules.css" />
+
+<script type="text/javascript"
+	src="../../../../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript"
+	src="../../../../../libs/jqueryextend.js"></script>	
+<script type="text/javascript"
+	src="../../../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript"
+	src="../../../../../libs/ext_3_2_1/ext-all.js"></script>
+
+<script type="text/javascript" src="../../../view/wls.js"></script>
+<script type="text/javascript" src="../../../view/quiz.js"></script>
+<script type="text/javascript" src="../../../view/glossary.js"></script>
+<script type="text/javascript" src="../../../view/glossary/logs.js"></script>
+<script type="text/javascript" src="../../../view/question.js"></script>
+<script type="text/javascript" src="../../../view/question/choice.js"></script>
+<script type="text/javascript">
+var wls_glossary = null;
+Ext.BLANK_IMAGE_URL = '../../../../../libs/ext_3_2_1/resources/images/default/s.gif';
+
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	wls_glossary_logs = new wls.glossary.logs();
+	wls_glossary_logs.config.AJAXPATH = '../../../../wls.php';
+	wls_glossary_logs.getIl8n('fitFullBrowser();');
+});
+
+function fitFullBrowser(){
+	wls_glossary_logs.initLayout();
+	wls_glossary_logs.containAnswer = 1;
+	wls_glossary_logs.naming = 'wls_glossary_logs';
+	wls_glossary_logs.ajaxQuestions('wls_glossary_logs.addQuestions()');
+}
+</script>
+</head>
+<body>
+</body>
+</html>

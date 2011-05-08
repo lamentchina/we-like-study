@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../view/wls.css" />
+<link rel="stylesheet" type="text/css" href="../view/modules.css" />
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript">
+var domid = 'a';
+var ajaxPath = '../../wls.php';
+var il8n = null;
+Ext.BLANK_IMAGE_URL = '../../../ext_3_2_1/resources/images/default/s.gif';
+
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	getIl8n();
+	getGrid();
+});
+
+var getIl8n = function(){
+	Ext.Ajax.request({
+		method : 'POST',
+		url : ajaxPath + "?controller=system&action=translateIniToJsClass",
+		success : function(response) {
+			var obj = Ext.decode(response.responseText);
+			//console.debug(obj);
+			il8n = obj.il8n;
+		},
+		failure : function(response) {
+			alert('Net connection failed.');
+		},
+	});
+}
+
+var getGrid = function(){
+	var search = new Ext.form.TextField({
+		id : domid + '_search',
+		width : 170,
+		enableKeyEvents : true
+	});
+	
+	var tb = new Ext.Toolbar({
+		id : "w_s_l_tb",
+		items : []
+	});
+	
+	var store = new Ext.data.JsonStore({
+		autoDestroy : true,
+		url : "glossary_wrongs.php",
+		root : 'data',
+		idProperty : 'id',
+		fields : ['id', 'word','count']
+	});
+
+	store.on('beforeload', function() {
+		Ext.apply(this.baseParams, {
+					search : Ext.getCmp(domid + '_search')
+							.getValue()
+				});
+	});
+
+	var cm = new Ext.grid.ColumnModel({
+		defaults : {
+			sortable : true
+		},
+		columns : [{
+					header : '编号',
+					dataIndex : 'id',
+					hidden : true 
+				}, {
+					header : '单词',
+					dataIndex : 'word',
+					editor : new Ext.form.TextField({
+								allowBlank : false
+							})
+				}, {
+					header : '次数',
+					dataIndex : 'count',
+					width : 250,
+					editor : new Ext.form.TextField({
+								allowBlank : false
+							})
+				}]
+	});
+
+	var bbar = new Ext.PagingToolbar({
+		store : store,
+		pageSize : 20,
+		displayInfo : true
+	});
+
+	var grid = new Ext.grid.GridPanel({
+		renderTo:'tree-div',
+		store : store,
+		id : domid,
+		cm : cm,
+
+		width:'100%',
+		height:500,
+		loadMask : true,
+		
+		tbar : tb,
+		bbar : bbar
+	});
+
+	store.load();
+
+	//Get the current user's access , add some operable buttons to the toole bar 
+	Ext.Ajax.request({
+		method : 'POST',
+		url : ajaxPath + "?controller=user&action=getCurrentUserSession",
+		success : function(response) {
+			var obj = Ext.decode(response.responseText);
+			var access = obj.access;
+			for(var i=0 ; i<access.length ; i++){
+				if(access[i]=='3102'){
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+
+					tb.add( {
+						iconCls : iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_u_l_i',
+								layout : 'fit',
+								width : 500,
+								height : 300,
+								modal : true,
+								html : "<iframe src ='glossary_wrongs_export.php' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+								});
+								win.show();
+							}
+						});
+				}else if(access[i]=='3103'){
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls : iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+								alert(il8n.quiz.ClickCellInGrid);
+								return;
+							}
+							var ids = '';
+							var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+							for (var i = 0; i < items.length; i++) {
+								ids += items[i].data.id + ',';
+							}
+							ids = ids.substring(0, ids.length - 1);
+							Ext.Ajax.request({
+								method : 'POST',
+								url : "glossary_wrongs_delete.php",
+								success : function(response) {
+									store.load();
+								},
+								failure : function(response) {
+
+								},
+								params : {
+									ids : ids
+								}
+							});
+						}
+					});
+				}else if(access[i]=='3104'){
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+
+					tb.add( {
+						iconCls : iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							//console.debug(parent);
+							//return;
+							var tab = parent.Ext.getCmp('tabpanel');
+			    			if(!parent.Ext.getCmp('3104')){
+			    				var comp = tab.add(new parent.Ext.Panel({
+			    					id:'3104',
+			    					closable:true,
+			    					title: '错词本练习',
+			    					html:"<iframe src='glossary_wrongs_quiz.html' width='100%' height='100%' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+			    				}));
+			    				tab.activate(comp);
+			    			}
+			            	return;
+						
+						}
+					});				
+				}
+			}
+			tb.doLayout();
+		},
+		failure : function(response) {
+			alert('Net connection failed.');
+		},
+	});
+}
+
+</script>
+</head>
+<body>
+<div id="tree-div"></div>
+
+</body>

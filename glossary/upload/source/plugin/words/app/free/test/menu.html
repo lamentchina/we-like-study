@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript"
+	src="../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript">
+Ext.onReady(function(){
+	var tree = new Ext.tree.TreePanel({
+        renderTo:'tree-div',
+
+        height: 500,
+        width: 300,
+
+		useArrows : false,
+		autoScroll : true,
+		animate : false,
+		enableDD : false,
+		containerScroll : true,
+		rootVisible : false,
+		frame : true,
+		root : {
+			nodeType : 'async',
+			expanded : true
+		},
+        
+        dataUrl: '../../wls.php?controller=user&action=getMenus',
+        
+        listeners: {
+            'click ': function(node, event){
+                console.debug(node);
+                console.debug(event);
+            }
+        }
+    });
+
+});
+</script>
+</head>
+<body>
+<div id="tree-div" style="width: 400px;height:500px;"></div>
+
+</body>

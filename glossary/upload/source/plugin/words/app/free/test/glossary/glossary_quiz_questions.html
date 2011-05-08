@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../view/wls.css" />
+<link rel="stylesheet" type="text/css" href="../../view/modules.css" />
+
+	
+
+<script type="text/javascript"
+	src="../../../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript"
+	src="../../../../libs/jqueryextend.js"></script>	
+<script type="text/javascript"
+	src="../../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript"
+	src="../../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../../view/wls.js"></script>
+<script type="text/javascript" src="../../view/quiz.js"></script>
+<script type="text/javascript" src="../../view/question.js"></script>
+<script type="text/javascript" src="../../view/question/choice.js"></script>
+<script type="text/javascript" src="../../view/glossary.js"></script>
+<script type="text/javascript">
+var domid = 'a';
+var ajaxPath = '../../../wls.php';
+var il8n = null;
+var quizObj = null;
+Ext.BLANK_IMAGE_URL = '../../../../libs/ext_3_2_1/resources/images/default/s.gif';
+
+var URLParams = new Array();
+var aParams = document.location.search.substr(1).split('&');
+for (i=0; i < aParams.length ; i++){
+   var aParam = aParams[i].split('=');
+   URLParams[aParam[0]] = aParam[1];
+}
+
+var id_level=URLParams["id_level"];
+
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	getIl8n();
+});
+
+var getIl8n = function(){
+	Ext.Ajax.request({
+		method : 'POST',
+		url : ajaxPath + "?controller=system&action=translateIniToJsClass",
+		success : function(response) {
+			var obj = Ext.decode(response.responseText);
+			//console.debug(obj);
+			il8n = obj.il8n;
+
+			quizObj = new wls.glossary();
+			quizObj.naming = 'quizObj';
+			quizObj.containAnswer = true;
+			quizObj.initLayout();
+			//obj.initLayout();
+			quizObj.ajaxQuestions('quizObj.addQuestions()');
+		},
+		failure : function(response) {
+			alert('Net connection failed.');
+		},
+	});
+}
+
+/*
+wls.quiz.glossary = Ext.extend(wls.quiz, {
+
+	type : 'glossary',
+	id : null,
+	paperData : null,
+
+	ajaxQuestions : function(nextFunction) {
+		var thisObj = this;
+		$.blockUI({
+					message : '<h1>' + il8n.normal.loading + '</h1>'
+				});
+		$.ajax({
+					url : "glossary_questions.php?id_level="+id_level,
+					type : "GET",
+					success : function(msg) {
+						thisObj.questionsData = jQuery.parseJSON(msg);
+						thisObj.state = 2;
+						$.unblockUI();
+						Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Navigation');
+						eval(nextFunction);
+					}
+				});
+	},
+	submit : function(nextFunction) {
+		$.blockUI({
+					message : '<h1>' + il8n.normal.submitting + '</h1>......'
+				});
+
+		var answersData = [];
+		for (var i = 0; i < this.questions.length; i++) {
+			var ans = {
+				 id : this.questions[i].id
+				,answer : this.questions[i].getMyAnswer()
+				,word : this.questions[i].answerData.word
+				,translation :  this.questions[i].answerData.translation
+			};
+			if(ans.answer!=this.questions[i].answerData.answer && ans.answer!='I_DONT_KNOW'){
+				answersData.push(ans);
+			}
+		}
+
+		//console.debug(answersData);
+		
+		var thisObj = this;
+		$.ajax({
+			url : "glossary_quiz_questions_submit.php",
+			data : {data:answersData,total:this.questions.length},
+			type : "POST",
+			success : function(msg) {
+				$.unblockUI();
+
+			}
+		});
+	},
+	showResult : function() {
+		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.score
+				+ "</td>" + "<td>" + this.mycent + "</td>" + "</tr>" + "<tr>"
+				+ "<td>" + il8n.score_total + "</td>" + "<td>" + this.cent
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_right
+				+ "</td>" + "<td>" + this.count.right + "</td>" + "</tr>"
+				+ "<tr>" + "<td>" + il8n.count_wrong + "</td>" + "<td>"
+				+ this.count.wrong + "</td>" + "</tr>" + "<tr>" + "<td>"
+				+ il8n.count_giveup + "</td>" + "<td>" + this.count.giveup
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_questions
+				+ "</td>" + "<td>" + this.count.total + "</td>" + "</tr>"
+				+ "</table>";
+		var ac = Ext.getCmp('ext_Operations');
+		ac.layout.activeItem.collapse(false);
+		ac.add({
+					id : 'ext_PaperResult',
+					title : il8n.Quiz_Paper_Result,
+					html : '<div id="paperresult">aaa</div>'
+				});
+		ac.doLayout();
+
+		$("#paperresult").empty();
+		$("#paperresult").append(str);
+
+		$.blockUI({
+					message : str
+				});
+		$('.blockOverlay').attr('title', il8n.click2unblock).click($.unblockUI);
+	}
+
+});
+*/
+</script>
+</head>
+<body>
+<div id="tree-div"></div>
+
+</body>
