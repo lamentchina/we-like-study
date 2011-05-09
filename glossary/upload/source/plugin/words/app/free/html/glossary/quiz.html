@@ -37,6 +37,10 @@ function fitFullBrowser(){
 	wls_glossary.naming = 'wls_glossary';
 	wls_glossary.subject = wls_glossary.getUrlPram('subject');
 	wls_glossary.level = wls_glossary.getUrlPram('level');
+	if(typeof(wls_glossary.subject)=='undefined' || typeof(wls_glossary.level)=='undefined'){
+		alert('Url Prams Missing');
+		return;
+	}
 	wls_glossary.ajaxQuestions('wls_glossary.addQuestions()');
 }
 </script>

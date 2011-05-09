@@ -338,6 +338,23 @@ wls.glossary.levels.logs = Ext.extend(wls.glossary.levels, {
 								});
 							}
 						});
+					}else if(access[i]=='305103'){
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+
+						tb.add( {
+							iconCls : iconCls,
+							tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+									alert(il8n.normal.ClickCellInGrid);
+									return;
+								}
+								var level = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.level;
+								var subject = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.subject;
+								window.location.href = ("../../all.html?subjectid="+subject+"&level="+level); 
+							}
+						});
 					}
 				}
 				tb.doLayout();

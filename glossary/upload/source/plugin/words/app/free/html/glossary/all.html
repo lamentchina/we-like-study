@@ -30,6 +30,12 @@ Ext.onReady(function(){
 });
 
 function fitFullBrowser(){
+	wls_glossary.subjectid = wls_glossary.getUrlPram('subjectid');
+	wls_glossary.level = wls_glossary.getUrlPram('level');
+	if(typeof(wls_glossary.subjectid)=='undefined' || typeof(wls_glossary.level)=='undefined'){
+		wls_glossary.subjectid = null ;
+		wls_glossary.level = null;
+	}
 	var comp = wls_glossary.getGrid('domid');
 	comp.render(Ext.getBody());
 }

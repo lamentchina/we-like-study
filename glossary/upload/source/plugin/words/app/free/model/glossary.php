@@ -257,7 +257,32 @@ class m_glossary extends wls implements dbtable,fileLoad{
 						$where = substr($where,0,strlen($where)-2);
 						$where .= " ) ";
 					}
+				}else if($keys[$i]=='level'){
+					//print_r($search);exit();
+					if(count($search[$keys[$i]])==1){
+						$where .= " and level = ".$search[$keys[$i]][0][1]." ";
+					}else{
+						$where .= " and (";
+						for($i2=0;$i2<count($search[$keys[$i]]);$i2++){
+							$where .= " level = ".$search[$keys[$i]][$i2][1]." or";
+						}
+						$where = substr($where,0,strlen($where)-2);
+						$where .= " ) ";
+					}
+				}else if($keys[$i]=='subjectid'){
+					//print_r($search);exit();
+					if(count($search[$keys[$i]])==1){
+						$where .= " and subject = ".$search[$keys[$i]][0][1]." ";
+					}else{
+						$where .= " and (";
+						for($i2=0;$i2<count($search[$keys[$i]]);$i2++){
+							$where .= " subject = ".$search[$keys[$i]][$i2][1]." or";
+						}
+						$where = substr($where,0,strlen($where)-2);
+						$where .= " ) ";
+					}
 				}else if($keys[$i]=='subject'){
+					//print_r($keys);exit();
 					if(count($search[$keys[$i]])==1){
 						$sql_subject = "select id_level from ".$pfx."wls_subject where name = '".$search[$keys[$i]][0][1]."' ;";
 						$res_subject = mysql_query($sql_subject,$conn);
@@ -286,7 +311,7 @@ class m_glossary extends wls implements dbtable,fileLoad{
 		if($orderby==null)$orderby = " order by id ";
 		$sql = "select ".$columns." from ".$pfx."wls_glossary ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
-		
+		//echo $sql;
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){

@@ -311,7 +311,7 @@ class m_glossary_logs extends wls implements dbtable,fileLoad{
 			}
 		}
 		if($orderby==null)$orderby = " order by id ";
-		$sql = "select ".$columns." from ".$pfx."wls_glossary_logs ".$where." ".$orderby;
+		$sql = "select * from ".$pfx."wls_glossary_logs ".$where." ".$orderby;
 		$sql .= " limit ".($pagesize*($page-1)).",".$pagesize." ";
 		
 		$res = mysql_query($sql,$conn);

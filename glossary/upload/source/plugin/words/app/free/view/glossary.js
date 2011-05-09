@@ -17,6 +17,7 @@ wls.glossary = Ext.extend(wls.quiz, {
 	id : null,
 	paperData : null,
 	subject : null,
+	subjectid : null,
 	level : null,
 	passline: null,
 
@@ -87,17 +88,29 @@ wls.glossary = Ext.extend(wls.quiz, {
 
 	getGrid : function(domid){
 		var thisObj = this;
+		
+		var searchVal = ' ';
+		if(thisObj.subjectid!=null){
+			searchVal += il8n.subject.id + "=" + thisObj.subjectid + " ";
+		}
+		if(thisObj.level!=null){
+			searchVal += il8n.glossary.level + "=" + thisObj.level + " ";
+		}
+		searchVal = searchVal.trim();
+		
 		var search = new Ext.form.TextField({
 			id : domid + '_search',
 			width : 170,
-			enableKeyEvents : true
-		});
+			enableKeyEvents : true,
+			value : searchVal
+		});		
+		
 		search.on('keyup', function(a, b, c) {
 			if (b.button == 12) {
 				store.load({
 					params : {
 						start : 0,
-						limit : 15,
+						limit : 20,
 						search : Ext.getCmp(domid + '_search').getValue()
 					}
 				});
@@ -125,7 +138,7 @@ wls.glossary = Ext.extend(wls.quiz, {
 			url : thisObj.config.AJAXPATH + "?controller=glossary&action=getList",
 			root : 'data',
 			idProperty : 'id',
-			fields : ['id', 'word', 'translation','subject_name','level']
+			fields : ['id', 'word', 'translation','subject_name','level','subject']
 		});
 
 		store.on('beforeload', function() {
@@ -141,6 +154,10 @@ wls.glossary = Ext.extend(wls.quiz, {
 			columns : [{
 						header :  il8n.normal.id,
 						dataIndex : 'id',
+						hidden : true 
+					},{
+						header :  il8n.subject.id,
+						dataIndex : 'subject',
 						hidden : true 
 					}, {
 						header : il8n.glossary.word,
@@ -328,6 +345,7 @@ wls.glossary = Ext.extend(wls.quiz, {
 		
 		return grid;
 	},
+	
 	ajaxQuestions : function(nextFunction) {
 		var thisObj = this;
 		Ext.Ajax.request({
@@ -379,6 +397,8 @@ wls.glossary = Ext.extend(wls.quiz, {
 				,word : thisObj.questions[i].answerData.word
 				,translation :  thisObj.questions[i].answerData.translation
 				,correct : correct
+				,level : thisObj.level
+				,subject : thisObj.subject
 			};
 			
 			if( myAnswer !='I_DONT_KNOW' ){

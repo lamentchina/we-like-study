@@ -140,7 +140,7 @@ wls.glossary.levels = Ext.extend(wls.glossary, {
 				//console.debug(obj);
 				var access = obj.access;
 				for(var i=0 ; i<access.length ; i++){
-					if(access[i]=='3003'){
+					if(access[i]=='305001'){
 						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
 						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 
@@ -172,7 +172,7 @@ wls.glossary.levels = Ext.extend(wls.glossary, {
 								});
 							}
 						});
-					}else if(access[i]=='3004'){
+					}else if(access[i]=='305002'){
 						grid.on("afteredit", function(e){
 							Ext.Ajax.request({
 									method : 'POST',
@@ -192,7 +192,7 @@ wls.glossary.levels = Ext.extend(wls.glossary, {
 								});
 							}
 							, grid);					
-					}else if(access[i]=='3005'){
+					}else if(access[i]=='305003'){
 						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
 						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 
@@ -214,7 +214,24 @@ wls.glossary.levels = Ext.extend(wls.glossary, {
 								w.show();
 							}
 						});
+					}else if(access[i]=='305004'){
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 
+						tb.add( {
+							iconCls : iconCls,
+							tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+									alert(il8n.normal.ToDeleteClickCellFirst);
+									return;
+								}
+								//console.debug(Ext.getCmp(domid).getSelectionModel().selection.record);
+								var level = Ext.getCmp(domid).getSelectionModel().selection.record.data.level;
+								var subject = Ext.getCmp(domid).getSelectionModel().selection.record.data.subject;
+								window.location.href = ("../all.html?subjectid="+subject+"&level="+level); 
+							}
+						});
 					}		
 				}
 				tb.doLayout();

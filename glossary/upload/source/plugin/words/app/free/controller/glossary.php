@@ -45,11 +45,18 @@ class glossary extends wls{
 					if(!isset($search['title']))$search['title'] = array();
 					$search['title'][] = $arr_conditions[$i];
 				}else if(count($temp1)==2){
-
 					if($temp1[0]==$this->il8n['subject']['subject']){
 						if(!isset($search['subject']))$search['subject'] = array();
 						$search['subject'][] = array('=',$temp1[1]);
 					}
+					if($temp1[0]==$this->il8n['glossary']['level']){
+						if(!isset($search['level']))$search['level'] = array();
+						$search['level'][] = array('=',$temp1[1]);
+					}
+					if($temp1[0]==$this->il8n['subject']['id']){
+						if(!isset($search['subjectid']))$search['subjectid'] = array();
+						$search['subjectid'][] = array('=',$temp1[1]);
+					}					
 				}else if(count($temp2)==2){
 
 				}else if(count($temp3)==2){
