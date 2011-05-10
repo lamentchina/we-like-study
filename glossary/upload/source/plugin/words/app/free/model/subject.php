@@ -197,13 +197,13 @@ class m_subject extends wls implements dbtable,fileLoad{
 			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['user']['id_level']){
 				$keys['id_level'] = $i;
 			}
-			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['user']['description']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['normal']['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['user']['name']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['normal']['name']){
 				$keys['name'] = $i;
 			}
-			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['user']['icon']){
+			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['normal']['icon']){
 				$keys['icon'] = $i;
 			}
 			if($currentSheet->getCell($i.$keysRow)->getValue()==$this->il8n['user']['isshortcut']){

@@ -64,16 +64,18 @@ class install extends wls {
 		$this->tool->removeDir($this->cfg->filePath."cache/quizlog/");
 		mkdir($this->cfg->filePath."cache/quizlog/", 0777);
 
-		/*
-		$obj = new m_user_group();
+		
+//		$obj = new m_user_group();
 
-		$obj->importExcelWithUser($this->cfg->filePath."demodata/config.xls");
-		$obj->importExcelWithSubject($this->cfg->filePath."demodata/config.xls");
-		$obj->importExcelWithAccess($this->cfg->filePath."demodata/config.xls");
+//		$obj->importExcelWithUser($this->cfg->filePath."demodata/config.xls");
+//		$obj->importExcelWithSubject($this->cfg->filePath."demodata/config.xls");
+//		$obj->importExcelWithAccess($this->cfg->filePath."demodata/config.xls");
 
 		$obj = new m_quiz_paper();
-		$obj->importOne("F:/1575.xls");
-		*/
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/account.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/CET4.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer.xls");
+		
 
 
 //		$obj = new m_quiz_exam();

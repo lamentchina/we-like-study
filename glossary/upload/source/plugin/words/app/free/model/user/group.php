@@ -235,8 +235,8 @@ class m_user_group extends wls implements dbtable,fileLoad{
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
-		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->il8n['user']['id']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->il8n['user']['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->il8n['normal']['id']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->il8n['normal']['name']);
 		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->il8n['user']['ordering']);
 
 		$index = 2;
@@ -266,8 +266,8 @@ class m_user_group extends wls implements dbtable,fileLoad{
 
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objPHPExcel->getActiveSheet()->setTitle('group');
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->il8n['user']['id']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->il8n['user']['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->il8n['normal']['id']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->il8n['normal']['name']);
 		$sql = "select * from ".$pfx."wls_user_group where id_level = '".$this->id_level."' ";
 		//		echo $sql;
 		$res = mysql_query($sql,$conn);
@@ -495,13 +495,13 @@ class m_user_group extends wls implements dbtable,fileLoad{
 			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['user']['money']){
 				$keys['money'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['user']['icon']){
+			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['normal']['icon']){
 				$keys['icon'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['user']['description']){
+			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['normal']['description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['user']['name']){
+			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['normal']['name']){
 				$keys['name'] = $i;
 			}
 			if($currentSheet->getCell($i.'3')->getValue()==$this->il8n['user']['id_level']){

@@ -114,7 +114,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 				});
 		$('.blockOverlay').attr('title', il8n.click2unblock).click($.unblockUI);
 	},
-	getList : function(domid) {
+	getGrid : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
@@ -136,20 +136,20 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 								width : 40,
 								dataIndex : 'index'
 							}, {
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id',
 								hidden : true
 							}, {
-								header : il8n.subject,
+								header : il8n.subject.subject,
 								dataIndex : 'name_subject'
 							}, {
-								header : il8n.title,
+								header : il8n.normal.title,
 								dataIndex : 'title',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.money,
+								header : il8n.user.money,
 								dataIndex : 'money',
 								editor : new Ext.form.TextField({
 											allowBlank : false

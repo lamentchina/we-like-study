@@ -115,7 +115,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['paper']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->il8n['paper']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -123,20 +123,20 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$paperData = array();
 		$quizData['imagePath'] = '';
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['title']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->il8n['normal']['title']){
 				$quizData['title'] = $currentSheet->getCell($i."2")->getValue();
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['money']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->il8n['user']['money']){
 				$paperData['money'] = $currentSheet->getCell($i."2")->getValue();
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['author']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->il8n['author']){
 				$quizData['author'] = $currentSheet->getCell($i."2")->getValue();
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['imagePath']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->il8n['imagePath']){
 				$imagePath = $currentSheet->getCell($i."2")->getValue();
 				$quizData['imagePath'] = $imagePath;
 			}
-			if($currentSheet->getCell($i."1")->getValue()==$this->lang['subject']){
+			if($currentSheet->getCell($i."1")->getValue()==$this->il8n['subject']){
 				$quizData['id_level_subject'] = $currentSheet->getCell($i."2")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$quizData['id_level_subject']."'; ";
 				$res = mysql_query($sql_,$conn);
@@ -189,12 +189,12 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 
 		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['paper']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['paper']);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['title']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['subject']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['author']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->il8n['title']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->il8n['subject']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->il8n['author']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $temp['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $temp['id_level_subject']);
@@ -203,13 +203,13 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$chr = 66;
 		if(!($temp['money']==''||$temp['money']=='0')){
 			$chr++;
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['money']);
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->il8n['money']);
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['money']);
 		}
 		$quizObj = new m_quiz();
 		if(!($temp['imagePath']==''||$temp['imagePath']=='0')){
 			$chr++;
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['imagePath']);
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->il8n['imagePath']);
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);
 			$quizObj->imagePath = $temp['imagePath'];
 		}
