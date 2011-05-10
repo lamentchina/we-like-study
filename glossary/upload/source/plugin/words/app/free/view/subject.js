@@ -15,33 +15,33 @@ wls.subject = Ext.extend(wls, {
 			defaultType : 'textfield',
 
 			items : [{
-						fieldLabel : il8n.id_level,
+						fieldLabel : il8n.normal.id_level,
 						width : 150,
 						regex:/^[0-9]/,
 						name : 'id_level',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.name,
+						fieldLabel : il8n.normal.name,
 						width : 150,
 						name : 'name',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.icon,
+						fieldLabel : il8n.normal.icon,
 						width : 150,
 						vtype : "alphanum",
-						name : 'icon',
+						name : 'icon'
 						//allowBlank : false
 					}, {
-						fieldLabel : il8n.description,
+						fieldLabel : il8n.normal.description,
 						width : 150,
-						name : 'description',
+						name : 'description'
 						//allowBlank : true
 					}, {
-						fieldLabel : il8n.isknowledge,
+						fieldLabel : il8n.user.isknowledge,
 						width : 150,
 						name : 'isknowledge',
 						maxLength : 1,
-						regex:/^[10]/,
+						regex:/^[10]/
 						//allowBlank : false
 					}],
 
@@ -176,133 +176,146 @@ wls.subject = Ext.extend(wls, {
 			autoExpandColumn: 'name'
 		});
 
-		var access = me.myUser.access.split(",");
-		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '190701'){
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_s_gp_l_i',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							listeners : {
-								'show':function(x){
-									var c = document.getElementById('subject_import');   
-									c.src =  thisObj.config.AJAXPATH + "?controller=subject&action=importAll";
-								}
-							},
-							html : "<iframe id='subject_import' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
-						});
-						win.show(this);
-					}
-				});
-			} else if (access[i] == '190702') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_s_gp_l_e',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							listeners : {
-								'show':function(x){
-									var c = document.getElementById('subject_export');   
-									c.src =  thisObj.config.AJAXPATH + "?controller=subject&action=exportAll";
-								}
-							},
-							html : "<iframe id='subject_export' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
-						});
-						win.show(this);
-					}
-				});
-			} else if (access[i] == '190703') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						Ext.MessageBox.confirm( Ext.MessageBox.buttonText.ok+'?', il8n.sureToDelete+"?<br/>"+il8n.cascadingDelete, function(button,text){  
-               				if(button=='yes'){
-               					Ext.Ajax.request({
-									method : 'POST',
-									url : thisObj.config.AJAXPATH
-											+ "?controller=subject&action=delete",
-									success : function(response) {
-										Ext.getCmp(domid).getView().refresh();
-										store.reload();
-									},
-									failure : function(response) {
-										Ext.Msg.alert('failure',
-												response.responseText);
-									},
-									params : {
-										id : Ext.getCmp(domid)
-												.getSelectionModel().selection.record.id
-									}
-								});
-               				}
-            			});
-					}
-				});
-			} else if (access[i] == '190704') {
-				grid.on("afteredit",function(e){
-						Ext.Ajax.request({
-									method : 'POST',
-									url : thisObj.config.AJAXPATH
-											+ "?controller=subject&action=saveUpdate",
-									success : function(response) {
-										// Ext.Msg.alert('success',response.responseText);
-									},
-									failure : function(response) {
-										Ext.Msg.alert('failure', response.responseText);
-									},
-									params : {
-										field : e.field,
-										value : e.value,
-										id : e.record.data.id
-									}
-								});
-					
-			 	});
-			} else if (access[i] == '190705') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-					tb.add( {
-						iconCls: iconCls,
-						tooltip : tooltip,
+		//Get the current user's access , add some operable buttons to the toole bar 
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
+				var access = obj.access;
+				for (var i = 0; i < access.length; i++) {
+					if (access[i] == '190701'){
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
 							handler : function() {
-								var form = thisObj.getAddItemForm();
-								var w = new Ext.Window({
-											title : il8n.addNewSubject,
-											id : 'subject_add_win',
-											width : 350,
-											height : 250,
-											layout : 'fit',
-											buttonAlign : 'center',
-											items : [form],
-											modal : true
-										});
-
-								w.show();
+								var win = new Ext.Window({
+									id : 'w_s_gp_l_i',
+									layout : 'fit',
+									width : 500,
+									height : 300,
+									listeners : {
+										'show':function(x){
+											var c = document.getElementById('subject_import');   
+											c.src =  thisObj.config.AJAXPATH + "?controller=subject&action=importAll";
+										}
+									},
+									html : "<iframe id='subject_import' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+								});
+								win.show(this);
 							}
 						});
+					} else if (access[i] == '190702') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+		
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
+							handler : function() {
+								var win = new Ext.Window({
+									id : 'w_s_gp_l_e',
+									layout : 'fit',
+									width : 500,
+									height : 300,
+									listeners : {
+										'show':function(x){
+											var c = document.getElementById('subject_export');   
+											c.src =  thisObj.config.AJAXPATH + "?controller=subject&action=exportAll";
+										}
+									},
+									html : "<iframe id='subject_export' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+								});
+								win.show(this);
+							}
+						});
+					} else if (access[i] == '190703') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+									alert(il8n.clickCellInGrid);
+									return;
+								}
+								Ext.MessageBox.confirm( Ext.MessageBox.buttonText.ok+'?', il8n.sureToDelete+"?<br/>"+il8n.cascadingDelete, function(button,text){  
+		               				if(button=='yes'){
+		               					Ext.Ajax.request({
+											method : 'POST',
+											url : thisObj.config.AJAXPATH
+													+ "?controller=subject&action=delete",
+											success : function(response) {
+												Ext.getCmp(domid).getView().refresh();
+												store.reload();
+											},
+											failure : function(response) {
+												Ext.Msg.alert('failure',
+														response.responseText);
+											},
+											params : {
+												id : Ext.getCmp(domid)
+														.getSelectionModel().selection.record.id
+											}
+										});
+		               				}
+		            			});
+							}
+						});
+					} else if (access[i] == '190704') {
+						grid.on("afteredit",function(e){
+								Ext.Ajax.request({
+											method : 'POST',
+											url : thisObj.config.AJAXPATH
+													+ "?controller=subject&action=saveUpdate",
+											success : function(response) {
+												// Ext.Msg.alert('success',response.responseText);
+											},
+											failure : function(response) {
+												Ext.Msg.alert('failure', response.responseText);
+											},
+											params : {
+												field : e.field,
+												value : e.value,
+												id : e.record.data.id
+											}
+										});
+							
+					 	});
+					} else if (access[i] == '190705') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
+								handler : function() {
+									var form = thisObj.getAddItemForm();
+									var w = new Ext.Window({
+												title : il8n.addNewSubject,
+												id : 'subject_add_win',
+												width : 350,
+												height : 250,
+												layout : 'fit',
+												buttonAlign : 'center',
+												items : [form],
+												modal : true
+											});
+	
+									w.show();
+								}
+							});
+					}
+				}
+				tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
 		
 		return grid;
 	}
@@ -375,11 +388,11 @@ wls.subject = Ext.extend(wls, {
 							})
 				});
 
-		var access = me.myUser.access.split(",");
+		var access = obj.access.split(",");
 		for (var i = 0; i < access.length; i++) {			
 			if (access[i] == '1107') {
-				//eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+				//eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 				tb.add( {
 					//iconCls: iconCls,
 					//tooltip : tooltip,
@@ -392,7 +405,7 @@ wls.subject = Ext.extend(wls, {
 						var items = Ext.getCmp(domid).getSelectionModel().selections.items;
 						var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 
-						var uid = me.myUser.id;
+						var uid = obj.id;
 						var desktop = parent.QoDesk.App.getDesktop();
 
 						var win = desktop.getWindow(pid + '_qdesk');
@@ -426,8 +439,8 @@ wls.subject = Ext.extend(wls, {
 					}
 				});
 			}else if (access[i] == '1110') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+				eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+				eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 	
 				Ext.Ajax.request({
 					method : 'GET',
@@ -445,7 +458,7 @@ wls.subject = Ext.extend(wls, {
 									width:'100%',
 									questionType:j,
 									handler: function(A,B){
-										var uid = me.myUser.id;
+										var uid = obj.id;
 										var desktop = parent.QoDesk.App.getDesktop();
 										
 										var win = desktop.getWindow(thisObj.id_level + '_'+ A.questionType);
@@ -532,7 +545,7 @@ wls.subject = Ext.extend(wls, {
 	},
 	getMyQuizLine : function(chartid) {
 		var so = new SWFObject(this.config.libPath + "am/amline/amline.swf",
-				me.myUser.id + "amline", "100%", "100%", "8", "#FFFFFF");
+				obj.id + "amline", "100%", "100%", "8", "#FFFFFF");
 		so.addVariable("path", this.config.libPath + "am/amline/");
 		so
 				.addVariable(

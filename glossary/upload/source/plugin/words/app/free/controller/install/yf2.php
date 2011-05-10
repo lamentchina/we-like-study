@@ -290,7 +290,6 @@ down();
 				$this->images .= "http://www.yfzxmn.cn/".$title2."\n";
 			}
 
-
 			$p1 = strpos($data,"A.");
 			$p2 = strpos($data,"B.");
 			$p3 = strpos($data,"C.");
@@ -314,7 +313,6 @@ down();
 					$this->images .= "http://www.yfzxmn.cn/".$title2."\n";
 				}
 			}else{
-
 				if(strpos($data,"<IMG onClick")!=false){
 					//echo $data;exit();
 					$p1 = strpos($data,"<IMG onClick=over(this)  src=\"");

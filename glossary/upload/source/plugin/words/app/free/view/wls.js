@@ -30,7 +30,7 @@ var wls = function() {
 			},
 			failure : function(response) {
 				alert('Net connection failed!');
-			},
+			}
 		});
 	}
 	

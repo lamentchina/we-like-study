@@ -256,83 +256,27 @@ class user extends wls{
 		echo json_encode($data);
 	}
 	
-	public function getQWikiMenus(){
-		$menuStff = $this->model->getMyMenuWithShortCut();
-		$str = json_encode($menuStff);
+	public function getQWikiUserSettings(){
+		//sleep(3);
+		session_start();	
+		if(!isset($_SESSION['wls_user']))$this->model->login('guest');
+		$data = $this->model->getMyMenuWithShortCut();
+		$data['background'] = $this->cfg->background;
+		$data['il8n'] = $this->il8n;
+		$data['username'] = $_SESSION['wls_user']['username'];
+		$str = json_encode($data);
 		
 		echo $str;
 	}
 	
 	public function getCurrentUserSession(){
-		if(!isset($_SESSION)){
-			session_start();
-		}
+		session_start();	
+		if(!isset($_SESSION['wls_user']))$this->model->login('guest');
 		$data = $_SESSION['wls_user'];
 		$data['access'] = explode(",", $_SESSION['wls_user']['access']);
 		sleep(1);
 		echo json_encode($data);
 	}
-	
-	public function viewGetList(){
-		if(!isset($_SESSION)){
-			session_start();
-		}
-		echo "
-<html>
-<head>
-<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
-<link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->cfg->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
-<link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->cfg->libsPath."ext_3_2_1/resources/css/".$this->cfg->theme."\" />	
-
-<link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->cfg->license."/view/modules.css\" />
-<link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->cfg->license."/view/wls.css\" />			
-<script type=\"text/javascript\"
-	src=\"".$this->cfg->libsPath."jquery-1.4.2.js\"></script>	
-<script type=\"text/javascript\"
-	src=\"".$this->cfg->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
-<script type=\"text/javascript\"
-	src=\"".$this->cfg->libsPath."jqueryextend.js\"></script>	
-<script type=\"text/javascript\"
-	src=\"".$this->cfg->libsPath."ext_3_2_1/ext-all.js\"></script>	
-<script type=\"text/javascript\"
-	src=\"".$this->cfg->libsPath."ext_3_2_1/ext-lang-zh_CN.js\"></script>
-
-<script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
-<script type=\"text/javascript\" src=\"".$this->cfg->license."/view/wls.js\"></script>
-<script type=\"text/javascript\" src=\"".$this->cfg->license."/view/user.js\"></script>
-
-<script type=\"text/javascript\">
-var me = new wls.user();
-";
-
-echo "me.myUser.access = '".$_SESSION['wls_user']['access']."';\n";
-echo "me.myUser.access2 = ".json_encode($_SESSION['wls_user']['access2']).";\n";
-echo "me.myUser.group = '".$_SESSION['wls_user']['group']."';\n";
-echo "me.myUser.subject = '".$_SESSION['wls_user']['subject']."';\n";
-echo "me.myUser.username = '".$_SESSION['wls_user']['username']."';\n";
-echo "me.myUser.money = '".$_SESSION['wls_user']['money']."';\n";
-echo "me.myUser.id = '".$_SESSION['wls_user']['id']."';\n";
-echo "me.myUser.photo = '".$_SESSION['wls_user']['photo']."';\n";
-echo "
-var obj;
-Ext.onReady(function(){
-	Ext.QuickTips.init(); 
-	obj = new wls.user();
-	var obj2 = obj.getList('qd_w_q_p_l')
-	obj2.render(Ext.getBody());
-});
-</script>
-</head>
-<body style='BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px' scroll='no'>
-
-</body>
-</html>
-		";
-	}	
 	
 	/**
 	 * This function is only used for debug.
