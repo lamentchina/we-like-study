@@ -1,10 +1,15 @@
 <?php
 include_once dirname(__FILE__).'/../model/subject.php';
 include_once dirname(__FILE__).'/../model/subject/log.php';
-include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/user.php';
 include_once dirname(__FILE__).'/../model/user/access.php';
+include_once dirname(__FILE__).'/../model/user/group.php';
 include_once dirname(__FILE__).'/../model/question.php';
+include_once dirname(__FILE__).'/../model/quiz.php';
+include_once dirname(__FILE__).'/../model/quiz/exam.php';
+include_once dirname(__FILE__).'/../model/quiz/log.php';
+include_once dirname(__FILE__).'/../model/quiz/paper.php';
+include_once dirname(__FILE__).'/../model/quiz/wrong.php';
 include_once dirname(__FILE__).'/../model/glossary.php';
 include_once dirname(__FILE__).'/../model/glossary/logs.php';
 include_once dirname(__FILE__).'/../model/glossary/levels.php';
@@ -22,6 +27,9 @@ class install extends wls {
 		$obj = new m_user_access();
 		$obj->create();
 
+		$obj = new m_user_group();
+		$obj->create();
+		
 		$obj = new m_user_group();
 		$obj->create();
 		
