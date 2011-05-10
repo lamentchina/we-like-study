@@ -148,8 +148,9 @@ class m_user extends wls implements dbtable,fileLoad{
 				,subject text
 				,group_ text
 				
-				,words_total int default 0
-				,words_right int default 0 
+				,glossary_wrong int default 0
+				,glossary_right int default 0 
+				,glossary_level_passed int default 0
 			
 			) DEFAULT CHARSET=utf8;
 			";

@@ -422,11 +422,16 @@ wls.glossary = Ext.extend(wls.quiz, {
 		var passed = 0;
 		var msg = il8n.normal.total+":"+thisObj.questions.length+","								
 				 +il8n.quiz.right+":"+count_right+","
-				 +il8n.quiz.wrong+":"+(answersData.length-count_right);
+				 +il8n.quiz.wrong+":"+(answersData.length-count_right)+"<br/>";
 		if(thisObj.questions.length!=answersData.length){
 			msg += ","+il8n.quiz.giveup+":"+(thisObj.questions.length-answersData.length)+"<br/>";			
 		}else{
-				
+			if(parseInt((count_right*100)/answersData.length) >= thisObj.passline){
+				passed = 1;
+				msg += ","+il8n.glossary.passed+"<br/>";		
+			}else{
+				msg += ","+il8n.glossary.unpassed+"<br/>";		
+			}
 		}
 		msg += il8n.quiz.ratio+":"+ parseInt((count_right*100)/answersData.length);	
 		
@@ -441,8 +446,8 @@ wls.glossary = Ext.extend(wls.quiz, {
 		
 		if(passed){
 			$.ajax({
-				url : thisObj.config.AJAXPATH + "?controller=glossary&action=submitQuiz",
-				data : {data:answersData,total:this.questions.length},
+				url : thisObj.config.AJAXPATH + "?controller=glossary_levels_logs&action=passed",
+				data : {subject:thisObj.subject,level:thisObj.level},
 				type : "POST",
 				success : function(response) {
 					Ext.Msg.alert("",msg);
