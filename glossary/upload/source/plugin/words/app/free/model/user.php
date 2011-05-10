@@ -678,7 +678,6 @@ class m_user extends wls implements dbtable,fileLoad{
 	 * */
 	public function getMyMenuForDesktop(){
 		$data = $this->getMyMenu();
-//		print_r($data);exit();
 		$this->treeMenuToDesktopMenu(null,$data);
 		$data = $this->desktopMenu;
 
@@ -687,15 +686,14 @@ class m_user extends wls implements dbtable,fileLoad{
 	
 	public function getMyMenuWithShortCut(){
 		$me = $this->getMyInfo();
-		//print_r($me);exit();
 		if($me['qwiki_modules']!='nothing'){
 			$me['qwiki_modules'] = str_replace("___","\\",$me['qwiki_modules']);
 			$me['qwiki_quickstart'] = str_replace("___","\\",$me['qwiki_quickstart']);
 			$me['qwiki_shortcut'] = str_replace("___","\\",$me['qwiki_shortcut']);
 			return array(				
-				 'modules'=>$me['qwiki_modules']
-				,'quickstart'=>$me['qwiki_quickstart']
-				,'shortcut'=>$me['qwiki_shortcut']
+				 'modules'=>json_decode($me['qwiki_modules'])
+				,'quickstart'=>json_decode($me['qwiki_quickstart'])
+				,'shortcut'=>json_decode($me['qwiki_shortcut'])
 			);
 		}else{		
 
@@ -743,9 +741,9 @@ class m_user extends wls implements dbtable,fileLoad{
 			));
 			
 			return array(				
-				 'modules'=>($modules)
-				,'quickstart'=>($quickstart)
-				,'shortcut'=>($shortcut)
+				 'modules'=>$modules
+				,'quickstart'=>$quickstart
+				,'shortcut'=>$shortcut
 			);
 		}
 	}

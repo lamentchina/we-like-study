@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../view/wls.css" />
+<link rel="stylesheet" type="text/css" href="../../view/modules.css" />
+
+<script type="text/javascript" src="../../../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript" src="../../../../libs/jqueryextend.js"></script>	
+<script type="text/javascript" src="../../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="../../../../libs/ext_3_2_1/ext-all.js"></script>
+
+<script type="text/javascript" src="../../view/wls.js"></script>
+<script type="text/javascript" src="../../view/user.js"></script>
+<script type="text/javascript">
+var wls_user = null;
+Ext.BLANK_IMAGE_URL = '../../../../libs/ext_3_2_1/resources/images/default/s.gif';
+
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	wls_user = new wls.user();
+	wls_user.config.AJAXPATH = '../../../wls.php';
+	wls_user.config.libPath = '../../../../libs/';
+	wls_user.getIl8n('fitFullBrowser();');
+});
+
+function fitFullBrowser(){
+	Ext.QuickTips.init(); 
+	var comp = wls_user.getList('domid');
+	comp.render(Ext.getBody());
+}
+</script>
+</head>
+<body style='BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px' scroll='no'>
+</body>
+</html>

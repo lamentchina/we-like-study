@@ -30,20 +30,20 @@ wls.user = Ext.extend(wls, {
 			defaultType : 'textfield',
 
 			items : [{
-						fieldLabel : il8n.username,
+						fieldLabel : il8n.user.username,
 						width : 150,
 						vtype : "alphanum",
 						name : 'username',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.password,
+						fieldLabel : il8n.user.password,
 						width : 150,
 						vtype : "alphanum",
 						name : 'password',
 						inputType : 'password',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.CheckCAPTCHA,
+						fieldLabel : il8n.normal.CAPTCHA  ,
 						width : 150,
 						vtype : "alphanum",
 						enableKeyEvents : true,
@@ -51,7 +51,7 @@ wls.user = Ext.extend(wls, {
 						allowBlank : false,
 						id : 'CAPTCHA'
 					}, new Ext.BoxComponent({
-						fieldLabel : il8n.CAPTCHA,
+						fieldLabel : "<span style='color:red'>"+il8n.normal.CAPTCHA+"</span>",
 						height : 32, 
 						autoEl : {
 							tag : 'div',
@@ -62,12 +62,12 @@ wls.user = Ext.extend(wls, {
 					})],
 
 			buttons : [{
-						text : il8n.Login,
+						text : il8n.user.login,
 						handler : function() {
 							thisObj.login();
 						}
 					}, {
-						text : il8n.Refresh + il8n.CAPTCHA,
+						text : il8n.normal.refresh + il8n.normal.CAPTCHA,
 						handler : function() {
 							$('#captcha').attr(
 									"src",
@@ -75,7 +75,7 @@ wls.user = Ext.extend(wls, {
 											+ Math.random());
 						}
 					}, {
-						text : il8n.Register,
+						text : il8n.user.register,
 						handler : function() {
 							thisObj.register();
 						}
@@ -104,21 +104,21 @@ wls.user = Ext.extend(wls, {
 			defaultType : 'textfield',
 
 			items : [{
-						fieldLabel : il8n.username,
+						fieldLabel : il8n.user.username,
 						name : 'username',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.password,
+						fieldLabel : il8n.user.password,
 						name : 'password',
 						inputType : 'password',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.CheckCAPTCHA,
+						fieldLabel : il8n.normal.CAPTCHA,
 						name : 'CAPTCHA',
 						allowBlank : false,
 						id : 'CAPTCHA_reg'
 					}, new Ext.BoxComponent({
-						fieldLabel : il8n.CAPTCHA,
+						fieldLabel : il8n.normal.CAPTCHA,
 						height : 32,
 						autoEl : {
 							tag : 'div',
@@ -129,7 +129,7 @@ wls.user = Ext.extend(wls, {
 					})],
 
 			buttons : [{
-				text : il8n.Register,
+				text : il8n.user.register,
 				handler : function() {
 					var obj = form.getForm().getValues();
 					Ext.Ajax.request({
@@ -139,7 +139,7 @@ wls.user = Ext.extend(wls, {
 								success : function(response) {
 									var obj = jQuery.parseJSON(response.responseText);
 									if (obj.msg == 'success') {
-										alert(il8n.success);
+										alert(il8n.normal.success);
 										win.close();
 									}else{
 										$.blockUI({
@@ -160,7 +160,7 @@ wls.user = Ext.extend(wls, {
 							});
 				}
 			}, {
-				text : il8n.CAPTCHA,
+				text : il8n.normal.CAPTCHA,
 				handler : function() {
 					$('#captcha_reg').attr(
 							"src",
@@ -172,7 +172,7 @@ wls.user = Ext.extend(wls, {
 
 
 		var win = new Ext.Window({
-					title : il8n.Register,
+					title : il8n.user.register,
 					width : 250,
 					height : 200,
 					layout : 'fit',
@@ -372,293 +372,304 @@ wls.user = Ext.extend(wls, {
 			bbar : bbar
 		});
 
-		var access = me.myUser.access.split(",");
-		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '1401') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_u_l_i',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=user&action=importAll' width='100%' height='250' />"
+		
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
+				var access = obj.access;
+				if (access[i] == '1401') {
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_u_l_i',
+								layout : 'fit',
+								width : 500,
+								height : 300,
+								html : "<iframe src ='"
+										+ thisObj.config.AJAXPATH
+										+ "?controller=user&action=importAll' width='100%' height='250' />"
+								});
+								win.show();
+							}
+						});
+				}else if(access[i] == '1402'){
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							var win = new Ext.Window({
+								id : 'w_u_l_i',
+								layout : 'fit',
+								width : 500,
+								height : 300,
+								html : "<iframe src ='"
+										+ thisObj.config.AJAXPATH
+										+ "?controller=user&action=exportAll' width='100%' height='250' />"
+								});
+								win.show();
+							}
+						});
+				}else if(access[i] == '1403'){
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+								alert(il8n.clickCellInGrid);
+								return;
+							}
+							Ext.Ajax.request({
+								method : 'POST',
+								url : thisObj.config.AJAXPATH
+									+ "?controller=user&action=delete",
+								success : function(response) {
+									store.load();
+								},
+								failure : function(response) {
+									Ext.Msg.alert('failure', response.responseText);
+								},
+								params : {
+									id : Ext.getCmp(domid).getSelectionModel().selection.record.id
+								}
 							});
-							win.show();
 						}
 					});
-			}else if(access[i] == '1402'){
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_u_l_i',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=user&action=exportAll' width='100%' height='250' />"
-							});
-							win.show();
-						}
-					});
-			}else if(access[i] == '1403'){
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
+				}else if(access[i] == '1404'){
+					grid.on("afteredit",function(e){	
 						Ext.Ajax.request({
 							method : 'POST',
 							url : thisObj.config.AJAXPATH
-								+ "?controller=user&action=delete",
+									+ "?controller=user&action=saveUpdate",
 							success : function(response) {
-								store.load();
+								// Ext.Msg.alert('success',response.responseText);
 							},
 							failure : function(response) {
 								Ext.Msg.alert('failure', response.responseText);
 							},
 							params : {
-								id : Ext.getCmp(domid).getSelectionModel().selection.record.id
+								field : e.field,
+								value : e.value,
+								id : e.record.data.id
 							}
 						});
-					}
-				});
-			}else if(access[i] == '1404'){
-				grid.on("afteredit",function(e){	
-					Ext.Ajax.request({
-						method : 'POST',
-						url : thisObj.config.AJAXPATH
-								+ "?controller=user&action=saveUpdate",
-						success : function(response) {
-							// Ext.Msg.alert('success',response.responseText);
-						},
-						failure : function(response) {
-							Ext.Msg.alert('failure', response.responseText);
-						},
-						params : {
-							field : e.field,
-							value : e.value,
-							id : e.record.data.id
+					});
+				}else if(access[i] == '1405'){
+				//}else if(1=1){
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							thisObj.register();
 						}
 					});
-				});
-			}else if(access[i] == '1405'){
-			//}else if(1=1){
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						thisObj.register();
-					}
-				});
-			}else if(access[i] == '1406'){
-			//}else if(1=1){
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
-						var tree = new Ext.tree.TreePanel({
-							id : 'u_l_g_t',
-							height : 300,
-							width : 400,
-							useArrows : true,
-							autoScroll : true,
-							animate : true,
-							enableDD : false,
-							containerScroll : true,
-							rootVisible : false,
-							frame : true,
-							root : {
-								nodeType : 'async',
-								expanded : true
-							},
-	
-							dataUrl : thisObj.config.AJAXPATH
-									+ "?controller=user&action=getGroupTree&username="
-									+ username,
-							buttons : [{
-								text : il8n.submit,
-								handler : function() {
-									var checkedNodes = tree.getChecked();
-									var s = "";
-									for (var i = 0; i < checkedNodes.length; i++) {
-										s += checkedNodes[i].attributes.id_level
-												+ ",";
-									}
-									Ext.getCmp("u_l_g_t").setVisible(false);
-	
-									Ext.Ajax.request({
-										method : 'POST',
-										url : thisObj.config.AJAXPATH + "?controller=user&action=updateGroup",
-										success : function(response) {
-											Ext.getCmp("w_u_l_g_w").close();
-										},
-										failure : function(response) {
-											Ext.Msg.alert('failure',response.responseText);
-											Ext.getCmp("w_u_l_g_w").close();
-										},
-										params : {
-											username : username,
-											accesss : s.substring(0, s.length- 1)
-										}
-									});
-								}
-							}]	
-						});
-	
-						var win = new Ext.Window({
-									id : 'w_u_l_g_w',
-									layout : 'fit',
-									title : username + " " + il8n.UserToGroup,
-									width : 500,
-									height : 300,
-									modal : true,
-									items : [tree]
-								});
-						win.show(this);
-					}
-				});
-			}else if(access[i] == '1407'){
-			//}else if(1=1){				
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
-						var tree = new Ext.tree.TreePanel({
-							id : 'w_u_l_p_t',
-							height : 300,
-							width : 400,
-							useArrows : true,
-							autoScroll : true,
-							animate : true,
-							enableDD : false,
-							containerScroll : true,
-							rootVisible : false,
-							frame : true,
-							root : {
-								nodeType : 'async',
-								expanded : true
-							},
-	
-							dataUrl : thisObj.config.AJAXPATH
-									+ "?controller=user&action=getAccessTree&username="
-									+ username
-	
-						});
-	
-						var win = new Ext.Window({
-									id : 'w_u_l_p_w',
-									layout : 'fit',
-									title : username + " " + il8n.access,
-									width : 500,
-									height : 300,
-									modal : true,
-									items : [tree]
-								});
-						win.show(this);
-					}
-				});
-			}else if(access[i] == '1408'){
-			//}else if(1=1){		
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
-						var tree = new Ext.tree.TreePanel({
-							id : 'w_u_l_s_t',
-							height : 300,
-							width : 400,
-							useArrows : true,
-							autoScroll : true,
-							animate : true,
-							enableDD : false,
-							containerScroll : true,
-							rootVisible : false,
-							frame : true,
-							root : {
-								nodeType : 'async',
-								expanded : true
-							},
-							dataUrl : thisObj.config.AJAXPATH
-									+ "?controller=user&action=getSubjectTree&username="
-									+ username
-	
-						});
-	
-						var win = new Ext.Window({
-									id : 'w_u_l_s_w',
-									layout : 'fit',
-									title : username + " " + il8n.subject,
-									width : 500,
-									height : 300,
-									modal : true,
-									items : [tree]
-								});
-						win.show();
-					}
-				});
-			}else if(access[i] == '1409'){
-			//}else if(1=1){		
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add( {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						Ext.Ajax.request({
-							method : 'GET',
-							url : thisObj.config.AJAXPATH + "?controller=user&action=cleanCache",
-							success : function(response) {
-								alert(il8n.success);
-							},
-							failure : function(response) {
-								Ext.Msg.alert('failure',response.responseText);
-								
+				}else if(access[i] == '1406'){
+				//}else if(1=1){
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+								alert(il8n.clickCellInGrid);
+								return;
 							}
-						});
-					}
-				});
+							var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
+							var tree = new Ext.tree.TreePanel({
+								id : 'u_l_g_t',
+								height : 300,
+								width : 400,
+								useArrows : true,
+								autoScroll : true,
+								animate : true,
+								enableDD : false,
+								containerScroll : true,
+								rootVisible : false,
+								frame : true,
+								root : {
+									nodeType : 'async',
+									expanded : true
+								},
+		
+								dataUrl : thisObj.config.AJAXPATH
+										+ "?controller=user&action=getGroupTree&username="
+										+ username,
+								buttons : [{
+									text : il8n.submit,
+									handler : function() {
+										var checkedNodes = tree.getChecked();
+										var s = "";
+										for (var i = 0; i < checkedNodes.length; i++) {
+											s += checkedNodes[i].attributes.id_level
+													+ ",";
+										}
+										Ext.getCmp("u_l_g_t").setVisible(false);
+		
+										Ext.Ajax.request({
+											method : 'POST',
+											url : thisObj.config.AJAXPATH + "?controller=user&action=updateGroup",
+											success : function(response) {
+												Ext.getCmp("w_u_l_g_w").close();
+											},
+											failure : function(response) {
+												Ext.Msg.alert('failure',response.responseText);
+												Ext.getCmp("w_u_l_g_w").close();
+											},
+											params : {
+												username : username,
+												accesss : s.substring(0, s.length- 1)
+											}
+										});
+									}
+								}]	
+							});
+		
+							var win = new Ext.Window({
+										id : 'w_u_l_g_w',
+										layout : 'fit',
+										title : username + " " + il8n.UserToGroup,
+										width : 500,
+										height : 300,
+										modal : true,
+										items : [tree]
+									});
+							win.show(this);
+						}
+					});
+				}else if(access[i] == '1407'){
+				//}else if(1=1){				
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+								alert(il8n.clickCellInGrid);
+								return;
+							}
+							var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
+							var tree = new Ext.tree.TreePanel({
+								id : 'w_u_l_p_t',
+								height : 300,
+								width : 400,
+								useArrows : true,
+								autoScroll : true,
+								animate : true,
+								enableDD : false,
+								containerScroll : true,
+								rootVisible : false,
+								frame : true,
+								root : {
+									nodeType : 'async',
+									expanded : true
+								},
+		
+								dataUrl : thisObj.config.AJAXPATH
+										+ "?controller=user&action=getAccessTree&username="
+										+ username
+		
+							});
+		
+							var win = new Ext.Window({
+										id : 'w_u_l_p_w',
+										layout : 'fit',
+										title : username + " " + il8n.access,
+										width : 500,
+										height : 300,
+										modal : true,
+										items : [tree]
+									});
+							win.show(this);
+						}
+					});
+				}else if(access[i] == '1408'){
+				//}else if(1=1){		
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							if (Ext.getCmp(domid).getSelectionModel().selection == null) {
+								alert(il8n.clickCellInGrid);
+								return;
+							}
+							var username = Ext.getCmp(domid).getSelectionModel().selection.record.data.username;
+							var tree = new Ext.tree.TreePanel({
+								id : 'w_u_l_s_t',
+								height : 300,
+								width : 400,
+								useArrows : true,
+								autoScroll : true,
+								animate : true,
+								enableDD : false,
+								containerScroll : true,
+								rootVisible : false,
+								frame : true,
+								root : {
+									nodeType : 'async',
+									expanded : true
+								},
+								dataUrl : thisObj.config.AJAXPATH
+										+ "?controller=user&action=getSubjectTree&username="
+										+ username
+		
+							});
+		
+							var win = new Ext.Window({
+										id : 'w_u_l_s_w',
+										layout : 'fit',
+										title : username + " " + il8n.subject,
+										width : 500,
+										height : 300,
+										modal : true,
+										items : [tree]
+									});
+							win.show();
+						}
+					});
+				}else if(access[i] == '1409'){
+				//}else if(1=1){		
+					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					tb.add( {
+						iconCls: iconCls,
+						tooltip : tooltip,
+						handler : function() {
+							Ext.Ajax.request({
+								method : 'GET',
+								url : thisObj.config.AJAXPATH + "?controller=user&action=cleanCache",
+								success : function(response) {
+									alert(il8n.success);
+								},
+								failure : function(response) {
+									Ext.Msg.alert('failure',response.responseText);
+									
+								}
+							});
+						}
+					});
+				}
+				tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
 		
 		store.load({
 					params : {
