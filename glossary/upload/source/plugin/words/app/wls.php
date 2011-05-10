@@ -53,13 +53,17 @@ class wls{
 		//Each module has an il8n file.
 		//Read each il8n file , and parse them
 		$languageFiels = $this->tool->getAllFiles('language/'.$this->cfg->language.'/');
+		//print_r($languageFiels);exit();
 		$arr = array();
 		for($i=0;$i<count($languageFiels);$i++){
-			$lang = parse_ini_file($languageFiels[$i],true);
-			$keys = array_keys($lang);
-			for($i2=0;$i2<count($keys);$i2++){
-				$arr[$keys[$i2]] = $lang[$keys[$i2]];	
-			}			
+			//echo substr($languageFiels[$i], strlen($languageFiels[$i])-4 ,4);
+			if(substr($languageFiels[$i], strlen($languageFiels[$i])-4 ,4)=='.ini'){
+				$lang = parse_ini_file($languageFiels[$i],true);
+				$keys = array_keys($lang);
+				for($i2=0;$i2<count($keys);$i2++){
+					$arr[$keys[$i2]] = $lang[$keys[$i2]];	
+				}			
+			}
 		}
 		$this->il8n = $arr;
 		$this->tool->il8n = $arr;
@@ -173,8 +177,7 @@ class wls{
 					}				
 				}
 				
-				$m_user->login($username);		
-				
+				$m_user->login($username);						
 				$menuStff = $m_user->getMyMenuWithShortCut();
 				$modules = $menuStff['modules'];
 				$quickstart = $menuStff['quickstart'];

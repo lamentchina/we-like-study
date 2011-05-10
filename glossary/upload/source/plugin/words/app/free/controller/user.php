@@ -11,7 +11,6 @@ class user extends wls{
 	function user(){
 		parent::wls();
 		$this->model = new m_user();
-		
 	}
 
 	public function getList(){
@@ -25,7 +24,7 @@ class user extends wls{
 	}
 
 	public function login(){
-		include_once $this->c->libsPath."securimage/securimage.php";
+		include_once $this->cfg->libsPath."securimage/securimage.php";
 		$securimage = new Securimage();
 		if ($securimage->check($_POST['CAPTCHA']) == false) {
 			echo json_encode(array(
@@ -56,7 +55,7 @@ class user extends wls{
 
 	public function add(){
 		if(isset($_POST['CAPTCHA'])){
-			include_once $this->c->libsPath."securimage/securimage.php";
+			include_once $this->cfg->libsPath."securimage/securimage.php";
 			$securimage = new Securimage();
 			if ($securimage->check($_POST['CAPTCHA']) == false) {
 				echo json_encode(array(
@@ -127,8 +126,8 @@ class user extends wls{
 		if ($_FILES["file"]["error"] > 0){
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
-			move_uploaded_file($_FILES["file"]["tmp_name"],$this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			$this->model->importAll($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			move_uploaded_file($_FILES["file"]["tmp_name"],$this->cfg->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$this->model->importAll($this->cfg->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
 	}
 
@@ -146,7 +145,7 @@ class user extends wls{
 
 	public function exportAll(){
 		$file = $this->model->exportExcel();
-		echo "<a href='".$this->c->filePath.$file."'>".$this->il8n['file']['download']."</a>";
+		echo "<a href='".$this->cfg->filePath.$file."'>".$this->il8n['file']['download']."</a>";
 	}
 
 	public function delete(){
@@ -164,7 +163,7 @@ class user extends wls{
 		for($i=0;$i<count($data);$i++){
 			unset($data[$i]['icon']);
 		}	
-		$data = $this->t->getTreeData(null,$data);
+		$data = $this->tool->getTreeData(null,$data);
 		echo json_encode($data);
 	}
 
@@ -176,7 +175,7 @@ class user extends wls{
 		for($i=0;$i<count($data);$i++){
 			unset($data[$i]['icon']);
 		}	
-		$data =  $this->t->getTreeData(null,$data);
+		$data =  $this->tool->getTreeData(null,$data);
 
 		echo json_encode($data);
 	}
@@ -207,7 +206,7 @@ class user extends wls{
 		for($i=0;$i<count($data);$i++){
 			unset($data[$i]['icon']);
 		}	
-		$data = $this->t->getTreeData(null,$data);
+		$data = $this->tool->getTreeData(null,$data);
 
 		echo json_encode($data);
 	}
@@ -253,8 +252,15 @@ class user extends wls{
 		$data = $this->model->getMyMenu();
 		$data = $this->model->removeNodeKey($data,'checked');
 		$data = $this->model->removeNodeKey($data,'icon');
-
+		//print_r($data);exit();
 		echo json_encode($data);
+	}
+	
+	public function getQWikiMenus(){
+		$menuStff = $this->model->getMyMenuWithShortCut();
+		$str = json_encode($menuStff);
+		
+		echo $str;
 	}
 	
 	public function getCurrentUserSession(){
@@ -276,28 +282,28 @@ class user extends wls{
 <head>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
+	href=\"".$this->cfg->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/".$this->c->theme."\" />	
+	href=\"".$this->cfg->libsPath."ext_3_2_1/resources/css/".$this->cfg->theme."\" />	
 
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->license."/view/modules.css\" />
+	href=\"".$this->cfg->license."/view/modules.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->license."/view/wls.css\" />			
+	href=\"".$this->cfg->license."/view/wls.css\" />			
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."jquery-1.4.2.js\"></script>	
+	src=\"".$this->cfg->libsPath."jquery-1.4.2.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
+	src=\"".$this->cfg->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."jqueryextend.js\"></script>	
+	src=\"".$this->cfg->libsPath."jqueryextend.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>	
+	src=\"".$this->cfg->libsPath."ext_3_2_1/ext-all.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/ext-lang-zh_CN.js\"></script>
+	src=\"".$this->cfg->libsPath."ext_3_2_1/ext-lang-zh_CN.js\"></script>
 
 <script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/user.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->cfg->license."/view/wls.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->cfg->license."/view/user.js\"></script>
 
 <script type=\"text/javascript\">
 var me = new wls.user();
@@ -336,28 +342,28 @@ Ext.onReady(function(){
 <head>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
+	href=\"".$this->cfg->libsPath."ext_3_2_1/resources/css/ext-all.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->libsPath."ext_3_2_1/resources/css/".$this->c->theme."\" />	
+	href=\"".$this->cfg->libsPath."ext_3_2_1/resources/css/".$this->cfg->theme."\" />	
 
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->license."/view/modules.css\" />
+	href=\"".$this->cfg->license."/view/modules.css\" />
 <link rel=\"stylesheet\" type=\"text/css\"
-	href=\"".$this->c->license."/view/wls.css\" />			
+	href=\"".$this->cfg->license."/view/wls.css\" />			
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."jquery-1.4.2.js\"></script>	
+	src=\"".$this->cfg->libsPath."jquery-1.4.2.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
+	src=\"".$this->cfg->libsPath."ext_3_2_1/adapter/jquery/ext-jquery-adapter.js\"></script>
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."jqueryextend.js\"></script>	
+	src=\"".$this->cfg->libsPath."jqueryextend.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/ext-all.js\"></script>	
+	src=\"".$this->cfg->libsPath."ext_3_2_1/ext-all.js\"></script>	
 <script type=\"text/javascript\"
-	src=\"".$this->c->libsPath."ext_3_2_1/ext-lang-zh_CN.js\"></script>
+	src=\"".$this->cfg->libsPath."ext_3_2_1/ext-lang-zh_CN.js\"></script>
 
 <script type=\"text/javascript\" src=\"wls.php?controller=system&action=translateIniToJsClass\"></script>
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/wls.js\"></script>
-<script type=\"text/javascript\" src=\"".$this->c->license."/view/user.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->cfg->license."/view/wls.js\"></script>
+<script type=\"text/javascript\" src=\"".$this->cfg->license."/view/user.js\"></script>
 
 <script type=\"text/javascript\">
 var me = new wls.user();

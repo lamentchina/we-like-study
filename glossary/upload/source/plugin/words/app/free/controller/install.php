@@ -18,7 +18,19 @@ include_once dirname(__FILE__).'/../model/glossary/levels/logs.php';
 class install extends wls {
 
 	public function createTables(){
+		$obj = new m_question();
+		$obj->create();
+
+		$obj = new m_quiz();
+		$obj->create();
+
+		$obj = new m_quiz_paper();
+		$obj->create();
+
 		$obj = new m_subject();
+		$obj->create();
+
+		$obj = new m_subject_log();
 		$obj->create();
 
 		$obj = new m_user();
@@ -29,9 +41,51 @@ class install extends wls {
 
 		$obj = new m_user_group();
 		$obj->create();
-		
-		$obj = new m_user_group();
+
+		$obj->importExcelWithUser($this->cfg->filePath."demodata/zh-cn/config.xls");
+		$obj->importExcelWithSubject($this->cfg->filePath."demodata/zh-cn/config.xls");
+		$obj->importExcelWithAccess($this->cfg->filePath."demodata/zh-cn/config.xls");
+
+		$obj->setLeaf();
+
+		$obj = new m_quiz_wrong();
 		$obj->create();
+
+		$obj = new m_question_log();
+		$obj->create();
+
+		$obj = new m_quiz_log();
+		$obj->create();
+
+		$obj = new m_quiz_exam();
+		$obj->create();
+
+
+		$this->tool->removeDir($this->cfg->filePath."cache/quizlog/");
+		mkdir($this->cfg->filePath."cache/quizlog/", 0777);
+
+		/*
+		$obj = new m_user_group();
+
+		$obj->importExcelWithUser($this->cfg->filePath."demodata/config.xls");
+		$obj->importExcelWithSubject($this->cfg->filePath."demodata/config.xls");
+		$obj->importExcelWithAccess($this->cfg->filePath."demodata/config.xls");
+
+		$obj = new m_quiz_paper();
+		$obj->importOne("F:/1575.xls");
+		*/
+
+
+//		$obj = new m_quiz_exam();
+//		$obj->importOne('F:/exam.xls');
+//		$obj->importOne('F:/exam2.xls');
+//		$obj->importOne('F:/exam3.xls');
+//		$obj->importOne('F:/exam4.xls');
+//		
+//		$obj = new m_quiz_log();
+//		$obj->importOne('F:/examlog.xls');
+//		$obj->importOne('F:/examlog2.xls');
+//		$obj->importOne('F:/examlog3.xls');
 		
 		$obj = new m_glossary();
 		$obj->create();
@@ -44,12 +98,14 @@ class install extends wls {
 
 		$obj = new m_glossary_levels_logs();
 		$obj->create();			
-		//exit();
+		exit();
 		
+		/*
 		$obj = new m_user_group();
 		$obj->importExcelWithUser($this->cfg->filePath."demodata/config.xls");
 		$obj->importExcelWithSubject($this->cfg->filePath."demodata/config.xls");
 		$obj->importExcelWithAccess($this->cfg->filePath."demodata/config.xls");
+		*/
 		
 		$obj = new m_glossary();
 		$obj->importAll($this->cfg->filePath."demodata/GLOSSARY_CET4.xls");

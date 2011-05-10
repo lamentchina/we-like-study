@@ -46,6 +46,7 @@ class m_user extends wls implements dbtable,fileLoad{
 		$values = implode("','",$values);
 		
 		$sql = "select * from ".$pfx."wls_user where username = '".$data['username']."';";
+		//echo $sql;exit();
 		$res = mysql_query($sql,$conn);
 		//echo $sql;
 		$temp = mysql_fetch_assoc($res);
@@ -134,10 +135,6 @@ class m_user extends wls implements dbtable,fileLoad{
 				,log_lastlogin datetime default '1987-03-18'			
 				,log_count_visit int default 0
 				,log_ip_lastlogin varchar(200) default '127.0.0.1'
-				
-				,glossary_total int default 0
-				,glossary_wrong int default 0
-				,glossary_proportion float default 0
 				
 				,qwiki_modules text
 				,qwiki_quickstart text
@@ -682,8 +679,8 @@ class m_user extends wls implements dbtable,fileLoad{
 	public function getMyMenuForDesktop(){
 		$data = $this->getMyMenu();
 //		print_r($data);exit();
-		$this->tool->treeMenuToDesktopMenu(null,$data);
-		$data = $this->tool->desktopMenu;
+		$this->treeMenuToDesktopMenu(null,$data);
+		$data = $this->desktopMenu;
 
 		return $data;
 	}
@@ -746,9 +743,9 @@ class m_user extends wls implements dbtable,fileLoad{
 			));
 			
 			return array(				
-				 'modules'=>json_encode($modules)
-				,'quickstart'=>json_encode($quickstart)
-				,'shortcut'=>json_encode($shortcut)
+				 'modules'=>($modules)
+				,'quickstart'=>($quickstart)
+				,'shortcut'=>($shortcut)
 			);
 		}
 	}

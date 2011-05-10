@@ -3,19 +3,331 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
-
+<link rel="stylesheet" type="text/css" href="../../../libs/qWikiOffice/resources/css/desktop.css" />
+<link rel="stylesheet" type="text/css" href="../view/modules.css" />
+<script type="text/javascript">
+var il8n = {
+		language:"语言",
+		id:"编号",
+		name:"名称",
+		unDone:"尚未完成",
+		right:"对",
+		giveup:"放弃",
+		wrong:"错",
+		yes_:"是",
+		no_:"不是",
+		success:"成功",
+		fail:"失败",
+		submit:"提交",
+		deleteItems:"删除",
+		search:"查询",
+		download:"下载",
+		ordering:"排序",
+		icon:"图标",
+		loading:"正在导入",
+		description:"描述",
+		weight:"权重",
+		menu:"菜单",
+		CheckCAPTCHA:"检查验证码",
+		CAPTCHA:"验证码",
+		Login:"登陆",
+		Refresh:"刷新",
+		Register:"注册",
+		RequesttedImputMissing:"你遗漏了一些必填项,请仔细检查",
+		Operations:"操作",
+		save:"保存",
+		add:"添加",
+		loginFail:"登陆失败,用户名或密码错误",
+		CAPTCHAFail:"验证码错误,请仔细对照图片上的验证码再输入一次",
+		loginSuccess:"登陆成功,现在要刷新页面,重新导入",
+		imagePath:"图片目录",
+		image:"图",
+		layout:"布局",
+		horizonal:"水平",
+		vertical:"垂直",
+		main:"主要",
+		cost:"代价",
+		over:"结束",
+		title:"标题",
+		author:"作者",
+		comment:"评论",
+		state:"状态",
+		sureToDelete:"你真的要删除这些数据吗",
+		cascadingDelete:"级联删除",
+		serverDataUpdated:"服务端已经将数据成功修改,<br/> 原数据 {1} <br/> 改为 {2} ",
+		serverDataDeleted:"服务端已经将数据成功删除,<br/> 编号 {1}",
+		serverDataAdded:"服务端已经插入数据,<br/> 编号 {1}",
+		desktop:"桌面",
+		startupbar:"启动栏",
+		ismenu:"是菜单",
+		isshortcut:"是桌面项",
+		isquickstart:"是启动栏项",
+		Minimize:"最小化",
+		Maximize:"最大化",
+		Close:"关闭",
+		Restore:"重新导入",
+		configFileError:"配置文件有问题;可能是丢失;找不到;无法被写入",
+		setConfig:"配置参数",
+		settedConfig:"配置参数设置完成",
+		createTables:"生成数据库表",
+		createdTables:"数据库表已经生成",
+		siteName:"站点名称",
+		cmstype:"集成到哪种CMS系统",
+		NOCMS:"没有集成;独立安装",
+		license:"系统授权",
+		freelicense:"自由开源软件协议GPL3",
+		importSysConfig:"导入系统配置文件",
+		dbhost:"数据库服务器",
+		dbname:"数据库名称",
+		dbuser:"数据库用户名",
+		dbpwd:"数据库密码",
+		dbprefix:"数据库表前缀",
+		installError:"系统无法正常运行,可能是安装过程失败造成的.建议你直接联系作者的QQ群:127222072以获得技术支持",
+		checkEnvironment:"检查系统的安装环境,检查配置文件内容,检查部分文件的可写性",
+		environmentError:"系统的安装环境错误!可能是某几个文件夹或文件没有写的权限,或者安装路径错误",
+		integrationError:"你应该将程序的安装包放在正确的位置!",
+		ImNewAboutThis:"我是第一次使用这个考试系统,<br/>我想运行一些示例数据,<br/>以方便我查看各个功能",
+		ImFamiliarAboutThis:"我对整个系统很熟悉,<br/>我现在就想搭建一个WLS考试网站",
+		installDemoData:"安装示例数据",
+		installDemoPapers:"正在导入试卷,请耐心等待...",
+		installDemoLogs:"正在导入做题日志,请耐心等待...",
+		pageIsJumpping:"页面正在跳转,请等待...",
+		loginAsAdminFirst:"如果你选择的是集成安装方式,请确认你目前已经以管理员身份登录了Joomla(DiscuzX,PhpWind)",
+		dbConfigWrong:"数据库配置错误,无法正常连接",
+		systemSettings:"系统配置内容",
+		setBackground:"设置背景图片",
+		setTheme:"设置皮肤",
+		setSiteName:"设置站点名称",
+		ExcelFilePath:"Excel文件路径",
+		seeExampleFile:"下载然后参照示例文件",
+		installDone:"安装完成",
+		importFile:"导入",
+		exportFile:"导出",
+		importAll:"批量导入",
+		exportAll:"批量导出",
+		importExcel:"导入一个Excel文件",
+		importExcelAsGroup:"导入一个Excel文件;重新配置好用户组",
+		importExcelAsGroupItem:"导入一个Excel文件;重新配置好单个用户组的内容",
+		importFormatWrong:"导入的文件格式错误",
+		user:"用户",
+		username:"用户名",
+		usergroup:"用户组",
+		usercenter:"用户中心",
+		access:"权限",
+		password:"密码",
+		money:"金币",
+		credits:"积分",
+		photo:"照片",
+		birthday:"出生年月",
+		sex:"性别",
+		realname:"姓名",
+		accessDenied:"权限不足,无法操作",
+		moneyRequest:"你的金币不足,非注册用户只能使用金币为0的试卷",
+		count_user:"用户数",
+		showAllColumns:"显示所有的用户列",
+		month:"月",
+		day:"天",
+		hour:"小时",
+		minute:"分钟",
+		second:"秒",
+		time:"时间",
+		time_limit:"限制时间",
+		time_spent:"所用时间",
+		time_start:"开始时间",
+		time_stop:"结束时间",
+		date_created:"创建时间",
+		student:"学生",
+		teacher:"教师",
+		subject:"科目",
+		mySubjects:"我的科目",
+		subjectsCountJoined:"参加科目数",
+		accesssCountJoined:"权限操作数",
+		statistic:"统计",
+		index:"序号",
+		belongto:"属于",
+		question:"题目",
+		cent:"分值",
+		option:"选项",
+		ques_description:"解题说明",
+		count_questions:"题目总数",
+		count_used:"使用次数",
+		count_right:"作对次数",
+		count_wrong:"做错次数",
+		count_giveup:"放弃次数",
+		count_total:"总数",
+		difficulty:"难度",
+		markingmethod:"批改方式",
+		optionlength:"选项数",
+		knowledge:"知识点",
+		ids_level_knowledge:"知识点级别编号",
+		listenningFile:"听力文件",
+		answer:"答案",
+		myAnswer:"回答",
+		id_level_group:"组编号",
+		id_level_access:"权限编号",
+		id_level_subject:"科目编号",
+		id_user:"用户编号",
+		id_paper:"试卷编号",
+		id_question:"题目编号",
+		paper:"试卷",
+		accessToGroup:"用户组和权限",
+		SubjectToGroup:"用户组和科目",
+		userGroup:"用户组",
+		UserToGroup:"用户组和用户",
+		JoomlaFirst:"此WLS系统为Joomla的一个插件,你必须先访问该网站的主页,然后再访问这里",
+		addNewSubject:"添加一门新的科目",
+		curve:"曲线",
+		isknowledge:"是知识点",
+		marking:"批改",
+		markingByTeacher:"教师批改",
+		markingByAuto:"自动批改",
+		markingByUser:"用户批改",
+		markingByMultiUser:"多用户评分批改",
+		Qes_Type:"题型",
+		Qes_Type2:"自定义题型",
+		Qes_Choice:"单项选择题",
+		Qes_MultiChoice:"多项选择题",
+		Qes_Check:"判断题",
+		Qes_Big:"大题",
+		Qes_Blank:"填空题",
+		Blank_Short:"填",
+		Qes_Mixed:"组合题",
+		Qes_Depict:"简答题",
+		Quiz_Application:"应用类型",
+		Quiz_Paper:"做测验卷",
+		Quiz_Paper_Result:"考试成绩结果",
+		Quiz_Random:"随机练习",
+		Quiz_QuesType:"题型掌握度练习",
+		Quiz_Knowledge:"知识点掌握度练习题",
+		Quiz_OnlineExam:"参加在线考试",
+		Quiz_Wrongs:"错题本练习",
+		Quiz_Wrongs_Result:"错题本练习结果",
+		Quiz_Proportion:"做对比例",
+		log_allMyQuiz:"所有我的测验记录",
+		log_allQuiz:"所有测验记录",
+		log_allWrongs:"所有错题",
+		log_review:"复习记录",
+		log_notfound:"没有这个测验的详细做题过程",
+		id_level:"级别编号",
+		examPassLine:"及格线",
+		score:"分数",
+		myScore:"得分",
+		score_avg:"平均分",
+		score_top:"最高分",
+		score_total:"总分",
+		whyImWrong:"我做错的原因",
+		whyImWrong_NotGoodEnough:"我掌握的知识还不够好",
+		whyImWrong_Carelese:"粗心大意",
+		whyImWrong_IHaveNoIdea:"我还不明白错在哪里",
+		whyImWrong_WrongAnswer:"答案错了,我没有错",
+		click2unblock:"单击,屏幕解锁",
+		clickCellInGrid:"请点击列表中的任何一个单元格",
+		Navigation:"导航",
+		privilageImportWarning:"警告!<br/>导入科目配置之前,请确保新的科目配置的编号能够与原始科目编号一致.否则将导致部分试卷没有对应科目,导致试卷无效",
+		quizLog:"记录",
+		exam:"考试",
+		exam_count_users:"参加人数",
+		exam_count_groups:"参加群体",
+		exam_passed:"通过考试",
+		exam_failed:"不及格",
+		exam_already_done:"你已经参与过该考试了,在 {1} ,成绩为 {2} ,因此本次考试的成绩不会被记录",
+		exam_you_are_guest:"你是以<b>访客</b>的身份参与了这次考试  ,因此本次考试的成绩不会被记录",
+		instructor:"任课老师",
+		waitForMark:"等待批改",
+		markked:"已经批改"
+		 };
+</script>
 <script type="text/javascript" src="../../../libs/jquery-1.4.2.js"></script>	
 <script type="text/javascript" src="../../../libs/jqueryextend.js"></script>	
 <script type="text/javascript" src="../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
 <script type="text/javascript" src="../../../libs/ext_3_2_1/ext-all.js"></script>
-<script type="text/javascript" src="../../../libs/qWikiOffice/App.js"></script>
-<script type="text/javascript" src="../../../libs/qWikiOffice/Desktop.js"></script>
-<script type="text/javascript" src="../../../libs/qWikiOffice/Module.js"></script>
-<script type="text/javascript" src="../../../libs/qWikiOffice/Notification.js"></script>
-<script type="text/javascript" src="../../../libs/qWikiOffice/Shortcut.js"></script>
-<script type="text/javascript" src="../../../libs/qWikiOffice/TaskBar.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/App.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/Desktop.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/Module.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/Notification.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/Shortcut.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/StartMenu.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/client/TaskBar.js"></script>
 <script type="text/javascript">
+
+Ext.namespace('Ext.ux','QoDesk');
+var qWikiMenuData = null;
+Ext.onReady(function(){
+	Ext.BLANK_IMAGE_URL = '../../../libs/ext_3_2_1/resources/images/default/s.gif';
+	Ext.QuickTips.init();
 	
+	Ext.Ajax.request({
+		method : 'GET',
+		url : "../../wls.php?controller=user&action=getQWikiMenus",
+		success : function(response) {
+
+			qWikiMenuData = Ext.decode(response.responseText);
+			QoDesk.App = new Ext.app.App({
+				   init : function(){},
+
+				   /**
+				    * The member's name and group name for this session.
+				    */
+				   memberInfo: {
+				      name: 'ddddd',
+				      group: 'System Administrator'
+				   },
+
+				   /**
+				    * An array of the module definitions.
+				    * The definitions are used until the module is loaded on demand.
+				    */
+				    modules: qWikiMenuData.modules ,
+
+				   /**
+				    * The desktop config object.
+				    */
+				   desktopConfig: {
+				      appearance: {
+				    	"fontColor":"333333",
+				    	"taskbarTransparency":70
+					  },
+				      background: {
+					      "color":"f9f9f9",
+					      "wallpaperPosition":"center",
+					      "wallpaper":{
+					      	"id":10,
+					      	"name":"WLS",
+					      	"file":"free/view/images/bgA1024x768.jpg"
+						   }
+					   },
+				      launchers: {
+						  "shortcut":qWikiMenuData.quickstart,
+						  "quickstart":qWikiMenuData.shortcut
+					  },
+				      taskbarConfig: {
+				         buttonScale: 'large',
+				         position: 'bottom',
+				         quickstartConfig: {
+				            width: 60
+				         },
+
+				         startMenuConfig: {
+				            iconCls: 'icon-user-48',
+				            title: 'aaaaa',
+				            width: 320
+				         }
+				      }
+				   }
+				});
+
+		},
+		failure : function(response) {
+
+		}
+	});
+});
+
+
+
+
+
+
 </script>
 </head>
 <body>
