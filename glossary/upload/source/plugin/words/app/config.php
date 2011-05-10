@@ -13,7 +13,7 @@ class wlsconfig{
 			public $siteName = 'We_Like_Study';
 			public $state = 'debug';
 			public $language = 'zh-cn';
-			public $background = 'free/view/images/bgA1024x768.jpg';
+			public $background = '../../../file/images/bgA1024x768.jpg';
 			public $theme = 'xtheme-green.css';
 }
 ?>
