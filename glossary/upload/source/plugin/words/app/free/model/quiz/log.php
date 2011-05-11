@@ -143,7 +143,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['main']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->il8n['normal']['main']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
@@ -154,7 +154,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$time = date('Y-m-d H:i:s');
 		$application = 0;
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['name']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['name']){
 				$title = $currentSheet->getCell($i.'3')->getValue();
 				
 				$sql = "update ".$pfx."wls_quiz set count_used = count_used + 1 where title = '".$title."' ";
@@ -166,10 +166,10 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 				$id_quiz = $temp['id'];
 				$application = $temp['application'];
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['time']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['time']){
 				$time = $currentSheet->getCell($i.'3')->getValue();
 			}			
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['username']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['user']['username']){
 				$value = $currentSheet->getCell($i.'3')->getValue();
 				$sql = "select id from ".$pfx."wls_user where username = '".$value."';";
 				$res = mysql_query($sql,$conn);
@@ -209,16 +209,16 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		}
 		$ids_question = substr($ids_question,0,strlen($ids_question)-1);
 
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['quizLog']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->il8n['quiz']['quizLog']);
 		$allRow = $currentSheet->getHighestRow();
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['index']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['index']){
 				$keys['index'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['myAnswer']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['myAnswer']){
 				$keys['myAnswer'] = $i;
 			}
 		}
@@ -262,11 +262,11 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		
 		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['main']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['quiz']['main']);
 		
-		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['name']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['username']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['time']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->il8n['normal']['name']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->il8n['user']['username']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->il8n['normal']['time']);
 		
 		$objPHPExcel->getActiveSheet()->setCellValue('A3', $temp["title"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('B3', $temp["username"]);
@@ -278,9 +278,9 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 //		exit();
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['quizLog']);
-		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['myAnswer']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['quiz']['quizLog']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->il8n['normal']['index']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->il8n['quiz']['myAnswer']);
 		
 		$keys = array_keys($data);
 		$index = 3;
@@ -343,7 +343,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
-			$temp['name_application'] = $this->t->formatApplicationType($temp['application']);
+			$temp['name_application'] = $this->tool->formatApplicationType($temp['application']);
 			$temp['count_questions'] = count(explode(",", $temp['ids_question']));
 			$arr[] = $temp;
 		}

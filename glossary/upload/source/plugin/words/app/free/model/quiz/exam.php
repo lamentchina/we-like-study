@@ -147,30 +147,30 @@ class m_quiz_exam extends wls implements dbtable,fileLoad{
 		$PHPReader->setReadDataOnly(true);
 		$this->phpexcel = $PHPReader->load($path);
 //		echo $path;exit();
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['exam']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->il8n['quiz']['exam']);
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$quizData = array();
 		$examData = array();
 		$quizData['imagePath'] = '';
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['title']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['title']){
 				$quizData['title'] = $currentSheet->getCell($i."3")->getValue();
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['time_start']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['time_start']){
 				$examData['time_start'] = $currentSheet->getCell($i."3")->getValue();
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['time_stop']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['time_stop']){
 				$examData['time_stop'] = $currentSheet->getCell($i."3")->getValue();
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['examPassLine']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['examPassLine']){
 				$examData['passline'] = $currentSheet->getCell($i."3")->getValue();
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['imagePath']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['imagePath']){
 				$imagePath = $currentSheet->getCell($i."3")->getValue();
 				$quizData['imagePath'] = $imagePath;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['subject']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['subject']['subject']){
 				$quizData['id_level_subject'] = $currentSheet->getCell($i."3")->getValue();
 				$sql_ = "select name from ".$pfx."wls_subject where id_level = '".$quizData['id_level_subject']."'; ";
 				$res = mysql_query($sql_,$conn);
@@ -201,7 +201,7 @@ class m_quiz_exam extends wls implements dbtable,fileLoad{
 		$examData['id_quiz'] = $quizData['id'];
 		$this->id_exam = $this->insert($examData);
 //		print_r($examData);
-		$currentSheet = $this->phpexcel->getSheetByName($this->lang['userGroup']);
+		$currentSheet = $this->phpexcel->getSheetByName($this->il8n['user']['userGroup']);
 		$allRow = $currentSheet->getHighestRow();
 //		$allRow = $allRow[0];
 		$groupObj = new m_user_group();
@@ -251,12 +251,12 @@ group by username
 
 		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['exam']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['quiz']['exam']);
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(40);
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->lang['title']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->lang['subject']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->lang['author']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->il8n['normal']['title']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', $this->il8n['subject']['subject']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C1', $this->il8n['quiz']['author']);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A2', $temp['title']);
 		$objPHPExcel->getActiveSheet()->setCellValue('B2', $temp['id_level_subject']);
@@ -265,13 +265,13 @@ group by username
 		$chr = 66;
 		if(!($temp['money']==''||$temp['money']=='0')){
 			$chr++;
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['money']);
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->il8n['user']['money']);
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['money']);
 		}
 		$quizObj = new m_quiz();
 		if(!($temp['imagePath']==''||$temp['imagePath']=='0')){
 			$chr++;
-			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->lang['imagePath']);
+			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'1', $this->il8n['quiz']['imagePath']);
 			$objPHPExcel->getActiveSheet()->setCellValue(chr($chr).'2', $temp['imagePath']);
 			$quizObj->imagePath = $temp['imagePath'];
 		}
@@ -420,7 +420,7 @@ select id_level_group from ".$pfx."wls_user_group2user where username = '".$me['
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
 		if($user['username']=='guest'){
-			$answers[0]['msg'] = $this->lang['exam_you_are_guest'];
+			$answers[0]['msg'] = $this->il8n['quiz']['exam_you_are_guest'];
 			return $answers;
 		}else{
 			$sql = "select * from ".$pfx."wls_quiz_log where id_user = ".$user['id']." and id_quiz = ".$temp['id_quiz'];
@@ -431,7 +431,7 @@ select id_level_group from ".$pfx."wls_user_group2user where username = '".$me['
 			}
 			$temp2 = mysql_fetch_assoc($res);
 			if($temp2!=false){
-				$msg = $this->lang['exam_already_done'];
+				$msg = $this->il8n['quiz']['exam_already_done'];
 				//$msg = str_replace("{1}",$temp2['time_stop'],$msg);
 				//$msg = str_replace("{2}",$temp2['mycent'],$msg);
 				$answers[0]['msg'] = $msg;
@@ -451,7 +451,7 @@ select id_level_group from ".$pfx."wls_user_group2user where username = '".$me['
 			,'application'=>4
 		));
 
-		$answers[0]['msg'] = $this->lang['over'];
+		$answers[0]['msg'] = $this->il8n['quiz']['over'];
 		return $answers;
 	}
 }

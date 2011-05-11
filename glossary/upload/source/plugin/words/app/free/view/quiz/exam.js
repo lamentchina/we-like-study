@@ -244,9 +244,9 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						   		,renderer : function(v, meta, record, row_idx, col_idx, store){
 						   			if(record.data.mycent!=null){
 						   				if(record.data.mycent>=record.data.examPassLine){
-						   					return il8n.exam_passed;
+						   					return il8n.quiz.exam_passed;
 						   				}else{
-						   					return '<span style="color:red">'+il8n.exam_failed+'</span>';
+						   					return '<span style="color:red">'+il8n.quiz.exam_failed+'</span>';
 						   				}
 						   			}
 						   			var str = record.data.time_start;
@@ -255,7 +255,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						   			//console.debug(arr[0]+" "+arr[1]);
 						   			var d1 = new Date(arr[0]+" "+arr[1]);
 						   			if(d1>new Date()){
-						   				return il8n.exam_notready;
+						   				return il8n.quiz.exam_notready;
 						   			}
 						   			var str = record.data.time_stop;
 						   			var arr = str.split(" ");
@@ -263,9 +263,9 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						   			//console.debug(arr[0]+" "+arr[1]);
 						   			var d1 = new Date(arr[0]+" "+arr[1]);
 						   			if(d1<new Date()){
-						   				return '<span style="color:red">'+il8n.exam_yourhavelost+'</span>';
+						   				return '<span style="color:red">'+il8n.quiz.exam_yourhavelost+'</span>';
 						   			}
-									return il8n.exam_open;
+									return il8n.quiz.exam_open;
 				            	}
 							}]
 				});

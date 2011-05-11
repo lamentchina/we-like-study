@@ -78,16 +78,19 @@ class install extends wls {
 		
 
 
-//		$obj = new m_quiz_exam();
-//		$obj->importOne('F:/exam.xls');
-//		$obj->importOne('F:/exam2.xls');
-//		$obj->importOne('F:/exam3.xls');
-//		$obj->importOne('F:/exam4.xls');
-//		
-//		$obj = new m_quiz_log();
-//		$obj->importOne('F:/examlog.xls');
-//		$obj->importOne('F:/examlog2.xls');
-//		$obj->importOne('F:/examlog3.xls');
+		$obj = new m_quiz_exam();
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/exam/exam.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/exam/exam2.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/exam/exam3.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/exam/exam4.xls");
+		
+		$obj = new m_quiz_log();
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/examlog.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/examlog2.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/examlog3.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/log1.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/log2.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/log3.xls");
 		
 		$obj = new m_glossary();
 		$obj->create();
