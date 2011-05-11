@@ -190,8 +190,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		var tb = new Ext.Toolbar({
 					id : "w_s_l_tb",
 					items : [search, {
-								iconCls: 'bt_search',
-								tooltip : il8n.search,						
+								iconCls: 'bt_search_16_16',
+								tooltip : il8n.normal.search,						
 								handler : function() {
 									store.load({
 												params : {
@@ -218,14 +218,18 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							})
 				});
 
-		if (typeof(user_) == "undefined") {
-			//
-		} else {
-			var access = user_.myUser.access.split(",");
+
+	Ext.Ajax.request({
+		method : 'POST',
+		url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+		success : function(response) {
+			var obj = Ext.decode(response.responseText);
+			//console.debug(obj);
+			var access = obj.access;
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '1101') {
-					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -249,8 +253,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '1102') {
-					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -280,8 +284,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				}else if (access[i] == '1108') {
-					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -305,8 +309,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				}else if (access[i] == '1109') {
-					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -330,8 +334,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				}else if (access[i] == '1103') {
-					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -358,8 +362,8 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '1107') {
-					eval("var iconCls = 'bt_'+user_.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = user_.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add( {
 						//iconCls: iconCls,
 						//tooltip : tooltip,
@@ -371,26 +375,14 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							}
 							var pid = Ext.getCmp(domid).getSelectionModel().selection.record.id;
 							
-							var uid = user_.myUser.id;
-							//console.debug(parent);
-							var desktop = parent.QoDesk.App.getDesktop();
-
-							var win = desktop.getWindow(pid + '_qdesk');
-							var winWidth = desktop.getWinWidth();
-							var winHeight = desktop.getWinHeight();
-
-							if (!win) {
-								win = desktop.createWindow({
-									id : pid + '_qdesk',
-									title : Ext.getCmp(domid)
-											.getSelectionModel().selection.record.data.title,
-									width : winWidth,
-									height : winHeight,
-									layout : 'fit',
-									plain : false,
-									listeners : {
+							var uid = obj.id;
+							if( typeof(parent.QoDesk)=='undefined' ){
+								var win = new Ext.Window({
+									 width: 400
+									,height: 500
+									,listeners : {
 										'show':function(x){
-											var c = parent.document.getElementById('paper_vq_' + pid);   
+											var c = document.getElementById('paper_vq_' + pid);   
 											c.src = thisObj.config.AJAXPATH + "?controller=quiz_paper&action=viewQuiz&id="
 													+ pid
 													+ "&uid="
@@ -398,11 +390,42 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 													+ '&temp='
 													+ Math.random();
 										}
-									},
-									html : '<iframe id="paper_vq_'+pid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+									}									
+									,html : '<iframe id="paper_vq_'+pid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
 								});
+								win.show();
+							}else{
+								var desktop = parent.QoDesk.App.getDesktop();
+								var win = desktop.getWindow(pid + '_qdesk');
+								var winWidth = desktop.getWinWidth();
+								var winHeight = desktop.getWinHeight();
+	
+								if (!win) {
+									win = desktop.createWindow({
+										id : pid + '_qdesk',
+										title : Ext.getCmp(domid)
+												.getSelectionModel().selection.record.data.title,
+										width : winWidth,
+										height : winHeight,
+										layout : 'fit',
+										plain : false,
+										listeners : {
+											'show':function(x){
+												var c = parent.document.getElementById('paper_vq_' + pid);   
+												c.src = thisObj.config.AJAXPATH + "?controller=quiz_paper&action=viewQuiz&id="
+														+ pid
+														+ "&uid="
+														+ uid
+														+ '&temp='
+														+ Math.random();
+											}
+										},
+										html : '<iframe id="paper_vq_'+pid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+									});
+								}
+								win.show();
 							}
-							win.show();
+							
 						}
 					});
 				} else if (access[i] == '1104') {
@@ -411,7 +434,13 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					// TODO
 				}
 			}
-		}
+		
+				tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
+			}
+		});
 		function afteredit(e) {
 			Ext.Ajax.request({
 						method : 'POST',

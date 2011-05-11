@@ -27,7 +27,7 @@ class_11 = Ext.extend(Ext.app.Module, {
 								listeners : {
 									'show':function(x){
 										var c = document.getElementById('paperList');   
-										c.src =  "../../wls.php?controller=quiz_paper&action=viewGetList";
+										c.src =  "quiz/paper/grid.html";
 									}
 								},
 								html : "<iframe id='paperList' width='100%' height='430' frameborder='no' border='0' marginwidth='0' marginheight='0' />"

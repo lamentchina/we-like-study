@@ -175,7 +175,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 		var currentTimeString = hours + ":" + minutes + ":" + seconds;
 		return currentTimeString;
 	},
-	getList : function(domid) {
+	getGrid : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
@@ -195,51 +195,51 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 								width : 40,
 								dataIndex : 'index'
 							}, {
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id',
 								hidden : true
 							}, {
-								header : il8n.title,
+								header : il8n.normal.title,
 								dataIndex : 'title'
 							}, {
-								header : il8n.subject,
+								header : il8n.subject.subject,
 								dataIndex : 'name_subject'
 							}, {
-								header : il8n.time_start,
+								header : il8n.normal.time_start,
 								dataIndex : 'time_start',
 								renderer : function(v){
 									return v.substr(0,10);
 								},
 								hidden:true
 							}, {
-								header : il8n.time_stop,
+								header : il8n.normal.time_stop,
 								dataIndex : 'time_stop',
 								renderer : function(v){
 									return v.substr(0,10);
 								},
 								hidden:true
 							}, {
-								header : il8n.examPassLine,
+								header : il8n.quiz.examPassLine,
 								dataIndex : 'passline',
 								hidden : true
 							}, {
-								header : il8n.exam_count_groups,
+								header : il8n.quiz.exam_count_groups,
 								dataIndex : 'count_groups'
 							}, {
-								header : il8n.exam_count_users,
+								header : il8n.quiz.exam_count_users,
 								dataIndex : 'count_users'
 							}, {
-								header : il8n.exam_count_done,
+								header : il8n.quiz.exam_count_done,
 								hidden : true,
 								dataIndex : 'count_used'
 							}, {
-								header : il8n.score_total,
+								header : il8n.quiz.score_total,
 								dataIndex : 'cent'
 							}, {
-								header : il8n.myScore,
+								header : il8n.quiz.myScore,
 								dataIndex : 'mycent'
 							}, {
-								header : il8n.state
+								header : il8n.normal.status
 								,dataIndex : 'mycent'
 						   		,renderer : function(v, meta, record, row_idx, col_idx, store){
 						   			if(record.data.mycent!=null){
@@ -290,7 +290,8 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 		var tb = new Ext.Toolbar({
 					id : "w_s_l_tb",
 					items : [search, {
-								text : il8n.search,
+								iconCls: 'bt_search_16_16',
+								tooltip : il8n.normal.search,	
 								handler : function() {
 									store.load({
 												params : {
@@ -316,14 +317,18 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 							})
 				});
 
-		if (typeof(me) == "undefined") {
-			//
-		} else {
-			var access = me.myUser.access.split(",");
+
+	Ext.Ajax.request({
+		method : 'POST',
+		url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+		success : function(response) {
+			var obj = Ext.decode(response.responseText);
+			//console.debug(obj);
+			var access = obj.access;
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '2001') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -343,8 +348,8 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2002') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -371,8 +376,8 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2003') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -399,8 +404,8 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2006') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -441,7 +446,7 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 
 							var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
 
-							var uid = me.myUser.id;
+							var uid = obj.id;
 							var desktop = parent.QoDesk.App.getDesktop();
 
 							var win = desktop.getWindow(pid + '_qdesk');
@@ -475,8 +480,8 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 						}
 					});
 				} else if (access[i] == '2009') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add({
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -541,8 +546,13 @@ wls.quiz.exam = Ext.extend(wls.quiz, {
 				} else if (access[i] == '1105') {
 
 				}
+			}				
+			tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
 
 		store.on('beforeload', function() {
 					Ext.apply(this.baseParams, {

@@ -103,94 +103,94 @@ class m_quiz extends wls implements dbtable{
 	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){}
 
 	public function importOne($phpexcel){
-		$currentSheet = $phpexcel->getSheetByName($this->lang['question']);
+		$currentSheet = $phpexcel->getSheetByName($this->il8n['quiz']['question']);
 		$allRow = $currentSheet->getHighestRow();
 		
 		$allColmun = $currentSheet->getHighestColumn();
 
 		$keys = array();
 		for($i='A';$i<=$allColmun;$i++){
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['index']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['index']){
 				$keys['index'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['belongto']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['belongto']){
 				$keys['belongto'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['Qes_Type']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['Qes_Type']){
 				$keys['type'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['title']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['title']){
 				$keys['title'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['answer']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['answer']){
 				$keys['answer'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['cent']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['cent']){
 				$keys['cent'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'A'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'A'){
 				$keys['option1'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'B'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'B'){
 				$keys['option2'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'C'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'C'){
 				$keys['option3'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'D'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'D'){
 				$keys['option4'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'E'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'E'){
 				$keys['option5'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'F'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'F'){
 				$keys['option6'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['option'].'G'){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['option'].'G'){
 				$keys['option7'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ques_description']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['ques_description']){
 				$keys['description'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['listenningFile']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['listenningFile']){
 				$keys['path_listen'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_used']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['count_used']){
 				$keys['count_used'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_right']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['count_right']){
 				$keys['count_right'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_wrong']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['count_wrong']){
 				$keys['count_wrong'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['count_giveup']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['count_giveup']){
 				$keys['count_giveup'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['difficulty']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['difficulty']){
 				$keys['difficulty'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['markingmethod']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['markingmethod']){
 				$keys['markingmethod'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['optionlength']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['optionlength']){
 				$keys['optionlength'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['ids_level_knowledge']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['ids_level_knowledge']){
 				$keys['ids_level_knowledge'] = $i;
 			}
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['Qes_Type2']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['quiz']['Qes_Type2']){
 				$keys['Qes_Type2'] = $i;
 			}			
-			if($currentSheet->getCell($i."2")->getValue()==$this->lang['layout']){
+			if($currentSheet->getCell($i."2")->getValue()==$this->il8n['normal']['layout']){
 				$keys['layout'] = $i;
 			}
 		}
 
 		for($i=3;$i<=$allRow;$i++){
-			$title = $this->t->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());
-			$title = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$title);
-			$title = str_replace("[/".$this->lang['image']."]","\">",$title);
+			$title = $this->tool->formatTitle($currentSheet->getCell($keys['title'].$i)->getValue());
+			$title = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$title);
+			$title = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$title);
 			$title = str_replace("[___","<input width=\"100\" class=\"w_blank\" index=\"",$title);
 			$title = str_replace("___]","\"/>",$title);
 
@@ -198,7 +198,7 @@ class m_quiz extends wls implements dbtable{
 				'type'=>$currentSheet->getCell($keys['type'].$i)->getValue(),
 				'title'=>$title,
 				'answer'=>$currentSheet->getCell($keys['answer'].$i)->getValue(),			
-				'option1'=>$this->t->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
+				'option1'=>$this->tool->formatTitle($currentSheet->getCell($keys['option1'].$i)->getValue()),
 				'id_quiz'=>$this->id_quiz	
 			);
 
@@ -218,56 +218,56 @@ class m_quiz extends wls implements dbtable{
 				
 			$optionlength = 1;
 			if(isset($keys['option2']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
+				$value = $this->tool->formatTitle($currentSheet->getCell($keys['option2'].$i)->getValue());
 				if($value!=''){
 					$optionlength = 2;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$value = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
+					$value = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$value);
 					$question['option2'] = $value;
 				}
 			}
 			if(isset($keys['option3']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue());
+				$value = $this->tool->formatTitle($currentSheet->getCell($keys['option3'].$i)->getValue());
 				if($value!=''){
 					$optionlength = 3;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$value = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
+					$value = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$value);
 					$question['option3'] = $value;
 				}
 			}
 			if(isset($keys['option4']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue());
+				$value = $this->tool->formatTitle($currentSheet->getCell($keys['option4'].$i)->getValue());
 				if($value!=''){
 					$optionlength = 4;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$value = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
+					$value = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$value);
 					$question['option4'] = $value;
 				}
 			}
 			if(isset($keys['option5']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue());
+				$value = $this->tool->formatTitle($currentSheet->getCell($keys['option5'].$i)->getValue());
 				if($value!=''){
 					$optionlength = 5;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$value = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
+					$value = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$value);
 					$question['option5'] = $value;
 				}
 			}
 			if(isset($keys['option6']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue());
+				$value = $this->tool->formatTitle($currentSheet->getCell($keys['option6'].$i)->getValue());
 				if($value!=''){
 					$optionlength = 6;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$value = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
+					$value = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$value);
 					$question['option6'] = $value;
 				}
 			}
 			if(isset($keys['option7']) ){
-				$value = $this->t->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue());
+				$value = $this->tool->formatTitle($currentSheet->getCell($keys['option7'].$i)->getValue());
 				if($value!=''){
 					$optionlength = 7;
-					$value = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
-					$value = str_replace("[/".$this->lang['image']."]","\">",$value);
+					$value = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$value);
+					$value = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$value);
 					$question['option7'] = $value;
 				}
 			}
@@ -277,9 +277,9 @@ class m_quiz extends wls implements dbtable{
 			$question['optionlength'] = $optionlength;
 
 			if(isset($keys['description'])){
-				$description = $this->t->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
-				$description = str_replace("[".$this->lang['image']."]","<img src=\"".$this->quizData['imagePath'],$description);
-				$description = str_replace("[/".$this->lang['image']."]","\">",$description);
+				$description = $this->tool->formatTitle($currentSheet->getCell($keys['description'].$i)->getValue());
+				$description = str_replace("[".$this->il8n['quiz']['image']."]","<img src=\"".$this->quizData['imagePath'],$description);
+				$description = str_replace("[/".$this->il8n['quiz']['image']."]","\">",$description);
 				$question['description'] = $description;
 			}
 			if(isset($keys['path_listen'])){
@@ -321,7 +321,7 @@ class m_quiz extends wls implements dbtable{
 			if(isset($keys['layout'])){
 				$value = $currentSheet->getCell($keys['layout'].$i)->getValue();
 				if($value!=''){
-					$question['layout']=$this->t->formatLayout($value,true);
+					$question['layout']=$this->tool->formatLayout($value,true);
 				}
 			}
 			if(isset($keys['Qes_Type2'])){
@@ -335,7 +335,7 @@ class m_quiz extends wls implements dbtable{
 
 		return $this->saveQuestions();
 	}
-
+	
 	public function saveQuestions(){
 		$quesObj = new m_question();
 		$questions = $this->questions;
@@ -408,25 +408,25 @@ class m_quiz extends wls implements dbtable{
 
 		$objPHPExcel->createSheet();
 		$objPHPExcel->setActiveSheetIndex(1);
-		$objPHPExcel->getActiveSheet()->setTitle($this->lang['question']);
+		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['quiz']['question']);
 
-		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->cfg->siteName.'_'.$this->lang['exportFile']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->cfg->siteName.'_'.$this->il8n['quiz']['exportFile']);
 
-		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->lang['index']);
-		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->lang['belongto']);
-		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->lang['Qes_Type']);
-		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->lang['title']);
-		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->lang['answer']);
-		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->lang['cent']);
-		$objPHPExcel->getActiveSheet()->setCellValue('G2', $this->lang['option'].'A');
-		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->lang['option'].'B');
-		$objPHPExcel->getActiveSheet()->setCellValue('I2', $this->lang['option'].'C');
-		$objPHPExcel->getActiveSheet()->setCellValue('J2', $this->lang['option'].'D');
-		$objPHPExcel->getActiveSheet()->setCellValue('K2', $this->lang['option'].'E');
-		$objPHPExcel->getActiveSheet()->setCellValue('L2', $this->lang['option'].'F');
-		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->lang['option'].'G');
-		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->lang['optionlength']);
-		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->lang['ques_description']);
+		$objPHPExcel->getActiveSheet()->setCellValue('A2', $this->il8n['quiz']['index']);
+		$objPHPExcel->getActiveSheet()->setCellValue('B2', $this->il8n['quiz']['belongto']);
+		$objPHPExcel->getActiveSheet()->setCellValue('C2', $this->il8n['quiz']['Qes_Type']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D2', $this->il8n['quiz']['title']);
+		$objPHPExcel->getActiveSheet()->setCellValue('E2', $this->il8n['quiz']['answer']);
+		$objPHPExcel->getActiveSheet()->setCellValue('F2', $this->il8n['quiz']['cent']);
+		$objPHPExcel->getActiveSheet()->setCellValue('G2', $this->il8n['quiz']['option'].'A');
+		$objPHPExcel->getActiveSheet()->setCellValue('H2', $this->il8n['quiz']['option'].'B');
+		$objPHPExcel->getActiveSheet()->setCellValue('I2', $this->il8n['quiz']['option'].'C');
+		$objPHPExcel->getActiveSheet()->setCellValue('J2', $this->il8n['quiz']['option'].'D');
+		$objPHPExcel->getActiveSheet()->setCellValue('K2', $this->il8n['quiz']['option'].'E');
+		$objPHPExcel->getActiveSheet()->setCellValue('L2', $this->il8n['quiz']['option'].'F');
+		$objPHPExcel->getActiveSheet()->setCellValue('M2', $this->il8n['quiz']['option'].'G');
+		$objPHPExcel->getActiveSheet()->setCellValue('N2', $this->il8n['quiz']['optionlength']);
+		$objPHPExcel->getActiveSheet()->setCellValue('O2', $this->il8n['quiz']['ques_description']);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(20);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(5);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(5);
@@ -436,46 +436,46 @@ class m_quiz extends wls implements dbtable{
 		$objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(5);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(5);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('W')->setWidth(15);
-		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->lang['listenningFile']);
-		$objPHPExcel->getActiveSheet()->setCellValue('Q2', $this->lang['count_used']);
-		$objPHPExcel->getActiveSheet()->setCellValue('R2', $this->lang['count_right']);
-		$objPHPExcel->getActiveSheet()->setCellValue('S2', $this->lang['count_wrong']);
-		$objPHPExcel->getActiveSheet()->setCellValue('T2', $this->lang['count_giveup']);
-		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->lang['difficulty']);
-		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->lang['markingmethod']);
-		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->lang['ids_level_knowledge']);
-		$objPHPExcel->getActiveSheet()->setCellValue('X2', $this->lang['Qes_Type2']);
-		$objPHPExcel->getActiveSheet()->setCellValue('Y2', $this->lang['layout']);
+		$objPHPExcel->getActiveSheet()->setCellValue('P2', $this->il8n['quiz']['listenningFile']);
+		$objPHPExcel->getActiveSheet()->setCellValue('Q2', $this->il8n['quiz']['count_used']);
+		$objPHPExcel->getActiveSheet()->setCellValue('R2', $this->il8n['quiz']['count_right']);
+		$objPHPExcel->getActiveSheet()->setCellValue('S2', $this->il8n['quiz']['count_wrong']);
+		$objPHPExcel->getActiveSheet()->setCellValue('T2', $this->il8n['quiz']['count_giveup']);
+		$objPHPExcel->getActiveSheet()->setCellValue('U2', $this->il8n['quiz']['difficulty']);
+		$objPHPExcel->getActiveSheet()->setCellValue('V2', $this->il8n['quiz']['markingmethod']);
+		$objPHPExcel->getActiveSheet()->setCellValue('W2', $this->il8n['quiz']['ids_level_knowledge']);
+		$objPHPExcel->getActiveSheet()->setCellValue('X2', $this->il8n['quiz']['Qes_Type2']);
+		$objPHPExcel->getActiveSheet()->setCellValue('Y2', $this->il8n['quiz']['layout']);
 
 		$index = 3;
 		for($i=0;$i<count($data);$i++){
 			$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $data[$i]['id']);
 			$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $data[$i]['id_parent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->t->formatQuesType($data[$i]['type']));			
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $this->tool->formatQuesType($data[$i]['type']));			
 				
-			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['title'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $this->tool->formatImagePath($this->tool->formatTitle($data[$i]['title'],true),$this->imagePath) );
 			$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $data[$i]['answer']);
 			$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, $data[$i]['cent']);
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option1'],true),$this->imagePath) );
-			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option2'],true),$this->imagePath) );
-			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option3'],true),$this->imagePath) );
-			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['option4'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $this->tool->formatImagePath($this->tool->formatTitle($data[$i]['option1'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('H'.$index, $this->tool->formatImagePath($this->tool->formatTitle($data[$i]['option2'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('I'.$index, $this->tool->formatImagePath($this->tool->formatTitle($data[$i]['option3'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('J'.$index, $this->tool->formatImagePath($this->tool->formatTitle($data[$i]['option4'],true),$this->imagePath) );
 			$objPHPExcel->getActiveSheet()->setCellValue('K'.$index, $data[$i]['option5']);
 			$objPHPExcel->getActiveSheet()->setCellValue('L'.$index, $data[$i]['option6']);
 			$objPHPExcel->getActiveSheet()->setCellValue('M'.$index, $data[$i]['option7']);
 			$objPHPExcel->getActiveSheet()->setCellValue('N'.$index, $data[$i]['optionlength']);
 			
-			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $this->t->formatImagePath($this->t->formatTitle($data[$i]['description'],true),$this->imagePath) );
+			$objPHPExcel->getActiveSheet()->setCellValue('O'.$index, $this->tool->formatImagePath($this->tool->formatTitle($data[$i]['description'],true),$this->imagePath) );
 			$objPHPExcel->getActiveSheet()->setCellValue('P'.$index, $data[$i]['path_listen']);
 			$objPHPExcel->getActiveSheet()->setCellValue('Q'.$index, $data[$i]['count_used']);
 			$objPHPExcel->getActiveSheet()->setCellValue('R'.$index, $data[$i]['count_right']);
 			$objPHPExcel->getActiveSheet()->setCellValue('S'.$index, $data[$i]['count_wrong']);
 			$objPHPExcel->getActiveSheet()->setCellValue('T'.$index, $data[$i]['count_giveup']);
 			$objPHPExcel->getActiveSheet()->setCellValue('U'.$index, $data[$i]['difficulty']);
-			$objPHPExcel->getActiveSheet()->setCellValue('V'.$index,$this->t->formatMarkingMethod($data[$i]['markingmethod']));
+			$objPHPExcel->getActiveSheet()->setCellValue('V'.$index,$this->tool->formatMarkingMethod($data[$i]['markingmethod']));
 			$objPHPExcel->getActiveSheet()->setCellValue('W'.$index, $data[$i]['ids_level_knowledge']);
 			$objPHPExcel->getActiveSheet()->setCellValue('X'.$index, $data[$i]['type2']);
-			$objPHPExcel->getActiveSheet()->setCellValue('Y'.$index, $this->t->formatLayout($data[$i]['layout']) );
+			$objPHPExcel->getActiveSheet()->setCellValue('Y'.$index, $this->tool->formatLayout($data[$i]['layout']) );
 
 			$index ++;
 		}

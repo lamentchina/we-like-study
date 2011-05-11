@@ -29,10 +29,10 @@ class tools {
 		$minutes = floor($remainSeconds / 60);
 		$seconds = intval($sec - $hours * 3600 - $minutes * 60);
 		$str = '';
-		if($days!=0)$str .= "&nbsp;".$days.$this->il8n['day'];
-		if($hours!=0)$str .= "&nbsp;".$hours.$this->il8n['hour'];
-		if($minutes!=0)$str .= "&nbsp;".$minutes.$this->il8n['minute'];
-		if($seconds!=0)$str .= "&nbsp;".$seconds.$this->il8n['second'];
+		if($days!=0)$str .= "&nbsp;".$days.$this->il8n['normal']['day'];
+		if($hours!=0)$str .= "&nbsp;".$hours.$this->il8n['normal']['hour'];
+		if($minutes!=0)$str .= "&nbsp;".$minutes.$this->il8n['normal']['minute'];
+		if($seconds!=0)$str .= "&nbsp;".$seconds.$this->il8n['normal']['second'];
 		return $str;
 	}
 
@@ -52,18 +52,18 @@ class tools {
 
 		$dif = ($d2-$d1);
 		if($dif>2592000){
-			return round($dif/30/3600/24).$this->il8n['month'];
+			return round($dif/30/3600/24).$this->il8n['normal']['month'];
 		}
 		if($dif>86400){
-			return round($dif/3600/24).$this->il8n['day'];
+			return round($dif/3600/24).$this->il8n['normal']['day'];
 		}
 		if($dif>3600){
-			return round($dif/3600).$this->il8n['hour'];
+			return round($dif/3600).$this->il8n['normal']['hour'];
 		}
 		if($dif>60){
-			return round($dif/60).$this->il8n['minute'];
+			return round($dif/60).$this->il8n['normal']['minute'];
 		}
-		return $dif.$this->il8n['second'];
+		return $dif.$this->il8n['normal']['second'];
 	}
 
 	/**
@@ -119,10 +119,10 @@ class tools {
 	 * */
 	public function formatMarkingMethod($key,$bool=false){
 		$config = array(
-			'0'=>$this->il8n['markingByAuto'],
-			'1'=>$this->il8n['markingByTeacher'],
-			'2'=>$this->il8n['markingByUser'],
-			'3'=>$this->il8n['markingByMultiUser'],
+			'0'=>$this->il8n['quiz']['markingByAuto'],
+			'1'=>$this->il8n['quiz']['markingByTeacher'],
+			'2'=>$this->il8n['quiz']['markingByUser'],
+			'3'=>$this->il8n['quiz']['markingByMultiUser'],
 		);
 
 		if($bool){
@@ -130,7 +130,7 @@ class tools {
 		}
 		if($key==''){
 			if($bool){
-				return $this->il8n['markingByAuto'];
+				return $this->il8n['quiz']['markingByAuto'];
 			}else{
 				return 0;
 			}
@@ -140,13 +140,13 @@ class tools {
 
 	public function formatQuesType($key,$bool=false){
 		$config = array(
-			'1'=>$this->il8n['Qes_Choice'],
-			'2'=>$this->il8n['Qes_MultiChoice'],
-			'3'=>$this->il8n['Qes_Check'],
-			'4'=>$this->il8n['Qes_Depict'],
-			'5'=>$this->il8n['Qes_Big'],
-			'6'=>$this->il8n['Qes_Mixed'],
-			'7'=>$this->il8n['Qes_Blank']
+			'1'=>$this->il8n['quiz']['Qes_Choice'],
+			'2'=>$this->il8n['quiz']['Qes_MultiChoice'],
+			'3'=>$this->il8n['quiz']['Qes_Check'],
+			'4'=>$this->il8n['quiz']['Qes_Depict'],
+			'5'=>$this->il8n['quiz']['Qes_Big'],
+			'6'=>$this->il8n['quiz']['Qes_Mixed'],
+			'7'=>$this->il8n['quiz']['Qes_Blank']
 		);
 
 		if($bool){
@@ -158,8 +158,8 @@ class tools {
 
 	public function formatLayout($key,$bool=false){
 		$config = array(
-			'1'=>$this->il8n['vertical'],
-			'0'=>$this->il8n['horizonal'],
+			'1'=>$this->il8n['quiz']['vertical'],
+			'0'=>$this->il8n['quiz']['horizonal'],
 		);
 
 		if($bool){
@@ -171,12 +171,12 @@ class tools {
 
 	public function formatApplicationType($key,$bool=false){
 		$config = array(
-			'0'=>$this->il8n['Quiz_Paper'],
-			'1'=>$this->il8n['Quiz_Random'],
-			'2'=>$this->il8n['Quiz_QuesType'],
-			'3'=>$this->il8n['Quiz_Knowledge'],
-			'4'=>$this->il8n['Quiz_OnlineExam'],
-			'5'=>$this->il8n['Quiz_Wrongs'],
+			'0'=>$this->il8n['quiz']['Quiz_Paper'],
+			'1'=>$this->il8n['quiz']['Quiz_Random'],
+			'2'=>$this->il8n['quiz']['Quiz_QuesType'],
+			'3'=>$this->il8n['quiz']['Quiz_Knowledge'],
+			'4'=>$this->il8n['quiz']['Quiz_OnlineExam'],
+			'5'=>$this->il8n['quiz']['Quiz_Wrongs'],
 		);
 
 		if($bool){
@@ -191,9 +191,9 @@ class tools {
 
 			return $str;
 		}else{
-			$str = str_replace("<img src=\"".$path,"[".$this->il8n['image']."]",$str);
-			$str = str_replace("\" />","[/".$this->il8n['image']."]",$str);
-			$str = str_replace("\"/>","[/".$this->il8n['image']."]",$str);
+			$str = str_replace("<img src=\"".$path,"[".$this->il8n['quiz']['image']."]",$str);
+			$str = str_replace("\" />","[/".$this->il8n['quiz']['image']."]",$str);
+			$str = str_replace("\"/>","[/".$this->il8n['quiz']['image']."]",$str);
 			return $str;
 		}
 	}

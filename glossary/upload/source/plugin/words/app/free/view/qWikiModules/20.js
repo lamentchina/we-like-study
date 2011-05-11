@@ -26,13 +26,7 @@ class_20 = Ext.extend(Ext.app.Module, {
 				shim : false,
 				constrainHeader : true,
 				layout : 'fit',
-				listeners : {
-					'show':function(x){
-						var c = document.getElementById('examList');   
-						c.src =  "../../wls.php?controller=quiz_exam&action=viewGetList";
-					}
-				},
-				html : "<iframe id='examList' width='100%' height='500' frameborder='no' border='0' marginwidth='0' marginheight='0' />"		
+				html : "<iframe id='examList' src='quiz/exam/grid.html' width='100%' height='500' frameborder='no' border='0' marginwidth='0' marginheight='0' />"		
 			});
 		}
 		win.show();				

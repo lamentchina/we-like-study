@@ -297,10 +297,10 @@ class m_question extends wls implements dbtable{
 			unset($data['index']);
 			unset($data['belongto']);
 			if(isset($data['markingmethod'])){
-				$data['markingmethod'] = $this->t->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
+				$data['markingmethod'] = $this->tool->formatMarkingMethod($questions[$indexs[$i]]['markingmethod'],true);
 			}
 			if(isset($data['type'])){
-				$data['type'] = $this->t->formatQuesType($questions[$indexs[$i]]['type'],true);
+				$data['type'] = $this->tool->formatQuesType($questions[$indexs[$i]]['type'],true);
 			}
 				
 			$data['date_created'] = date('Y-m-d H:i:s');
