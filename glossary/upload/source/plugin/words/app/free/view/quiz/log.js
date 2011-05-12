@@ -85,40 +85,39 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					},
 					columns : [{
 								width:40,
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id'
 							}, {
-								header : il8n.count_questions,
+								header : il8n.quiz.count_questions,
 								dataIndex : 'count_questions'
 							}, {
-								header : il8n.title,
+								header : il8n.normal.title,
 								dataIndex : 'title'
 							}, {
-								header : il8n.count_right,
+								header : il8n.quiz.count_right,
 								dataIndex : 'count_right'
 							}, {
-								header : il8n.count_wrong,
+								header : il8n.quiz.count_wrong,
 								dataIndex : 'count_wrong'
 							}, {
-								header : il8n.Quiz_Proportion,
+								header : il8n.quiz.Quiz_Proportion,
 								dataIndex : 'proportion',
 								hidden : true
 							}, {
-								header : il8n.user,
+								header : il8n.user.user,
 								dataIndex : 'id_user',
 								hidden : true
 							}, {
-								header : il8n.score,
+								header : il8n.quiz.score,
 								dataIndex : 'mycent'
 							}, {
-								header : il8n.score_total,
+								header : il8n.quiz.score_total,
 								dataIndex : 'cent'
 							}, {
-								header : il8n.Quiz_Application,
+								header : il8n.quiz.Quiz_Application,
 								dataIndex : 'name_application',
 								hidden : true
 							}
-
 					]
 				});
 
@@ -165,7 +164,6 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
 			success : function(response) {
 				var obj = Ext.decode(response.responseText);
-				//console.debug(obj);
 				var access = obj.access;
 				for (var i = 0; i < access.length; i++) {
 					if (access[i] == '165101') {
@@ -356,7 +354,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 		});
 		return grid;
 	},
-	getMyList : function(domid) {
+	getMyGrid : function(domid) {
 		var listStuff = this.getListStuff();
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
@@ -386,56 +384,67 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							})
 				});
 
-		var access = obj.access.split(",");
-		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '125301') {
-					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
-					tb.add('-', {
-						iconCls: iconCls,
-						tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
-						var uid = obj.id;
-						var desktop = parent.QoDesk.App.getDesktop();
-
-						var win = desktop.getWindow(lid + '_log_qdesk');
-						var winWidth = desktop.getWinWidth();
-						var winHeight = desktop.getWinHeight();
-
-						if (!win) {
-							win = desktop.createWindow({
-								id : lid + '_log_qdesk',
-								title : il8n.log_review,
-								width : winWidth,
-								height : winHeight,
-								layout : 'fit',
-								plain : false,
-								listeners : {
-									'show':function(x){
-										var c = parent.document.getElementById('log_vq_' + lid);   
-										c.src = thisObj.config.AJAXPATH + "?controller=quiz_log&action=viewQuiz&id="
-												+ lid
-												+ "&uid="
-												+ uid
-												+ '&temp='
-												+ Math.random();
-									}
-								},
-								html : '<iframe id="log_vq_'+lid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
-							});
-						}
-						win.show();
-
-						// window.open(thisObj.config.AJAXPATH+"?controller=quiz_log&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				var access = obj.access;
+				for (var i = 0; i < access.length; i++) {
+					if (access[i] == '125301') {
+							eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+							eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+							tb.add('-', {
+								iconCls: iconCls,
+								tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+									alert(il8n.normal.ClickCellInGrid);
+									return;
+								}
+								var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
+								var uid = obj.id;
+								var desktop = parent.QoDesk.App.getDesktop();
+		
+								var win = desktop.getWindow(lid + '_log_qdesk');
+								var winWidth = desktop.getWinWidth();
+								var winHeight = desktop.getWinHeight();
+		
+								if (!win) {
+									win = desktop.createWindow({
+										id : lid + '_log_qdesk',
+										title : il8n.log_review,
+										width : winWidth,
+										height : winHeight,
+										layout : 'fit',
+										plain : false,
+										listeners : {
+											'show':function(x){
+												var c = parent.document.getElementById('log_vq_' + lid);   
+												c.src = thisObj.config.AJAXPATH + "?controller=quiz_log&action=viewQuiz&id="
+														+ lid
+														+ "&uid="
+														+ uid
+														+ '&temp='
+														+ Math.random();
+											}
+										},
+										html : '<iframe id="log_vq_'+lid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+									});
+								}
+								win.show();
+		
+								// window.open(thisObj.config.AJAXPATH+"?controller=quiz_log&action=viewOne&id="+Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id);
+							}
+						});
 					}
-				});
+				}			
+				tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
 
 		store.load({
 					params : {
