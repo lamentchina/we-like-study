@@ -124,7 +124,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 					remoteSort:true, 
 					idProperty : 'id',
 					fields : ['id', 'index', 'name_subject', 'title', 'money',
-							'ids_questions', 'count_used', 'date_created2']
+							'ids_questions', 'count_used', 'date_created2','id_level_subject']
 				});
 
 		var cm = new Ext.grid.ColumnModel({
@@ -138,6 +138,10 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 							}, {
 								header : il8n.normal.id,
 								dataIndex : 'id',
+								hidden : true
+							}, {
+								header : il8n.normal.id + '(' + il8n.subject.subject + ')',
+								dataIndex : 'id_level_subject',
 								hidden : true
 							}, {
 								header : il8n.subject.subject,
@@ -155,7 +159,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 											allowBlank : false
 										})
 							}, {
-								header : il8n.count_questions,
+								header : il8n.quiz.count_questions,
 								dataIndex : 'ids_questions',
 								renderer : function(value) {
 									var json = '[' + value + ']';
@@ -163,10 +167,10 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 									return arr.length;
 								}
 							}, {
-								header : il8n.count_used,
+								header : il8n.quiz.count_used,
 								dataIndex : 'count_used'
 							}, {
-								header : il8n.date_created,
+								header : il8n.normal.date_created,
 								dataIndex : 'date_created2'
 							}]
 				});

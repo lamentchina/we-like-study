@@ -64,18 +64,19 @@ class install extends wls {
 		$this->tool->removeDir($this->cfg->filePath."cache/quizlog/");
 		mkdir($this->cfg->filePath."cache/quizlog/", 0777);
 
-		
-//		$obj = new m_user_group();
-
-//		$obj->importExcelWithUser($this->cfg->filePath."demodata/config.xls");
-//		$obj->importExcelWithSubject($this->cfg->filePath."demodata/config.xls");
-//		$obj->importExcelWithAccess($this->cfg->filePath."demodata/config.xls");
-
 		$obj = new m_quiz_paper();
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/account.xls");
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/CET4.xls");
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer.xls");
-		
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer612.xls");		
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer613.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer615.xls");	
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer616.xls");		
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer626.xls");
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer930.xls");	
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer931.xls");		
+		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/chinaofficer932.xls");
+
 
 
 		$obj = new m_quiz_exam();

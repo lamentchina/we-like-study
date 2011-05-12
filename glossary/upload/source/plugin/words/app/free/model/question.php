@@ -43,7 +43,7 @@ class m_question extends wls implements dbtable{
 			$data['option7'] = ' ';
 		}
 		if(!isset($data['description'])){
-			$data['description'] = $this->lang['ques_description'];
+			$data['description'] = $this->il8n['quiz']['ques_description'];
 		}
 		if(!isset($data['date_created'])){
 			$data['date_created'] = date('Y-m-d H:i:s');

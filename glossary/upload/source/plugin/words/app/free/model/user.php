@@ -136,10 +136,6 @@ class m_user extends wls implements dbtable,fileLoad{
 				,log_count_visit int default 0
 				,log_ip_lastlogin varchar(200) default '127.0.0.1'
 				
-				,qwiki_modules text
-				,qwiki_quickstart text
-				,qwiki_shortcut text
-				
 				,access text
 				,access2 text
 				,subject text
@@ -372,7 +368,11 @@ class m_user extends wls implements dbtable,fileLoad{
 		if(!isset($_SESSION)){
 			session_start();
 		}
-		return $_SESSION['wls_user'];
+		if(isset($_SESSION['wls_user'])){
+			return $_SESSION['wls_user'];
+		}else{
+			//die('Wrong'); TODO
+		}		
 	}
 
 	/**
@@ -686,19 +686,13 @@ class m_user extends wls implements dbtable,fileLoad{
 	
 	public function getMyMenuWithShortCut(){
 		$me = $this->getMyInfo();
-		if($me['qwiki_modules']!='nothing'){
-			$me['qwiki_modules'] = str_replace("___","\\",$me['qwiki_modules']);
-			$me['qwiki_quickstart'] = str_replace("___","\\",$me['qwiki_quickstart']);
-			$me['qwiki_shortcut'] = str_replace("___","\\",$me['qwiki_shortcut']);
-			return array(				
-				 'modules'=>json_decode($me['qwiki_modules'])
-				,'quickstart'=>json_decode($me['qwiki_quickstart'])
-				,'shortcut'=>json_decode($me['qwiki_shortcut'])
-			);
-		}else{		
-
+		$cacheFilePath = $this->cfg->filePath.'cache/qwiki4user/'.$me['id'].'.json';
+		if(file_exists($cacheFilePath)){	
+			$content = file( $cacheFilePath );		
+			$content = implode("\n", $content);
+			return json_decode($content,true);		
+		}else{
 			$menus = $this->getMyMenuForDesktop();
-
 			$modules = array();
 			$shortcut = array();
 			$quickstart = array();
@@ -732,13 +726,15 @@ class m_user extends wls implements dbtable,fileLoad{
 					$quickstart[] = "id_".$menus[$i]['id_level'];
 				}					
 			}
-
-			$this->update(array(
-				 'id'=>$me['id']
-				,'qwiki_modules'=>str_replace("\\","___",json_encode($modules))
-				,'qwiki_quickstart'=>str_replace("\\","___",json_encode($quickstart))
-				,'qwiki_shortcut'=>str_replace("\\","___",json_encode($shortcut))
+			
+			$content = json_encode(array(				
+				 'modules'=>$modules
+				,'quickstart'=>$quickstart
+				,'shortcut'=>$shortcut
 			));
+			$handle=fopen($cacheFilePath,"a");
+			fwrite($handle,$content);
+			fclose($handle);
 			
 			return array(				
 				 'modules'=>$modules

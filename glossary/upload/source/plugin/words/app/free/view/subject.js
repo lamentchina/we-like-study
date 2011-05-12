@@ -182,7 +182,6 @@ wls.subject = Ext.extend(wls, {
 			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
 			success : function(response) {
 				var obj = Ext.decode(response.responseText);
-				//console.debug(obj);
 				var access = obj.access;
 				for (var i = 0; i < access.length; i++) {
 					if (access[i] == '190701'){
@@ -211,7 +210,6 @@ wls.subject = Ext.extend(wls, {
 					} else if (access[i] == '190702') {
 						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
 						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
-		
 						tb.add( {
 							iconCls: iconCls,
 							tooltip : tooltip,
@@ -320,7 +318,7 @@ wls.subject = Ext.extend(wls, {
 		return grid;
 	}
 	,
-	getPaperList : function(domid) {
+	getPaperGrid : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 			autoDestroy : true,
@@ -338,29 +336,29 @@ wls.subject = Ext.extend(wls, {
 						sortable : true
 					},
 					columns : [{
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id',
 								width : 50
 							}, {
-								header : il8n.title,
+								header : il8n.normal.title,
 								dataIndex : 'title'
 							}, {
-								header : il8n.count_used,
+								header : il8n.quiz.count_used,
 								dataIndex : 'count_used',
 								hidden : true
 							}, {
-								header : il8n.money,
+								header : il8n.user.money,
 								dataIndex : 'money'
 							}, {
-								header : il8n.score_avg,
+								header : il8n.quiz.score_avg,
 								dataIndex : 'score_avg',
 								hidden : true
 							}, {
-								header : il8n.score_top,
+								header : il8n.quiz.score_top,
 								dataIndex : 'score_top',
 								hidden : true
 							}, {
-								header : il8n.count_questions,
+								header : il8n.quiz.count_questions,
 								dataIndex : 'ids_questions',
 								renderer : function(value) {
 									var json = '[' + value + ']';
@@ -388,7 +386,12 @@ wls.subject = Ext.extend(wls, {
 							})
 				});
 
-		var access = obj.access.split(",");
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				var access = obj.access;
 		for (var i = 0; i < access.length; i++) {			
 			if (access[i] == '1107') {
 				//eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
@@ -511,7 +514,14 @@ wls.subject = Ext.extend(wls, {
 				
 				
 			}
-		}
+			}
+				tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
+			}
+		});
+		
 		store.load({
 					params : {
 						start : 0,
