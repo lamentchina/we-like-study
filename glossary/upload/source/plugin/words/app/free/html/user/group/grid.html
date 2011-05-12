@@ -13,25 +13,25 @@
 
 <script type="text/javascript" src="../../../view/wls.js"></script>
 <script type="text/javascript" src="../../../view/user.js"></script>
-<script type="text/javascript" src="../../../view/user/group.js"></script>
+<script type="text/javascript" src="../../../view/user/access.js"></script>
 
 <script type="text/javascript" src="../../../../../libs/ux.maximgb.tg/TreeGrid.packed.js"></script>	
 <link rel="stylesheet" type="text/css" href="../../../../../libs/ux.maximgb.tg/css/TreeGrid.css" />
 <script type="text/javascript">
-var wls_user_group = null;
+var wls_user_access = null;
 Ext.BLANK_IMAGE_URL = '../../../../../libs/ext_3_2_1/resources/images/default/s.gif';
 
 Ext.onReady(function(){
 	Ext.QuickTips.init();
-	wls_user_group = new wls.user.group();
-	wls_user_group.config.AJAXPATH = '../../../../wls.php';
-	wls_user_group.config.libPath = '../../../../../libs/';
-	wls_user_group.getIl8n('fitFullBrowser();');
+	wls_user_access = new wls.user.access();
+	wls_user_access.config.AJAXPATH = '../../../../wls.php';
+	wls_user_access.config.libPath = '../../../../../libs/';
+	wls_user_access.getIl8n('fitFullBrowser();');
 });
 
 function fitFullBrowser(){
 	Ext.QuickTips.init(); 
-	var comp = wls_user_group.getTreeGrid('domid');
+	var comp = wls_user_access.getGrid('domid');
 	comp.render(Ext.getBody());
 }
 </script>
