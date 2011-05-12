@@ -47,6 +47,7 @@ class wls{
 	public $conn = null;
 
 	public function wls(){
+		//sleep(2);
 		$this->cfg = new wlsconfig();		
 		$this->tool = new tools();	
 
