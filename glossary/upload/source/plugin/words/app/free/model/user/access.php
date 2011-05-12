@@ -221,7 +221,7 @@ class m_user_access extends wls implements dbtable,fileLoad{
 
 	public function cumulative($column){}
 
-	public function getList($page=null,$pagesize=null,$search=null,$orderby=null,$columns="*"){
+	public function getList($page=1,$pagesize=20,$search=null,$orderby=null,$columns="*"){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
 

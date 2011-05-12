@@ -26,19 +26,11 @@ class m_user extends wls implements dbtable,fileLoad{
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
 		
-		if(!isset($data['qwiki_modules'])){
-			$data['qwiki_modules'] = 'nothing';
-			$data['qwiki_quickstart'] = 'nothing';
-			$data['qwiki_shortcut'] = 'nothing';
-		}
-		if(!isset($data['access'])){
-			$data['access'] = 'nothing';
-			$data['access2'] = 'nothing';
-			$data['group'] = 'nothing';
-			$data['subject'] = 'nothing';
+		if(!isset($data['accesses'])){
+			$data['accesses'] = 'nothing';
+			$data['groups'] = 'nothing';
+			$data['subjects'] = 'nothing';
 		}	
-		$data['group_'] = $data['group'];
-		unset($data['group']);
 		
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -106,7 +98,6 @@ class m_user extends wls implements dbtable,fileLoad{
 		
 		$this->error($sql);
 		mysql_query($sql,$conn);
-
 	}
 
 	/**
@@ -136,10 +127,9 @@ class m_user extends wls implements dbtable,fileLoad{
 				,log_count_visit int default 0
 				,log_ip_lastlogin varchar(200) default '127.0.0.1'
 				
-				,access text
-				,access2 text
-				,subject text
-				,group_ text
+				,accesses text
+				,subjects text
+				,groups text
 				
 				,glossary_wrong int default 0
 				,glossary_right int default 0 
@@ -194,7 +184,6 @@ class m_user extends wls implements dbtable,fileLoad{
 	public function importOne($path){}
 
 	public function importAll($path){
-		
 		if($this->phpexcel==null){
 			$objPHPExcel = new PHPExcel();
 			$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -304,8 +293,6 @@ class m_user extends wls implements dbtable,fileLoad{
 		return $file;
 	}
 
-	public function cumulative($column){}
-
 	/**
 	 * Get a data list; It's normally used in grid and table work;
 	 * Could also be used in to get a single data;
@@ -396,11 +383,9 @@ class m_user extends wls implements dbtable,fileLoad{
 				return false;
 			}
 		}		
-		$data['group'] = $data['group_'];
-		unset($data['group_']);
 		unset($data['password']);
 		
-		if($data['access']=='nothing'){		
+		if($data['accesses']=='nothing'){		
 			//Get the accesss , It's a little complex. 
 			//First , get the user's group info , 
 			//than get the accesss info from the group info  						
@@ -408,16 +393,13 @@ class m_user extends wls implements dbtable,fileLoad{
 			$d = $o->getListForUser($data['username']);
 	
 			$ids = '';
-			$access2 = array();
 			for($i=0;$i<count($d);$i++){
 				if($d[$i]['checked']=='1'){
 					$ids .= $d[$i]['id_level'].",";
-					$access2['p'.$d[$i]['id_level']] = array($d[$i]['money'],$d[$i]['icon'],$d[$i]['name']);
 				}
 			}
 			$ids = substr($ids,0,strlen($ids)-1);
-			$data['access'] = $ids;
-			$data['access2'] = $access2;
+			$data['accesses'] = $ids;
 	
 			//One user can belong to more than two groups.
 			//And one user at least belong to one group.
@@ -428,7 +410,7 @@ class m_user extends wls implements dbtable,fileLoad{
 				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
 			}
 			$ids = substr($ids,0,strlen($ids)-1);
-			$data['group'] = $ids;
+			$data['groups'] = $ids;
 	
 			//How many subjects do this user participed?
 			$o = new m_subject();
@@ -438,17 +420,14 @@ class m_user extends wls implements dbtable,fileLoad{
 				if($d[$i]['checked']=='1')$ids .= $d[$i]['id_level'].",";
 			}
 			$ids = substr($ids,0,strlen($ids)-1);
-			$data['subject'] = $ids;	
+			$data['subjects'] = $ids;	
 			
 			$this->update(array(
 				 'id'=>$data['id']
-				,'subject'=>$data['subject']
-				,'group_'=>$data['group']
-				,'access'=>$data['access']
-				,'access2'=>str_replace("\\","___", json_encode($data['access2']))
+				,'subjects'=>$data['subjects']
+				,'groups'=>$data['groups']
+				,'accesses'=>$data['accesses']
 			));
-		}else{
-			$data['access2'] =json_decode( str_replace("___","\\",$data['access2']) ,true);
 		}
 		if(!isset($_SESSION)){
 			session_start();
@@ -465,13 +444,9 @@ class m_user extends wls implements dbtable,fileLoad{
 		$sql = "delete from ".$pfx."wls_user_group2user where username = '".$username."' ;";
 		mysql_query($sql,$conn);
 		$sql = "update ".$pfx."wls_user set 
-			qwiki_modules = 'nothing' ,
-			qwiki_quickstart = 'nothing' ,
-			qwiki_shortcut = 'nothing' ,
-			access = 'nothing' ,
-			access2 = 'nothing' ,
-			subject = 'nothing' ,
-			group_  = 'nothing' 
+			accesses = 'nothing' ,
+			subjects = 'nothing' ,
+			groups  = 'nothing' 
 			where username = '".$username."' ;";
 		mysql_query($sql,$conn);		
 		$arr = explode(",",$ids_group);
@@ -686,7 +661,7 @@ class m_user extends wls implements dbtable,fileLoad{
 	
 	public function getMyMenuWithShortCut(){
 		$me = $this->getMyInfo();
-		$cacheFilePath = $this->cfg->filePath.'cache/qwiki4user/'.$me['id'].'.json';
+		$cacheFilePath = $this->cfg->filePath.'cache/user2qwiki/'.$me['id'].'.json';
 		if(file_exists($cacheFilePath)){	
 			$content = file( $cacheFilePath );		
 			$content = implode("\n", $content);
@@ -761,19 +736,16 @@ class m_user extends wls implements dbtable,fileLoad{
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;
 
-		$sql = " update ".$pfx."wls_user set 				
-				qwiki_modules = 'nothing'
-				,qwiki_quickstart  = 'nothing'
-				,qwiki_shortcut  = 'nothing'
-				
-				,access  = 'nothing'
+		$sql = " update ".$pfx."wls_user set  
+		 
+				access  = 'nothing'
 				,access2  = 'nothing'
 				,subject  = 'nothing'
 				,group_  = 'nothing'  ";
 		$res = mysql_query($sql,$conn);
 	}
 	
-//Store all the qWikiOffice-Menu here,it's used in the function below
+	//Store all the qWikiOffice-Menu here,it's used in the function below
 	public $desktopMenu = array();
 
 	/**

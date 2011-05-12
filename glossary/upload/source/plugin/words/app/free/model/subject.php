@@ -165,6 +165,19 @@ class m_subject extends wls implements dbtable,fileLoad{
 		$sql = "update ".$pfx."wls_subject set isleaf = 0 where id_level in (".$ids.") ";
 		mysql_query($sql,$conn);
 	}
+	
+	public function getListsWithIdLevelKey(){
+		$conn = $this->conn();
+		$pfx = $this->cfg->dbprefix;
+
+		$sql = "select * from ".$pfx."wls_subject";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[$temp['id_level']] = $temp['name'];
+		}
+		return $data;
+	}
 
 	/**
 	 * Import an Excel file into the subject's database table
@@ -361,8 +374,6 @@ class m_subject extends wls implements dbtable,fileLoad{
 			'pagesize'=>$pagesize,
 		);
 	}
-
-	public function getLevelList($root){}
 
 	/**
 	 * One usergroup has participated in more than one subjects

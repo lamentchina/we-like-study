@@ -61,8 +61,10 @@ class install extends wls {
 		$obj->create();
 
 
-		$this->tool->removeDir($this->cfg->filePath."cache/quizlog/");
+		$this->tool->removeDir($this->cfg->filePath."cache/");
+		mkdir($this->cfg->filePath."cache/", 0777);
 		mkdir($this->cfg->filePath."cache/quizlog/", 0777);
+		mkdir($this->cfg->filePath."cache/user2qwiki/", 0777);		
 
 		$obj = new m_quiz_paper();
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/account.xls");

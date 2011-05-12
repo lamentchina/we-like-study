@@ -231,7 +231,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$where = " where ".$pfx."wls_quiz_paper.id_quiz = ".$pfx."wls_quiz.id  ";
 		$userObj = new m_user();
 		$me = $userObj->getMyInfo();
-		$temp = explode(',',$me['subject']);
+		$temp = explode(',',$me['subjects']);
 		$ids = '';
 		for($i=0;$i<count($temp);$i++){
 			$ids .= "'".$temp[$i]."',";

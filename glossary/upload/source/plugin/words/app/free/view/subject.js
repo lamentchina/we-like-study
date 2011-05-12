@@ -182,6 +182,7 @@ wls.subject = Ext.extend(wls, {
 			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
 			success : function(response) {
 				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
 				var access = obj.access;
 				for (var i = 0; i < access.length; i++) {
 					if (access[i] == '190701'){
@@ -266,23 +267,22 @@ wls.subject = Ext.extend(wls, {
 						});
 					} else if (access[i] == '190704') {
 						grid.on("afteredit",function(e){
-								Ext.Ajax.request({
-											method : 'POST',
-											url : thisObj.config.AJAXPATH
-													+ "?controller=subject&action=saveUpdate",
-											success : function(response) {
-												// Ext.Msg.alert('success',response.responseText);
-											},
-											failure : function(response) {
-												Ext.Msg.alert('failure', response.responseText);
-											},
-											params : {
-												field : e.field,
-												value : e.value,
-												id : e.record.data.id
-											}
-										});
-							
+							Ext.Ajax.request({
+								method : 'POST',
+								url : thisObj.config.AJAXPATH
+										+ "?controller=subject&action=saveUpdate",
+								success : function(response) {
+									// Ext.Msg.alert('success',response.responseText);
+								},
+								failure : function(response) {
+									Ext.Msg.alert('failure', response.responseText);
+								},
+								params : {
+									field : e.field,
+									value : e.value,
+									id : e.record.data.id
+								}
+							});							
 					 	});
 					} else if (access[i] == '190705') {
 						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
@@ -293,15 +293,15 @@ wls.subject = Ext.extend(wls, {
 								handler : function() {
 									var form = thisObj.getAddItemForm();
 									var w = new Ext.Window({
-												title : il8n.addNewSubject,
-												id : 'subject_add_win',
-												width : 350,
-												height : 250,
-												layout : 'fit',
-												buttonAlign : 'center',
-												items : [form],
-												modal : true
-											});
+										title : il8n.addNewSubject,
+										id : 'subject_add_win',
+										width : 350,
+										height : 250,
+										layout : 'fit',
+										buttonAlign : 'center',
+										items : [form],
+										modal : true
+									});
 	
 									w.show();
 								}
@@ -392,129 +392,127 @@ wls.subject = Ext.extend(wls, {
 			success : function(response) {
 				var obj = Ext.decode(response.responseText);
 				var access = obj.access;
-		for (var i = 0; i < access.length; i++) {			
-			if (access[i] == '1107') {
-				//eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = obj.access2.p"+access[i]+"[2];");
-				tb.add( {
-					//iconCls: iconCls,
-					//tooltip : tooltip,
-					text:tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var items = Ext.getCmp(domid).getSelectionModel().selections.items;
-						var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
-
-						var uid = obj.id;
-						var desktop = parent.QoDesk.App.getDesktop();
-
-						var win = desktop.getWindow(pid + '_qdesk');
-						var winWidth = desktop.getWinWidth();
-						var winHeight = desktop.getWinHeight();
-
-						if (!win) {
-							win = desktop.createWindow({
-								id2 : pid,
-								id : pid + '_qdesk',
-								title : Ext.getCmp(domid).getSelectionModel().selections.items[0].data.title,
-								width : winWidth,
-								height : winHeight,
-								layout : 'fit',
-								plain : false,
-								listeners : {
-									'show':function(x){
-										var c = parent.document.getElementById('x_'+x.id2);   
-										c.src =  thisObj.config.AJAXPATH + "?controller=quiz_paper&action=viewQuiz&id="
-												+ x.id2
-												+ "&uid="
-												+ uid
-												+ '&temp='
-												+ Math.random();
-									}
-								},
-								html : '<iframe id="x_'+pid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
-							});
-						}
-						win.show();
-					}
-				});
-			}else if (access[i] == '1110') {
-				eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = obj.access2.p"+access[i]+"[2];");
-	
-				Ext.Ajax.request({
-					method : 'GET',
-					url : thisObj.config.AJAXPATH
-							+ "?controller=subject&action=getQuestionTypes&id_level="+thisObj.id_level,
-					success : function(response) {
-						if(response.responseText!=0 && response.responseText!="['0']"){
-							var obj = Ext.decode(response.responseText);
-
-							var menu = new Ext.menu.Menu();
-							for(var j=0;j<obj.length;j++){
-
-								menu.add(new Ext.Button({
-									text:obj[j],
-									width:'100%',
-									questionType:j,
-									handler: function(A,B){
-										var uid = obj.id;
-										var desktop = parent.QoDesk.App.getDesktop();
-										
-										var win = desktop.getWindow(thisObj.id_level + '_'+ A.questionType);
-										var winWidth = desktop.getWinWidth();
-										var winHeight = desktop.getWinHeight();
-				
-										if (!win) {
-											win = desktop.createWindow({
-												id : thisObj.id_level + '_'+ A.questionType,
-												title : A.text,
-												width : winWidth,
-												height : winHeight,
-												layout : 'fit',
-												plain : false,
-												listeners : {
-													'show':function(x){
-														var c = parent.document.getElementById('rd_'+thisObj.id_level);   
-														c.src =  thisObj.config.AJAXPATH + "?controller=quiz_random&action=viewQuiz&subject_id_level="
-																+ thisObj.id_level
-																+ "&questionType="
-																+ A.questionType
-																+ "&uid="
-																+ uid
-																+ '&temp='
-																+ Math.random();
-													}
-												},
-												html : '<iframe id="rd_'+thisObj.id_level+'"  style="width:100%; height:'+(winHeight-30)+';" frameborder="no" border="0" marginwidth="0" marginheight="0">'
-											});
-										}
-										win.show();
-									}
-								}));
+				for (var i = 0; i < access.length; i++) {			
+					if (access[i] == '1107') {
+						//eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							//iconCls: iconCls,
+							//tooltip : tooltip,
+							text:tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+									alert(il8n.clickCellInGrid);
+									return;
+								}
+								var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+								var pid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
+		
+								var uid = obj.id;
+								var desktop = parent.QoDesk.App.getDesktop();
+		
+								var win = desktop.getWindow(pid + '_qdesk');
+								var winWidth = desktop.getWinWidth();
+								var winHeight = desktop.getWinHeight();
+		
+								if (!win) {
+									win = desktop.createWindow({
+										id2 : pid,
+										id : pid + '_qdesk',
+										title : Ext.getCmp(domid).getSelectionModel().selections.items[0].data.title,
+										width : winWidth,
+										height : winHeight,
+										layout : 'fit',
+										plain : false,
+										listeners : {
+											'show':function(x){
+												var c = parent.document.getElementById('x_'+x.id2);   
+												c.src =  "quiz/paper/quiz.html?id="
+														+ x.id2
+														+ "&uid="
+														+ uid
+														+ '&temp='
+														+ Math.random();
+											}
+										},
+										html : '<iframe id="x_'+pid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+									});
+								}
+								win.show();
 							}
-							//console.debug(Ext.getCmp('w_s_gp_l_tb'+domid));
-
-							Ext.getCmp('w_s_gp_l_tb'+domid).add({								
-								//iconCls : iconCls,
-								text : tooltip,							
-								menu:menu
-							});
-							Ext.getCmp('w_s_gp_l_tb'+domid).doLayout();
-							//tb.add(menu);
-						}
-					},
-					failure : function(response) {
-						Ext.Msg.alert('failure', response.responseText);
+						});
+					}else if (access[i] == '1110') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+			
+						Ext.Ajax.request({
+							method : 'GET',
+							url : thisObj.config.AJAXPATH
+									+ "?controller=subject&action=getQuestionTypes&id_level="+thisObj.id_level,
+							success : function(response) {
+								if(response.responseText!=0 && response.responseText!="['0']"){
+									var obj = Ext.decode(response.responseText);
+		
+									var menu = new Ext.menu.Menu();
+									for(var j=0;j<obj.length;j++){
+		
+										menu.add(new Ext.Button({
+											text:obj[j],
+											width:'100%',
+											questionType:j,
+											handler: function(A,B){
+												var uid = obj.id;
+												var desktop = parent.QoDesk.App.getDesktop();
+												
+												var win = desktop.getWindow(thisObj.id_level + '_'+ A.questionType);
+												var winWidth = desktop.getWinWidth();
+												var winHeight = desktop.getWinHeight();
+						
+												if (!win) {
+													win = desktop.createWindow({
+														id : thisObj.id_level + '_'+ A.questionType,
+														title : A.text,
+														width : winWidth,
+														height : winHeight,
+														layout : 'fit',
+														plain : false,
+														listeners : {
+															'show':function(x){
+																var c = parent.document.getElementById('rd_'+thisObj.id_level);   
+																c.src =  thisObj.config.AJAXPATH + "?controller=quiz_random&action=viewQuiz&subject_id_level="
+																		+ thisObj.id_level
+																		+ "&questionType="
+																		+ A.questionType
+																		+ "&uid="
+																		+ uid
+																		+ '&temp='
+																		+ Math.random();
+															}
+														},
+														html : '<iframe id="rd_'+thisObj.id_level+'"  style="width:100%; height:'+(winHeight-30)+';" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+													});
+												}
+												win.show();
+											}
+										}));
+									}
+									//console.debug(Ext.getCmp('w_s_gp_l_tb'+domid));
+		
+									Ext.getCmp('w_s_gp_l_tb'+domid).add({								
+										//iconCls : iconCls,
+										text : tooltip,							
+										menu:menu
+									});
+									Ext.getCmp('w_s_gp_l_tb'+domid).doLayout();
+									//tb.add(menu);
+								}
+							},
+							failure : function(response) {
+								Ext.Msg.alert('failure', response.responseText);
+							}
+						});
 					}
-				});
-				
-				
-			}
-			}
+				}
 				tb.doLayout();
 			},
 			failure : function(response) {
@@ -523,11 +521,11 @@ wls.subject = Ext.extend(wls, {
 		});
 		
 		store.load({
-					params : {
-						start : 0,
-						limit : 15
-					}
-				});
+			params : {
+				start : 0,
+				limit : 15
+			}
+		});
 		return grid;
 	},
 	getSubjectCenter : function(domid) {
