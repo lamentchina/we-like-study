@@ -16,7 +16,7 @@ class_11 = Ext.extend(Ext.app.Module, {
 
 					win = desktop.createWindow({
 								id : this.id,
-								title : il8n.paper,
+								title : il8n.quiz.paper,
 								width : winWidth,
 								height : winHeight,
 								iconCls : 'icon_paper_16_16',

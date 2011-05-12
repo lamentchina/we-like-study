@@ -3,7 +3,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	type : 'wrong',
 	ajaxIds : function(nextFunction) {
 		var thisObj = this;
-		$.blockUI({message : '<h1>' + il8n.loading + '</h1>'});
+		$.blockUI({message : '<h1>' + il8n.normal.loading + '</h1>'});
 		$.ajax({
 			url : thisObj.config.AJAXPATH + "?controller=quiz_wrong&action=getOne",
 			type : "POST",
@@ -21,14 +21,14 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	},
 	addQuizBrief : function() {
 		var str = "<table width='90%'>" + "<tr>" + "<td>"
-				+ il8n.count_questions + "</td>" + "<td>" + this.count.total
+				+ il8n.normal.count_questions + "</td>" + "<td>" + this.count.total
 				+ "</td>" + "</tr>" + "</table>";
 		$("#paperBrief").append(str);
 		var thisObj = this;
 		Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Brief');
 	},
 	submit : function(nextFunction) {
-		$.blockUI({message : '<h1>' + il8n.loading + '</h1>'});
+		$.blockUI({message : '<h1>' + il8n.normal.loading + '</h1>'});
 		this.answersData = [];
 		for (var i = 0; i < this.questions.length; i++) {
 			this.answersData.push({
@@ -57,19 +57,19 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 	}
 	,
 	showResult : function() {
-		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.count_right
+		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.normal.count_right
 				+ "</td>" + "<td>" + this.count.right + "</td>" + "</tr>"
-				+ "<tr>" + "<td>" + il8n.count_wrong + "</td>" + "<td>"
+				+ "<tr>" + "<td>" + il8n.normal.count_wrong + "</td>" + "<td>"
 				+ this.count.wrong + "</td>" + "</tr>" + "<tr>" + "<td>"
-				+ il8n.count_giveup + "</td>" + "<td>" + this.count.giveup
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_questions
+				+ il8n.normal.count_giveup + "</td>" + "<td>" + this.count.giveup
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.normal.count_questions
 				+ "</td>" + "<td>" + this.count.total + "</td>" + "</tr>"
 				+ "</table>";
 		var ac = Ext.getCmp('ext_Operations');
 		ac.layout.activeItem.collapse(false);
 		ac.add({
 					id : 'ext_wrongResult',
-					title : il8n.Quiz_Wrongs_Result,
+					title : il8n.quiz.Quiz_Wrongs_Result,
 					html : '<div id="wrongresult">aaa</div>'
 				});
 		ac.doLayout();
@@ -82,7 +82,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				});
 		$('.blockOverlay').attr('title', 'Click to unblock').click($.unblockUI);
 	},
-	getList : function(domid) {
+	getGrid : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
@@ -99,23 +99,23 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 						sortable : true
 					},
 					columns : [{
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id'
 							}, {
-								header : il8n.title,
+								header : il8n.normal.title,
 								dataIndex : 'title_question'
 							}, {
-								header : il8n.date_created,
+								header : il8n.normal.date_created,
 								dataIndex : 'date_created',
 								hidden : true
 							}, {
-								header : il8n.date_created,
+								header : il8n.normal.date_created,
 								dataIndex : 'timedif'
 							}, {
-								header : il8n.count_wrong,
+								header : il8n.quiz.count_wrong,
 								dataIndex : 'count'
 							}, {
-								header : il8n.username,
+								header : il8n.user.username,
 								dataIndex : 'id_user'
 							}]
 				});
@@ -129,7 +129,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					cm : cm,
 					id : domid,
 					width : '100%',
-					height : 500,
+					height : 430,
 					tbar : tb,
 					bbar : new Ext.PagingToolbar({
 								store : store,
@@ -137,17 +137,23 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								displayInfo : true
 							})
 				});
-		var access = me.myUser.access.split(",");
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
+				var access = obj.access;
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '165303') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add( {
 						iconCls: iconCls,
 						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
+							alert(il8n.normal.clickCellInGrid);
 							return;
 						}
 						var ids = '';
@@ -173,8 +179,14 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 						});
 					}
 				});
+			}}			
+			tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
+		
 		store.load({
 					params : {
 						start : 0,
@@ -221,33 +233,33 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 						sortable : true
 					},
 					columns : [{
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id'
 							}, {
-								header : il8n.subject,
+								header : il8n.normal.subject,
 								dataIndex : 'name_subject'
 							}, {
-								header : il8n.subject+'(id)',
+								header : il8n.normal.subject+'(id)',
 								dataIndex : 'id_level_subject',
 								hidden : true
 							}, {
-								header : il8n.paper,
+								header : il8n.normal.paper,
 								dataIndex : 'title_quiz'
 							}, {
-								header : il8n.question,
+								header : il8n.normal.question,
 								dataIndex : 'title_question'
 							}, {
-								header : il8n.date_created+(2),
+								header : il8n.normal.date_created+(2),
 								dataIndex : 'date_created',
 								hidden : true
 							}, {
-								header : il8n.date_created,
+								header : il8n.normal.date_created,
 								dataIndex : 'timedif'
 							}, {
-								header : il8n.count_wrong,
+								header : il8n.normal.count_wrong,
 								dataIndex : 'count'
 							}, {
-								header : il8n.Qes_Type,
+								header : il8n.normal.Qes_Type,
 								dataIndex : 'type',
 								hidden : true
 							}]
@@ -270,17 +282,23 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								displayInfo : true
 							})
 				});
-		var access = me.myUser.access.split(",");
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
+				var access = obj.access;
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '125003') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add( {
 						iconCls: iconCls,
 						tooltip : tooltip,
 					handler : function() {
 						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
+							alert(il8n.normal.clickCellInGrid);
 							return;
 						}
 						var ids = '';
@@ -306,13 +324,13 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					}
 				});
 			} else if (access[i] == '125007') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add( {
 						iconCls: iconCls,
 						tooltip : tooltip,
 					handler : function() {
-						var uid = me.myUser.id;
+						var uid = obj.id;
 						var desktop = parent.QoDesk.App.getDesktop();
 
 						var win = desktop.getWindow(uid + '_wrongs');
@@ -322,7 +340,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 						if (!win) {
 							win = desktop.createWindow({
 								id : uid + '_wrongs',
-								title : il8n.Quiz_Wrongs,
+								title : il8n.quiz.Quiz_Wrongs,
 								width : winWidth,
 								height : winHeight,
 								layout : 'fit',
@@ -343,8 +361,13 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 						win.show();
 					}
 				});
+			}}			
+			tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
 		store.load({
 					params : {
 						start : 0,

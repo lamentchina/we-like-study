@@ -130,7 +130,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 					'count_questions', 'name_application','proportion','title']
 		};
 	},
-	getList : function(domid) {
+	getGrid : function(domid) {
 		var listStuff = this.getListStuff();
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
@@ -147,194 +147,206 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 				});
 
 		var grid = new Ext.grid.GridPanel({
-					store : store,
-					cm : listStuff.cm,
-					id : domid,
-					width : '100%',
-					height : 500,
-					tbar : tb,
-					bbar : new Ext.PagingToolbar({
-								store : store,
-								pageSize : 15,
-								displayInfo : true
-							})
-				});
+			store : store,
+			cm : listStuff.cm,
+			id : domid,
+			width : '100%',
+			height : 430,
+			tbar : tb,
+			bbar : new Ext.PagingToolbar({
+						store : store,
+						pageSize : 15,
+						displayInfo : true
+					})
+		});
 
-		var access = me.myUser.access.split(",");
-		for (var i = 0; i < access.length; i++) {
-			if (access[i] == '165101') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add('-', {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						var win = new Ext.Window({
-							id : 'w_q_p_l_i',
-							layout : 'fit',
-							width : 500,
-							modal:true,
-							height : 300,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=importOne' width='100%' height='250' />"
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
+				var access = obj.access;
+				for (var i = 0; i < access.length; i++) {
+					if (access[i] == '165101') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
+							handler : function() {
+								var win = new Ext.Window({
+									id : 'w_q_p_l_i',
+									layout : 'fit',
+									width : 500,
+									modal:true,
+									height : 300,
+									html : "<iframe src ='"
+											+ thisObj.config.AJAXPATH
+											+ "?controller=quiz_log&action=importOne' width='100%' height='250' />"
+								});
+								win.show(this);
+							}
 						});
-						win.show(this);
-					}
-				});
-			} else if (access[i] == '165102') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add('-', {
-					iconCls: iconCls,
-					tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var win = new Ext.Window({
-							id : 'w_q_p_l_e',
-							layout : 'fit',
-							width : 500,
-							height : 300,
-							modal:true,
-							html : "<iframe src ='"
-									+ thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=exportOne"									
-									+ "&temp="
-									+ Math.random()
-									+ "&id="
-									+ Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id
-									+ "' style='width:100%; height:100%;' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+					} else if (access[i] == '165102') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+									alert(il8n.clickCellInGrid);
+									return;
+								}
+								var win = new Ext.Window({
+									id : 'w_q_p_l_e',
+									layout : 'fit',
+									width : 500,
+									height : 300,
+									modal:true,
+									html : "<iframe src ='"
+											+ thisObj.config.AJAXPATH
+											+ "?controller=quiz_log&action=exportOne"									
+											+ "&temp="
+											+ Math.random()
+											+ "&id="
+											+ Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id
+											+ "' style='width:100%; height:100%;' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+								});
+								win.show(this);
+							}
 						});
-						win.show(this);
-					}
-				});
-			}else if (access[i] == '165108') {
-				eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-				eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-				tb.add('-', {
-					iconCls: iconCls,
-					tooltip : tooltip,
-						handler : function() {
-							var win = new Ext.Window({
-								id : 'w_q_p_l_e',
-								layout : 'fit',
-								title : il8n.exportAll,
-								modal : true,
-								width : 500,
-								height : 200,
-								html : "<iframe src ='"
-										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_log&action=exportAll"
-										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+					}else if (access[i] == '165108') {
+						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+						tb.add( {
+							iconCls: iconCls,
+							tooltip : tooltip,
+								handler : function() {
+									var win = new Ext.Window({
+										id : 'w_q_p_l_e',
+										layout : 'fit',
+										title : il8n.exportAll,
+										modal : true,
+										width : 500,
+										height : 200,
+										html : "<iframe src ='"
+												+ thisObj.config.AJAXPATH
+												+ "?controller=quiz_log&action=exportAll"
+												+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+									});
+									win.show(this);
+								}
 							});
-							win.show(this);
-						}
-					});
-				}else if (access[i] == '165109') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-					tb.add('-', {
-						iconCls: iconCls,
-						tooltip : tooltip,
-						handler : function() {
-							var win = new Ext.Window({
-								id : 'w_q_p_l_e',
-								layout : 'fit',
-								title : il8n.importAll,
-								modal : true,
-								width : 500,
-								modal:true,
-								height : 200,
-								html : "<iframe src ='"
-										+ thisObj.config.AJAXPATH
-										+ "?controller=quiz_log&action=importAll"
-										+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+						}else if (access[i] == '165109') {
+							eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+							eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+							tb.add( {
+								iconCls: iconCls,
+								tooltip : tooltip,
+								handler : function() {
+									var win = new Ext.Window({
+										id : 'w_q_p_l_e',
+										layout : 'fit',
+										title : il8n.importAll,
+										modal : true,
+										width : 500,
+										modal:true,
+										height : 200,
+										html : "<iframe src ='"
+												+ thisObj.config.AJAXPATH
+												+ "?controller=quiz_log&action=importAll"
+												+ "' width='100%' height='250' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+									});
+									win.show(this);
+								}
 							});
-							win.show(this);
-						}
-					});
-				} else if (access[i] == '165103') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-					tb.add('-', {
-						iconCls: iconCls,
-						tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var ids = '';
-						var items = Ext.getCmp(domid).getSelectionModel().selections.items;
-						for (var i = 0; i < items.length; i++) {
-							ids += items[i].data.id + ',';
-						}
-						ids = ids.substring(0, ids.length - 1);
-						Ext.Ajax.request({
-							method : 'POST',
-							url : thisObj.config.AJAXPATH
-									+ "?controller=quiz_log&action=delete",
-							success : function(response) {
-								store.load();
-							},
-							failure : function(response) {
-								Ext.Msg.alert('failure', response.responseText);
-							},
-							params : {
-								ids : ids
+						} else if (access[i] == '165103') {
+							eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+							eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+							tb.add( {
+								iconCls: iconCls,
+								tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+									alert(il8n.clickCellInGrid);
+									return;
+								}
+								var ids = '';
+								var items = Ext.getCmp(domid).getSelectionModel().selections.items;
+								for (var i = 0; i < items.length; i++) {
+									ids += items[i].data.id + ',';
+								}
+								ids = ids.substring(0, ids.length - 1);
+								Ext.Ajax.request({
+									method : 'POST',
+									url : thisObj.config.AJAXPATH
+											+ "?controller=quiz_log&action=delete",
+									success : function(response) {
+										store.load();
+									},
+									failure : function(response) {
+										Ext.Msg.alert('failure', response.responseText);
+									},
+									params : {
+										ids : ids
+									}
+								});
+							}
+						});
+					} else if (access[i] == '165107') {
+							eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+							eval("var tooltip = obj.access2.p"+access[i]+"[2];");
+							tb.add( {
+								iconCls: iconCls,
+								tooltip : tooltip,
+							handler : function() {
+								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
+									alert(il8n.clickCellInGrid);
+									return;
+								}
+								var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
+								var uid = obj.id;
+								var desktop = parent.QoDesk.App.getDesktop();
+		
+								var win = desktop.getWindow(lid + '_qdesk');
+								var winWidth = desktop.getWinWidth();
+								var winHeight = desktop.getWinHeight();
+		
+								if (!win) {
+									win = desktop.createWindow({
+										id : lid + '_qdesk',
+										title : il8n.log_review,
+										width : winWidth,
+										height : winHeight,
+										layout : 'fit',
+										plain : false,
+										listeners : {
+											'show':function(x){
+												var c = parent.document.getElementById('log_vq_' + lid);   
+												c.src = thisObj.config.AJAXPATH + "?controller=quiz_log&action=viewQuiz&id="
+														+ lid
+														+ "&uid="
+														+ uid
+														+ '&temp='
+														+ Math.random();
+											}
+										},
+										html : '<iframe id="log_vq_'+lid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
+									});
+								}
+								win.show();
 							}
 						});
 					}
-				});
-			} else if (access[i] == '165107') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
-					tb.add('-', {
-						iconCls: iconCls,
-						tooltip : tooltip,
-					handler : function() {
-						if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-							alert(il8n.clickCellInGrid);
-							return;
-						}
-						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
-						var uid = me.myUser.id;
-						var desktop = parent.QoDesk.App.getDesktop();
-
-						var win = desktop.getWindow(lid + '_qdesk');
-						var winWidth = desktop.getWinWidth();
-						var winHeight = desktop.getWinHeight();
-
-						if (!win) {
-							win = desktop.createWindow({
-								id : lid + '_qdesk',
-								title : il8n.log_review,
-								width : winWidth,
-								height : winHeight,
-								layout : 'fit',
-								plain : false,
-								listeners : {
-									'show':function(x){
-										var c = parent.document.getElementById('log_vq_' + lid);   
-										c.src = thisObj.config.AJAXPATH + "?controller=quiz_log&action=viewQuiz&id="
-												+ lid
-												+ "&uid="
-												+ uid
-												+ '&temp='
-												+ Math.random();
-									}
-								},
-								html : '<iframe id="log_vq_'+lid+'" style="width:100%; height:'+(winHeight-30)+'px;" frameborder="no" border="0" marginwidth="0" marginheight="0">'
-							});
-						}
-						win.show();
-					}
-				});
+				}			
+				tb.doLayout();
+			},
+			failure : function(response) {
+				alert('Net connection failed.');
 			}
-		}
+		});
 
 		store.load({
 			params : {
@@ -374,11 +386,11 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							})
 				});
 
-		var access = me.myUser.access.split(",");
+		var access = obj.access.split(",");
 		for (var i = 0; i < access.length; i++) {
 			if (access[i] == '125301') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add('-', {
 						iconCls: iconCls,
 						tooltip : tooltip,
@@ -388,7 +400,7 @@ wls.quiz.log = Ext.extend(wls.quiz, {
 							return;
 						}
 						var lid = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.id;
-						var uid = me.myUser.id;
+						var uid = obj.id;
 						var desktop = parent.QoDesk.App.getDesktop();
 
 						var win = desktop.getWindow(lid + '_log_qdesk');

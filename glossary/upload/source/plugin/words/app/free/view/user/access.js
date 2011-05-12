@@ -1,5 +1,5 @@
 wls.user.access = Ext.extend(wls, {
-	getList : function(domid) {
+	getGrid : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
@@ -16,42 +16,42 @@ wls.user.access = Ext.extend(wls, {
 						sortable : true
 					},
 					columns : [{
-								header : il8n.id,
+								header : il8n.normal.id,
 								dataIndex : 'id_level'
 							}, {
-								header : il8n.name,
+								header : il8n.normal.name,
 								dataIndex : 'name',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.money,
+								header : il8n.user.money,
 								dataIndex : 'money',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.ismenu,
+								header : il8n.user.ismenu,
 								dataIndex : 'ismenu'
 
 							}, {
-								header : il8n.isshortcut,
+								header : il8n.user.isshortcut,
 								dataIndex : 'isshortcut',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.isquickstart,
+								header : il8n.user.isquickstart,
 								dataIndex : 'isquickstart',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.icon,
+								header : il8n.normal.icon,
 								dataIndex : 'icon',
 								editor : new Ext.form.TextField()
 							}, {
-								 header : il8n.description
+								 header : il8n.normal.description
 								,dataIndex : 'description'
 								,editor : new Ext.form.TextField()
 								,hidden:true
@@ -105,21 +105,24 @@ wls.user.access = Ext.extend(wls, {
 					}
 				});
 
-		if (typeof(me) == "undefined") {
-			//
-		} else {
-			var access = me.myUser.access.split(",");
+		Ext.Ajax.request({
+			method : 'POST',
+			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
+			success : function(response) {
+				var obj = Ext.decode(response.responseText);
+				//console.debug(obj);
+				var access = obj.access;
 
 			for (var i = 0; i < access.length; i++) {
 				if (access[i] == '190701') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add('-', {
 						iconCls: iconCls,
 						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
-								title : il8n.importFile,
+								title : il8n.normal.importFile,
 								id : 'w_u_p_l_i',
 								layout : 'fit',
 								width : 500,
@@ -133,14 +136,14 @@ wls.user.access = Ext.extend(wls, {
 						}
 					});
 				} else if (access[i] == '190702') {
-					eval("var iconCls = 'bt_'+me.myUser.access2.p"+access[i]+"[1]+'_16_16';");
-					eval("var tooltip = me.myUser.access2.p"+access[i]+"[2];");
+					eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
+					eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 					tb.add('-', {
 						iconCls: iconCls,
 						tooltip : tooltip,
 						handler : function() {
 							var win = new Ext.Window({
-								title : il8n.exportFile,
+								title : il8n.normal.exportFile,
 								id : 'w_u_p_l_e',
 								layout : 'fit',
 								width : 500,
@@ -157,7 +160,13 @@ wls.user.access = Ext.extend(wls, {
 					// TODO
 				}
 			}
+			
+			tb.doLayout();
+		},
+		failure : function(response) {
+			alert('Net connection failed.');
 		}
+	});
 
 		return grid;
 	}
