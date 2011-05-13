@@ -15,7 +15,7 @@ wls.subject = Ext.extend(wls, {
 			defaultType : 'textfield',
 
 			items : [{
-						fieldLabel : il8n.normal.id_level,
+						fieldLabel : il8n.quiz.id_level,
 						width : 150,
 						regex:/^[0-9]/,
 						name : 'id_level',
@@ -46,15 +46,11 @@ wls.subject = Ext.extend(wls, {
 					}],
 
 			buttons : [{
-				text : il8n.save,
+				text : il8n.normal.save,
 				handler : function() {
 					var form = Ext.getCmp('w_s_ai_f').getForm();
 
 					if (form.isValid()) {
-						$.blockUI({
-									message : '<h1>' + il8n.loading
-											+ '......</h1>'
-								});
 						var obj = form.getValues();
 						Ext.Ajax.request({
 									method : 'POST',
@@ -62,21 +58,19 @@ wls.subject = Ext.extend(wls, {
 											+ "?controller=subject&action=add&temp="
 											+ Math.random(),
 									success : function(response) {
-										$.unblockUI();
 										if(response.responseText==0){
-											alert(il8n.fail);
+											alert(il8n.normal.fail);
 										}else{										
 											Ext.getCmp('subject_add_win').close();
 										}
 									},
 									failure : function(response) {
 										// TODO
-										$.unblockUI();
 									},
 									params : obj
 								});
 					} else {
-						Ext.Msg.alert(il8n.fail, il8n.RequesttedImputMissing);
+						Ext.Msg.alert(il8n.normal.fail, il8n.normal.RequesttedImputMissing);
 					}
 				}
 			}]
@@ -124,7 +118,7 @@ wls.subject = Ext.extend(wls, {
 		   columns: [
 		   	{
 		   		 id:'name'
-		   		,header: il8n.name
+		   		,header: il8n.normal.name
 		   		//,sortable: true
 		   		,width: 75
 		   		,dataIndex: 'name'
@@ -136,38 +130,38 @@ wls.subject = Ext.extend(wls, {
                		return v;
             	}
 			},{
-			    header: il8n.icon, 
+			    header: il8n.normal.icon, 
 				width: 75, 
 				//sortable: true, 
 				dataIndex: 'icon',
 				hidden: true,
 				editor: new Ext.form.TextField()
 			},{
-			    header: il8n.id_level, 
+			    header: il8n.quiz.id_level, 
 				//width: 75, 
 				//sortable: true, 
 				dataIndex: 'id_level',
 				editor: new Ext.form.TextField()
 			},{
-			    header: il8n.description, 
+			    header: il8n.normal.description, 
 				width: 75, 
 				//sortable: true, 
 				dataIndex: 'description',
 				editor: new Ext.form.TextField()
 			},{
-			    header: il8n.isshortcut, 
+			    header: il8n.user.isshortcut, 
 				width: 75, 
 				//sortable: true, 
 				dataIndex: 'isshortcut',
 				editor: new Ext.form.TextField()
 			},{
-			    header: il8n.isknowledge, 
+			    header: il8n.user.isknowledge, 
 				width: 75, 
 				hidden: true, 
 				dataIndex: 'isknowledge',
 				editor: new Ext.form.TextField()
 			},{
-			    header: il8n.Qes_Type, 
+			    header: il8n.quiz.Qes_Type, 
 				width: 75, 
 				hidden: true, 
 				dataIndex: 'questiontypes',
@@ -239,10 +233,10 @@ wls.subject = Ext.extend(wls, {
 							tooltip : tooltip,
 							handler : function() {
 								if (Ext.getCmp(domid).getSelectionModel().selection == null) {
-									alert(il8n.clickCellInGrid);
+									alert(il8n.quiz.clickCellInGrid);
 									return;
 								}
-								Ext.MessageBox.confirm( Ext.MessageBox.buttonText.ok+'?', il8n.sureToDelete+"?<br/>"+il8n.cascadingDelete, function(button,text){  
+								Ext.MessageBox.confirm( Ext.MessageBox.buttonText.ok+'?', il8n.subject.sureToDelete+"?<br/>"+il8n.subject.cascadingDelete, function(button,text){  
 		               				if(button=='yes'){
 		               					Ext.Ajax.request({
 											method : 'POST',
@@ -293,7 +287,7 @@ wls.subject = Ext.extend(wls, {
 								handler : function() {
 									var form = thisObj.getAddItemForm();
 									var w = new Ext.Window({
-										title : il8n.addNewSubject,
+										title : il8n.quiz.addNewSubject,
 										id : 'subject_add_win',
 										width : 350,
 										height : 250,
@@ -402,7 +396,7 @@ wls.subject = Ext.extend(wls, {
 							text:tooltip,
 							handler : function() {
 								if (Ext.getCmp(domid).getSelectionModel().selections.items.length == 0) {
-									alert(il8n.clickCellInGrid);
+									alert(il8n.quiz.clickCellInGrid);
 									return;
 								}
 								var items = Ext.getCmp(domid).getSelectionModel().selections.items;
@@ -538,7 +532,7 @@ wls.subject = Ext.extend(wls, {
 					width : 400,
 					frame : true,
 					items : [{
-								title : il8n.Quiz_Paper_Result + il8n.curve,
+								title : il8n.quiz.Quiz_Paper_Result + il8n.quiz.curve,
 								html : '<div id="' + domid + 'chart"></div>'
 							}],
 					region : 'east'

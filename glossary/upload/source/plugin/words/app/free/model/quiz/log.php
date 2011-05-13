@@ -379,7 +379,7 @@ class m_quiz_log extends wls implements dbtable,fileLoad,log{
 			$userObj = new m_user();
 			$me = $userObj->getMyInfo();
 			$id_user = $me['id'];
-			$ids_level_user_group = $me['group'];
+			$ids_level_user_group = $me['groups'];
 		}
 
 		$data = array(

@@ -17,25 +17,25 @@ wls.question = Ext.extend(wls, {
 				.append("<div class='WhyImWrong'>"
 						+ "<table><tr style='color:red;font-size:11px;'>"
 						+ "<td width='20%' >"
-						+ il8n.whyImWrong
+						+ il8n.quiz.whyImWrong
 						+ ":&nbsp;&nbsp;</td>"
 						+ "<td width='20%'><input type='radio' onchange='wls_question_saveComment(this)' value='1' name='"
 						+ this.id
 						+ "' />"
-						+ il8n.whyImWrong_NotGoodEnough
+						+ il8n.quiz.whyImWrong_NotGoodEnough
 						+ "</td>"
 						+ "<td width='20%'><input type='radio' onchange='wls_question_saveComment(this)' value='2' name='"
 						+ this.id
 						+ "' />"
-						+ il8n.whyImWrong_Carelese
+						+ il8n.quiz.whyImWrong_Carelese
 						+ "</td>"
 						+ "<td width='20%'><input type='radio' onchange='wls_question_saveComment(this)' value='3' name='"
 						+ this.id
 						+ "' />"
-						+ il8n.whyImWrong_IHaveNoIdea
+						+ il8n.quiz.whyImWrong_IHaveNoIdea
 						+ "</td>"
 						+ "<td width='20%'><input type='radio' onchange='wls_question_saveComment(this)' value='4' name='"
-						+ this.id + "' />" + il8n.whyImWrong_WrongAnswer
+						+ this.id + "' />" + il8n.quiz.whyImWrong_WrongAnswer
 						+ "</td>" + "</tr></table>" + "</div>");
 	}
 
@@ -64,20 +64,20 @@ var wls_question_saveComment = function(dom) {
 			cc.push(Math.floor((c2 * 100) / (c1 + c2 + c3 + c4)));
 			cc.push(Math.floor((c3 * 100) / (c1 + c2 + c3 + c4)));
 			cc.push(Math.floor((c4 * 100) / (c1 + c2 + c3 + c4)));
-			var str = il8n.statistic + ":";
+			var str = il8n.normal.statistic + ":";
 			for (var i = 0; i < 4; i++) {
 				if (i == 0) {
 					str += "<span style='background-color:red;color:red' title='"
-							+ il8n.whyImWrong_NotGoodEnough + "," + c1 + "'>";
+							+ il8n.quiz.whyImWrong_NotGoodEnough + "," + c1 + "'>";
 				} else if (i == 1) {
 					str += "<span style='background-color:blue;color:blue' title='"
-							+ il8n.whyImWrong_Carelese + "," + c2 + "'>";
+							+ il8n.quiz.whyImWrong_Carelese + "," + c2 + "'>";
 				} else if (i == 2) {
 					str += "<span style='background-color:gray;color:gray' title='"
-							+ il8n.whyImWrong_IHaveNoIdea + "," + c3 + "'>";
+							+ il8n.quiz.whyImWrong_IHaveNoIdea + "," + c3 + "'>";
 				} else if (i == 3) {
 					str += "<span style='background-color:yellow;color:yellow' title='"
-							+ il8n.whyImWrong_WrongAnswer + "," + c4 + "'>";
+							+ il8n.quiz.whyImWrong_WrongAnswer + "," + c4 + "'>";
 				}
 				for (ii = 0; ii < cc[i]; ii++) {
 					str += "|";
@@ -110,7 +110,7 @@ var wls_question_done = function(id){
 var wls_question_marking = function(id_question,cent,id_index){
 	var win = new Ext.Window({
 		id : id_question,
-		title : il8n.marking,
+		title : il8n.quiz.marking,
 		width : 300,
 		height : 200,
 		modal : true,
@@ -128,17 +128,17 @@ var wls_question_marking = function(id_question,cent,id_index){
 		 			defaultType : 'textfield',
 
 		 			items : [{
-		 						fieldLabel : il8n.marking,
+		 						fieldLabel : il8n.quiz.marking,
 		 						width : 150,
 		 						xtype: 'radiogroup',
 
 		 			            items: [
-		 			                   {boxLabel: il8n.right, name: 'correct', inputValue: 1, checked: true},
-		 			                   {boxLabel: il8n.wrong, name: 'correct', inputValue: 0}
+		 			                   {boxLabel: il8n.quiz.right, name: 'correct', inputValue: 1, checked: true},
+		 			                   {boxLabel: il8n.quiz.wrong, name: 'correct', inputValue: 0}
 		 			               ]
 
 		 					}, {
-		 						fieldLabel : il8n.myScore,
+		 						fieldLabel : il8n.quiz.myScore,
 		 						width : 150,
 		 						xtype: 'spinnerfield',
 		 			           	minValue: 0,
@@ -147,20 +147,20 @@ var wls_question_marking = function(id_question,cent,id_index){
 		 						name : 'mycent',
 		 						allowBlank : false
 		 					}, {
-		 						fieldLabel : il8n.comment,
+		 						fieldLabel : il8n.quiz.comment,
 		 						width : 150,
 		 						name : 'comment',
 		 						allowBlank : false
 		 					}],
 
 		 			buttons : [{
-	 						text : il8n.marking,
+	 						text : il8n.quiz.marking,
 	 						handler : function() {
 				 				var form = Ext.getCmp('wls_q_marking_w').getForm();
 		
 				 				if (form.isValid()) {
 				 					$.blockUI({
-				 								message : '<h1>' + il8n.loading + '......</h1>'
+				 								message : '<h1>' + il8n.normal.loading + '......</h1>'
 				 							});
 				 					var obj = form.getValues();
 				 					obj.id = id_question;
@@ -183,7 +183,7 @@ var wls_question_marking = function(id_question,cent,id_index){
 				 						params : obj
 				 					});
 				 				} else {
-				 					Ext.Msg.alert(il8n.fail, il8n.RequesttedImputMissing);
+				 					Ext.Msg.alert(il8n.normal.fail, il8n.RequesttedImputMissing);
 				 				}
 	 						}
 	 					}
@@ -216,21 +216,21 @@ var wls_question_markked = function(id_quiz_log,index){
 		 			defaultType : 'textfield',
 
 		 			items : [{
-		 						fieldLabel : il8n.marking,
+		 						fieldLabel : il8n.quiz.marking,
 		 						width : 150,
 		 						name: 'correct'
 
 		 					}, {
-		 						fieldLabel : il8n.myScore,
+		 						fieldLabel : il8n.quiz.myScore,
 		 						width : 150,
 		 						name : 'mycent'
 
 		 					}, {
-		 						fieldLabel : il8n.comment,
+		 						fieldLabel : il8n.quiz.comment,
 		 						width : 150,
 		 						name : 'comment'
 		 					}, {
-		 						fieldLabel : il8n.state,
+		 						fieldLabel : il8n.normal.status,
 		 						width : 150,
 		 						name : 'markked'
 		 					}]

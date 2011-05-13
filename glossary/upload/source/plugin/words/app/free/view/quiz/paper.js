@@ -7,7 +7,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	ajaxIds : function(nextFunction) {
 		var thisObj = this;
 		$.blockUI({
-					message : '<h1>' + il8n.loading + '</h1>......'
+					message : '<h1>' + il8n.normal.loading + '</h1>......'
 				});
 		$.ajax({
 					url : thisObj.config.AJAXPATH + "?controller=quiz_paper&action=getOne",
@@ -55,7 +55,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 	},
 	submit : function(nextFunction) {
 		$.blockUI({
-					message : '<h1>' + il8n.loading + '</h1>......'
+					message : '<h1>' + il8n.normal.loading + '</h1>......'
 				});
 
 		this.answersData = [];
@@ -86,22 +86,22 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		});
 	},
 	showResult : function() {
-		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.score
+		var str = "<table width='90%'>" + "<tr>" + "<td>" + il8n.quiz.score
 				+ "</td>" + "<td>" + this.mycent + "</td>" + "</tr>" + "<tr>"
-				+ "<td>" + il8n.score_total + "</td>" + "<td>" + this.cent
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_right
+				+ "<td>" + il8n.quiz.score_total + "</td>" + "<td>" + this.cent
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.quiz.count_right
 				+ "</td>" + "<td>" + this.count.right + "</td>" + "</tr>"
-				+ "<tr>" + "<td>" + il8n.count_wrong + "</td>" + "<td>"
+				+ "<tr>" + "<td>" + il8n.quiz.count_wrong + "</td>" + "<td>"
 				+ this.count.wrong + "</td>" + "</tr>" + "<tr>" + "<td>"
-				+ il8n.count_giveup + "</td>" + "<td>" + this.count.giveup
-				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.count_questions
+				+ il8n.quiz.count_giveup + "</td>" + "<td>" + this.count.giveup
+				+ "</td>" + "</tr>" + "<tr>" + "<td>" + il8n.quiz.count_questions
 				+ "</td>" + "<td>" + this.count.total + "</td>" + "</tr>"
 				+ "</table>";
 		var ac = Ext.getCmp('ext_Operations');
 		ac.layout.activeItem.collapse(false);
 		ac.add({
 					id : 'ext_PaperResult',
-					title : il8n.Quiz_Paper_Result,
+					title : il8n.quiz.Quiz_Paper_Result,
 					html : '<div id="paperresult">aaa</div>'
 				});
 		ac.doLayout();
@@ -112,7 +112,7 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 		$.blockUI({
 					message : str
 				});
-		$('.blockOverlay').attr('title', il8n.click2unblock).click($.unblockUI);
+		$('.blockOverlay').attr('title', il8n.quiz.click2unblock).click($.unblockUI);
 	},
 	getGrid : function(domid) {
 		var thisObj = this;

@@ -5,11 +5,11 @@ include_once dirname(__FILE__).'/../../model/user/access.php';
 
 class user_group extends wls{
 	
-	private $m = null;
+	private $model = null;
 	
 	function user_group(){
 		parent::wls();
-		$this->m = new m_user_group();
+		$this->model = new m_user_group();
 	}
 	
 	public function getList(){
@@ -17,14 +17,14 @@ class user_group extends wls{
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 15;
 		if(isset($_POST['limit']))$pagesize = $_POST['limit'];
-		$data = $this->m->getList($page,$pagesize);
+		$data = $this->model->getList($page,$pagesize);
 		$data['totalCount'] = $data['total'];
 		echo json_encode($data);
 	}
 	
 	public function getTreeGrid(){
 		$id = $_REQUEST['anode'];
-		$data = $this->m->getList(1,500,array('id_'=>$id));
+		$data = $this->model->getList(1,500,array('id_'=>$id));
 		
 		for($i=0;$i<count($data['data']);$i++){
 			$data['data'][$i]['_is_leaf'] = $data['data'][$i]['isleaf'];			
@@ -64,8 +64,8 @@ class user_group extends wls{
 			echo "Error: " . $_FILES["file"]["error"] . "<br />";
 		}else{
 			move_uploaded_file($_FILES["file"]["tmp_name"],$this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
-			$this->m->create();
-			$this->m->importAll($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
+			$this->model->create();
+			$this->model->importAll($this->c->filePath."upload/upload".date('Ymdims').$_FILES["file"]["name"]);
 		}
 		echo '<html xmlns="http://www.w3.org/1999/xhtml">		
 				<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>		
@@ -74,14 +74,14 @@ class user_group extends wls{
 	}	
 	
 	public function delete(){
-		if($this->m->delete($_POST['id'])){
+		if($this->model->delete($_POST['id'])){
 			$msg = $this->il8n['normal']['serverDataDeleted'];
 			$msg = str_replace("{1}",$_POST['id'],$msg);
 			echo json_encode(array('result'=>'success','msg'=>$msg));
 		}else{
 			echo 'fail';
 		}
-		$this->m->setLeaf();
+		$this->model->setLeaf();
 	}
 	
 	public function saveUpdate(){
@@ -90,7 +90,7 @@ class user_group extends wls{
 			'id'=>$_POST['id'],
 			$_POST['field']=>$_POST['value']
 		);
-		if($this->m->update($data)){
+		if($this->model->update($data)){
 			$msg = $this->il8n['normal']['serverDataUpdated'];
 			$msg = str_replace("{1}",$_POST['originalValue'],$msg);
 			$msg = str_replace("{2}",$_POST['value'],$msg);
@@ -99,11 +99,11 @@ class user_group extends wls{
 			echo 'fail';			
 		}
 		
-		$this->m->setLeaf();
+		$this->model->setLeaf();
 	}
 	
 	public function exportAll(){
-		$file = $this->m->exportAll();
+		$file = $this->model->exportAll();
 		echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>		
 				<body><a href='".$this->c->filePath.$file."'>".$this->il8n['file']['download']."</a></body></html>";
 	}
@@ -115,7 +115,7 @@ class user_group extends wls{
 		for($i=0;$i<count($data);$i++){
 			unset($data[$i]['icon']);
 		}		
-		$data =  $this->t->getTreeData(null,$data);			
+		$data =  $this->tool->getTreeData(null,$data);			
 		echo json_encode($data);
 	}
 	
@@ -126,7 +126,7 @@ class user_group extends wls{
 		for($i=0;$i<count($data);$i++){
 			unset($data[$i]['icon']);
 		}	
-		$data = $this->t->getTreeData(null,$data);			
+		$data = $this->tool->getTreeData(null,$data);			
 		echo json_encode($data);
 	}	
 	
@@ -135,26 +135,33 @@ class user_group extends wls{
 	}
 	
 	public function saveAccessTree(){
-		$this->m->updateaccess($_POST['id'],$_POST['ids']);
+		$this->model->updateaccess($_POST['id'],$_POST['ids']);
+		$userObj = new m_user();
+		$userObj->cleanCache();
 	}
 	
 	public function saveSubjectTree(){
-		$this->m->updateSubject($_POST['id'],$_POST['ids']);
+		$this->model->updateSubject($_POST['id'],$_POST['ids']);
+		$userObj = new m_user();
+		$userObj->cleanCache();
 	}	
 	
+	//TODO undone yet, should redesign again.
 	public function saveCourseTree(){
-		$this->m->updateSubject($_POST['id'],$_POST['ids']);
+		$this->model->updateSubject($_POST['id'],$_POST['ids']);
 	}
 	
 	public function add(){
 		sleep(1);
-		$id = $this->m->insert($_POST);
+		$id = $this->model->insert($_POST);
 		echo $id;
-		$this->m->setLeaf();
+		$this->model->setLeaf();
+		$userObj = new m_user();
+		$userObj->cleanCache();
 	}
 	
 	public function setLeaf(){
-		$this->m->setLeaf();
+		$this->model->setLeaf();
 	}
 }
 ?>

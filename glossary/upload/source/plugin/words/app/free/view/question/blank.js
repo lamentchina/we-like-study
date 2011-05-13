@@ -39,7 +39,7 @@ wls.question.blank = Ext.extend(wls.question, {
 
 		if(this.markingmethod==1){
 			$('#w_q_subQuesNav_' + this.id).attr('class','w_q_sn_mark');
-			$(c.next()).append("<a href='#' onclick='wls_question_marking("+this.id_question_log+","+this.cent+","+this.id+")'>"+il8n.marking+"</a>");
+			$(c.next()).append("<a href='#' onclick='wls_question_marking("+this.id_question_log+","+this.cent+","+this.id+")'>"+il8n.quiz.marking+"</a>");
 		}
 	},
 	
@@ -56,7 +56,7 @@ wls.question.blank = Ext.extend(wls.question, {
 					il8n.markingByTeacher + ',' + il8n.cent + ':' + (this.cent));
 			if(this.quiz.type=='log'){
 				var c = $("#w_qs_"+this.id);
-				$(c.next()).append("<a href='#' onclick='wls_question_markked("+this.quiz.logData.id+","+this.id+")'>"+il8n.marking+"</a>");
+				$(c.next()).append("<a href='#' onclick='wls_question_markked("+this.quiz.logData.id+","+this.id+")'>"+il8n.quiz.marking+"</a>");
 			}
 
 		}else{		 

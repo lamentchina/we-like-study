@@ -474,15 +474,29 @@ class m_user extends wls implements dbtable,fileLoad{
 		$conn = $this->conn();
 
 		$user = $this->getMyInfo();
-		$accesss = $user['access'];
-		$accesss = explode(",",$accesss);
-		if(in_array($access,$accesss)){
+		$acceses = $user['accesses'];
+		$acceses = explode(",",$acceses);
+		
+		
+		$accessObj = new m_user_access();
+		$accessdata = $accessObj->getList(1,500);
+		$accessdata = $accessdata['data'];
+		$access2 = array();
+		for($i=0;$i<count($accessdata);$i++){
+			$access2['p'.$accessdata[$i]['id_level']] = array(
+				$accessdata[$i]['id_level'],
+				$accessdata[$i]['icon'],
+				$accessdata[$i]['name']
+			);
+		}
+		
+		if(in_array($access,$acceses)){
 			if($withMoney){
-				if(intval($user['money'])>intval($user['access2']['p'.$access][1])){
-					$sql = "update ".$pfx."wls_user set money = money - ".intval($user['access2']['p'.$access][0])." where id = ".$user['id'];
+				if(intval($user['money'])>intval($accessdata['p'.$access][1])){
+					$sql = "update ".$pfx."wls_user set money = money - ".intval($accessdata['p'.$access][0])." where id = ".$user['id'];
 					mysql_query($sql,$conn);
 					if(!isset($_SESSION))session_start();
-					$_SESSION['wls_user']['money'] -= intval($user['access2']['p'.$access][0]);
+					$_SESSION['wls_user']['money'] -= intval($accessdata['p'.$access][0]);
 	
 					if($this->cfg->cmstype!='' && $user['username']!='guest'){//Synchro money
 						$obj = null;
@@ -738,11 +752,13 @@ class m_user extends wls implements dbtable,fileLoad{
 
 		$sql = " update ".$pfx."wls_user set  
 		 
-				access  = 'nothing'
-				,access2  = 'nothing'
-				,subject  = 'nothing'
-				,group_  = 'nothing'  ";
+				accesses  = 'nothing'
+				,subjects  = 'nothing'
+				,groups  = 'nothing'  ";
 		$res = mysql_query($sql,$conn);
+		
+		$this->tool->removeDir($this->cfg->filePath."cache/user2qwiki/");
+		mkdir($this->cfg->filePath."cache/user2qwiki/", 0777);
 	}
 	
 	//Store all the qWikiOffice-Menu here,it's used in the function below

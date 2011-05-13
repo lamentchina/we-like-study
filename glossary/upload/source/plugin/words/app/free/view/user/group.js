@@ -98,7 +98,7 @@ wls.user.group = Ext.extend(wls, {
 		   columns: [
 		   	{
 		   		 id:'name'
-		   		,header: il8n.name
+		   		,header: il8n.normal.name
 		   		,width: 75
 		   		,dataIndex: 'name'
 		   		,editor: new Ext.form.TextField()
@@ -106,11 +106,11 @@ wls.user.group = Ext.extend(wls, {
                		return v;
             	}
 			},{
-			    header: il8n.id_level, 
+			    header: il8n.quiz.id_level, 
 				dataIndex: 'id_level',
 				editor: new Ext.form.TextField()
 			},{
-			    header: il8n.count_user, 
+			    header: il8n.user.count_user, 
 				dataIndex: 'count_user'
 			}],
 			autoExpandColumn: 'name'
@@ -175,7 +175,6 @@ wls.user.group = Ext.extend(wls, {
 								}
 								var id = Ext.getCmp(domid).getSelectionModel().selection.record.data.id_level;
 								thisObj.getAccessTree(id);
-		
 							}
 						});
 					} else if (access[i] == '130402') {
@@ -316,13 +315,12 @@ wls.user.group = Ext.extend(wls, {
 					+ "?controller=user_group&action=getAccessTree&id="
 					+ id,
 			buttons : [{
-				text : il8n.submit,
+				text : il8n.normal.submit,
 				handler : function() {
 					var checkedNodes = tree.getChecked();
 					var s = "";
 					for (var i = 0; i < checkedNodes.length; i++) {
-						s += checkedNodes[i].attributes.id_level
-								+ ",";
+						s += checkedNodes[i].attributes.id_level + ",";
 					}
 					Ext.getCmp("w_u_g_l_p_t").setVisible(false);
 					Ext.Ajax.request({
@@ -348,7 +346,7 @@ wls.user.group = Ext.extend(wls, {
 		var win = new Ext.Window({
 					id : 'w_u_g_l_p_w',
 					layout : 'fit',
-					title : il8n.access,
+					title : il8n.user.access,
 					width : 500,
 					height : 300,
 					modal : true,
@@ -378,7 +376,7 @@ wls.user.group = Ext.extend(wls, {
 					+ "?controller=user_group&action=getSubjectTree&id="
 					+ id,
 			buttons : [{
-				text : il8n.submit,
+				text : il8n.normal.submit,
 				handler : function() {
 					var checkedNodes = tree.getChecked();
 					var s = "";
@@ -410,7 +408,7 @@ wls.user.group = Ext.extend(wls, {
 		var win = new Ext.Window({
 					id : 'w_u_g_l_s_w',
 					layout : 'fit',
-					title : il8n.subject,
+					title : il8n.subject.subject,
 					width : 500,
 					height : 300,
 					modal : true,

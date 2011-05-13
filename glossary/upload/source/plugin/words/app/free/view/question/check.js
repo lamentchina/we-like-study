@@ -16,11 +16,11 @@ wls.question.check = Ext.extend(wls.question, {
 				+ this.questionData.title + "</div>");
 		$("#w_qs_" + this.id).append("<div class='w_qw_options'></div>");
 		$(".w_qw_options", "#w_qs_" + this.id).append("<span><input type='radio' onclick='wls_question_done("+this.id+")' name='w_qs_" 
-						+ this.id + "' value='A' />&nbsp;" + il8n.right
+						+ this.id + "' value='A' />&nbsp;" + il8n.quiz.right
 						+ "</span>");
 		$(".w_qw_options", "#w_qs_" + this.id)
 				.append("<span><input type='radio' onclick='wls_question_done("+this.id+")' name='w_qs_"
-						+ this.id + "' value='B' />&nbsp;" + il8n.wrong
+						+ this.id + "' value='B' />&nbsp;" + il8n.quiz.wrong
 						+ "</span>");
 
 		this.cent = this.questionData.cent;
@@ -41,7 +41,7 @@ wls.question.check = Ext.extend(wls.question, {
 		this.quiz.count.total++;
 		$(".w_qw_tool", $('#w_qs_' + this.id))
 				.append("<a href='#' class='w_q_d_t' title='"
-						+ il8n.SeeQuestionAbout + "' id='w_qs_d_t_"
+						+ il8n.quiz.SeeQuestionAbout + "' id='w_qs_d_t_"
 						+ this.id + "' onclick='wls_question_toogle("
 						+ this.id
 						+ ")'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>");
@@ -57,7 +57,7 @@ wls.question.check = Ext.extend(wls.question, {
 					.addClass('w_qs_q_w');
 			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_g');
 			$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.giveup + ':' + (this.cent));
+					il8n.quiz.giveup + ':' + (this.cent));
 			wls_question_toogle(this.id);
 			
 		// Right
@@ -66,7 +66,7 @@ wls.question.check = Ext.extend(wls.question, {
 			this.quiz.mycent += parseFloat(obj.cent);
 			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_r');
 			$('#w_q_subQuesNav_' + this.id).attr('title',
-				il8n.right + ',' + il8n.cent + ':' + (this.cent));
+				il8n.quiz.right + ',' + il8n.quiz.cent + ':' + (this.cent));
 			wls_question_toogle(this.id);
 			
 		// Wrong	
@@ -77,7 +77,7 @@ wls.question.check = Ext.extend(wls.question, {
 					.addClass('w_qs_q_w');
 			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_w');
 			$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.wrong + ':' + (this.cent));
+					il8n.quiz.wrong + ':' + (this.cent));
 			if (this.quiz.type == 'paper')
 				this.addWhyImWrong();
 		}
