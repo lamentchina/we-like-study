@@ -12,11 +12,16 @@ class quiz_paper extends quiz{
 	}
 
 	public function getOne(){
-		$data = $this->m->getList(1,1,array('id'=>$_REQUEST['id']));
-		$data = $data['data'];
-//		print_r($data);
-		$data = $data[0];
-		echo json_encode($data);
+		if($this->m->checkMoney($_REQUEST['id'])==true){			
+			$data = $this->m->getList(1,1,array('id'=>$_REQUEST['id']));
+			$data = $data['data'];
+			$data = $data[0];
+			echo json_encode($data);
+		}else{
+			echo json_encode(array(
+				'ids_questions'=>0
+			));
+		}
 	}
 
 	/**

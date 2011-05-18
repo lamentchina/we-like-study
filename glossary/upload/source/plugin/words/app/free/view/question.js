@@ -43,9 +43,9 @@ wls.question = Ext.extend(wls, {
 var wls_question_saveComment = function(dom) {
 	$(".WhyImWrong", $("#w_qs_" + dom.name)).empty();
 
-	var obj = new wls();
+	
 	$.ajax({
-		url : obj.config.AJAXPATH + "?controller=question&action=saveComment",
+		url : "../../../../wls.php?controller=question&action=saveComment",
 		data : {
 			id : dom.name,
 			value : dom.value
@@ -85,7 +85,6 @@ var wls_question_saveComment = function(dom) {
 				str += "</span>";
 			}
 			$(".WhyImWrong", $("#w_qs_" + dom.name)).append(str);
-
 		}
 	});
 }

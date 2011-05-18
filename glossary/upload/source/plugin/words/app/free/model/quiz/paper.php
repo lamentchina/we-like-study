@@ -358,12 +358,16 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		$sql = "select money,id from ".$pfx."wls_quiz_paper where id= ".$id;
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
+		if($temp['money']==0)return true;
 
 		$userObj = new m_user();
 		$user = $userObj->getMyInfo();
+		$sql = "select * from ".$pfx."wls_user where id = ".$user['id'];
+		$res = mysql_query($sql,$conn);
+		$user = mysql_fetch_assoc($res);
 
 		if(intval($temp['money'])>0 && $user['username']=='guest')return false;
-		if(intval($user['money'])>intval($temp['money'])){
+		if(intval($user['money'])>=intval($temp['money'])){
 			$sql = "update ".$pfx."wls_user set money = money - ".$temp['money']." where id = ".$user['id'];
 
 			if(!isset($_SESSION)){
@@ -384,6 +388,7 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		}
 	}
 
+	//TODO
 	public function checkMyPaper($answers,$paperid){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();

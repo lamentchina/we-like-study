@@ -19,6 +19,10 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 						var obj = jQuery.parseJSON(msg);
 						thisObj.paperData = obj;
 						thisObj.ids_questions = obj.ids_questions;
+						if(thisObj.ids_questions==0){
+							alert(il8n.user.moneyRequest);
+							return;
+						}
 						thisObj.state = 1;
 						thisObj.addQuizBrief();
 

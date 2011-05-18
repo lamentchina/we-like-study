@@ -296,22 +296,22 @@ wls.user = Ext.extend(wls, {
 							var obj = jQuery.parseJSON(response.responseText);
 
 							var columns = [{
-								header : il8n.username,
+								header : il8n.user.username,
 								dataIndex : 'username'
 							}, {
-								header : il8n.password,
+								header : il8n.user.password,
 								dataIndex : 'password',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.money,
+								header : il8n.user.money,
 								dataIndex : 'money',
 								editor : new Ext.form.TextField({
 											allowBlank : false
 										})
 							}, {
-								header : il8n.credits,
+								header : il8n.user.credits,
 								dataIndex : 'credits',
 								editor : new Ext.form.TextField({
 											allowBlank : false

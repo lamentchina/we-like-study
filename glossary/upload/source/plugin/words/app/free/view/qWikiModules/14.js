@@ -14,7 +14,7 @@ class_14 = Ext.extend(Ext.app.Module, {
 				if (!win) {
 					win = desktop.createWindow({
 								id : this.id,
-								title : il8n.user,
+								title : il8n.user.user,
 								width : winWidth,
 								height : winHeight,
 								iconCls : 'icon_user_16_16',

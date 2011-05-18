@@ -31,6 +31,7 @@ class m_user extends wls implements dbtable,fileLoad{
 			$data['groups'] = 'nothing';
 			$data['subjects'] = 'nothing';
 		}	
+		$data['log_created'] = date('Y-m-d H:i:s');
 		
 		$keys = array_keys($data);
 		$keys = implode(",",$keys);
@@ -43,7 +44,6 @@ class m_user extends wls implements dbtable,fileLoad{
 		//echo $sql;
 		$temp = mysql_fetch_assoc($res);
 		if($temp===false){		
-			
 			$sql = "insert into ".$pfx."wls_user (".$keys.") values ('".$values."')";
 			mysql_query($sql,$conn);
 			$this->error($sql);
@@ -433,6 +433,22 @@ class m_user extends wls implements dbtable,fileLoad{
 			session_start();
 		}	
 		$_SESSION['wls_user'] = $data;
+		
+		$onlineip= '127.0.0.1';
+		if(isset($_SERVER['HTTP_CLIENT_IP']) ){
+		     $onlineip=$_SERVER['HTTP_CLIENT_IP'];
+		}elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
+		     $onlineip=$_SERVER['HTTP_X_FORWARDED_FOR'];
+		}else{
+		     $onlineip=$_SERVER['REMOTE_ADDR'];
+		}
+		
+		$this->update(array(
+			 'id'=>$data['id']
+			,'log_ip_lastlogin'=>$onlineip
+			,'log_lastlogin'=>date('Y-m-d H:i:s')
+			,'log_count_visit'=>($data['log_count_visit']+1)
+		));
 		
 		return $data;
 	}
