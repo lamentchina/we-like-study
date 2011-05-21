@@ -391,6 +391,7 @@ class m_user extends wls implements dbtable,fileLoad{
 			//than get the accesss info from the group info  						
 			$o = new m_user_access();
 			$d = $o->getListForUser($data['username']);
+			//print_r($d);exit();
 	
 			$ids = '';
 			for($i=0;$i<count($d);$i++){

@@ -218,9 +218,11 @@ wls.glossary = Ext.extend(wls.quiz, {
 				var obj = Ext.decode(response.responseText);
 				//console.debug(obj);
 				var access = obj.access;
+				//console.debug(access);
 				for(var i=0 ; i<access.length ; i++){
 					//console.debug(access[i]);
 					if(access[i]=='3001'){
+						
 						eval("var iconCls = 'bt_'+obj.access2.p"+access[i]+"[1]+'_16_16';");
 						eval("var tooltip = obj.access2.p"+access[i]+"[2];");
 						//console.debug(1234213421341234);

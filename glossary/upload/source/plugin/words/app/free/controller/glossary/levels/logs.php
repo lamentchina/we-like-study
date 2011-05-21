@@ -188,5 +188,13 @@ class glossary_levels_logs extends wls{
 	public function passed(){
 		$this->model->passed($_POST['subject'],$_POST['level']);
 	}
+	
+	/**
+	 * To get others' recent activites, 
+	 * mainly about: what level are they in
+	 * */
+	public function whatAreTheyDoing(){
+		
+	}
 }
 ?>

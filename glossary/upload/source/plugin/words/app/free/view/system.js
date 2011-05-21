@@ -14,24 +14,24 @@ wls.system = Ext.extend(wls, {
 			defaultType : 'textfield',
 
 			items : [{
-						fieldLabel : il8n.setBackground,
+						fieldLabel : il8n.system.setBackground,
 						width : 150,
 						name : 'background',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.setTheme,
+						fieldLabel : il8n.system.setTheme,
 						width : 150,
 						name : 'theme',
 						allowBlank : false
 					}, {
-						fieldLabel : il8n.setSiteName,
+						fieldLabel : il8n.system.setSiteName,
 						width : 150,
 						name : 'siteName',
 						allowBlank : false
 					}],
 
 			buttons : [{
-				text : il8n.submit,
+				text : il8n.normal.submit,
 				handler : function() {
 					Ext.Ajax.request({
 						method : 'POST',
@@ -47,7 +47,7 @@ wls.system = Ext.extend(wls, {
 					});
 				}
 			},{
-				text : il8n.importSysConfig,
+				text : il8n.system.importSysConfig,
 				handler : function() {
 					var win = new Ext.Window({
 						id : 'w_s_ic',
@@ -61,7 +61,7 @@ wls.system = Ext.extend(wls, {
 					win.show();
 				}
 			},{
-				text : il8n.importSysConfig,
+				text : il8n.system.importSysConfig,
 				handler : function() {
 					var win = new Ext.Window({
 						id : 'w_s_ic',

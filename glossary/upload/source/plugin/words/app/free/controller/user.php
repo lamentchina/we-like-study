@@ -85,8 +85,8 @@ class user extends wls{
 				
 //			$this->model->login($_POST['username'],$_POST['password']);
 			echo json_encode(array(
-						'msg'=>'success'
-						));
+				'msg'=>'success'
+			));
 		}
 	}
 
@@ -273,12 +273,14 @@ class user extends wls{
 		session_start();	
 		if(!isset($_SESSION['wls_user']))$this->model->login('guest');
 		$data = $_SESSION['wls_user'];
+		//print_r($data);exit();
 		$data['access'] = explode(",", $_SESSION['wls_user']['accesses']);
 		unset($data['accesses']);
 		
 		$access = new m_user_access();
 		$access = $access->getList(1,500);
 		$access = $access['data'];
+		//print_r($data);exit();
 		$access2 = array();
 		for($i=0;$i<count($access);$i++){
 			$access2['p'.$access[$i]['id_level']] = array(

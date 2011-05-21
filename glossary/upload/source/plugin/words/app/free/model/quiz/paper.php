@@ -106,6 +106,14 @@ class m_quiz_paper extends wls implements dbtable,fileLoad{
 		return $ids;
 	}
 
+	/**
+	 * Mainly used in testting, while it's on develop process
+	 * Unsuggestable to be used after release.
+	 * It need high memory usage.
+	 * 
+	 * @param path   String ,the Excel file path
+	 * @return file   String  
+	 * */
 	public function importOne($path){
 		$conn = $this->conn();
 		$pfx = $this->cfg->dbprefix;

@@ -344,5 +344,14 @@ class m_glossary_levels_logs extends wls implements dbtable{
 		$sql = "update ".$pfx."wls_glossary_levels set count_passed = count_passed + 1  where subject = '".$subject."' and level = ".$level;	
 		mysql_query($sql,$conn);		
 	}
+	
+	public function whatAreTheyDoing(){
+		$pfx = $this->cfg->dbprefix;
+		$conn = $this->conn();
+		
+		$sql = "";
+	}
+	
+
 }
 ?>

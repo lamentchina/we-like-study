@@ -13,20 +13,21 @@
 
 <script type="text/javascript" src="../../view/wls.js"></script>
 <script type="text/javascript" src="../../view/user.js"></script>
+<script type="text/javascript" src="../../view/system.js"></script>
 <script type="text/javascript">
-var wls_user = null;
+var wls_system = null;
 Ext.BLANK_IMAGE_URL = '../../../../libs/ext_3_2_1/resources/images/default/s.gif';
 
 Ext.onReady(function(){
 	Ext.QuickTips.init();
-	wls_user = new wls.user();
-	wls_user.config.AJAXPATH = '../../../wls.php';
-	wls_user.config.libPath = '../../../../libs/';
-	wls_user.getIl8n('fitFullBrowser();');
+	wls_system = new wls.system();
+	wls_system.config.AJAXPATH = '../../../wls.php';
+	wls_system.config.libPath = '../../../../libs/';
+	wls_system.getIl8n('fitFullBrowser();');
 });
 
 function fitFullBrowser(){
-	var comp = wls_user.getLogin('domid');
+	var comp = wls_system.modifySystemSettings('domid');
 	comp.render(Ext.getBody());
 }
 </script>

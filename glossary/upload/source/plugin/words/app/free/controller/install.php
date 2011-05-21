@@ -106,7 +106,7 @@ class install extends wls {
 
 		$obj = new m_glossary_levels_logs();
 		$obj->create();			
-		exit();
+		//exit();
 		
 		/*
 		$obj = new m_user_group();
