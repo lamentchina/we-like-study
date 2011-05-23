@@ -170,7 +170,6 @@ wls.user = Ext.extend(wls, {
 			}]
 		});
 
-
 		var win = new Ext.Window({
 					title : il8n.user.register,
 					width : 250,
@@ -372,7 +371,6 @@ wls.user = Ext.extend(wls, {
 			bbar : bbar
 		});
 
-		
 		Ext.Ajax.request({
 			method : 'POST',
 			url : thisObj.config.AJAXPATH + "?controller=user&action=getCurrentUserSession",
