@@ -87,9 +87,12 @@ class oop {
 		$data['money_level'] = $temp['money'];
 		$data['passline_level'] = $temp['passline'];
 		
+		//模拟这次做关卡的时间
+		$data['date'] = date('Y-m-d H:i:s',mktime(0, 0, 0, date("m")-10  , date("d")+rand($level*5,($level+1)*5) , date("Y")));
+		
 		//根据关卡序号和科目编号,得到此关卡的所有词汇信息,
 		//这些信息要插入到 词汇日志表 中去
-		$sql = "select id,word,translation from pre_wls_glossary where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user']." ; ";
+		$sql = "select id,word,translation from pre_wls_glossary where subject = '".$data['id_subject']."' and level = ".$level."  ; ";
 		$res = mysql_query($sql,$conn);
 		$arr = array();
 		$data['count_right'] = 0;
@@ -98,18 +101,7 @@ class oop {
 			$sql2 = "select id from pre_wls_glossary_logs where id_user = ".$data['id_user']." and id_word = ".$temp['id'];
 			$res2 = mysql_query($sql2,$conn);
 			$temp2 = mysql_affected_rows($conn);
-			//如果已经有记载,就更新记录
-			if($temp2){
-				$result = rand(1, $accuracy);
-				$temp['right'] = ($result>50)?1:0;
-				if($temp['right']){
-					$data['count_right'] ++;
-					$sql3 = "update pre_wls_glossary_logs set count_right = count_right + 1;";
-				}else{
-					$sql3 = "update pre_wls_glossary_logs set count_wrong = count_wrong + 1;";
-				}
-				mysql_query($sql3,$conn);				
-			}else{
+			if(!$temp2){
 				//如果没有记载,就插入一条记录
 				$sql3 = "insert into pre_wls_glossary_logs (
 						 id_word
@@ -119,6 +111,8 @@ class oop {
 						,username
 						,word
 						,translation
+						,logtime
+						,count_right
 					)values(
 						 '".$temp['id']."'
 						,'".$data['id_subject']."'
@@ -127,8 +121,20 @@ class oop {
 						,'".$username."'
 						,'".$temp['word']."'
 						,'".$temp['translation']."'
+						,'".$data['date']."'
+						,".( (rand(1, 100)>(100-$accuracy) )?1:0 )."
 					) ";
 				mysql_query($sql3,$conn);	
+			}else{
+				//如果已经有记载,就更新记录
+				$temp['right'] = ( (rand(1, 100)>(100-$accuracy) )?1:0 );
+				if($temp['right']){
+					$data['count_right'] ++;
+					$sql3 = "update pre_wls_glossary_logs set count_right = count_right + 1 where id_user = ".$data['id_user']." and id_word = ".$temp['id']." ;";
+				}else{
+					$sql3 = "update pre_wls_glossary_logs set count_wrong = count_wrong + 1 where id_user = ".$data['id_user']." and id_word = ".$temp['id']." ;";
+				}
+				mysql_query($sql3,$conn);
 			}
 			$arr[] = $temp;
 		}
@@ -136,21 +142,58 @@ class oop {
 		
 		//判断一下此用户这一次模拟关卡有没有通过
 		$data['passed'] = 0;
-		if( ($data['count_right'] * 100)/count($data['glossary']) > $data['passline_level'] )$data['passed'] = 1;
-		print_r($data);exit();
+		//echo ($data['count_right'] * 100)/count($data['glossary']);
+		//echo "---";
+		//echo number_format($data['passline_level'],2);
+		if( ( ($data['count_right'] * 100)/count($data['glossary']) ) > number_format($data['passline_level'],2) ){
+			$data['passed'] = 1;
+		}
+		
 		//最后是 关卡日志表
 		//先判断一下此用户有关此关卡的日志是否存在
-		$sql = "select id from pre_wls_glossary_levels_logs where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
+		$sql = "select id,status from pre_wls_glossary_levels_logs where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
+		//echo $sql;exit();
 		$res = mysql_query($sql,$conn);
 		//如果存在,就更新一下关卡统计信息
 		$sql2 = "";
-		if ( mysql_affected_rows($res) ){
+		if ( $temp = mysql_fetch_assoc($res) ){
 			if($data['passed']){
-				$sql2 = "upate pre_wls_glossary_levels_logs set count_right = count_right + 1 ";
+				$sql2 = "update pre_wls_glossary_levels_logs set count_right = count_right + 1  where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
+				mysql_query($sql2,$conn);
+				//检查一下,是不是第一次通过此关卡
+				if($temp['status']==0){
+					//是首次通过关卡,就要修改关卡日志的 通过时间 和 日志状态
+					$sql3 = "update pre_wls_glossary_levels_logs set status = 1 ,time_passed = '".$data['date']."' where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
+					
+					mysql_query($sql3,$conn);
+					//然后再开通此关卡的后续关卡,如果有的话
+					$sql4 = "select id from pre_wls_glossary_levels where subject = '".$data['id_subject']."' and level = ".($level+1);
+					$res2 = mysql_query($sql4,$conn);
+					if($temp2 = mysql_fetch_assoc($res2)){
+						$sql5 = "insert into pre_wls_glossary_levels_logs (
+									 time_joined
+									,subject
+									,status
+									,level
+									,id_user
+								)values(
+									 '".$data['date']."'
+									,'".$data['id_subject']."'
+									,0
+									,".($level+1)."
+									,".$data['id_user']."
+								)";
+						mysql_query($sql5,$conn);
+					}else{
+						die( '-1' );
+					}
+				}
 			}else{
-				$sql2 = "upate pre_wls_glossary_levels_logs set count_wrong = count_wrong + 1 ";
-			}
-		}		
+				$sql2 = "update pre_wls_glossary_levels_logs set count_wrong = count_wrong + 1 where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
+				mysql_query($sql2,$conn);
+			}			
+		}	
+		echo $data['passed'];
 	}
 	
 	/**
@@ -160,26 +203,140 @@ class oop {
 	 * 
 	 * 这是一个前台函数
 	 * 直接向前台输出HTML内容,HTML使用Jquery来做重复的AJAX访问
-	 * 
-	 * @param $_GET username 用户名
-	 * @param $_GET level 关卡序号
-	 * @param $_GET subject 科目名称
 	 * */
 	public function simulate1UserDo1LevelUntialPassed(){
-		$html = "";
-		//TODO
+		$html = '
+		<html>
+			<head>
+				<script type="text/javascript" src="../../../../libs/jquery-1.4.2.js"></script>
+				<script type="text/javascript">
+					var level = 1;
+					var accuracy = 10;
+					var start = function(){
+						$.ajax({
+							 type : "post"
+							,url : "data4test.php?function=simulate1UserDo1Level"
+							,data : {	 username:"admin"
+										,level:level
+										,subject:"CET4"
+										,accuracy:accuracy}
+													
+							,success : function(msg) {
+     							if(msg==0){
+     								//如果没有通过,就再试一次,这一次就上调通过率,每次上调20
+     								accuracy += 20;
+     								start();
+     							}else if(msg==1){
+   									//TODO
+								}
+    						}
+    					});
+					}	
+				</script>
+			</head>
+			<body onload="start();">123</body>
+		</html>
+		';
 		echo $html;
 	}
 	
 	
 	/**
 	 * 模拟某一个用户做了所有关卡
-	 * 直接调用上一个函数实现
-	 * 
-	 * @param username 用户名
+	 * 只对应某一个科目
 	 * */
-	public function simulate1UserDoAllLevel(){
+	public function simulate1UserDoAllLevelsOnSingleSubject(){
+		$html = '
+		<html>
+			<head>
+				<script type="text/javascript" src="../../../../libs/jquery-1.4.2.js"></script>
+				<script type="text/javascript">
+					var level = 1;
+					var accuracy = 10;
+					var start = function(){
+						$.ajax({
+							 type : "post"
+							,url : "data4test.php?function=simulate1UserDo1Level"
+							,data : {	 username:"admin"
+										,level:level
+										,subject:"CET4"
+										,accuracy:accuracy}
+													
+							,success : function(msg) {
+     							if(msg==0){
+     								//如果没有通过,就再试一次,这一次就上调通过率,每次上调20
+     								accuracy += 20;
+     								start();
+     							}else if(msg==1){
+     								//如果成功通过了这个关卡,就开始模拟下一个关卡
+     								level ++;
+     								accuracy = 10;
+     								start();
+								}
+    						}
+    					});
+					}	
+				</script>
+			</head>
+			<body onload="start();">123</body>
+		</html>
+		';
 		//TODO
+		echo $html;
+	}
+	
+	/**
+	 * 模拟某一个用户做了所有关卡
+	 * 对应所有科目
+	 * */
+	public function simulate1UserDoAllLevels(){
+		$html = '
+		<html>
+			<head>
+				<script type="text/javascript" src="../../../../libs/jquery-1.4.2.js"></script>
+				<script type="text/javascript">
+					var level = 1;
+					var accuracy = 10;
+					var subjects = ["CET4","CET6","GRE"];
+					var subjectIndex = 0;
+					var start = function(){
+						$.ajax({
+							 type : "post"
+							,url : "data4test.php?function=simulate1UserDo1Level"
+							,data : {	 username:"admin"
+										,level:level
+										,subject:subjects[subjectIndex]
+										,accuracy:accuracy}
+													
+							,success : function(msg) {
+     							if(msg==0){
+     								//如果没有通过,就再试一次,这一次就上调通过率,每次上调20
+     								accuracy += 20;
+     								start();
+     							}else if(msg==1){
+     								//如果成功通过了这个关卡,就开始模拟下一个关卡
+     								level ++;
+     								accuracy = 10;
+     								start();
+								}else if(msg==(-1) ){
+									//看来他已经成功的通过了这个科目,那就跳到下一个科目
+									subjectIndex ++;
+									if(subjectIndex <= subjects.length){
+										accuracy = 10;
+										level = 1;
+										start();
+									}
+								}
+    						}
+    					});
+					}	
+				</script>
+			</head>
+			<body onload="start();">123</body>
+		</html>
+		';
+		//TODO
+		echo $html;
 	}
 	
 	/**
@@ -189,6 +346,7 @@ class oop {
 		//TODO
 	}
 }
+
 $obj = new oop();
-$obj->simulate1UserDo1Level("admin",1,"CET4",70);
+eval('$obj->'.$_REQUEST['function'].'();');
 ?>
