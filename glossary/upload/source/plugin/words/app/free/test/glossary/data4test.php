@@ -142,9 +142,6 @@ class oop {
 		
 		//判断一下此用户这一次模拟关卡有没有通过
 		$data['passed'] = 0;
-		//echo ($data['count_right'] * 100)/count($data['glossary']);
-		//echo "---";
-		//echo number_format($data['passline_level'],2);
 		if( ( ($data['count_right'] * 100)/count($data['glossary']) ) > number_format($data['passline_level'],2) ){
 			$data['passed'] = 1;
 		}
@@ -226,9 +223,7 @@ class oop {
      								//如果没有通过,就再试一次,这一次就上调通过率,每次上调20
      								accuracy += 20;
      								start();
-     							}else if(msg==1){
-   									//TODO
-								}
+     							}
     						}
     					});
 					}	
@@ -238,8 +233,7 @@ class oop {
 		</html>
 		';
 		echo $html;
-	}
-	
+	}	
 	
 	/**
 	 * 模拟某一个用户做了所有关卡
@@ -343,7 +337,64 @@ class oop {
 	 * 模拟所有用户做了所有关卡
 	 * */
 	public function simulateAllUserDoAllLevel(){
+	$html = '
+		<html>
+			<head>
+				<script type="text/javascript" src="../../../../libs/jquery-1.4.2.js"></script>
+				<script type="text/javascript">
+					var level = 1;
+					var accuracy = 10;
+					var subjects = ["CET4","CET6","GRE"];
+					var subjectIndex = 0;
+					var users = ["admin","user1","2010111044"];
+					var userIndex = 0;					
+					var start = function(){
+						$.ajax({
+							 type : "post"
+							,url : "data4test.php?function=simulate1UserDo1Level"
+							,data : {	 username:"admin"
+										,level:level
+										,subject:subjects[subjectIndex]
+										,accuracy:accuracy}
+													
+							,success : function(msg) {
+     							if(msg==0){
+     								//如果没有通过,就再试一次,这一次就上调通过率,每次上调20
+     								accuracy += 20;
+     								start();
+     							}else if(msg==1){
+     								//如果成功通过了这个关卡,就开始模拟下一个关卡
+     								level ++;
+     								accuracy = 10;
+     								start();
+								}else if(msg==(-1) ){
+									//看来他已经成功的通过了这个科目,那就跳到下一个科目
+									subjectIndex ++;
+									if(subjectIndex <= subjects.length){
+										accuracy = 10;
+										level = 1;
+										start();
+									}else{
+										//他已经完成了所有科目?
+										//那就开始下一个用户
+										if(userIndex <= users.length){
+											accuracy = 10;
+											level = 1;
+											subjectIndex = 0;
+											start();
+										}
+									}
+								}
+    						}
+    					});
+					}	
+				</script>
+			</head>
+			<body onload="start();">123</body>
+		</html>
+		';
 		//TODO
+		echo $html;
 	}
 }
 
