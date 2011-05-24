@@ -115,6 +115,38 @@ class install extends wls {
 		$obj2->importAll($this->cfg->filePath."demodata/GLOSSARY_CET4.xls");
 		$obj2->caculateLevelWordCounts();
 		
+		$obj = new m_glossary();
+		$obj->importAll($this->cfg->filePath."demodata/GLOSSARY_CET6.xls");
+		
+		$obj2 = new m_glossary_levels();
+		$obj2->phpexcel = $obj->phpexcel;
+		$obj2->importAll($this->cfg->filePath."demodata/GLOSSARY_CET6.xls");
+		$obj2->caculateLevelWordCounts();
+		
+		$obj = new m_glossary();
+		$obj->importAll($this->cfg->filePath."demodata/GLOSSARY_GRE.xls");
+		
+		$obj2 = new m_glossary_levels();
+		$obj2->phpexcel = $obj->phpexcel;
+		$obj2->importAll($this->cfg->filePath."demodata/GLOSSARY_GRE.xls");
+		$obj2->caculateLevelWordCounts();
+		
+		$obj = new m_glossary();
+		$obj->importAll($this->cfg->filePath."demodata/GLOSSARY_TOEFL.xls");
+		
+		$obj2 = new m_glossary_levels();
+		$obj2->phpexcel = $obj->phpexcel;
+		$obj2->importAll($this->cfg->filePath."demodata/GLOSSARY_TOEFL.xls");
+		$obj2->caculateLevelWordCounts();
+		
+		$obj = new m_glossary();
+		$obj->importAll($this->cfg->filePath."demodata/GLOSSARY_IELTS.xls");
+		
+		$obj2 = new m_glossary_levels();
+		$obj2->phpexcel = $obj->phpexcel;
+		$obj2->importAll($this->cfg->filePath."demodata/GLOSSARY_IELTS.xls");
+		$obj2->caculateLevelWordCounts();
+		
 		$obj = new m_glossary_levels_logs();
 		$obj->sendFreeLevelsToEveryone();		
 		exit();
