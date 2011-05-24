@@ -142,6 +142,7 @@ class oop {
 		
 		//判断一下此用户这一次模拟关卡有没有通过
 		$data['passed'] = 0;
+		if( count($data['glossary'])==0 )die('-1');
 		if( ( ($data['count_right'] * 100)/count($data['glossary']) ) > number_format($data['passline_level'],2) ){
 			$data['passed'] = 1;
 		}
@@ -161,7 +162,6 @@ class oop {
 				if($temp['status']==0){
 					//是首次通过关卡,就要修改关卡日志的 通过时间 和 日志状态
 					$sql3 = "update pre_wls_glossary_levels_logs set status = 1 ,time_passed = '".$data['date']."' where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
-					
 					mysql_query($sql3,$conn);
 					//然后再开通此关卡的后续关卡,如果有的话
 					$sql4 = "select id from pre_wls_glossary_levels where subject = '".$data['id_subject']."' and level = ".($level+1);
@@ -182,8 +182,14 @@ class oop {
 								)";
 						mysql_query($sql5,$conn);
 					}else{
+						//如果没有后续关卡,输出 -1
 						die( '-1' );
 					}
+					//然后再累加关卡的通过人数
+					$sql5 = "update pre_wls_glossary_levels set count_passed = count_passed + 1 where subject = '".$data['id_subject']."' and level = ".$level;
+					mysql_query($sql5,$conn);
+					$sql5 = "update pre_wls_glossary_levels set count_joined = count_joined + 1 where subject = '".$data['id_subject']."' and level = ".($level+1);
+					mysql_query($sql5,$conn);					
 				}
 			}else{
 				$sql2 = "update pre_wls_glossary_levels_logs set count_wrong = count_wrong + 1 where subject = '".$data['id_subject']."' and level = ".$level." and id_user = ".$data['id_user'];
@@ -291,7 +297,7 @@ class oop {
 				<script type="text/javascript">
 					var level = 1;
 					var accuracy = 10;
-					var subjects = ["CET4","CET6","GRE"];
+					var subjects = ["TOEFL","CET6","GRE","IELTS"];
 					var subjectIndex = 0;
 					var start = function(){
 						$.ajax({
@@ -340,15 +346,20 @@ class oop {
 	$html = '
 		<html>
 			<head>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				<script type="text/javascript" src="../../../../libs/jquery-1.4.2.js"></script>
 				<script type="text/javascript">
 					var level = 1;
 					var accuracy = 10;
-					var subjects = ["CET4","CET6","GRE"];
+					var subjects = ["TOEFL","CET6","GRE","IELTS"];
 					var subjectIndex = 0;
 					var users = ["admin","user1","2010111044"];
-					var userIndex = 0;					
+					var userIndex = 0;		
+	
 					var start = function(){
+						$("#user").html(users[userIndex]);
+						$("#level").html(level);
+						$("#subject").html(subjects[subjectIndex]);		
 						$.ajax({
 							 type : "post"
 							,url : "data4test.php?function=simulate1UserDo1Level"
@@ -372,14 +383,14 @@ class oop {
 									subjectIndex ++;
 									if(subjectIndex <= subjects.length){
 										accuracy = 10;
-										level = 1;
-										start();
+										level = 0;
+										start();										
 									}else{
 										//他已经完成了所有科目?
 										//那就开始下一个用户
 										if(userIndex <= users.length){
 											accuracy = 10;
-											level = 1;
+											level = 0;
 											subjectIndex = 0;
 											start();
 										}
@@ -390,10 +401,13 @@ class oop {
 					}	
 				</script>
 			</head>
-			<body onload="start();">123</body>
+			<body onload="start();">
+				<div>当前用户:<span id="user"></span></div>
+				<div>当前关卡:<span id="level"></span></div>
+				<div>当前科目:<span id="subject"></span></div>
+			</body>
 		</html>
 		';
-		//TODO
 		echo $html;
 	}
 }
