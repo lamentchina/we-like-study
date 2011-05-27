@@ -1,0 +1,60 @@
+CREATE PROCEDURE wls_glossary_logs_add (
+	 IN in_id_word INT 
+	,IN in_id_user INT 
+	,IN in_logtime DATETIME
+	,IN in_count_right INT 
+)
+BEGIN
+	DECLARE glossary_id INT DEFAULT 0 ;
+	DECLARE tmpname varchar(20) default '' ;
+	/*如果这个单词-用户相关的记录已经存在,就更新对错记录,否则就新增一条*/
+	DECLARE glossary_logs_c CURSOR
+		FOR
+		SELECT id FROM pre_wls_glossary_logs WHERE id_word  = in_id_word AND id_user = in_id_user;
+		
+	/*根据单词编号得到单词信息*/
+	DECLARE glossary_c CURSOR
+		FOR
+		SELECT word,translation,subject,level FROM pre_wls_glossary_logs WHERE id = in_id_word ;
+		
+	/*根据用户编号得到用户信息*/
+	DECLARE user_c CURSOR
+		FOR
+		SELECT word,translation,subject,level FROM pre_wls_glossary_logs WHERE id = in_id_word ;
+		
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET tmpname = null;
+	
+	OPEN glossary_logs_c;
+	FETCH glossary_c INTO glossary_id;
+		IF ( tmpname IS NOT NULL) THEN
+			/*有记录,则更新*/
+			IF in_count_right = 1 THEN 
+				UPDATE pre_wls_glossary_logs SET count_right = count_right + 1 WHERE id_word  = in_id_word AND id_user = in_id_user; 
+			ELSE
+				UPDATE pre_wls_glossary_logs SET count_wrong = count_wrong + 1 WHERE id_word  = in_id_word AND id_user = in_id_user; 
+			END IF;
+		ELSE
+			INSERT INTO pre_wls_glossary_logs (
+						 id_word
+						,subject
+						,level
+						,id_user
+						,username
+						,word
+						,translation
+						,logtime
+						,count_right
+				) VALUES (
+						 in_id_word
+						,in_subject
+						,in_level 
+						,in_id_user
+						,in_username 
+						,in_word	
+						,in_translation
+						,in_logtime
+						,1
+				);	
+		END IF;
+	CLOSE glossary_c;
+END
