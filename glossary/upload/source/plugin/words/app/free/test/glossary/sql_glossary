@@ -3,7 +3,6 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `wls_glossary_test_simulate1UserDo1L
 	IN in_gSubject VARCHAR(200) ,
 	IN in_accuracy FLOAT)
 BEGIN
-	BEGIN
 	DECLARE user_id INT;/*用户编号*/
 	DECLARE subject_id_level VARCHAR(30);/*科目级别编号*/
 	DECLARE glossary_level_money INT;/*关卡金币*/
@@ -14,6 +13,7 @@ BEGIN
 	DECLARE glossary_logs_id_word INT;
 	DECLARE glossary_logs_word VARCHAR(50);
 	DECLARE glossary_logs_translation VARCHAR(200);
+	DECLARE glossary_logs_right INT;
 
 	DECLARE temp_index INT;
 	DECLARE tmpname varchar(20) default '' ;
@@ -61,29 +61,12 @@ BEGIN
 	OPEN glossary_c;
 	FETCH glossary_c INTO glossary_logs_id_word,glossary_logs_word,glossary_logs_translation;
 		WHILE ( tmpname IS NOT NULL) DO
-			SELECT glossary_logs_id_word,temp_index;
-			insert into pre_wls_glossary_logs (
-						 id_word
-						,subject
-						,level
-						,id_user
-						,username
-						,word
-						,translation
-						,logtime
-						,count_right
-				) values (
-						 glossary_logs_id_word
-						,subject_id_level
-						,in_gLevel 
-						,user_id
-						,in_username 
-						,glossary_logs_word	
-						,glossary_logs_translation
-						,timeDoThis
-						,1
-				);	
-
+			IF RAND()>(in_accuracy/100) THEN
+				SET glossary_logs_right = 1;
+			ELSE
+				SET glossary_logs_right = 0;
+			END IF;
+			CALL wls_glossary_logs_add(glossary_logs_id_word,user_id,timeDoThis,glossary_logs_right);
 			FETCH glossary_c INTO glossary_logs_id_word,glossary_logs_word,glossary_logs_translation;
 		END WHILE;
 	CLOSE glossary_c;
