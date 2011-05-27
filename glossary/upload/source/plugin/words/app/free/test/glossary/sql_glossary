@@ -3,6 +3,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `wls_glossary_test_simulate1UserDo1L
 	IN in_gSubject VARCHAR(200) ,
 	IN in_accuracy FLOAT)
 BEGIN
+	BEGIN
 	DECLARE user_id INT;/*用户编号*/
 	DECLARE subject_id_level VARCHAR(30);/*科目级别编号*/
 	DECLARE glossary_level_money INT;/*关卡金币*/
@@ -14,9 +15,8 @@ BEGIN
 	DECLARE glossary_logs_word VARCHAR(50);
 	DECLARE glossary_logs_translation VARCHAR(200);
 
-	DECLARE stopFlag int;
-	
-	
+	DECLARE temp_index INT;
+	DECLARE tmpname varchar(20) default '' ;
 
 	/*为了得到用户编号*/
 	DECLARE user_id_c CURSOR
@@ -38,7 +38,7 @@ BEGIN
 		FOR	
 		SELECT id,word,translation FROM pre_wls_glossary WHERE subject = subject_id_level AND level = in_gLevel ;
 		
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET stopFlag=1;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET tmpname = null;
 
 	/*根据用户名得到用户编号*/
 	OPEN user_id_c;
@@ -55,15 +55,14 @@ BEGIN
 		FETCH glossary_level_c INTO glossary_logs_id_word,glossary_level_passline;
 	CLOSE glossary_level_c;
 	
-
 	SET timeDoThis = DATE_ADD(NOW(), INTERVAL ( (-1)*RAND()*( in_gLevel +1) - in_gLevel ) DAY);
+	SET temp_index = 1;
 
-	/*用游标得到关卡金币跟分数线*/
 	OPEN glossary_c;
-		REPEAT
-			FETCH glossary_c INTO glossary_logs_id_word,glossary_logs_word,glossary_logs_translation;
-			BEGIN
-				insert into pre_wls_glossary_logs (
+	FETCH glossary_c INTO glossary_logs_id_word,glossary_logs_word,glossary_logs_translation;
+		WHILE ( tmpname IS NOT NULL) DO
+			SELECT glossary_logs_id_word,temp_index;
+			insert into pre_wls_glossary_logs (
 						 id_word
 						,subject
 						,level
@@ -83,11 +82,9 @@ BEGIN
 						,glossary_logs_translation
 						,timeDoThis
 						,1
-				);		
-			END;
-		UNTIL stopFlag = 1
-		END REPEAT;
-	CLOSE glossary_c;
+				);	
 
-	SELECT user_id,subject_id_level,glossary_level_money,glossary_level_passline,timeDoThis;
+			FETCH glossary_c INTO glossary_logs_id_word,glossary_logs_word,glossary_logs_translation;
+		END WHILE;
+	CLOSE glossary_c;
 END

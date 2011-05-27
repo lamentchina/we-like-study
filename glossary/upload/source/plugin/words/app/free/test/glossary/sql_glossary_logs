@@ -6,6 +6,11 @@ CREATE PROCEDURE wls_glossary_logs_add (
 )
 BEGIN
 	DECLARE glossary_id INT DEFAULT 0 ;
+	DECLARE glossary_logs_word VARCHAR(200);
+	DECLARE glossary_logs_translation VARCHAR(200);
+	DECLARE glossary_logs_subject VARCHAR(200);
+	DECLARE glossary_logs_level INT;
+	DECLARE glossary_logs_username VARCHAR(200);
 	DECLARE tmpname varchar(20) default '' ;
 	/*如果这个单词-用户相关的记录已经存在,就更新对错记录,否则就新增一条*/
 	DECLARE glossary_logs_c CURSOR
@@ -15,17 +20,26 @@ BEGIN
 	/*根据单词编号得到单词信息*/
 	DECLARE glossary_c CURSOR
 		FOR
-		SELECT word,translation,subject,level FROM pre_wls_glossary_logs WHERE id = in_id_word ;
+		SELECT word,translation,subject,level FROM pre_wls_glossary WHERE id = in_id_word ;
 		
 	/*根据用户编号得到用户信息*/
 	DECLARE user_c CURSOR
 		FOR
-		SELECT word,translation,subject,level FROM pre_wls_glossary_logs WHERE id = in_id_word ;
+		SELECT username FROM pre_wls_user WHERE id = in_id_user ;
 		
 	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET tmpname = null;
 	
+	/*获得单词信息*/
+	OPEN glossary_c;
+		FETCH glossary_c INTO glossary_logs_word,glossary_logs_translation,glossary_logs_subject,glossary_logs_level;
+	CLOSE glossary_c;
+	
+	OPEN user_c;
+		FETCH user_c INTO glossary_logs_username;
+	CLOSE user_c;
+	
 	OPEN glossary_logs_c;
-	FETCH glossary_c INTO glossary_id;
+	FETCH glossary_logs_c INTO glossary_id;
 		IF ( tmpname IS NOT NULL) THEN
 			/*有记录,则更新*/
 			IF in_count_right = 1 THEN 
@@ -46,15 +60,15 @@ BEGIN
 						,count_right
 				) VALUES (
 						 in_id_word
-						,in_subject
-						,in_level 
+						,glossary_logs_subject
+						,glossary_logs_level 
 						,in_id_user
-						,in_username 
-						,in_word	
-						,in_translation
+						,glossary_logs_username 
+						,glossary_logs_word	
+						,glossary_logs_translation
 						,in_logtime
 						,1
 				);	
 		END IF;
-	CLOSE glossary_c;
+	CLOSE glossary_logs_c;
 END
