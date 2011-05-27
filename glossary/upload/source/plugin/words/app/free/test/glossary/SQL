@@ -1,0 +1,93 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `wls_glossary_test_simulate1UserDo1Level`(IN in_username VARCHAR(200) ,
+	IN in_gLevel INT ,
+	IN in_gSubject VARCHAR(200) ,
+	IN in_accuracy FLOAT)
+BEGIN
+	DECLARE user_id INT;/*用户编号*/
+	DECLARE subject_id_level VARCHAR(30);/*科目级别编号*/
+	DECLARE glossary_level_money INT;/*关卡金币*/
+	DECLARE glossary_level_passline INT;/*关卡分数线*/
+	DECLARE timeDoThis DATETIME;
+
+	/*在插入日志文件时需要使用*/
+	DECLARE glossary_logs_id_word INT;
+	DECLARE glossary_logs_word VARCHAR(50);
+	DECLARE glossary_logs_translation VARCHAR(200);
+
+	DECLARE stopFlag int;
+	
+	
+
+	/*为了得到用户编号*/
+	DECLARE user_id_c CURSOR
+		FOR
+		SELECT id FROM pre_wls_user WHERE username = in_username   ;
+	
+	/*为了得到科目编号*/
+	DECLARE subject_id_level_c CURSOR
+		FOR
+		SELECT id_level FROM pre_wls_subject WHERE name = in_gSubject ;
+	
+	/*为了得到关卡金币和关卡分数线*/
+	DECLARE glossary_level_c CURSOR
+		FOR
+		SELECT money,passline FROM pre_wls_glossary_levels WHERE subject = subject_id_level AND level = in_gLevel ;
+
+	/*单词游标*/
+	DECLARE glossary_c CURSOR
+		FOR	
+		SELECT id,word,translation FROM pre_wls_glossary WHERE subject = subject_id_level AND level = in_gLevel ;
+		
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET stopFlag=1;
+
+	/*根据用户名得到用户编号*/
+	OPEN user_id_c;
+		FETCH user_id_c INTO user_id;
+	CLOSE user_id_c;
+
+	/*根据科目名得到科目编号*/
+	OPEN subject_id_level_c;
+		FETCH subject_id_level_c INTO subject_id_level;
+	CLOSE subject_id_level_c;
+
+	/*用游标得到关卡金币跟分数线*/
+	OPEN glossary_level_c;
+		FETCH glossary_level_c INTO glossary_logs_id_word,glossary_level_passline;
+	CLOSE glossary_level_c;
+	
+
+	SET timeDoThis = DATE_ADD(NOW(), INTERVAL ( (-1)*RAND()*( in_gLevel +1) - in_gLevel ) DAY);
+
+	/*用游标得到关卡金币跟分数线*/
+	OPEN glossary_c;
+		REPEAT
+			FETCH glossary_c INTO glossary_logs_id_word,glossary_logs_word,glossary_logs_translation;
+			BEGIN
+				insert into pre_wls_glossary_logs (
+						 id_word
+						,subject
+						,level
+						,id_user
+						,username
+						,word
+						,translation
+						,logtime
+						,count_right
+				) values (
+						 glossary_logs_id_word
+						,subject_id_level
+						,in_gLevel 
+						,user_id
+						,in_username 
+						,glossary_logs_word	
+						,glossary_logs_translation
+						,timeDoThis
+						,1
+				);		
+			END;
+		UNTIL stopFlag = 1
+		END REPEAT;
+	CLOSE glossary_c;
+
+	SELECT user_id,subject_id_level,glossary_level_money,glossary_level_passline,timeDoThis;
+END

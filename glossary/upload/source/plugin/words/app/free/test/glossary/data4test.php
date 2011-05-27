@@ -381,17 +381,19 @@ class oop {
 								}else if(msg==(-1) ){
 									//看来他已经成功的通过了这个科目,那就跳到下一个科目
 									subjectIndex ++;
-									if(subjectIndex <= subjects.length){
+									if(subjectIndex <= (subjects.length-1) ){
 										accuracy = 10;
-										level = 0;
+										level = 1;
 										start();										
 									}else{
 										//他已经完成了所有科目?
 										//那就开始下一个用户
-										if(userIndex <= users.length){
+										userIndex ++;
+										if(userIndex <= (users.length-1) ){
 											accuracy = 10;
-											level = 0;
+											level = 1;
 											subjectIndex = 0;
+											
 											start();
 										}
 									}
