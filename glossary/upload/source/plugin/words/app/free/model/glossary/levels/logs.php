@@ -348,10 +348,8 @@ class m_glossary_levels_logs extends wls implements dbtable{
 	public function whatAreTheyDoing(){
 		$pfx = $this->cfg->dbprefix;
 		$conn = $this->conn();
-		
+		//TODO
 		$sql = "";
 	}
-	
-
 }
 ?>
