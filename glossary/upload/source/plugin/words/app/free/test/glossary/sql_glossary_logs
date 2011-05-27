@@ -58,6 +58,7 @@ BEGIN
 						,translation
 						,logtime
 						,count_right
+						,count_wrong
 				) VALUES (
 						 in_id_word
 						,glossary_logs_subject
@@ -67,7 +68,8 @@ BEGIN
 						,glossary_logs_word	
 						,glossary_logs_translation
 						,in_logtime
-						,1
+						,in_count_right
+						,(1-in_count_right)
 				);	
 		END IF;
 	CLOSE glossary_logs_c;
