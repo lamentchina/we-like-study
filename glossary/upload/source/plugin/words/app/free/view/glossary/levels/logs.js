@@ -352,7 +352,7 @@ wls.glossary.levels.logs = Ext.extend(wls.glossary.levels, {
 								}
 								var level = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.level;
 								var subject = Ext.getCmp(domid).getSelectionModel().selections.items[0].data.subject;
-								window.location.href = ("../../all.html?subjectid="+subject+"&level="+level); 
+								window.location.href = ("../../grid.html?subjectid="+subject+"&level="+level); 
 							}
 						});
 					}
