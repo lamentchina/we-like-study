@@ -1,0 +1,94 @@
+CREATE PROCEDURE wls_glossary_levels_logs_add (
+	 IN in_level INT 
+	,IN in_id_user INT 
+	,IN id_subject VARCHAR(200)
+	,IN passed INT
+	,IN logTime DATETIME
+)
+BEGIN
+	DECLARE glossary_levels_logs_id INT DEFAULT 0 ;
+	DECLARE glossary_levels_logs_status INT DEFAULT 0;
+	
+	/*用于检查有没有后续关卡*/
+	DECLARE glossary_levels_id INT;
+	DECLARE tmpname varchar(20) default '' ;
+	
+	/*如果这个单词-用户相关的记录已经存在,就更新对错记录,否则就新增一条*/
+	DECLARE glossary_levels_logs_c CURSOR
+		FOR
+		SELECT id,status FROM pre_wls_glossary_levels_logs WHERE level  = in_level AND id_user = in_id_user AND subject = id_subject;
+
+	DECLARE glossary_levels_c CURSOR
+		FOR
+		SELECT id FROM pre_wls_glossary_levels WHERE level  = (in_level + 1) AND subject = id_subject;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET tmpname = null;
+	
+	OPEN glossary_levels_logs_c;
+		FETCH glossary_levels_logs_c INTO glossary_levels_logs_id , glossary_levels_logs_status;
+		IF ( tmpname IS NOT NULL) THEN
+			/*有记录,则更新*/
+			IF passed = 1 THEN 
+				/*通过了,就更新状态,并累加通过次数*/
+				UPDATE pre_wls_glossary_levels_logs SET status = 1, count_right = count_right + 1 WHERE level  = in_level AND id_user = in_id_user AND subject = id_subject;
+				/*状态值从 0 变成 1,即第一次通过这个关卡,就新增一条后续关卡*/
+				IF glossary_levels_logs_status = 0 THEN
+					OPEN glossary_levels_c;			
+						FETCH glossary_levels_c INTO glossary_levels_id;
+						IF ( tmpname IS NOT NULL) THEN
+							INSERT INTO pre_wls_glossary_levels_logs (
+								 time_joined
+								,subject
+								,status
+								,level
+								,id_user
+							) VALUES (
+								 logTime
+								,id_subject
+								,0
+								,( in_level+1 )
+								,in_id_user
+							);
+						END IF;			
+					CLOSE glossary_levels_c;
+					
+					/*同时,更新关卡的通过时间*/
+					UPDATE pre_wls_glossary_levels_logs SET time_passed = logTime;
+				END IF;				
+			ELSE
+				UPDATE pre_wls_glossary_levels_logs SET count_wrong = count_wrong + 1 WHERE level  = in_level AND id_user = in_id_user AND subject = id_subject; 
+			END IF;			
+		END IF;
+	CLOSE glossary_levels_logs_c;
+END
+
+/*创建触发器,如果状态值从 0 变成 1,即第一次通过这个关卡,就新增一条后续关卡*/
+DROP TRIGGER wls_glossary_levels_logs_add_after
+
+CREATE TRIGGER wls_glossary_levels_logs_add_after AFTER UPDATE ON pre_wls_glossary_levels_logs
+FOR EACH ROW 
+BEGIN
+	/*用于检查有没有后续关卡*/
+	DECLARE glossary_levels_id INT;
+	DECLARE tmpname varchar(20) default '' ;
+	DECLARE glossary_levels_c CURSOR
+		FOR
+		SELECT id FROM pre_wls_glossary_levels WHERE level  = (OLD.level + 1) AND subject = OLD.subject;
+	DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET tmpname = null;
+	
+	/*
+	IF OLD.status = 0 THEN
+		UPDATE pre_wls_glossary_levels_logs SET count_right = 100 WHERE id = 1;
+		IF NEW.status = 1 THEN
+			
+			OPEN glossary_levels_c;
+			
+				FETCH glossary_levels_c INTO glossary_levels_id;
+				IF ( tmpname IS NOT NULL) THEN
+					UPDATE pre_wls_glossary_levels_logs SET OLD.level = 1000;
+				END IF;
+			
+			CLOSE glossary_levels_c;
+		END IF;
+	END IF;
+	*/
+END

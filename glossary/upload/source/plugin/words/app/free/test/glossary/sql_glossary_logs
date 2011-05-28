@@ -74,3 +74,11 @@ BEGIN
 		END IF;
 	CLOSE glossary_logs_c;
 END
+
+DROP TRIGGER wls_glossary_logs_add_after
+
+CREATE TRIGGER wls_glossary_logs_add_after AFTER INSERT ON pre_wls_glossary_logs
+FOR EACH ROW 
+BEGIN
+	UPDATE pre_wls_user SET glossary_wrong = glossary_wrong + 1 WHERE id = NEW.id_user;
+END
