@@ -363,10 +363,10 @@ class oop {
 						$.ajax({
 							 type : "post"
 							,url : "data4test.php?function=simulate1UserDo1Level"
-							,data : {	 username:"admin"
-										,level:level
-										,subject:subjects[subjectIndex]
-										,accuracy:accuracy}
+							,data : {	 username : users[userIndex]
+										,level : level
+										,subject : subjects[subjectIndex]
+										,accuracy : accuracy}
 													
 							,success : function(msg) {
      							if(msg==0){
