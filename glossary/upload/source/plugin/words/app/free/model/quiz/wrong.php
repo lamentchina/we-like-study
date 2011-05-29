@@ -130,9 +130,9 @@ class m_quiz_wrong extends wls implements dbtable{
 
 		$arr = array();
 		while($temp = mysql_fetch_assoc($res)){
-			$temp['timedif'] = $this->t->getTimeDif($temp['date_created']); 
-			$temp['title_question'] = $this->t->split_title($temp['title_question'],10);
-			$temp['type'] = $this->t->formatQuesType($temp['type']); 
+			$temp['timedif'] = $this->tool->getTimeDif($temp['date_created']); 
+			$temp['title_question'] = $this->tool->split_title($temp['title_question'],10);
+			$temp['type'] = $this->tool->formatQuesType($temp['type']); 
 			$arr[] = $temp;
 		}
 

@@ -129,7 +129,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					cm : cm,
 					id : domid,
 					width : '100%',
-					height : 430,
+					height : 500,
 					tbar : tb,
 					bbar : new Ext.PagingToolbar({
 								store : store,
@@ -195,7 +195,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 				});
 		return grid;
 	},
-	getMyList : function(domid) {
+	getMyGrid : function(domid) {
 		var thisObj = this;
 		var store = new Ext.data.JsonStore({
 					autoDestroy : true,
@@ -236,17 +236,17 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								header : il8n.normal.id,
 								dataIndex : 'id'
 							}, {
-								header : il8n.normal.subject,
+								header : il8n.subject.subject,
 								dataIndex : 'name_subject'
 							}, {
-								header : il8n.normal.subject+'(id)',
+								header : il8n.subject.subject+'(id)',
 								dataIndex : 'id_level_subject',
 								hidden : true
 							}, {
-								header : il8n.normal.paper,
+								header : il8n.quiz.paper,
 								dataIndex : 'title_quiz'
 							}, {
-								header : il8n.normal.question,
+								header : il8n.quiz.Qes_Title,
 								dataIndex : 'title_question'
 							}, {
 								header : il8n.normal.date_created+(2),
@@ -256,10 +256,10 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 								header : il8n.normal.date_created,
 								dataIndex : 'timedif'
 							}, {
-								header : il8n.normal.count_wrong,
+								header : il8n.quiz.count_wrong,
 								dataIndex : 'count'
 							}, {
-								header : il8n.normal.Qes_Type,
+								header : il8n.quiz.Qes_Type,
 								dataIndex : 'type',
 								hidden : true
 							}]
@@ -274,7 +274,7 @@ wls.quiz.wrong = Ext.extend(wls.quiz, {
 					cm : cm,
 					id : domid,
 					width : '100%',
-					height : 400,
+					height : 430,
 					tbar : tb,
 					bbar : new Ext.PagingToolbar({
 								store : store,

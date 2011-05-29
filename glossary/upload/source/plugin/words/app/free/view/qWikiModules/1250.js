@@ -21,7 +21,7 @@ class_1250 = Ext.extend(Ext.app.Module, {
 								iconCls : 'icon_wrongbook_16_16',
 								iconClsGhostBar : 'icon_wrongbook_32_32',
 								layout : 'fit',
-								html : "<iframe src ='quiz/wrong/grid.html' width='100%' height='430' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
+								html : "<iframe src ='quiz/wrong/myGrid.html' width='100%' height='430' frameborder='no' border='0' marginwidth='0' marginheight='0' />"
 							});
 				}
 				win.show();

@@ -65,7 +65,7 @@ class install extends wls {
 		mkdir($this->cfg->filePath."cache/quizlog/", 0777);
 		mkdir($this->cfg->filePath."cache/user2qwiki/", 0777);		
 
-		/*
+		
 		$obj = new m_quiz_paper();
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/account.xls");
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/paper/CET4.xls");
@@ -92,7 +92,7 @@ class install extends wls {
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/log1.xls");
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/log2.xls");
 		$obj->importOne($this->cfg->filePath."demodata/zh-cn/log/log3.xls");
-		*/
+		
 		
 		$obj = new m_glossary();
 		$obj->create();
@@ -107,6 +107,7 @@ class install extends wls {
 		$obj->create();			
 		//exit();
 		
+		/*
 		$obj = new m_glossary();
 		$obj->importAll($this->cfg->filePath."demodata/GLOSSARY_CET4.xls");
 		
@@ -149,6 +150,7 @@ class install extends wls {
 		
 		$obj = new m_glossary_levels_logs();
 		$obj->sendFreeLevelsToEveryone();		
+		*/
 		exit();
 		
 		echo '
