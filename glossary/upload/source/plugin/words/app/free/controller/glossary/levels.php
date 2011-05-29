@@ -13,6 +13,7 @@ class glossary_levels extends wls{
 	}	
 	
 	public function getList(){
+		
 		$page = 1;
 		if(isset($_POST['start']))$page = ($_POST['start']+$_POST['limit'])/$_POST['limit'];
 		$pagesize = 20;
