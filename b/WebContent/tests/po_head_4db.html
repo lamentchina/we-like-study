@@ -9,6 +9,14 @@
 <script type="text/javascript"
 	src="../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
 <script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridSorter.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridNodeUI.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridLoader.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridColumns.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGrid.js"></script>
+
 <script type="text/javascript" src="../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../client/extjs-modifies.js"></script>
 <script type="text/javascript" src="../client/il8n.js"></script>
@@ -22,6 +30,7 @@
 Ext.onReady(function() {
 	url.po_head_list = '/b/Server?class=po.Head&function=list'
 	url.po_line_list = '/b/Server?class=po.Line&function=list'
+	url.po_head_workflow = '/b/Server?class=po.Head&function=getWorkFlow';
 	var obj = po.head.list();
 	
 	
