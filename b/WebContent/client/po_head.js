@@ -288,7 +288,8 @@ po.head = {
 	detail : function(po_id){		
 		var lineList = po.line.list(po_id);
 		lineList.title = il8n.po.line.list;
-
+		var tree = po.head.getWorkFlow(po_id);
+		tree.title = il8n.workFlow.gantt;
 		var tabPanel = new Ext.TabPanel({   
 			id: 'p_h_detail'+po_id,   
 			width: 500,   
@@ -300,7 +301,7 @@ po.head = {
 				style: 'padding:5'
 			},   
 			items:[   
-				lineList
+				lineList,tree
 			],   
 			enableTabScroll: true  
 		});    
