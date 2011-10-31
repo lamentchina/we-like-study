@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css"
+	href="../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript"
+	src="../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript">
+	Ext.onReady(function() {
+		var store = new Ext.data.JsonStore( {
+			autoDestroy : true,
+			proxy : new Ext.data.HttpProxy( {
+				url : '/b/abc',
+				method : 'GET'
+			}),
+			root : 'data',
+			remoteSort : true,
+			idProperty : 'id',
+			fields : [ 'id', 'trade_no', 'proj_code', 'task_code', 'act_qty',
+					'acct_flag', 'mtl_code', 'batch_no' ]
+		});
+		store.load();
+		var cm = new Ext.grid.ColumnModel( {
+			defaults : {
+				sortable : true
+			},
+			columns : [ {
+				header : 'trade_no',
+				dataIndex : 'trade_no'
+			}, {
+				header : 'id',
+				dataIndex : 'id'
+
+			}, {
+				header : 'proj_code',
+				dataIndex : 'proj_code'
+
+			}, {
+				header : 'task_code',
+				dataIndex : 'task_code'
+
+			}, {
+				header : 'act_qty',
+				dataIndex : 'act_qty'
+
+			}, {
+				header : 'acct_flag',
+				dataIndex : 'acct_flag'
+
+			}, {
+				header : 'mtl_code',
+				dataIndex : 'mtl_code'
+
+			}, {
+				header : 'batch_no',
+				dataIndex : 'batch_no'
+
+			} ]
+		});
+
+		var grid = new Ext.grid.GridPanel( {
+			store : store,
+			cm : cm,
+			height : 350,
+			width : '95%',
+			title : '同步失败发料明细列表',
+			renderTo : 'grid-example',
+			bbar : new Ext.PagingToolbar( {
+				store : store,
+				pageSize : 15,
+				displayInfo : true
+			})
+		});
+
+	});
+</script>
+</head>
+<body>
+<div id='grid-example'></div>
+</body>
+</html>

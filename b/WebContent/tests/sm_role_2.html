@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css"
+	href="../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript"
+	src="../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridSorter.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridNodeUI.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridLoader.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGridColumns.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/examples/ux/treegrid/TreeGrid.js"></script>
+
+<script type="text/javascript" src="../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../client/config.js"></script>
+<script type="text/javascript" src="../client/sm.js"></script>
+<script type="text/javascript" src="../client/sm_role.js"></script>
+<script type="text/javascript">
+
+
+Ext.onReady(function() {
+	url.sm_role_mine = 'data/sm_role_myrole.txt';
+	url.sm_role_permissions2save = 'data/sm_role_permissions2save.txt?1=1';
+	url.sm_role_permissionsTree = 'data/sm_role_tree.txt?1=1';
+	url.sm_role_permissionsTree4Edit = 'data/sm_role_tree_4e.txt?1=1';
+	url.sm_role_mine = 'data/sm_role_myrole.txt';
+	url.sm_role_list = 'data/sm_role_list_2.txt?1=1'
+	
+	var obj = sm.role.list();
+	sm.role.setToolBar('s_r_list_tb','100102,10010202');
+	
+	obj.region = 'center';
+	var viewport = new Ext.Viewport({
+		layout:'border',
+		items:[obj]	                
+    });
+});
+</script>
+</head>
+<body>
+</body>
+</html>

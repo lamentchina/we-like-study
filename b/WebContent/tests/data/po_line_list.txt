@@ -1,0 +1,33 @@
+﻿{
+	 "page" : "1"
+	,"total" : "1"
+	,"pagesize" : "15"
+	,"data" :[
+		 {
+			 "id" : "2"
+			,"proj_code" : "A4456604"
+			,"proj_name" : "杭州某某某项目"
+			,"task_code" : "21.34.113"
+			,"task_name" : "杭州某某街135号"
+			,"mtl_code" : "NET-FIBER-456X-20100807"
+			,"mtl_name" : "光缆1"
+			,"mtl_price" : "450"
+			,"plan_qty" : "5"
+			,"act_qty" : "5"
+			,"remark" : "某某某 后台修改过"
+		}
+		,{
+			 "id" : "3"
+			,"proj_code" : "A4456604"
+			,"proj_name" : "杭州某某某项目"
+			,"task_code" : "21.34.123"
+			,"task_name" : "杭州某某街175号"
+			,"mtl_code" : "NET-FIBER-456Y-20100807"
+			,"mtl_name" : "光缆2"
+			,"mtl_price" : "150"
+			,"plan_qty" : "6"
+			,"act_qty" : "6"
+			,"remark" : "某某某 后台修改过"
+		}
+	]
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css"
+	href="../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css"
+	href="../client/extjs-modifies.css" />
+<script type="text/javascript"
+	src="../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/src/locale/ext-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../client/extjs-modifies.js"></script>
+<script type="text/javascript" src="../client/il8n.js"></script>
+<script type="text/javascript" src="../client/config.js"></script>
+<script type="text/javascript" src="../client/po.js"></script>
+<script type="text/javascript" src="../client/po_head.js"></script>
+<script type="text/javascript" src="../client/po_line.js"></script>
+<script type="text/javascript">
+
+
+Ext.onReady(function() {
+	url.po_head_list = '/b/Server?class=po.Head&function=list'
+	url.po_line_list = '/b/Server?class=po.Line&function=list'
+	var obj = po.head.list();
+	
+	
+	obj.region = 'center';
+	var viewport = new Ext.Viewport({
+            layout:'border',
+            items:[obj]	                
+    });
+});
+</script>
+</head>
+<body>
+</body>
+</html>
