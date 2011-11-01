@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -16,12 +15,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 
-import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
-
-import com.google.gson.Gson;
 
 /**
  * 一些与系统业务逻辑不想关的,
@@ -159,6 +155,7 @@ public class Util {
 	 * 当然,必须有规定的数据库表列才行
 	 * */
 	public static void importStarndsFromXLS(String path){
+		int i=0;
 		try {
 	        Workbook workbook = Workbook.getWorkbook(new File(path));
 	        Sheet sheet = workbook.getSheet(0);
@@ -168,9 +165,8 @@ public class Util {
 
 	        Connection conn = tools.Db.PoolConn();
 			Statement stmt = conn.createStatement();
-
-	        for(int i=0;i<rows;i++){
-	        	String sql = "insert into standards (code,value,source) values ('"+sheet.getCell(1,i).getContents()+"','"+sheet.getCell(2,i).getContents()+"','"+source+"')";
+	        for(i=1;i<rows;i++){
+	        	String sql = "insert into standards (code,value,source) values ('"+sheet.getCell(0,i).getContents()+"','"+sheet.getCell(1,i).getContents()+"','"+source+"')";
 	        	stmt.executeQuery(sql);
 	        }
 	        workbook.close();
@@ -181,13 +177,10 @@ public class Util {
         } catch (IOException e) {
 	        e.printStackTrace();
         } catch (SQLException e) {
+        	System.out.println(i);
 	        e.printStackTrace();
         }
 	}
 }
 
-class xlsImportTest{
-	public static void main(String args[]){
-		tools.Util.importStarndsFromXLS("src\\tools\\GB2260.XLS");
-	}
-}
+
