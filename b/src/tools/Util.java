@@ -2,21 +2,41 @@ package tools;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 import com.google.gson.Gson;
 
+/**
+ * 一些与系统业务逻辑不想关的,
+ * 但又非常有用的函数
+ * 
+ * @author wei1224hf
+ * */
 public class Util {
 
+	/**
+	 * 将一个纯粹的二维表根据ID字段,
+	 * 转化为一个TREE,
+	 * 其树形支点规则是按照EXTJS组织数据的形式来设定的
+	 * 子节点集都用 children 来处理
+	 * */
 	public static ArrayList<Serializable> getTreeData(String id,
 	        ArrayList<Serializable> bigList) {
 		if (id == "0") {
@@ -58,7 +78,12 @@ public class Util {
 		}
 	}
 
-	private static int setGantt(Hashtable<String,String> node) {
+	/**
+	 * 设置甘特图专用的节点属性
+	 * 在业务流程图的展现中,
+	 * 需要专门为 甘特图 这种图表添加几种属性值
+	 * */
+	public static int setGantt(Hashtable<String,String> node) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 		try {
@@ -77,6 +102,11 @@ public class Util {
 
 	private static Hashtable<String, Serializable> il8n = null;
 
+	/**
+	 * 得到国际化语言包
+	 * 那些语言包文件都放置在 src\il8n 文件夹内
+	 * 每个模块都有一个对应的语言包文件
+	 * */
 	public static Hashtable<String, Serializable> getIl8n() {
 		if (il8n == null) {
 			il8n = setIl8n(new File("src\\il8n"));
@@ -121,13 +151,43 @@ public class Util {
 			return ht;
 		}
 	}
+	
+	/**
+	 * 将一个EXCEL文件中的标准性数据抽取出来插入到数据库表中
+	 * 必须能够成功连接数据库
+	 * 而且数据库中存在表 standards 才可以
+	 * 当然,必须有规定的数据库表列才行
+	 * */
+	public static void importStarndsFromXLS(String path){
+		try {
+	        Workbook workbook = Workbook.getWorkbook(new File(path));
+	        Sheet sheet = workbook.getSheet(0);
+	        String source = sheet.getName();
+	        int rows = sheet.getRows(); 
+	        
+
+	        Connection conn = tools.Db.PoolConn();
+			Statement stmt = conn.createStatement();
+
+	        for(int i=0;i<rows;i++){
+	        	String sql = "insert into standards (code,value,source) values ('"+sheet.getCell(1,i).getContents()+"','"+sheet.getCell(2,i).getContents()+"','"+source+"')";
+	        	stmt.executeQuery(sql);
+	        }
+	        workbook.close();
+	        
+	       
+        } catch (BiffException e) {
+	        e.printStackTrace();
+        } catch (IOException e) {
+	        e.printStackTrace();
+        } catch (SQLException e) {
+	        e.printStackTrace();
+        }
+	}
 }
 
-class util_test {
-	public static void main(String args[]) {
-
-		System.out.println(new Gson().toJson(Util.getIl8n()));
-
+class xlsImportTest{
+	public static void main(String args[]){
+		tools.Util.importStarndsFromXLS("src\\tools\\GB2260.XLS");
 	}
-
 }
