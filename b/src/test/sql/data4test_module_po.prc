@@ -1,6 +1,6 @@
 create or replace procedure data4test_module_po is
 /*
- å¾€è®¢å•è¡¨é‡Œæ’å…¥éšæœºçš„æ•°æ®,ç”¨äºæµ‹è¯•å¼€å‘
+ Íù¶©µ¥±íÀï²åÈëËæ»úµÄÊı¾İ,ÓÃÓÚ²âÊÔ¿ª·¢
 */
 flag NUMBER;
 flag2 number;
@@ -56,5 +56,4 @@ begin
       end loop;      
       
 end data4test_module_po;
-
-
+/
