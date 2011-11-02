@@ -30,17 +30,15 @@ create or replace procedure init_module_user is
        )
  **/
 flag NUMBER;
-prefix varchar(10);
 begin
       flag := 0;
-      prefix := init_prefix();
       --判断用户表是否存在,存在则删除重建
-      select count(*) into flag from all_tables where table_name=upper(prefix||'member');
+      select count(*) into flag from all_tables where table_name=upper('member');
       if (flag<>0) then
-         execute immediate 'drop table '||prefix||'MEMBER';
+         execute immediate 'drop table MEMBER';
       end if;
       execute immediate '
-      create table '||prefix||'member (
+      create table member (
               keyid        int PRIMARY KEY
              ,username     varchar(200)
              ,password     varchar(200)
@@ -49,12 +47,12 @@ begin
       ' ;
       
       --判断权限表是否存在,存在则删除重建
-      select count(*) into flag from all_tables where table_name=upper(prefix||'permission');
+      select count(*) into flag from all_tables where table_name=upper('permission');
       if (flag<>0) then
-         execute immediate 'drop table '||prefix||'permission';
+         execute immediate 'drop table permission';
       end if;
       execute immediate '
-      create table '||prefix||'permission (
+      create table permission (
               keyid        int PRIMARY KEY
              ,name         varchar(200)
              ,remark       varchar(400)
@@ -62,12 +60,12 @@ begin
       ' ;
       
       --判断权限表是否存在,存在则删除重建
-      select count(*) into flag from all_tables where table_name=upper(prefix||'people');
+      select count(*) into flag from all_tables where table_name=upper('people');
       if (flag<>0) then
-         execute immediate 'drop table '||prefix||'people';
+         execute immediate 'drop table people';
       end if;
       execute immediate '
-      create table '||prefix||'people (
+      create table people (
               keyid        int PRIMARY KEY
              ,realname     varchar(200)
              ,sex          int
