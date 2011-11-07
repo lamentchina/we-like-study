@@ -9,7 +9,7 @@ begin
       insert into nst_person(
           guid
           ,name
-          ,sex
+          ,gender
           ,birthday
       )values(
           createGUID()

@@ -19,6 +19,33 @@ create table nst_organization (
 create table nst_person(
         guid     varchar(200)         primary key --主键,使用 SYS-ID
        ,name     varchar(200)                     --姓名,有些系统还会采用 first-name , last-name 来录入姓名数据,难以处理
-       ,sex      int                              --参考国标文件对性别的定义: 0 未知,1男,2女,9其他性别
+       ,gender      int                           --参考国标文件对性别的定义: 0 未知,1男,2女,9其他性别
        ,birthday date                             --生日
+       ,nationality    varchar(200)               --国籍
+       ,nation   varchar(200)                     --名族
+       ,degree   varchar(200)                     --学历
 )
+
+/*标准数据库,用来存储各个标准数据,比如行政区划编码,变动很小的那种
+*/
+create table nst_standards (
+     code             varchar(200) not null
+    ,value            varchar(200) not null
+    ,source           varchar(200) not null
+    ,remark           varchar2(400) 
+    
+    ,txt1             varchar(200) 
+    ,txt2             varchar(200) 
+    ,txt3             varchar(200) 
+    ,txt4             varchar(200) 
+    
+)
+comment on table  nst_standards is                       '标准';       
+comment on column nst_standards.code is                  '编码';
+comment on column nst_standards.value is                 '值';
+comment on column nst_standards.source is                '来源';
+comment on column nst_standards.remark is                '批注';
+      
+
+      
+PURGE RECYCLEBIN
