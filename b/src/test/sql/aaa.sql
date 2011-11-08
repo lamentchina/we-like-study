@@ -19,11 +19,15 @@ create table nst_organization (
 create table nst_person(
         guid     varchar(200)         primary key --主键,使用 SYS-ID
        ,name     varchar(200)                     --姓名,有些系统还会采用 first-name , last-name 来录入姓名数据,难以处理
-       ,gender      int                           --参考国标文件对性别的定义: 0 未知,1男,2女,9其他性别
+       ,gender   int                           --参考国标文件对性别的定义: 0 未知,1男,2女,9其他性别
        ,birthday date                             --生日
+       ,birthplace     varchar(200)               --出生地
        ,nationality    varchar(200)               --国籍
        ,nation   varchar(200)                     --名族
        ,degree   varchar(200)                     --学历
+       ,photo    varchar(300)                     --照片 URL 路径
+       ,height   int                              --身高
+       ,phone    varchar(200)                     --电话联系方式
 )
 
 /*标准数据库,用来存储各个标准数据,比如行政区划编码,变动很小的那种

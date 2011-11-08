@@ -1,5 +1,5 @@
 create or replace procedure init_basic is
-flag NUMBER;
+
 begin
 
 
@@ -336,6 +336,17 @@ insert into nst_standards (code,value,source) values ('60','普通高级中学教育','G
 insert into nst_standards (code,value,source) values ('70','初级中学教育','GB4658');  
 insert into nst_standards (code,value,source) values ('80','小学教育','GB4658');
 insert into nst_standards (code,value,source) values ('90','其他','GB4658');   
+
+
+insert into nst_standards (code,value,source,txt1) values ('9','其他','www.51job.com','degree.resume');   
+insert into nst_standards (code,value,source,txt1) values ('8','博士','www.51job.com','degree.resume');   
+insert into nst_standards (code,value,source,txt1) values ('7','硕士','www.51job.com','degree.resume'); 
+insert into nst_standards (code,value,source,txt1) values ('6','本科','www.51job.com','degree.resume'); 
+insert into nst_standards (code,value,source,txt1) values ('5','大专','www.51job.com','degree.resume'); 
+insert into nst_standards (code,value,source,txt1) values ('4','中专','www.51job.com','degree.resume'); 
+insert into nst_standards (code,value,source,txt1) values ('3','中技','www.51job.com','degree.resume'); 
+insert into nst_standards (code,value,source,txt1) values ('2','高中','www.51job.com','degree.resume');   
+insert into nst_standards (code,value,source,txt1) values ('1','初中','www.51job.com','degree.resume');  
 
 insert into nst_standards (code,value,source) values ('1','精通','GB6865');  
 insert into nst_standards (code,value,source) values ('2','熟练','GB6865');  
