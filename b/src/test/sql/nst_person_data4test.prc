@@ -7,8 +7,8 @@ degree_         varchar(200);
 birthplace_     varchar(200);
 i               NUMBER;
 begin
-  first_names := '李王张刘陈杨赵黄周吴徐孙胡朱高林何郭马罗梁宋郑谢韩唐冯于董肖程曹袁邓许傅沈曾彭吕苏卢蒋贾丁魏薛叶阎余潘杜戴夏钟汪田任姜范方石姚谭廖邹熊金陆郝孔白崔康毛邱秦江史顾侯邵孟龙万段雷钱汤尹黎易常武乔贺赖龚文';
-  last_names := '安邦安福安歌安国安和安康安澜安民安宁安平安然安顺安翔安晏安宜安怡安易安志昂然昂雄宾白宾鸿宾实彬彬彬炳彬郁斌斌斌蔚滨海波光波鸿波峻波涛博瀚博超博达博厚博简博明博容博赡博涉博实博涛博文博学博雅博延博艺博易博裕博远才捷才良才艺才英才哲才俊成和成弘成化成济成礼成龙成仁成双成天成文成业成益成荫成周承安承弼承德承恩承福承基承教承平承嗣承天承望承宣承颜承业承悦承允承运承载承泽承志德本德海德厚德华德辉德惠德容德润德寿德水德馨德曜德业德义德庸德佑德宇德元德运德泽德明飞昂飞白飞飙飞掣飞尘飞沉飞驰飞光飞翰飞航飞翮飞鸿飞虎飞捷飞龙飞鸾飞鸣飞鹏飞扬飞文飞翔飞星飞翼飞英飞宇飞羽飞雨飞语飞跃飞章飞舟风华丰茂丰羽刚豪刚洁刚捷刚毅高昂高岑高畅高超高驰高达高澹高飞高芬高峯高峰高歌高格高寒高翰高杰高洁高峻高朗高丽高邈高旻高明高爽高兴高轩高雅高扬高阳高义高谊高逸高懿高原高远高韵高卓光赫光华光辉光济光霁光亮光临光明光启光熙光耀光誉光远国安国兴国源冠宇冠玉晗昱晗日涵畅涵涤涵亮涵忍涵容涵润涵涵涵煦涵蓄涵衍涵意涵映涵育翰采翰池翰飞翰海翰翮翰林翰墨翰学翰音瀚玥翰藻瀚海瀚漠昊苍昊昊昊空昊乾昊穹昊然昊然昊天';
+  first_names := '�������������Ի��������������ֺι���������֣л���Ʒ��ڶ�Ф�̲�Ԭ����������������¬���ֶ�κѦҶ�����˶Ŵ����������ν�����ʯҦ̷�����ܽ�½�¿װ״޿�ë���ؽ�ʷ�˺������������Ǯ�������׳����Ǻ�������';
+  last_names := '��������谲�����Ͱ���������������ƽ��Ȼ��˳���谲�̰��˰������װ�־��Ȼ���۱��ױ����ʵ�������������ε�������Ⲩ�貨�����β�嫲������ﲩ�񲩼������ݲ��Ĳ��沩ʵ���β��Ĳ�ѧ���Ų��Ӳ��ղ��ײ�ԣ��Զ�Žݲ������ղ�Ӣ���ܲſ��ɺͳɺ�ɻ��ɼó���������ʳ�˫������ĳ�ҵ���������ܳа������е³ж��и��л��н̳�ƽ���ó�������������ճ�ҵ���ó��ʳ��˳��س����־�±��º��º�»��»Ե»ݵ��ݵ�����ٵ�ˮ��ܰ���׵�ҵ�����ӹ���ӵ����Ԫ���˵�������ɰ��ɰ׷�쭷ɳ��ɳ��ɳ��ɳ۷ɹ�ɺ��ɺ�����ɺ�ɻ��ɽݷ�������������������ķ�����Ƿ�����Ӣ��������������Ծ���·��۷绪��ï����պ��ս�սݸ���߰���᯸߳��߳��߳۸ߴ��壸߷ɸ߷Ҹߍo�߷�߸�߸�ߺ��ߺ��߽ܸ߽�߾����ʸ�������ߕF������ˬ���˸������Ÿ���������������ݸ�ܲ��ԭ��Զ���ϸ�׿��չ⻪��Թ�ù����������ٹ�������������ҫ������Զ�������˹�Դ��������������պ������Ӻ������̺��ݺ��󺭺����㺭��ܺ��⺭ӳ�������ɺ��غ��ɺ������纲�ֺ�ī��ѧ����嫫h����嫺��Į껲���껿��Ǭ���Ȼ�Ȼ���';
   
   for i in 1..total loop
       select value into nationality_ from (select std.value from nst_standards std 
@@ -32,17 +32,18 @@ begin
           ,phone
       )values(
           createGUID()
-          ,( select SUBSTR(first_names,abs(mod(dbms_random.random,length(first_names)-2)),1) from dual  )||( select SUBSTR(last_names,abs(mod(dbms_random.random,length(last_names)-3)),2) from dual  )
-          ,( select (abs(mod(dbms_random.random,2))+1) from dual  )
-          ,( select to_date(TO_CHAR(SYSDATE-abs(mod(dbms_random.random,365*30))-365*18 , 'YYYY-MM-DD'),'YYYY-MM-DD') from dual )
+          ,( SUBSTR(first_names,abs(mod(dbms_random.random,length(first_names)-2)),1)   )||(  SUBSTR(last_names,abs(mod(dbms_random.random,length(last_names)-3)),2)   )
+          ,abs(mod(dbms_random.random,2))+1
+          ,( to_date(TO_CHAR(SYSDATE-abs(mod(dbms_random.random,365*30))-365*18 , 'YYYY-MM-DD'),'YYYY-MM-DD') )
           ,birthplace_
           ,nationality_
           ,nation_
           ,degree_
-          ,( select (abs(mod(dbms_random.random,40))+140) from dual  )
-          ,'13511111111'
+          ,( abs(mod(dbms_random.random,40))+140 )
+          ,( abs(mod(dbms_random.random,50))+135 )||( abs(mod(dbms_random.random,9999999))+10000000 )
       );      
      
   end loop; 
   commit;
 end nst_person_data4test;
+/

@@ -1,6 +1,9 @@
 --组织机构与权限设计
 /*清空回收站  
+drop table nst_standards
 drop table nst_person
+delete from nst_person
+delete from nst_standards
 PURGE RECYCLEBIN 
 */
 
@@ -24,10 +27,20 @@ create table nst_person(
        ,birthplace     varchar(200)               --出生地
        ,nationality    varchar(200)               --国籍
        ,nation   varchar(200)                     --名族
-       ,degree   varchar(200)                     --学历
-       ,photo    varchar(300)                     --照片 URL 路径
        ,height   int                              --身高
+       ,blood    int                              --血型
+       
+       ,photo    varchar(300)                     --照片 URL 路径
+       
+       ,degree   varchar(200)                     --学历
+       ,school   varchar(200)                     --最高学历对应的毕业学校
+       ,character      varchar(200)               --性格
+       ,religion       int                        --宗教信仰
+       
        ,phone    varchar(200)                     --电话联系方式
+       ,email    varchar(200)                     --电子邮件联系方式
+       ,qq       varchar(200)                     --QQ联系方式
+       ,web      varchar(200)                     --个人网页,如果有的话
 )
 
 /*标准数据库,用来存储各个标准数据,比如行政区划编码,变动很小的那种
@@ -49,6 +62,8 @@ comment on column nst_standards.code is                  '编码';
 comment on column nst_standards.value is                 '值';
 comment on column nst_standards.source is                '来源';
 comment on column nst_standards.remark is                '批注';
+
+
       
 
       

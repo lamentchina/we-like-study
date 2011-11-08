@@ -156,31 +156,41 @@ public class Util {
 	 * */
 	public static void importStarndsFromXLS(String path){
 		int i=0;
+		String code,value,source,txt1,txt2,txt3;
+		String sql = "";
 		try {
 	        Workbook workbook = Workbook.getWorkbook(new File(path));
 	        Sheet sheet = workbook.getSheet(0);
-	        String source = sheet.getName();
-	        int rows = sheet.getRows(); 
-	        
-
+	        int rows = sheet.getRows(); 	        
 	        Connection conn = tools.Db.PoolConn();
 			Statement stmt = conn.createStatement();
+			
 	        for(i=1;i<rows;i++){
-	        	String sql = "insert into standards (code,value,source) values ('"+sheet.getCell(0,i).getContents()+"','"+sheet.getCell(1,i).getContents()+"','"+source+"')";
+				code = sheet.getCell(0,i).getContents();
+				value = sheet.getCell(1,i).getContents();
+				source = sheet.getCell(2,i).getContents();
+				txt1 = sheet.getCell(3,i).getContents();
+				txt2 = sheet.getCell(4,i).getContents();
+				txt3 = sheet.getCell(5,i).getContents();
+				
+				if(code.equals(null))code = " ";
+				if(value.equals(null))value = " ";
+				if(source.equals(null))source = " ";
+				if(txt1.equals(null))txt1 = " ";
+				if(txt2.equals(null))txt2 = " ";
+				if(txt3.equals(null))txt3 = " ";
+	        	sql = "insert into nst_standards (code,value,source,txt1,txt2,txt3) values ('"+code+"','"+value+"','"+source+"','"+txt1+"','"+txt2+"','"+txt3+"')";
 	        	stmt.executeQuery(sql);
 	        }
-	        workbook.close();
-	        
-	       
+	        workbook.close();    
         } catch (BiffException e) {
 	        e.printStackTrace();
         } catch (IOException e) {
 	        e.printStackTrace();
         } catch (SQLException e) {
         	System.out.println(i);
+        	System.out.println(sql);
 	        e.printStackTrace();
         }
-	}
+	}	
 }
-
-
