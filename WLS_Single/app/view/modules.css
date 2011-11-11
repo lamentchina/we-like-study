@@ -1,0 +1,387 @@
+@CHARSET "UTF-8";
+.icon__48_48{
+	background-image:url("../../file/images/48x48.png") !important;
+}
+.icon__16_16{
+	background-image:url("../../file/images/16x16.png") !important;
+}
+.icon__32_32{
+	background-image:url("../../file/images/32x32.png") !important;
+}.icon_net_48_48{
+	background-image:url("../../file/images/net48x48.png") !important;
+}
+.icon_net_16_16{
+	background-image:url("../../file/images/net16x16.png") !important;
+}
+.icon_net_32_32{
+	background-image:url("../../file/images/net32x32.png") !important;
+}.icon_CET4_48_48{
+	background-image:url("../../file/images/CET448x48.png") !important;
+}
+.icon_CET4_16_16{
+	background-image:url("../../file/images/CET416x16.png") !important;
+}
+.icon_CET4_32_32{
+	background-image:url("../../file/images/CET432x32.png") !important;
+}.icon_medic_48_48{
+	background-image:url("../../file/images/medic48x48.png") !important;
+}
+.icon_medic_16_16{
+	background-image:url("../../file/images/medic16x16.png") !important;
+}
+.icon_medic_32_32{
+	background-image:url("../../file/images/medic32x32.png") !important;
+}.icon_chinalogo_48_48{
+	background-image:url("../../file/images/chinalogo48x48.png") !important;
+}
+.icon_chinalogo_16_16{
+	background-image:url("../../file/images/chinalogo16x16.png") !important;
+}
+.icon_chinalogo_32_32{
+	background-image:url("../../file/images/chinalogo32x32.png") !important;
+}.icon_books_48_48{
+	background-image:url("../../file/images/books48x48.png") !important;
+}
+.icon_books_16_16{
+	background-image:url("../../file/images/books16x16.png") !important;
+}
+.icon_books_32_32{
+	background-image:url("../../file/images/books32x32.png") !important;
+}
+.icon_police_48_48{
+	background-image:url("../../file/images/police48x48.png") !important;
+}
+.icon_police_16_16{
+	background-image:url("../../file/images/police16x16.png") !important;
+}
+.icon_police_32_32{
+	background-image:url("../../file/images/police32x32.png") !important;
+}.icon_account_48_48{
+	background-image:url("../../file/images/account48x48.png") !important;
+}
+.icon_account_16_16{
+	background-image:url("../../file/images/account16x16.png") !important;
+}
+.icon_account_32_32{
+	background-image:url("../../file/images/account32x32.png") !important;
+}.icon_law_48_48{
+	background-image:url("../../file/images/law48x48.png") !important;
+}
+.icon_law_16_16{
+	background-image:url("../../file/images/law16x16.png") !important;
+}
+.icon_law_32_32{
+	background-image:url("../../file/images/law32x32.png") !important;
+}.icon_finance_48_48{
+	background-image:url("../../file/images/finance48x48.png") !important;
+}
+.icon_finance_16_16{
+	background-image:url("../../file/images/finance16x16.png") !important;
+}
+.icon_finance_32_32{
+	background-image:url("../../file/images/finance32x32.png") !important;
+}.icon_company_48_48{
+	background-image:url("../../file/images/company48x48.png") !important;
+}
+.icon_company_16_16{
+	background-image:url("../../file/images/company16x16.png") !important;
+}
+.icon_company_32_32{
+	background-image:url("../../file/images/company32x32.png") !important;
+}.icon_audit_48_48{
+	background-image:url("../../file/images/audit48x48.png") !important;
+}
+.icon_audit_16_16{
+	background-image:url("../../file/images/audit16x16.png") !important;
+}
+.icon_audit_32_32{
+	background-image:url("../../file/images/audit32x32.png") !important;
+}.icon_tax_48_48{
+	background-image:url("../../file/images/tax48x48.png") !important;
+}
+.icon_tax_16_16{
+	background-image:url("../../file/images/tax16x16.png") !important;
+}
+.icon_tax_32_32{
+	background-image:url("../../file/images/tax32x32.png") !important;
+}
+.icon_math_48_48{
+	background-image:url("../../file/images/math48x48.png") !important;
+}
+.icon_math_16_16{
+	background-image:url("../../file/images/math16x16.png") !important;
+}
+.icon_math_32_32{
+	background-image:url("../../file/images/math32x32.png") !important;
+}.icon_paper_48_48{
+	background-image:url("../../file/images/paper48x48.png") !important;
+}
+.icon_paper_16_16{
+	background-image:url("../../file/images/paper16x16.png") !important;
+}
+.icon_paper_32_32{
+	background-image:url("../../file/images/paper32x32.png") !important;
+}.icon_wrongbook_48_48{
+	background-image:url("../../file/images/wrongbook48x48.png") !important;
+}
+.icon_wrongbook_16_16{
+	background-image:url("../../file/images/wrongbook16x16.png") !important;
+}
+.icon_wrongbook_32_32{
+	background-image:url("../../file/images/wrongbook32x32.png") !important;
+}.icon_word_48_48{
+	background-image:url("../../file/images/word48x48.png") !important;
+}
+.icon_word_16_16{
+	background-image:url("../../file/images/word16x16.png") !important;
+}
+.icon_word_32_32{
+	background-image:url("../../file/images/word32x32.png") !important;
+}.icon_pcworking_48_48{
+	background-image:url("../../file/images/pcworking48x48.png") !important;
+}
+.icon_pcworking_16_16{
+	background-image:url("../../file/images/pcworking16x16.png") !important;
+}
+.icon_pcworking_32_32{
+	background-image:url("../../file/images/pcworking32x32.png") !important;
+}.icon_groups_48_48{
+	background-image:url("../../file/images/groups48x48.png") !important;
+}
+.icon_groups_16_16{
+	background-image:url("../../file/images/groups16x16.png") !important;
+}
+.icon_groups_32_32{
+	background-image:url("../../file/images/groups32x32.png") !important;
+}.icon_group_48_48{
+	background-image:url("../../file/images/group48x48.png") !important;
+}
+.icon_group_16_16{
+	background-image:url("../../file/images/group16x16.png") !important;
+}
+.icon_group_32_32{
+	background-image:url("../../file/images/group32x32.png") !important;
+}.icon_user_48_48{
+	background-image:url("../../file/images/user48x48.png") !important;
+}
+.icon_user_16_16{
+	background-image:url("../../file/images/user16x16.png") !important;
+}
+.icon_user_32_32{
+	background-image:url("../../file/images/user32x32.png") !important;
+}.icon_access_48_48{
+	background-image:url("../../file/images/access48x48.png") !important;
+}
+.icon_access_16_16{
+	background-image:url("../../file/images/access16x16.png") !important;
+}
+.icon_access_32_32{
+	background-image:url("../../file/images/access32x32.png") !important;
+}.icon_grid_48_48{
+	background-image:url("../../file/images/grid48x48.png") !important;
+}
+.icon_grid_16_16{
+	background-image:url("../../file/images/grid16x16.png") !important;
+}
+.icon_grid_32_32{
+	background-image:url("../../file/images/grid32x32.png") !important;
+}.icon_layout_48_48{
+	background-image:url("../../file/images/layout48x48.png") !important;
+}
+.icon_layout_16_16{
+	background-image:url("../../file/images/layout16x16.png") !important;
+}
+.icon_layout_32_32{
+	background-image:url("../../file/images/layout32x32.png") !important;
+}.icon_server_48_48{
+	background-image:url("../../file/images/server48x48.png") !important;
+}
+.icon_server_16_16{
+	background-image:url("../../file/images/server16x16.png") !important;
+}
+.icon_server_32_32{
+	background-image:url("../../file/images/server32x32.png") !important;
+}.icon_excel_48_48{
+	background-image:url("../../file/images/excel48x48.png") !important;
+}
+.icon_excel_16_16{
+	background-image:url("../../file/images/excel16x16.png") !important;
+}
+.icon_excel_32_32{
+	background-image:url("../../file/images/excel32x32.png") !important;
+}.icon_teacher_48_48{
+	background-image:url("../../file/images/teacher48x48.png") !important;
+}
+.icon_teacher_16_16{
+	background-image:url("../../file/images/teacher16x16.png") !important;
+}
+.icon_teacher_32_32{
+	background-image:url("../../file/images/teacher32x32.png") !important;
+}.icon_doquiz_48_48{
+	background-image:url("../../file/images/doquiz48x48.png") !important;
+}
+.icon_doquiz_16_16{
+	background-image:url("../../file/images/doquiz16x16.png") !important;
+}
+.icon_doquiz_32_32{
+	background-image:url("../../file/images/doquiz32x32.png") !important;
+}.icon_about_48_48{
+	background-image:url("../../file/images/about48x48.png") !important;
+}
+.icon_about_16_16{
+	background-image:url("../../file/images/about16x16.png") !important;
+}
+.icon_about_32_32{
+	background-image:url("../../file/images/about32x32.png") !important;
+}.icon_key_48_48{
+	background-image:url("../../file/images/key48x48.png") !important;
+}
+.icon_key_16_16{
+	background-image:url("../../file/images/key16x16.png") !important;
+}
+.icon_key_32_32{
+	background-image:url("../../file/images/key32x32.png") !important;
+}
+.icon_discuzx_48_48{
+	background-image:url("../../file/images/discuzx48x48.png") !important;
+}
+.icon_discuzx_16_16{
+	background-image:url("../../file/images/discuzx16x16.png") !important;
+}
+.icon_PhpWind_48_48{
+	background-image:url("../../file/images/PhpWind48x48.png") !important;
+}
+.icon_PhpWind_16_16{
+	background-image:url("../../file/images/PhpWind16x16.png") !important;
+}
+.icon_GRE_48_48{
+	background-image:url("../../file/images/GRE48x48.png") !important;
+}
+.icon_GRE_16_16{
+	background-image:url("../../file/images/GRE16x16.png") !important;
+}
+.icon_CET4_48_48{
+	background-image:url("../../file/images/CET448x48.png") !important;
+}
+.icon_CET4_16_16{
+	background-image:url("../../file/images/CET416x16.png") !important;
+}
+.icon_CET6_48_48{
+	background-image:url("../../file/images/CET648x48.png") !important;
+}
+.icon_CET6_16_16{
+	background-image:url("../../file/images/CET616x16.png") !important;
+}
+.icon_IELTS_48_48{
+	background-image:url("../../file/images/IELTS48x48.png") !important;
+}
+.icon_IELTS_16_16{
+	background-image:url("../../file/images/IELTS16x16.png") !important;
+}
+.icon_joomla_48_48{
+	background-image:url("../../file/images/joomla48x48.png") !important;
+}
+.icon_joomla_16_16{
+	background-image:url("../../file/images/joomla16x16.png") !important;
+}
+
+.bt_search_16_16{
+	background-image:url("../../file/images/search16x16.png") !important;
+}
+
+.bt_paper_16_16{
+	background-image:url("../../file/images/paper16x16.png") !important;
+}
+.bt_up_16_16{
+	background-image:url("../../file/images/up16x16.png") !important;
+}
+.bt_down_16_16{
+	background-image:url("../../file/images/down16x16.png") !important;
+}
+.bt_down2_16_16{
+	background-image:url("../../file/images/down216x16.png") !important;
+}
+.bt_up2_16_16{
+	background-image:url("../../file/images/up216x16.png") !important;
+}
+.bt_delete_16_16{
+	background-image:url("../../file/images/delete16x16.png") !important;
+}
+.bt_edit_16_16{
+	background-image:url("../../file/images/edit16x16.png") !important;
+}
+.bt_add_16_16{
+	background-image:url("../../file/images/add16x16.png") !important;
+}
+.bt_excel_16_16{
+	background-image:url("../../file/images/excel16x16.png") !important;
+}
+.bt_doquiz_16_16{
+	background-image:url("../../file/images/doquiz16x16.png") !important;
+}
+.bt_pcworking_16_16{
+	background-image:url("../../file/images/pcworking16x16.png") !important;
+}
+.bt_wrongbook_16_16{
+	background-image:url("../../file/images/wrongbook16x16.png") !important;
+}
+.bt_word_16_16{
+	background-image:url("../../file/images/word16x16.png") !important;
+}
+.bt_group_16_16{
+	background-image:url("../../file/images/group16x16.png") !important;
+}
+.bt_action_16_16{
+	background-image:url("../../file/images/action16x16.png") !important;
+}
+.bt_subject_16_16{
+	background-image:url("../../file/images/subject16x16.png") !important;
+}
+.bt_user_16_16{
+	background-image:url("../../file/images/user16x16.png") !important;
+}
+.bt_access_16_16{
+	background-image:url("../../file/images/access16x16.png") !important;
+}
+.bt_layout_16_16{
+	background-image:url("../../file/images/layout16x16.png") !important;
+}
+.bt_grid_16_16{
+	background-image:url("../../file/images/grid16x16.png") !important;
+}
+.bt_teacher_16_16{
+	background-image:url("../../file/images/teacher16x16.png") !important;
+}
+.bt_server_16_16{
+	background-image:url("../../file/images/server16x16.png") !important;
+}
+.bt__16_16{
+	background-image:url("../../file/images/16x16.png") !important;
+}
+.bt_about_16_16{
+	background-image:url("../../file/images/about16x16.png") !important;
+}
+.bt_key_16_16{
+	background-image:url("../../file/images/key16x16.png") !important;
+}
+.bt_ranking_16_16{
+	background-image:url("../../file/images/ranking16x16.png") !important;
+}
+.bt_ranking_16_16{
+	background-image:url("../../file/images/ranking16x16.png") !important;
+}
+.bt_questypes_16_16{
+	background-image:url("../../file/images/questypes16x16.png") !important;
+}
+.bt_refresh_16_16{
+	background-image:url("../../file/images/refresh16x16.gif") !important;
+}
+.bt_do_16_16{
+	background-image:url("../../file/images/do16x16.png") !important;
+}
+.bt_math_16_16{
+	background-image:url("../../file/images/math16x16.png") !important;
+}
+.bt_GRE_16_16{
+	background-image:url("../../file/images/GRE16x16.png") !important;
+}
