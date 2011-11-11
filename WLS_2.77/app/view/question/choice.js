@@ -1,9 +1,3 @@
-/**
- * WLS,We-Like-Study,An online examination application
- * The single-choice question type.
- * 
- * @author wei1224hf
- * */
 wls.question.choice = Ext.extend(wls.question, {
 	
 
