@@ -3,9 +3,9 @@ include_once dirname(__FILE__).'/user/access.php';
 include_once dirname(__FILE__).'/user/group.php';
 include_once dirname(__FILE__).'/subject.php';
 
-include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel.php';
-include_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-require_once dirname(__FILE__).'/../../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+include_once dirname(__FILE__).'/../../libs/phpexcel/Classes/PHPExcel.php';
+include_once dirname(__FILE__).'/../../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+require_once dirname(__FILE__).'/../../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
 
 /**
  * User's operations.
