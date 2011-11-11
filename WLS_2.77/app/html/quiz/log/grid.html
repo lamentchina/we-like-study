@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../../view/wls.css" />
+<link rel="stylesheet" type="text/css" href="../../../view/modules.css" />
+
+<script type="text/javascript" src="../../../../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript" src="../../../../../libs/jqueryextend.js"></script>	
+<script type="text/javascript" src="../../../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="../../../../../libs/ext_3_2_1/ext-all.js"></script>
+
+<script type="text/javascript" src="../../../view/wls.js"></script>
+<script type="text/javascript" src="../../../view/quiz.js"></script>
+<script type="text/javascript" src="../../../view/quiz/log.js"></script>
+<script type="text/javascript">
+var wls_quiz_log = null;
+Ext.BLANK_IMAGE_URL = '../../../../../libs/ext_3_2_1/resources/images/default/s.gif';
+
+Ext.onReady(function(){
+	Ext.QuickTips.init();
+	wls_quiz_log = new wls.quiz.log();
+	wls_quiz_log.config.AJAXPATH = '../../../../wls.php';
+	wls_quiz_log.getIl8n('fitFullBrowser();');
+});
+
+function fitFullBrowser(){
+	var comp = wls_quiz_log.getGrid('domid');
+	comp.render(Ext.getBody());
+}
+</script>
+</head>
+<body>
+</body>
+</html>

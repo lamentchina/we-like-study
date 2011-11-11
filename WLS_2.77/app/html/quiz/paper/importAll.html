@@ -1,0 +1,45 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script type="text/javascript" src="../../../../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript" src="../../../../../libs/jqueryextend.js"></script>	
+<script type="text/javascript">
+var ids = null;
+var index = 0;
+$.ajax({
+	type: 'get',
+	url: '../../../../wls.php?controller=quiz_paper&action=importAll',
+	success: function(msg){
+		ids = jQuery.evalJSON(msg);
+		down();
+	}
+});
+
+
+	var down = function(){
+		$.ajax({
+			type: 'post',
+			url: '../../../../wls.php?controller=quiz_paper&action=importAll',
+			data: {id:ids[index]},
+			success: function(msg){
+				if(index==ids.length ){
+					$('#data').text('done')
+					return;
+				}
+				if(msg=='ok'){
+					index++;
+					$('#data').text('index:'+index+'/'+ids.length+';  file:'+ids[index]);
+				}else{
+					$('#data').text('wrong!');
+				}
+				down();
+			}
+		});
+	}
+</script>
+</head>
+<body>
+<div id='data'><div>
+</body>
+</html>	

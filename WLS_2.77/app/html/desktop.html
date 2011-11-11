@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../../libs/qWikiOffice/resources/css/desktop.css" />
+<link rel="stylesheet" type="text/css" href="../view/modules.css" />
+<!-- TODO CSS 文件应该动态生成 -->
+<!--  
+<script type="text/javascript">
+document.write("<script src='../../../libs/jquery-1.4.2.js'><\/script>"); 
+document.write("<script src='../../../libs/jqueryextend.js'><\/script>");
+document.write("<script src='../../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js'><\/script>");
+document.write("<script src='../../../libs/ext_3_2_1/ext-all.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreApp.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreDesktop.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreModule.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreNotification.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreShortcut.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreStartMenu.js'><\/script>");
+document.write("<script src='../../../libs/qWikiOffice/system/coreTaskBar.js'><\/script>");
+</script>
+-->
+
+
+<script type="text/javascript" src="../../../libs/ext_3_2_1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../../../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/App.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/Desktop.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/Module.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/Notification.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/Shortcut.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/StartMenu.js"></script>
+<script type="text/javascript" src="../../../libs/qWikiOffice/system/core/TaskBar.js"></script>
+
+<script type="text/javascript">
+var qWikiSettings = null;
+var il8n = null;
+Ext.onReady(function(){
+	
+	Ext.namespace('Ext.ux','QoDesk');
+	Ext.BLANK_IMAGE_URL = '../../../libs/ext_3_2_1/resources/images/default/s.gif';
+	Ext.QuickTips.init();
+	//return;
+	Ext.Ajax.request({
+		method : 'GET',
+		url : "../../wls.php?controller=user&action=getQWikiUserSettings",
+		success : function(response) {
+			qWikiSettings = Ext.decode(response.responseText);
+			il8n = qWikiSettings.il8n;
+			
+			QoDesk.App = new Ext.app.App({
+				init : function(){},
+				memberInfo: {},
+				modules: qWikiSettings.modules ,
+				desktopConfig: {
+					appearance: {
+					 	"fontColor":"333333",
+					 	"taskbarTransparency":70
+					},
+					background: {
+						"color":"f9f9f9",
+						"wallpaperPosition":"tile",//center
+						"wallpaper":{
+							"id":10,
+							"name" : "WLS",
+							"file" : qWikiSettings.background
+						}
+					},
+					launchers: {
+						"shortcut":qWikiSettings.shortcut ,
+						"quickstart":qWikiSettings.quickstart
+					},
+					taskbarConfig: {
+						buttonScale: 'large',
+						position: 'bottom',
+						quickstartConfig: {
+							width: 60
+						},
+					
+						startMenuConfig: {
+							iconCls: 'icon-user-48',
+							title: qWikiSettings.username,
+							width: 320
+						}
+					}
+				}
+			});
+		},
+		failure : function(response) {
+			alert('Net Failed');
+		}
+	});
+});
+</script>
+</head>
+<body scroll="no" background="../../../file/images/loading.gif" >
+</body>
+</html>
