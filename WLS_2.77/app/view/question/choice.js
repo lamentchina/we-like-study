@@ -6,15 +6,7 @@
  * */
 wls.question.choice = Ext.extend(wls.question, {
 	
-	/**
-	 * Add this question's Html-Dom-stuff into the web page
-	 * One question contains :
-	 *    Question Title , in [class=w_qw_title]
-	 *    Question Tools , like listenning-icon ,description-icon , in [class=w_qw_tool]
-	 *    Question Options , like A:blablabla, B:blablabla , in [class=w_qw_options]
-	 *        Each option is a <input:radio> tag, with @onclick handler
-	 *    Question Navigater , it's on the left of the main quiz tab panel , in [id=w_q_subQuesNav_]
-	 * */
+
 	initDom : function() {
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id + "'></div>");
 		
