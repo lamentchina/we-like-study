@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../app/view/wls.css" />
+<script type="text/javascript" src="../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript" src="../libs/jqueryextend.js"></script>	
+<script type="text/javascript" src="../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../app/view/il8n.js"></script>
+<script type="text/javascript" src="../app/view/wls.js"></script>
+<script type="text/javascript" src="../app/view/quiz.js"></script>
+<script type="text/javascript" src="../app/view/question.js"></script>
+<script type="text/javascript" src="../app/view/question/choice.js"></script>
+
+<script type="text/javascript">
+var obj ;
+Ext.onReady(function(){
+	obj = new wls.quiz();
+	obj.objName = 'obj';
+	obj.initLayout();
+	var questions = quiz_choices_submit_data;
+
+	
+	
+	obj.initQuestions();
+});
+
+var getQues = function(id){
+	var que = new wls.question.choice();
+	que.quiz = obj;
+	que.optionLength = 3;
+	que.id = id;
+	que.layout = 'horizontal';
+	que.answer = 'A';
+	que.description = '解题思路';
+	que.title = '这是一个单项选择题,请勾选选项:';
+	que.options = ['选项1','选项2','选项3'];
+	que.cent = 1;
+	return que;
+}
+
+
+</script>
+</head>
+<body>
+</body>
+</html>
