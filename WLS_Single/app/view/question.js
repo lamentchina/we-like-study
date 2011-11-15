@@ -15,8 +15,8 @@ wls.question = Ext.extend(wls, {
 	myAnswer : null,         //我选择的答案
 	questionData : null,     //这是一个Object,内含各个题目选项.如果体型是 填空题 或 简答题,则只包含题目描述(title)
 	
-	cent : null,             //这个题目的分值
-	cent_ : null,            //用户答题后所获得的分值,一般而言,要么是0,要么就等于cent.但简答题则不同
+	cent : 0,                //这个题目的分值
+	cent_ : 0,               //用户答题后所获得的分值,一般而言,要么是0,要么就等于cent.但简答题则不同
 	
 	type : null,             //题型,字符串,可以是 单选题,多选题,判断题,填空题等
 	quiz : null,             //试卷对象.	
@@ -30,17 +30,14 @@ wls.question = Ext.extend(wls, {
 	state : '',              //状态 submitted 已提交
 	
     initDom : function(){},         //初始化页面,   接口定义,子类覆盖
-    showDescription : function(){},	//显示解题思路, 接口定义,子类覆盖
     submit : function(){}           //提交答案               接口定义,子类覆盖
 
 });
 
 /**
+ * 用户在做卷子时,做完了一道题,修改题目导航处的状态
+ * 由白色变为黄色
  * */
-var wls_question_toogle = function(id) {
-	$('#w_qs_d_t_' + id, $('#w_qs_' + id)).toggleClass('w_q_d_t_2');
-	$(".w_q_d", $('#w_qs_' + id)).toggleClass('w_q_d_h');
-}
 var wls_question_done = function(id){
 	if($('#w_q_subQuesNav_' + id).hasClass('w_q_sn_undone')){
 		$('#w_q_subQuesNav_' + id).attr('class','w_q_sn_done');

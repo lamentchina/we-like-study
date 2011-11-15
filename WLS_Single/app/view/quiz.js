@@ -14,14 +14,11 @@ wls.quiz = Ext.extend(wls, {
 		total : 0
 	},
 
-
 	state : 0,
-	cent : 0,
-	mycent : 0,
-	naming : null,
+	cent : 0,        //卷子总分
+	cent_ : 0,       //我的得分
 
 	addQuestions : function() {
-
 		var index = 1;
 		for (var i = 0; i < this.questions.length; i++) {
 			this.questions[i].quiz = this;
@@ -38,8 +35,6 @@ wls.quiz = Ext.extend(wls, {
 		var str = '';
 		var index = 0;
 		for (var i = 0; i < this.questions.length; i++) {
-			
-
 				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_"
 						+ this.questions[i].id
 						+ "' onclick='"
@@ -47,11 +42,10 @@ wls.quiz = Ext.extend(wls, {
 						+ ".wls_quiz_nav("
 						+ this.questions[i].id
 						+ ")' style='height:18px;'><a href='#' style='border:0px;font-size:10px;margin-top:2px;' >"
-						+ i + "</a></div>";
+						+ (i+1) + "</a></div>";
 
 		}
 		$("#navigation").append(str);
-
 	},
 	
 	/**
@@ -68,6 +62,15 @@ wls.quiz = Ext.extend(wls, {
 	},
 	
 	/**
+	 * 提交卷子
+	 * */
+	submit : function(){
+	    for(var i=0;i<this.questions.length;i++){
+	    	this.questions[i].submit();
+	    }
+	},
+	
+	/**
 	 * 初始化页面布局
 	 * */
 	initLayout : function() {
@@ -80,7 +83,6 @@ wls.quiz = Ext.extend(wls, {
 						margins : '5 0 0 0',
 						html : '<div id="wls_quiz_main" class="w_q_container"></div>'
 					}, {
-
 						title : il8n.normal.operation,
 						collapsible : true,
 						layout : 'border',
@@ -102,7 +104,7 @@ wls.quiz = Ext.extend(wls, {
 									region : 'south',
 									height:40,
 									handler : function() {
-										//TODO
+									    thisObj.submit();
 									}
 								}), {
 							id : 'ext_Operations',
