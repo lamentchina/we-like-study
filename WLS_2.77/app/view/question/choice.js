@@ -1,26 +1,38 @@
+/**
+ * 单项选择题
+ * 只能有一个正确答案,可以有多个备选答案
+ * 有一行题目描述.
+ * 答案的布局,可以纵向排列(一个选项一行),
+ * 也可以横向排列(所有选项都一排),比如在完型填空中,就需要用 横向排列
+ * */
 wls.question.choice = Ext.extend(wls.question, {
 	
-
+	optionLength : 4, //单项选择题中的备选的答案个数,默认为 4,就是 A B C D四个选项
+	options : [],     //选项的具体内容,一个包含一堆字符串的数组,可能会有一个空元素(因此需要 opentionLength 字段描述真实长度)
+	
+	/**
+	 * 初始化页面控件
+	 * 住页面必须有这个元素: <div id = 'wls_quiz_main'>
+	 * */
 	initDom : function() {
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id + "'></div>");
 		
-		//To display the options horizontally, use table-tag
-		if(parseInt(this.questionData.layout)==0){
+		//备选答案是 水平排列的,比如完型填空题中的选择题,使用 SPAN 标签
+		if(this.layout == 'horizontal'){
 			$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
-					+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
-					+ this.questionData.title + "</div>");
+					+ this.id + "&nbsp;<span class='w_qw_tool'></span>"
+					+ this.title + "</div>");
 			
-			//Add the options in a table, the table is inside a span-tag
+			//为了确保每个选项都是等长,使用 TABLE 标签控制
 			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");			
 			var str = "<table width='90%'><tr>";					
-			for (var i = 0; i < parseInt(this.questionData.optionlength); i++) {
-				eval("var title = this.questionData.option" + (i + 1));
-				var optionStr = "<td width='"+parseInt(100/this.questionData.optionlength)+"%'>" 
-									+ String.fromCharCode(i + 65) //Option Index: A B C D ...
+			for (var i = 0; i < parseInt(this.optionLength); i++) {
+				var optionStr = "<td width='"+parseInt(100/this.optionLength)+"%'>" 
+									+ String.fromCharCode(i + 65) // A B C D ...
 									+ ":&nbsp;<input type='radio' "
-									+ " onclick='wls_question_done("+this.id+")' " //Change the navigater item color
+									+ " onclick='wls_question_done("+this.id+")' " //选项点击之后,改变颜色,并设置 选择答案
 									+ " name='w_qs_" + this.id + "' value='" + String.fromCharCode(i + 65) + "' />&nbsp;" 
-									+ title+"</td>";
+									+ this.options[i]+"</td>";
 									
 				str += optionStr;
 			}					
@@ -28,59 +40,59 @@ wls.question.choice = Ext.extend(wls.question, {
 			$(".w_qw_options", "#w_qs_" + this.id).append(str);
 			
 		}else{
-			//To display the options vertically, use div-tag
+			//如果题目是纵向排列的,就用DIV标签
 			$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
-					+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
-					+ this.questionData.title + "</div>");
+					+ this.id + "&nbsp;<span class='w_qw_tool'></span>"
+					+ this.title + "</div>");
 			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
 			
-			for (var i = 0; i < parseInt(this.questionData.optionlength); i++) {
-				eval("var title = this.questionData.option" + (i + 1));
-				var str = "<div>" + String.fromCharCode(i + 65) //Option Index: A B C D
+			for (var i = 0; i < parseInt(this.optionLength); i++) {
+				var str = "<div>" + String.fromCharCode(i + 65) // A B C D
 						+ ":&nbsp;<input type='radio' "
-						+ " onclick='wls_question_done("+this.id+")' name='w_qs_" //Event handler , Change the navigater item color
+						+ " onclick='wls_question_done("+this.id+")' name='w_qs_" //选项点击之后,改变颜色,并设置 选择答案
 						+ this.id + "' value='"
 						+ String.fromCharCode(i + 65) + "' />&nbsp;"
-						+ title;
-				if (i != parseInt(this.questionData.optionlength) - 1) {
+						+ this.options[i];
+				if (i != parseInt(this.optionLength) - 1) {
 					str += "</div>";
 				}
 				$(".w_qw_options", "#w_qs_" + this.id).append(str);
 			}
 		}
-
-		this.cent = this.questionData.cent;
-		this.questionData = null;
-	},
-	
-	marking:function(){
-		var c = $("input[name=w_qs_" + this.id + "]");
-		for(var i=0;i<c.length;i++){
-			$(c[i]).attr('disabled',true);;
-		}
-		if(this.markingmethod!=0){
-			$('#w_q_subQuesNav_' + this.id).attr('class','w_q_sn_mark');
-			$(".w_qw_tool", $('#w_qs_' + this.id)).append("<a href='#' onclick='wls_question_marking("+this.id+","+this.cent+","+this.id+")'>"+il8n.quiz.marking+"</a>");
-		}
 	},
 	
 	/**
-	 *  When the paper was submitted , cilent send the myAnswers to the server
-	 * ,the server caculate the mark, and send the current answers back to client
-	 * ,the client should display the current answer and tell the user 
-	 * 		'What you've done were right and what were wrong'
-	 * 
-	 * Do the question right:
-	 * 		Navigater Item: Blue
-	 * 		Hidde the description
-	 * Do the question wrong:
-	 * 		Navigater Item: Red
-	 * 		Display the description
-	 * Give Up the question:
-	 * 		Navigater Item: Yellow
-	 * 		Hidde the description
+	 * 提交答案,
+	 * */
+	submit : function(){
+	
+		var value = $('input[name=w_qs_' + this.id + ']:checked').val();
+		if (typeof(value) == 'undefined') {
+			this.myAnswer = 'I_DONT_KNOW';
+			this.quiz.count.giveup++;
+		} else {
+			this.myAnswer = value;
+			
+			if(this.myAnswer==this.answer){//做对了
+				
+			}else{//做错了
+				
+			}
+		}
+		if(this.state != 'submitted'){
+			$('#w_qs_' + this.id).append("<div class='w_q_d'>"+ this.description + "</div>");
+		}
+		this.state = 'submitted';
+	},
+	
+	/**
+	 * 当用户做完一张卷子,点击 提交 之后,程序会逐一判断用户有没有作对
+	 * 如果做对了,题目导航处变蓝,题目处影藏解题思路
+	 *     做错了,题目导航处变红,题目处显示解题思路
+	 *     弃权了,题目导航处变黄,题目处影藏解题思路
 	 * */
 	showDescription : function() {
+		/*
 		var obj = this.answerData;
 		this.quiz.cent += parseFloat(obj.cent);
 		this.quiz.count.total++;
@@ -96,54 +108,45 @@ wls.question.choice = Ext.extend(wls.question, {
 		}
 		$(".w_q_d_t", $('#w_qs_' + this.id)).addClass("w_q_d_t_2");
 
-		
-		if(obj.markingmethod==1){
-			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_mark');
-			$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.quiz.markingByTeacher + ',' + il8n.quiz.cent + ':' + (this.cent));
+		//弃权
+		if (obj.myAnswer == 'I_DONT_KNOW') {
+			this.quiz.count.giveup++;
+			$(":radio[value='" + obj.answer + "']",
+					$("#w_qs_" + this.id)).parent()
+					.addClass('w_qs_q_w');
 
-			if(this.quiz.type=='log'){
-				$(".w_qw_tool", $('#w_qs_' + this.id)).append("<a href='#' onclick='wls_question_markked("+this.quiz.logData.id+","+this.id+")'>"+il8n.quiz.marking+"</a>");
-			}
-		}else{			
-			//Give Up
-			if (obj.myAnswer == 'I_DONT_KNOW') {
-				this.quiz.count.giveup++;
-				$(":radio[value='" + obj.answer + "']",
-						$("#w_qs_" + this.id)).parent()
-						.addClass('w_qs_q_w');
-	
-				$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_g');
-				$('#w_q_subQuesNav_' + this.id).attr('title',
-						il8n.quiz.giveup + ',' + il8n.quiz.cent + ':' + (this.cent));
-				wls_question_toogle(this.id);
-				
-			//Right
-			} else if (obj.answer == obj.myAnswer) {
-				this.quiz.count.right++;
-				this.quiz.mycent += parseFloat(obj.cent);
-				
-				$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_r');
-				$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.quiz.right + ',' + il8n.quiz.cent + ':' + (this.cent));
-				wls_question_toogle(this.id);
+			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_g');
+			$('#w_q_subQuesNav_' + this.id).attr('title',
+					il8n.quiz.giveup + ',' + il8n.quiz.cent + ':' + (this.cent));
+			wls_question_toogle(this.id);
 			
-			//Wrong
-			} else {
-				this.quiz.count.wrong++;
-				$(":radio[value='" + obj.answer + "']",
-						$("#w_qs_" + this.id)).parent()
-						.addClass('w_qs_q_w');
-	
-				$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_w');
-				$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.quiz.wrong + ',' + il8n.quiz.cent + ':' + (this.cent));
-				if (this.quiz.type == 'paper'){
-					this.addWhyImWrong();
-				}
+		//作对了
+		} else if (obj.answer == obj.myAnswer) {
+			this.quiz.count.right++;
+			this.quiz.mycent += parseFloat(obj.cent);
+			
+			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_r');
+			$('#w_q_subQuesNav_' + this.id).attr('title',
+				il8n.quiz.right + ',' + il8n.quiz.cent + ':' + (this.cent));
+			wls_question_toogle(this.id);
+		
+		//做错了
+		} else {
+			this.quiz.count.wrong++;
+			$(":radio[value='" + obj.answer + "']",
+					$("#w_qs_" + this.id)).parent()
+					.addClass('w_qs_q_w');
+
+			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_w');
+			$('#w_q_subQuesNav_' + this.id).attr('title',
+				il8n.quiz.wrong + ',' + il8n.quiz.cent + ':' + (this.cent));
+			if (this.quiz.type == 'paper'){
+				this.addWhyImWrong();
 			}
 		}
+		
 		obj = null;
+		*/
 	},
 	
 	/**
