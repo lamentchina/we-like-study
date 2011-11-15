@@ -1,3 +1,7 @@
+/**
+ * 卷子
+ * 这个类是 考卷,随机组卷 的父类
+ * */
 wls.quiz = Ext.extend(wls, {
 
 	answersData : null,
