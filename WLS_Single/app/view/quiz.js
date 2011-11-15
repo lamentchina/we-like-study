@@ -3,11 +3,8 @@
  * 这个类是 考卷,随机组卷 的父类
  * */
 wls.quiz = Ext.extend(wls, {
-
-	answersData : null,
-	questionsData : null,
-	ids_questions : null,
-	containAnswer : false,
+	
+	objName:'',
 	questions : [],
 	count : {
 		giveup : 0,
@@ -24,188 +21,55 @@ wls.quiz = Ext.extend(wls, {
 	naming : null,
 
 	addQuestions : function() {
-		//console.debug(1);
-		var obj = this.questionsData;
+
 		var index = 1;
-		for (var i = 0; i < obj.length; i++) {
-			var ques = null;
-			//console.debug(obj[i]);
-			switch (obj[i].type) {
-				case '1' :
-					//console.debug(1);
-					ques = new wls.question.choice();
-					ques.type = "Qes_Choice";
-					ques.index = index;
-					index++;
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;
-				case '2' :
-					ques = new wls.question.multichoice();
-					ques.type = "Qes_MultiChoice";
-					ques.index = index;
-					index++;
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;
-				case '3' :
-					ques = new wls.question.check();
-					ques.type = "Qes_Check";
-					ques.index = index;
-					index++;
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;
-				case '4' :
-					ques = new wls.question.depict();
-					ques.type = "Qes_Depict";
-					ques.index = index;
-					index++;
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;
-				case '5' :
-					ques = new wls.question.big();
-					ques.type = "Qes_Big";
-					ques.title = obj[i].title;
-					ques.index = '';
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;
-				case '6' :
-					ques = new wls.question.mixed();
-					ques.type = "Qes_Mixed";
-					ques.index = '';
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;					
-				case '7' :
-					ques = new wls.question.blank();
-					ques.type = "Qes_Blank";					
-					if(parseInt(obj[i].id_parent)!=0){
-						ques.index = index;
-						index++;
-					}else{						
-						ques.index = '';
-					}
-					ques.questionData = obj[i];
-					ques.id = obj[i].id;
-					ques.quiz = this;
-					break;
-				default :
-					break;
-			}
-			if (ques != null) {
-				if(this.type=='teacherMark'){
-					ques.id_question_log = obj[i].id_question_log;
-				}
-				if(this.containAnswer){
-					ques.answerData = obj[i].answerData;
-				}
-				ques.initDom();		
-				this.questions.push(ques);
-			}
+		for (var i = 0; i < this.questions.length; i++) {
+			this.questions[i].quiz = this;
+			this.questions[i].initDom();		
 		}
 		this.addNavigation();
-		this.status = 2;
+		//this.status = 2;
 	},
 	
 	/**
-	 * Qestion Navigation , question list On quiz left, in the according panel
+	 * 题目导航
 	 */
 	addNavigation : function() {
 		var str = '';
 		var index = 0;
 		for (var i = 0; i < this.questions.length; i++) {
 			
-			if (this.questions[i].type == 'Qes_Big'){
-				str += "<div class='w_q_sn_undone' style='width:99%;'>"+this.questions[i].title+"</div>";
-				continue;
-			}
-			if(this.questions[i].index == ''){
-				continue;
-			}
-			var temp = index + 1;
-			if (temp < 10) {
-				temp = '0' + temp;
-				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_" + this.questions[i].id 
-					+ "' onclick='" + this.naming + ".wls_quiz_nav(" + this.questions[i].id
-					+ ")'><a href='#' style='border:0px;'>" + temp
-					+ "</a></div>";
-			} else if (temp >= 10 && temp < 100) {
-				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_"
-						+ this.questions[i].id + "' onclick='" + this.naming
-						+ ".wls_quiz_nav(" + this.questions[i].id
-						+ ")'><a href='#' style='border:0px;'>" + temp
-						+ "</a></div>";
-			} else {
+
 				str += "<div class='w_q_sn_undone' id='w_q_subQuesNav_"
 						+ this.questions[i].id
 						+ "' onclick='"
-						+ this.naming
+						+ this.objName
 						+ ".wls_quiz_nav("
 						+ this.questions[i].id
 						+ ")' style='height:18px;'><a href='#' style='border:0px;font-size:10px;margin-top:2px;' >"
-						+ temp + "</a></div>";
-			}
-			index++;
+						+ i + "</a></div>";
+
 		}
 		$("#navigation").append(str);
 
 	},
 	
+	/**
+	 * 点击了题目导航处的序号
+	 * 试卷会聚焦到这个题目处,并闪烁一下
+	 * */
 	wls_quiz_nav : function(id) {
 		$("#wls_quiz_main").scrollTop($("#wls_quiz_main").scrollTop() * (-1));
-
 		var num = $("#w_qs_" + id).offset().top - 150;
 		$("#wls_quiz_main").scrollTop(num);
+		$("#w_qs_" + id).fadeTo("slow", 0.33,function(){
+			$("#w_qs_" + id).fadeTo("slow", 1);
+		});		
 	},
 	
-	addAnswers : function() {
-		alert(1);
-	},
-	
-	addDescriptions : function() {
-		this.count.giveup = 0;
-		this.count.total = 0;
-		for (var i = 0; i < this.questions.length; i++) {
-			if(this.questions[i].type=='Qes_Choice'||
-			this.questions[i].type=='Qes_MultiChoice'||
-			this.questions[i].type=='Qes_Check'||
-			this.questions[i].type=='Qes_Blank'){
-				this.questions[i].showDescription();
-			}
-		}
-		this.state = 42;
-	},
-	
-	ajaxQuestions : function(nextFunction) {
-		var thisObj = this;
-		$.blockUI({
-					message : '<h1>' + il8n.normal.loading + '</h1>'
-				});
-		$.ajax({
-					url : thisObj.config.AJAXPATH + "?controller=question&action=getByIds",
-					data : {
-						ids_questions : thisObj.ids_questions
-					},
-					type : "POST",
-					success : function(msg) {
-						thisObj.questionsData = jQuery.parseJSON(msg);
-						thisObj.state = 2;
-						$.unblockUI();
-						Ext.getCmp('ext_Operations').layout.setActiveItem('ext_Navigation');
-						eval(nextFunction);
-					}
-				});
-	},
-	
+	/**
+	 * 初始化页面布局
+	 * */
 	initLayout : function() {
 		var thisObj = this;
 		var viewport = new Ext.Viewport({
@@ -236,10 +100,9 @@ wls.quiz = Ext.extend(wls, {
 									id : 'quiz_submit',
 									text : il8n.normal.submit,
 									region : 'south',
+									height:40,
 									handler : function() {
-										thisObj.submit(thisObj.naming
-												+ ".addDescriptions();");
-										Ext.getCmp('quiz_submit').disable();
+										//TODO
 									}
 								}), {
 							id : 'ext_Operations',
@@ -259,7 +122,7 @@ wls.quiz = Ext.extend(wls, {
 							},
 							items : [{
 										id : 'ext_Navigation',
-										title : il8n.normal.Navigation,
+										title : il8n.normal.navigation,
 										html : '<div id="navigation"></div>'
 									}, {
 										id : 'ext_Brief',
