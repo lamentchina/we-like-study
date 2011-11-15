@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../libs/ext_3_2_1/resources/css/ext-all.css" />
+<script type="text/javascript" src="../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript" src="../libs/jqueryextend.js"></script>	
+<script type="text/javascript" src="../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="../libs/ext_3_2_1/ext-all.js"></script>
+<script type="text/javascript" src="../app/view/wls.js"></script>
+<script type="text/javascript" src="../app/view/quiz.js"></script>
+<script type="text/javascript" src="../app/view/question.js"></script>
+<script type="text/javascript" src="../app/view/question/choice.js"></script>
+<script type="text/javascript">
+var obj ;
+Ext.onReady(function(){
+	var quizObj = new wls.quiz();
+	obj = new wls.question.choice();
+	obj.quiz = quizObj;
+	obj.optionLength = 3;
+	obj.id = 1;
+	obj.layout = 'horizontal';
+	obj.answer = 'A';
+	obj.description = '解题思路';
+	obj.title = '这是一个单项选择题,请勾选选项:';
+	obj.options = ['选项1','选项2','选项3'];
+	obj.initDom();
+	
+});
+</script>
+</head>
+<body>
+<div id='wls_quiz_main' style='width:400px;height:400px;background-color: red;'></div>
+<button onclick='obj.submit()'>submit</button>
+</body>
+</html>
