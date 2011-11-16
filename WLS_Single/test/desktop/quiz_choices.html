@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../../libs/ext_3_2_1/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../libs/qWikiOffice/resources/css/desktop.css" />
+<style type="text/css">
+.icon_books_48_48{
+	background-image:url("../../file/images/books48x48.png") !important;
+}
+.icon_books_16_16{
+	background-image:url("../../file/images/books16x16.png") !important;
+}
+.icon_books_32_32{
+	background-image:url("../../file/images/books32x32.png") !important;
+}
+
+.icon_wrongbook_48_48{
+	background-image:url("../../file/images/wrongbook48x48.png") !important;
+}
+.icon_wrongbook_16_16{
+	background-image:url("../../file/images/wrongbook16x16.png") !important;
+}
+.icon_wrongbook_32_32{
+	background-image:url("../../file/images/wrongbook32x32.png") !important;
+}
+
+.icon_audit_48_48{
+	background-image:url("../../file/images/audit48x48.png") !important;
+}
+.icon_audit_16_16{
+	background-image:url("../../file/images/audit16x16.png") !important;
+}
+.icon_audit_32_32{
+	background-image:url("../../file/images/audit32x32.png") !important;
+}
+
+.icon_access_48_48{
+	background-image:url("../../file/images/access48x48.png") !important;
+}
+.icon_access_16_16{
+	background-image:url("../../file/images/access16x16.png") !important;
+}
+.icon_access_32_32{
+	background-image:url("../../file/images/access32x32.png") !important;
+}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../app/view/wls.css" />
+
+<script type="text/javascript" src="../../libs/jquery-1.4.2.js"></script>	
+<script type="text/javascript" src="../../libs/jqueryextend.js"></script>	
+<script type="text/javascript" src="../../libs/ext_3_2_1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="../../libs/ext_3_2_1/ext-all.js"></script>
+<!-- <script type="text/javascript" src="../view/il8n.js"></script> -->
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/App.js"></script>
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/Desktop.js"></script>
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/Module.js"></script>
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/Notification.js"></script>
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/Shortcut.js"></script>
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/StartMenu.js"></script>
+<script type="text/javascript" src="../../libs/qWikiOffice/system/core/TaskBar.js"></script>
+
+<script type="text/javascript" src="../../app/view/il8n.js"></script>
+<script type="text/javascript" src="../../app/view/wls.js"></script>
+<script type="text/javascript" src="../../app/view/quiz.js"></script>
+<script type="text/javascript" src="../../app/view/quiz/paper.js"></script>
+<script type="text/javascript" src="../../app/view/question.js"></script>
+<script type="text/javascript" src="../../app/view/question/choice.js"></script>
+
+<script type="text/javascript" src="quiz_choices.js"></script>
+
+<script type="text/javascript">
+
+
+
+class_papers = Ext.extend(Ext.app.Module, {
+	id : 'id_10',
+
+	init : function() { },
+
+	createWindow : function() {
+		var desktop = this.app.getDesktop();
+		var win = desktop.getWindow(this.id);
+		var winWidth = desktop.getWinWidth() / 1.1;
+		var winHeight = 430;
+
+		var grid = wls_quiz_paper();
+		if (!win) {
+			win = desktop.createWindow({
+						id : this.id,
+						title : "试题库",
+						width : winWidth,
+						height : winHeight,
+						iconCls : 'icon_books_16_16',
+						iconClsGhostBar : 'icon_books_32_32',
+						layout : 'fit',
+						items:[grid]
+					});
+		}
+		win.show();
+	}
+});
+</script>
+
+<script type="text/javascript">
+Ext.onReady(function(){
+	
+
+	
+	Ext.namespace('Ext.ux','QoDesk');
+	Ext.BLANK_IMAGE_URL = '../../libs/ext_3_2_1/resources/images/default/s.gif';
+	Ext.QuickTips.init();
+	
+	QoDesk.App = new Ext.app.App({
+		init : function(){},
+		memberInfo: {},
+		modules: [{
+		        	  id:'10',
+		        	  className:'class_papers',
+		        	  launcher:{
+		        		  text:'试卷库',
+		        		  iconCls:'icon_books_16_16',
+		        		  shortcutIconCls:'icon_books_48_48'		        		  
+		        	  },
+					  launcherPaths:{
+						  startmenu:""
+					  }		        	  
+		          },{
+		        	  id:'11',
+		        	  className:'ggg',
+		        	  launcher:{
+		        		  text:'随机测验',
+		        		  iconCls:'icon_audit_16_16',
+		        		  shortcutIconCls:'icon_audit_48_48',
+		        		  
+		        	  },
+					  launcherPaths:{
+						  startmenu:""
+					  }		        	  
+		          },{
+		        	  id:'12',
+		        	  className:'ggg',
+		        	  launcher:{
+		        		  text:'错题复习',
+		        		  iconCls:'icon_wrongbook_16_16',
+		        		  shortcutIconCls:'icon_wrongbook_48_48',
+		        		  
+		        	  },
+					  launcherPaths:{
+						  startmenu:""
+					  }		        	  
+		          },{
+		        	  id:'13',
+		        	  className:'ggg',
+		        	  launcher:{
+		        		  text:'统计',
+		        		  iconCls:'icon_access_16_16',
+		        		  shortcutIconCls:'icon_access_48_48',
+		        		  
+		        	  },
+					  launcherPaths:{
+						  startmenu:""
+					  }		        	  
+		          }
+		          ] ,
+		desktopConfig: {
+			appearance: {
+			 	"fontColor":"333333",
+			 	"taskbarTransparency":70
+			},
+			background: {
+				"color":"f9f9f9",
+				"wallpaperPosition":"tile",
+				"wallpaper":{
+					"id":10,
+					"name" : "WLS",
+					"file" : "../../file/images/bgH100x100.jpeg"
+				}
+			},
+			launchers: {
+				shortcut:["10",'11','12'] 
+			},
+			taskbarConfig: {
+				buttonScale: 'large',
+				position: 'bottom',
+				quickstartConfig: {
+					width: 60
+				},
+			
+				startMenuConfig: {
+					iconCls: 'icon-user-48',
+					title: "WLS 单人版",
+					width: 320
+				}
+			}
+		}
+	});
+
+});
+</script>
+</head>
+<body scroll="no"  >
+</body>
+</html>
