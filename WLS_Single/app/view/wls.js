@@ -30,8 +30,16 @@
  * @author wei1224hf, from China , mainland
  * @QQ:135426431(group)
  * */
-var wls = function() {	
-	this.author = 'wei1224hf';
-	this.version = '2.77';
-	this.see = 'www.welikestudy.com';
-};
+var wls = function() {};//这只是一个namespace
+
+/**
+ * 全局变量
+ * 其功能类似于传统软件中的数据库
+ * 部分数据存储有交叉重叠,有冗余
+ * */
+var wlsData = {
+	questions : [],      //储存所有题目,为 随机组题出卷 提供数据,为此题目总数务必要小,不然浏览器卡死
+	papers : [],         //所有试卷
+	knowledges : [],     //知识点
+	wrongs : []	         //错题本
+}

@@ -3,12 +3,17 @@ var il8n = {
     	giveup:'弃权',
     	wrong:'做错',
         right:'作对',
-        cent:'分数'        
+        cent:'分数',
+        totalCent:'总分',
+        myCent:'我的得分'
     },
     normal:{
     	operation:'操作',
     	submit:'提交',
     	navigation:'导航',
     	title:'标题'
+    },
+    general:{
+    	detail:'详细'
     }
 }
