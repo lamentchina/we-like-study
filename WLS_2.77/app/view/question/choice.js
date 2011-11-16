@@ -63,90 +63,45 @@ wls.question.choice = Ext.extend(wls.question, {
 	
 	/**
 	 * 提交答案,
+	 * 如果做对了,题目导航处变蓝
+	 *     做错了,题目导航处变红
+	 *     弃权了,题目导航处变黄
 	 * */
 	submit : function(){
-	
+		if(this.state=='submitted')return;
+		this.state = 'submitted';
+		
+		//显示解题思路
+		$('#w_qs_' + this.id).append("<div class='w_q_d'>"+ this.description + "</div>");
+		
+		//得到做题的答案,如果用户没有做就提交了,就设置为  I_DONT_KNOW 表示用户弃权不做
 		var value = $('input[name=w_qs_' + this.id + ']:checked').val();
 		if (typeof(value) == 'undefined') {
 			this.myAnswer = 'I_DONT_KNOW';
-			this.quiz.count.giveup++;
+			return 'I_DONT_KNOW';
 		} else {
-			this.myAnswer = value;
-			
+			this.myAnswer = value;			
 			if(this.myAnswer==this.answer){//做对了
+				$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_r');
+				$('#w_q_subQuesNav_' + this.id).attr('title',
+					il8n.quiz.right + ',' + il8n.quiz.cent + ':' + (this.cent));
 				
-			}else{//做错了
-				
+				this.cent_ = this.cent;
+				$(".w_q_d",$('#w_qs_' + this.id)).prepend("<span style='color:red;font-size:30px;'>  √  </span>");
+				return 'RIGHT';
+			}else{
+				//做错了,将正确答案高亮显示
+				$(":radio[value='" + this.answer + "']",
+						$("#w_qs_" + this.id)).parent()
+						.addClass('w_qs_q_w');
+				//在题目导航处,修改背景颜色,并设置标签描述
+				$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_w');
+				$('#w_q_subQuesNav_' + this.id).attr('title',
+						il8n.quiz.wrong + ',' + il8n.quiz.cent + ':' + (this.cent));
+				$(".w_q_d",$('#w_qs_' + this.id)).prepend("<span style='color:red;font-size:35px;'>  ×  </span>");
+				return 'WRONG';
 			}
-		}
-		if(this.state != 'submitted'){
-			$('#w_qs_' + this.id).append("<div class='w_q_d'>"+ this.description + "</div>");
-		}
-		this.state = 'submitted';
-	},
-	
-	/**
-	 * 当用户做完一张卷子,点击 提交 之后,程序会逐一判断用户有没有作对
-	 * 如果做对了,题目导航处变蓝,题目处影藏解题思路
-	 *     做错了,题目导航处变红,题目处显示解题思路
-	 *     弃权了,题目导航处变黄,题目处影藏解题思路
-	 * */
-	showDescription : function() {
-		/*
-		var obj = this.answerData;
-		this.quiz.cent += parseFloat(obj.cent);
-		this.quiz.count.total++;
-
-		if(obj.description!='nothing'){
-			$(".w_qw_tool", $('#w_qs_' + this.id))
-			.append("<a href='#' class='w_q_d_t' title='"
-					+ il8n.quiz.question + il8n.normal.description
-					+ "' id='w_qs_d_t_" + this.id
-					+ "' onclick='wls_question_toogle(" + this.id
-					+ ")'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>");
-			$('#w_qs_' + this.id).append("<div class='w_q_d'>"+ obj.description + "</div>");
-		}
-		$(".w_q_d_t", $('#w_qs_' + this.id)).addClass("w_q_d_t_2");
-
-		//弃权
-		if (obj.myAnswer == 'I_DONT_KNOW') {
-			this.quiz.count.giveup++;
-			$(":radio[value='" + obj.answer + "']",
-					$("#w_qs_" + this.id)).parent()
-					.addClass('w_qs_q_w');
-
-			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_g');
-			$('#w_q_subQuesNav_' + this.id).attr('title',
-					il8n.quiz.giveup + ',' + il8n.quiz.cent + ':' + (this.cent));
-			wls_question_toogle(this.id);
-			
-		//作对了
-		} else if (obj.answer == obj.myAnswer) {
-			this.quiz.count.right++;
-			this.quiz.mycent += parseFloat(obj.cent);
-			
-			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_r');
-			$('#w_q_subQuesNav_' + this.id).attr('title',
-				il8n.quiz.right + ',' + il8n.quiz.cent + ':' + (this.cent));
-			wls_question_toogle(this.id);
-		
-		//做错了
-		} else {
-			this.quiz.count.wrong++;
-			$(":radio[value='" + obj.answer + "']",
-					$("#w_qs_" + this.id)).parent()
-					.addClass('w_qs_q_w');
-
-			$('#w_q_subQuesNav_' + this.id).addClass('w_q_sn_w');
-			$('#w_q_subQuesNav_' + this.id).attr('title',
-				il8n.quiz.wrong + ',' + il8n.quiz.cent + ':' + (this.cent));
-			if (this.quiz.type == 'paper'){
-				this.addWhyImWrong();
-			}
-		}
-		
-		obj = null;
-		*/
+		}		
 	},
 	
 	/**
