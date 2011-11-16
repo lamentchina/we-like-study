@@ -38,6 +38,7 @@ var wls = function() {};//这只是一个namespace
  * 部分数据存储有交叉重叠,有冗余
  * */
 var wlsData = {
+    stores : [],         //Ext.data.ArrayStore 数组
 	questions : [],      //储存所有题目,为 随机组题出卷 提供数据,为此题目总数务必要小,不然浏览器卡死
 	papers : [],         //所有试卷
 	knowledges : [],     //知识点

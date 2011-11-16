@@ -22,24 +22,14 @@ wls.quiz.paper = Ext.extend(wls.quiz, {
 
 var wls_quiz_paper = function(){
 	
-	var data = [];
-	for(var i=0;i<data_to_load.length;i++){
-		data.push([data_to_load[i].title,i]);
-	}
-
-	var store = new Ext.data.ArrayStore({
-	    fields: [
-	       {name: 'title'},
-	       {name: 'index'}
-	    ]
-	});
-	store.loadData(data);
-	
 	var grid = new Ext.grid.GridPanel({
-	    store: store,
+	    store: wlsData.stores[0],
 	    columns: [
-	        {id:'title',header: '标题' ,dataIndex: 'title'},
-	        {id:'index',header: '序号' ,dataIndex: 'index'}
+            {id:'index',header: ' ' ,dataIndex: 'index',width:20},
+	        {id:'title',header: '标题' ,dataIndex: 'title'},	        
+	        {id:'title',header: '题总数' ,dataIndex: 'count'},
+	        {id:'title',header: '总分' ,dataIndex: 'cent'},
+	        {id:'title',header: '得分' ,dataIndex: 'cent_'}
 	    ],
 	    stripeRows: true,
 	    height: 350,
@@ -49,30 +39,24 @@ var wls_quiz_paper = function(){
 	});
 	
 	grid.on('celldblclick',function(grid,row,col,rec){
-		var index = grid.store.getAt(row).get("index");
-		
-		var data = wlsData.papers[index];
-		if(wlsData.papers.length<=index){
-			wlsData.papers.push(new wls.quiz.paper());
-			wlsData.papers[index].objName = 'wlsData.papers['+index+']';
-			wlsData.papers[index].store(data_to_load[index].questions);	
-		}
-		
-		
-		
+		var index = grid.store.getAt(row).get("index");		
 		var panel = wlsData.papers[index].initLayout();	
 
 		var w = new Ext.Window({
 			title : il8n.general.detail,
 			id : 'p_h_l_win_detail_',
-			width : '90%',
-			height : 550,
+			width : '95%',
+			height : 560,
 			layout : 'fit',
-			modal : false,
-			items : [panel]
+			modal : true,
+			items : [panel],
+			listeners :{
+				hide : function(){
+					w.destroy();
+				}
+			}
 		});
-		w.show();
-		
+		w.show();		
 			
 		wlsData.papers[index].initQuestions();
 	});

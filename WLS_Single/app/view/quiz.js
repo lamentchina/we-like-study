@@ -22,7 +22,6 @@ wls.quiz = Ext.extend(wls, {
 	 * 每一种题型,都有 initDom() 这个函数
 	 * */
 	initQuestions : function() {
-		var index = 1;
 		for (var i = 0; i < this.questions.length; i++) {
 			this.questions[i].quiz = this;
 			this.questions[i].initDom();		
@@ -59,7 +58,6 @@ wls.quiz = Ext.extend(wls, {
 		var num = $("#w_qs_" + id).offset().top - 150;
 		var target = $('#ext_wls_quiz_main>div>div>div').find('#w_qs_'+id);
 		$('#ext_wls_quiz_main>div>div').scrollTo(target, 800);
-			
 	},
 	
 	/**
