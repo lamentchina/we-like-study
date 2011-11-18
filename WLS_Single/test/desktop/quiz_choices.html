@@ -72,8 +72,6 @@
 
 <script type="text/javascript">
 
-
-
 class_papers = Ext.extend(Ext.app.Module, {
 	id : 'id_10',
 
@@ -106,7 +104,28 @@ class_papers = Ext.extend(Ext.app.Module, {
 <script type="text/javascript">
 Ext.onReady(function(){
 	
+	var data = [];
+	for(var i=0;i<data_to_load.length;i++){
+		data.push([data_to_load[i].title,i,data_to_load[i].questions.length,0,0]);
+		
+		var paper = new wls.quiz.paper(); 
+		paper.questions = [];
+		paper.objName = 'wlsData.papers['+i+']';
+		paper.store(data_to_load[i].questions);
+		wlsData.papers.push(paper);
+	}
 
+	var store = new Ext.data.ArrayStore({
+	    fields: [
+	       {name: 'title'},
+	       {name: 'index'},
+	       {name: 'count'},
+	       {name: 'cent'},
+	       {name: 'cent_'}
+	    ]
+	});
+	store.loadData(data);
+	wlsData.stores.push(store);
 	
 	Ext.namespace('Ext.ux','QoDesk');
 	Ext.BLANK_IMAGE_URL = '../../libs/ext_3_2_1/resources/images/default/s.gif';
@@ -196,7 +215,6 @@ Ext.onReady(function(){
 			}
 		}
 	});
-
 });
 </script>
 </head>
