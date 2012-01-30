@@ -1,5 +1,11 @@
 package com.wei1224hf.myapp;
 
-public class Person {
+import javax.servlet.http.HttpServletRequest;
 
+public class Person {
+	
+	public String action(String functionName,HttpServletRequest request){
+		String output = "";
+		return output;		
+	}
 }
