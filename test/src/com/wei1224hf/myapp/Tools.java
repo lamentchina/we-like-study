@@ -19,9 +19,9 @@ import org.apache.tomcat.dbcp.pool.impl.GenericObjectPool;
 public class Tools {
 	private static Hashtable<String, Serializable> il8n = null;
 	public static ObjectPool connectionPool=null; 
-	private static String dbUrl = "jdbc:mysql://127.0.0.1:3306/MADCM_20110831_TEST?useUnicode=true&characterEncoding=utf8";
+	private static String dbUrl = "jdbc:mysql://127.0.0.1:3306/dbtest?useUnicode=true&characterEncoding=utf8";
 	private static String username = "root";
-	private static String password = "";
+	private static String password = "root";
 
 	public static Hashtable<String, Serializable> getIl8n(String path) {
 		if (il8n == null) {

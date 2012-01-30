@@ -22,9 +22,15 @@ public class Server extends HttpServlet {
 		String cls = request.getParameter("class");
 		String fun = request.getParameter("function");
 		
-		if(cls.equals("com.wei1224hf.myapp.Person")){
+		if(cls==null){
+			output = "missing class";
+		}else if(cls.equals("com.wei1224hf.myapp.Person")){
 			output = new com.wei1224hf.myapp.Person().action(fun, request);
+		}else{
+			output = "error";
 		}
+		
+		response.getWriter().write(output);
 	}
 
 
