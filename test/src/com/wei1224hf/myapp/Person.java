@@ -6,7 +6,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -54,7 +58,7 @@ public class Person {
 			rs.next();
 			total = rs.getString("total");
 
-			sql = "select * from person limit 20";
+			sql = "select * from person limit "+start+","+limit;
 			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
 
@@ -69,6 +73,9 @@ public class Person {
 						t2.put(rsmd.getColumnName(i), rs.getString(i));
 					}
 				}
+				t2.put("age", String.valueOf( getAge(  (String)t2.get("birthday") )));
+				t2.put("birthday", ((String)t2.get("birthday")).substring(0,10) );
+				
 				a.add(t2);			
 			}
 			rs.close();
@@ -86,10 +93,27 @@ public class Person {
 		return t;
 	}
 	
+	private int getAge(String birthday){
+		int age = 0;
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			Date d1 = df.parse(birthday);
+			Date d2 = new Date();
+			long diff = d2.getTime() - d1.getTime();
+			long days = diff / (1000 * 60 * 60 * 24);
+			age = (int) (days / 365) ;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return age;
+	}
+	
 	public static void main(String args[]){
 		Person obj = new Person();
-		Hashtable t = obj.list("0","0","");
+		System.out.println(obj.getAge("1987-01-02 00:00:00"));
+		//Hashtable t = obj.list("0","0","");
 		
-		System.out.println(new Gson().toJson(t));
+		//System.out.println(new Gson().toJson(t));
 	}
 }
