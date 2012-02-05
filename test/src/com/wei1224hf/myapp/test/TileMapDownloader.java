@@ -32,11 +32,9 @@ public class TileMapDownloader {
 			e.printStackTrace();
 		}
 	}
-	
-
 
 	public static void main(String args[]){
 		//http://q5.baidu.com/it/u=x=101238;y=37702;z=19;v=009;type=sate&fm=46 北京
-		TileMapDownloader.getBaidu(101238+5,37702+5,101238-5,37702-5,19);
+		TileMapDownloader.getBaidu(101238+10,37702+10,101238-10,37702-10,19);
 	}
 }
