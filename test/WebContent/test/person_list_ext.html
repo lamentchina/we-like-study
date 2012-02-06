@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="http://localhost:8091/libs/ext4/resources/css/ext-all.css" />
+
+<script type="text/javascript" src="http://localhost:8091/libs/ext4/ext-all.js"></script>
+<script type="text/javascript">
+var getGrid = function(){
+    var store = new Ext.data.JsonStore({
+        autoDestroy : true,
+        proxy: {
+            type: 'ajax',
+            url: '/test/test/data/personlist.txt',
+            reader: {
+                type: 'json',
+                root: 'data',
+                idProperty: 'id'
+            }
+        },
+        fields : ['id','age', 'birthday', 'name','gender','ismarried','cellphone']
+    });
+   
+    store.load();
+
+    var grid = new Ext.grid.GridPanel({
+        store : store,
+        columns :  [{
+			header : '&nbsp;',
+			width : 40,
+			dataIndex : 'id'
+        }, {
+            header : '姓名',
+            dataIndex : 'name'
+        }, {
+            header : '年龄',
+            dataIndex : 'age'
+        }, {
+            header : '生日',
+            dataIndex : 'birthday'
+        }, {
+            header : '性别',
+            dataIndex : 'gender',
+            renderer : function(a,b,c){
+            	if(a==1){
+            		return '男';
+            	}else {
+            		return '女';
+            	}
+            }
+        }, {
+            header : '婚姻',
+            dataIndex : 'ismarried',
+            renderer : function(a,b,c){
+            	if(a==1){
+            		return '已婚';
+            	}else {
+            		return '未婚';
+            	}
+            }
+        }, {
+            header : '手机号码',
+            dataIndex : 'cellphone'
+        }],
+        width : "100%",
+        height : 400,
+        bbar : new Ext.PagingToolbar({
+            store : store,
+            pageSize : 15,
+            displayInfo : true
+        })
+    });
+
+    grid.render(Ext.getBody());
+}
+</script>
+
+<script type="text/javascript">
+Ext.onReady(function(){
+    getGrid();
+    
+});
+</script>
+</head>
+<body style='BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px' scroll='no'>
+</body>
+</html>

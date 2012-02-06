@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojo/resources/dojo.css" />
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/resources/Grid.css" />
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/resources/tundraGrid.css" />
+
+<script type="text/javascript" src="/test/libs/dojo-release-1.7.1/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad: true"></script>
+<script type="text/javascript">
+
+	dojo.require("dijit.dijit");
+	dojo.require("dojox.grid.DataGrid");
+	dojo.require("dojo.data.ItemFileWriteStore");
+
+	//dojo.parser.parse();
+</script>
+</head>
+<body class="tundra">
+<span dojoType="dojo.data.ItemFileWriteStore" 
+		jsId="jsonStore" url="/test/test/data/countries.txt">
+	</span>
+	<table dojoType="dojox.grid.DataGrid" keepSelection=true
+		jsid="grid" id="grid" 
+		store="jsonStore" query="{ name: '*' }" rowsPerPage="20" rowSelector="20px">
+		<thead>
+			<tr>
+				<th field="name" width="300px">Country/Continent Name</th>
+				<th field="type" width="auto">Type</th>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>
