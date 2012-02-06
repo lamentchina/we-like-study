@@ -34,6 +34,16 @@ public class Person {
 			Hashtable<String, Serializable> t = list(start,limit,search);
 			
 			output = new Gson().toJson(t);
+		}else if(action.equals("list4dojo")) {
+			String start = request.getParameter("start") ;
+			start = (start==null)?"1":start ;
+			String limit = request.getParameter("limit") ;
+			limit = (limit==null)?"15":limit ;
+			String search = request.getParameter("search") ;
+			search = (search==null)?"":search ;			
+			Hashtable<String, Serializable> t = list4dojo(start, limit, search);
+			
+			output = new Gson().toJson(t);
 		} else {
 			output = "wrong function";
 		}
@@ -42,7 +52,6 @@ public class Person {
 	
 	private Hashtable<String, Serializable> list(String start, String limit, String search) {
 		String total = "0";
-		Hashtable<String, Serializable> t = new Hashtable<String, Serializable>();
 
 		String conditions = " where 1=1 ";
 		if (!"".equals(search)) 
@@ -85,12 +94,25 @@ public class Person {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
+		Hashtable<String, Serializable> t = new Hashtable<String, Serializable>();
 		t.put("data", a);
 		t.put("page", "1");
 		t.put("total", total);
 		t.put("pagesize", limit);
 		return t;
+	}
+	
+	private Hashtable<String, Serializable> list4dojo(String start, String limit, String search) {
+		Hashtable<String, Serializable> t = list(start,limit,search);
+		Hashtable<String, Serializable> t2 = new Hashtable<String, Serializable>();
+		t2.put("items", t.get("data"));
+		t2.put("identifier", "id");
+		t2.put("label", "name");
+		t2.put("page", t.get("page"));
+		t2.put("total", t.get("total"));
+		t2.put("pagesize", t.get("pagesize"));
+		return t2;
 	}
 	
 	private int getAge(String birthday){
