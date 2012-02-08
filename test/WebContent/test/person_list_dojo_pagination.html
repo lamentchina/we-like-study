@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojo/resources/dojo.css" />
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/enhanced/resources/tundra/EnhancedGrid.css" />
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/resources/tundraGrid.css" />
+
+<script type="text/javascript" src="/test/libs/dojo-release-1.7.1/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad: true"></script>
+<script type="text/javascript">
+	dojo.require("dijit.dijit");
+	dojo.require("dojox.grid.EnhancedGrid");
+	dojo.require("dojox.grid.enhanced.plugins.ServerPaging");
+	dojo.require("dojo.data.ItemFileReadStore");
+	
+	dojo.require("dojo.parser");
+</script>
+</head>
+<body class="tundra">
+<span dojoType="dojo.data.ItemFileReadStore" 
+		jsId="jsonStore" url="/test/Server.do?class=com.wei1224hf.myapp.Person&function=list4dojo">
+	</span>
+	<div style="width:500px;height:500px;">
+			<table dojoType="dojox.grid.EnhancedGrid" plugins="{  serverPaging : {limit:25}}"
+		jsid="grid" id="grid" 
+		store="jsonStore" rowsPerPage="20" rowSelector="20px" >
+		<thead>
+			<tr>
+				<th field="name" width="auto">姓名</th>
+				<th field="age" width="auto">年龄</th>
+				<th field="birthday" width="auto">生日</th>
+				<th field="gender" width="auto">性别</th>
+				<th field="cellphone" width="auto">手机号码</th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+
+</body>
+</html>
