@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dijit/themes/tundra/tundra.css" />
+
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/enhanced/resources/tundra/EnhancedGrid.css" />
+<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/resources/tundraGrid.css" />
+
+<script type="text/javascript" src="/test/libs/dojo-release-1.7.1/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad: false"></script>
+<script type="text/javascript">
+	
+	dojo.require("dojox.grid.EnhancedGrid");
+	dojo.require("dojox.grid.enhanced.plugins.ServerPaging");
+	dojo.require("dojox.grid._CheckBoxSelector");
+	dojo.require("dojo.data.ItemFileReadStore");
+	
+	dojo.require("dojo.parser");
+	
+	var button,gird,structure; 
+	dojo.addOnLoad(function(){
+		
+		var store = new dojo.data.ItemFileReadStore({url:"/test/Server.do?class=com.wei1224hf.myapp.Person&function=list4dojo"});
+		grid = new dojox.grid.EnhancedGrid({
+			id : "grid",
+			store : store,
+			height : "400px",
+			structure : [{
+				type: "dojox.grid._CheckBoxSelector"
+			},{ cells: [[
+				new dojox.grid.cells.RowIndex({ width: 5 }),
+				{name: '姓名', field: 'name'},
+				{name: '生日', field: 'birthday'},
+				{name: '年龄', field: 'age'}
+			]]}],
+			plugins : {"serverPaging":{}}
+		});
+		
+		dojo.place(grid.domNode,dojo.body(),"last");
+		grid.startup();
+		grid.pluginMgr._plugins[0].init();		
+	});
+</script>
+</head>
+<body class="tundra">
+</body>
+</html>

@@ -8,25 +8,27 @@
 
 <script type="text/javascript" src="/test/libs/dojo-release-1.7.1/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad: true"></script>
 <script type="text/javascript">
-
 	dojo.require("dijit.dijit");
 	dojo.require("dojox.grid.DataGrid");
-	dojo.require("dojo.data.ItemFileWriteStore");
-
-	//dojo.parser.parse();
+	dojo.require("dojox.grid._RadioSelector");
+	dojo.require("dojo.data.ItemFileReadStore");
 </script>
 </head>
 <body class="tundra">
-<span dojoType="dojo.data.ItemFileWriteStore" 
-		jsId="jsonStore" url="/test/test/data/countries.txt">
+<span dojoType="dojo.data.ItemFileReadStore" 
+		jsId="jsonStore" url="/test/Server.do?class=com.wei1224hf.myapp.Person&function=list4dojo">
 	</span>
-	<table dojoType="dojox.grid.DataGrid" keepSelection=true
+	<table dojoType="dojox.grid.DataGrid" keepSelection=true style="height:400px"
 		jsid="grid" id="grid" 
-		store="jsonStore" query="{ name: '*' }" rowsPerPage="20" rowSelector="20px">
+		store="jsonStore" rowsPerPage="20" rowSelector="20px" type= "dojox.grid._RadioSelector">
 		<thead>
 			<tr>
-				<th field="name" width="300px">Country/Continent Name</th>
-				<th field="type" width="auto">Type</th>
+				<th field="name" width="300px">姓名</th>
+				<th field="age" width="auto">年龄</th>
+				<th field="birthday" width="auto">生日</th>
+				<th field="gender" width="auto">性别</th>
+				<th field="cellphone" width="auto">手机号码</th>
+				
 			</tr>
 		</thead>
 	</table>
