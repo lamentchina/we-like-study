@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dijit/themes/claro/document.css" />
+		<link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dijit/themes/claro/claro.css" />
+		<style type="text/css">
+			html, body { height: 100%; width: 100%; padding: 0; border: 0; }
+		</style>
+		<script type="text/javascript" src="/test/libs/dojo-release-1.7.1/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad: true"></script>
+        <script type="text/javascript" >
+            dojo.require("dijit.layout.BorderContainer");
+            dojo.require("dijit.layout.LayoutContainer");
+            dojo.require("dijit.layout.TabContainer");
+            dojo.require("dijit.layout.ContentPane");
+            dojo.require("dijit.MenuBar");
+            dojo.require("dijit.PopupMenuItem");
+            dojo.require("dijit.PopupMenuBarItem");
+            dojo.require("dijit.Menu");
+            dojo.require("dijit.MenuItem");
+            dojo.require("dojo.parser");
+            dojo.addOnLoad(function(){
+            	return;
+                var a = dojo.byId("menu");
+
+                var menuObj = [
+                    {label:"社工",children:[
+                        {label:"民情走访"},
+                        {label:"责任片走访"}
+                    ]},
+                    {label:"医生",children:[
+                        {label:"患者走访"}
+                    ]},
+                    {label:"管理员",children:[
+                        {label:"用户管理"},
+                        {label:"权限管理"},
+                        {label:"楼层数据管理",children:[
+                            {label:"小区A",children:[
+                                {label:"楼A#1栋",children:[
+                                    {label:"A单元",children:[
+                                        {label:"101室"},
+                                        {label:"102室"},
+                                        {label:"103室"}
+                                    ]},
+                                    {label:"B单元",children:[
+                                        {label:"201室"},
+                                        {label:"202室"},
+                                        {label:"303室"}                                                          
+                                    ]}
+                                ]},
+                                {label:"楼A#2栋",children:[
+                                    {label:"A单元",children:[
+                                        {label:"101室"},
+                                        {label:"102室"},
+                                        {label:"103室"}
+                                    ]},
+                                    {label:"B单元",children:[
+                                        {label:"101室"},
+                                        {label:"102室"},
+                                        {label:"103室"}
+                                    ]}
+                                ]}
+                            ]},
+                            {label:"小区B"},
+                            {label:"小区C"}
+                        ]}
+                    ]}                
+                ];
+
+                function setMenu(data){
+                    var str = "";
+                    for(var i=0;i<data.length;i++){
+                        if(data[i].hasOwnProperty("children")){
+                        	str += "<div dojoType=\"dijit.PopupMenuItem\" label=\""+data[i].label+"\">";
+                        	str += "<div dojoType=\"dijit.Menu\">";
+                        	str += setMenu(data[i].children);
+                        	str += "</div></div>";
+                        }else{
+                            str += "<div dojoType=\"dijit.MenuItem\">"+data[i].label+"</div>";
+                        }                    	
+                    }
+                    return str;
+                }
+
+                var str = setMenu(menuObj);
+               
+                a.innerHTML = str;
+                
+                dojo.parser.parse();
+            });
+        </script>
+    </head>
+    <body class="claro" >
+		<div id="border1" dojoType="dijit.layout.BorderContainer" style="width:100%;height:100%">
+			<div  dojoType="dijit.layout.ContentPane" region="top" splitter="true">
+				top bar (resizable)
+			</div>
+			<div  dojoType="dijit.layout.ContentPane" region="center">
+				asdf
+			</div>
+		</div>
+    </body>
+</html>

@@ -3,7 +3,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dijit/themes/tundra/tundra.css" />
-
 <link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/enhanced/resources/tundra/EnhancedGrid.css" />
 <link rel="stylesheet" type="text/css" href="/test/libs/dojo-release-1.7.1/dojox/grid/resources/tundraGrid.css" />
 
@@ -25,10 +24,10 @@
 			id : "grid",
 			store : store,
 			height : "400px",
+			width : "400px",
 			structure : [{
 				type: "dojox.grid._CheckBoxSelector"
 			},{ cells: [[
-				new dojox.grid.cells.RowIndex({ width: 5 }),
 				{name: '姓名', field: 'name'},
 				{name: '生日', field: 'birthday'},
 				{name: '年龄', field: 'age'}
