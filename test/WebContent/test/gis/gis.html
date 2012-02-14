@@ -1,0 +1,126 @@
+<html>
+<head>
+<link rel="stylesheet" href="http://localhost:8091/libs/OpenLayers-2.11/theme/default/style.css" type="text/css">
+<script src="http://localhost:8091/libs/OpenLayers-2.11/lib/OpenLayers.js"></script>
+<script type="text/javascript">
+var map,vlayer,select,vectorLayer;
+var init = function(){
+	var mapOptions = { 
+		resolutions: [0.703125, 0.3515625, 0.17578125, 0.087890625, 0.0439453125, 0.02197265625, 0.010986328125, 0.0054931640625, 0.00274658203125, 0.001373291015625, 6.866455078125E-4, 3.4332275390625E-4, 1.71661376953125E-4, 8.58306884765625E-5, 4.291534423828125E-5, 2.1457672119140625E-5, 1.0728836059570312E-5, 5.364418029785156E-6, 2.682209014892578E-6, 1.341104507446289E-6, 6.705522537231445E-7, 3.3527612686157227E-7, 1.6763806343078613E-7, 8.381903171539307E-8, 4.190951585769653E-8, 2.0954757928848267E-8],
+		projection: new OpenLayers.Projection('EPSG:4326'),
+		maxExtent: new OpenLayers.Bounds(-180.0,-90.0,180.0,90.0),
+		units: "degrees",
+		controls: [
+			new OpenLayers.Control.Navigation(),
+			new OpenLayers.Control.LayerSwitcher(),
+		]
+	};
+	map = new OpenLayers.Map('map', mapOptions );
+	var demolayer = new OpenLayers.Layer.WMS(
+		"gs_lg","http://localhost:8081/geoserver/gwc/service/wms",
+		{layers: 'gs_lg', format: 'image/gif' },
+		{ tileSize: new OpenLayers.Size(256,256) }
+	);
+	map.addLayer(demolayer);
+	map.zoomToExtent(new OpenLayers.Bounds(120.13,30.287,120.153,30.307));
+	
+	vlayer = new OpenLayers.Layer.Vector( "¿É±à¼­²ã" );
+	map.addLayers([ vlayer]);
+	map.addControl(new OpenLayers.Control.EditingToolbar(vlayer));
+	
+
+	/*
+	select = new OpenLayers.Control.SelectFeature(vlayer, {
+		hover: true,
+		highlightOnly: true,
+		renderIntent: "temporary",
+		onSelect : serialize,
+		clickout: true
+	});
+	map.addControl(select);
+	select.activate();
+	*/
+	
+	
+	var highlightCtrl = new OpenLayers.Control.SelectFeature(vlayer, {
+		                   
+		clickout: false, toggle: false,
+		multiple: false, hover: false,
+		toggleKey: "ctrlKey", // ctrl key removes from selection
+		multipleKey: "shiftKey", // shift key adds to selection
+		box: true,
+                 /*   
+		callbacks: {
+			hover : function(){
+				console.debug(2);
+			},
+			click: function(){
+				console.debug(1);
+			}
+		} 
+		*/
+	});
+
+	map.addControl(highlightCtrl);
+	highlightCtrl.activate();
+	
+	var layer_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+	layer_style.fillOpacity = 0.2;
+	layer_style.graphicOpacity = 1;
+	vectorLayer = new OpenLayers.Layer.Vector("Êý¾Ý¿â²ã",{
+		style: layer_style
+	});
+	
+	OpenLayers.loadURL("http://localhost:8091/test/gis.php","",null,
+		function(a){			
+			eval("var obj = "+a.responseText);			
+			var style_green = {
+                strokeColor: "#00FF00",
+                strokeWidth: 3,
+                strokeDashstyle: "dashdot",
+                pointRadius: 6,
+                pointerEvents: "visiblePainted"
+            };
+			
+
+			for(var i1=0;i1<obj.length;i1++){
+				var pointList = [];
+				for(var i=0;i<obj[i1].array.length;i++){
+					pointList.push(new OpenLayers.Geometry.Point(obj[i1].array[i][0],obj[i1].array[i][1]));
+				}
+				var linearRing = new OpenLayers.Geometry.LinearRing(pointList);
+				var polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linearRing]));
+				vectorLayer.addFeatures([polygonFeature]);
+			}
+            map.addLayer(vectorLayer);
+			
+
+		},
+		function(){}
+	);
+}
+
+var serialize = function(a,b){
+	console.debug(a);
+	console.debug(b);
+}
+
+var save = function(){
+	console.debug(vlayer);
+}
+
+var save = function(){
+	console.debug(select);
+}
+
+var functionC = function(a){
+	console.debug(a);
+}
+</script>
+</head>
+<body onload="init()" style="padding:0px;margin:0px;">
+<div id="map" style="width:100%;height:500px;"></div>
+<button>add</button>
+<button>del</button>
+</body>
+</html>

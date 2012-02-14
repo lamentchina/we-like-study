@@ -1,0 +1,223 @@
+﻿<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=gb2312">
+<link rel="stylesheet" href="http://localhost:8091/libs/OpenLayers-2.11/theme/default/style.css" type="text/css">
+<script src="http://localhost:8091/libs/OpenLayers-2.11/lib/OpenLayers.js"></script>
+<script src="http://localhost:8091/libs/jquery/jquery.js"></script>
+
+<script type="text/javascript">
+var map,vlayer,select,vectorLayer,feature1,feature2;
+var init = function(){
+	var mapOptions = { 
+		resolutions: [0.703125, 0.3515625, 0.17578125, 0.087890625, 0.0439453125, 0.02197265625, 0.010986328125, 0.0054931640625, 0.00274658203125, 0.001373291015625, 6.866455078125E-4, 3.4332275390625E-4, 1.71661376953125E-4, 8.58306884765625E-5, 4.291534423828125E-5, 2.1457672119140625E-5, 1.0728836059570312E-5, 5.364418029785156E-6, 2.682209014892578E-6, 1.341104507446289E-6, 6.705522537231445E-7, 3.3527612686157227E-7, 1.6763806343078613E-7, 8.381903171539307E-8, 4.190951585769653E-8, 2.0954757928848267E-8],
+		projection: new OpenLayers.Projection('EPSG:4326'),
+		maxExtent: new OpenLayers.Bounds(-180.0,-90.0,180.0,90.0),
+		units: "degrees",
+		controls: [
+			new OpenLayers.Control.Navigation(),
+			new OpenLayers.Control.LayerSwitcher()
+		]
+	};
+	map = new OpenLayers.Map('map', mapOptions );
+
+	var demolayer3 = new OpenLayers.Layer.TMS("卫星图底图"," ",{
+		layername:"gs_lg",type:"gif",
+		getURL: function (bounds) {
+			bounds = this.adjustBounds(bounds);
+			var res = this.map.getResolution();
+			var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+			var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
+			var z = this.serverResolutions != null ?
+				OpenLayers.Util.indexOf(this.serverResolutions, res) :
+				this.map.getZoom() + this.zoomOffset;
+			
+			var shift = z / 2;
+			var half = 2 << shift;
+
+			var digits = 1;
+			if (half > 10) {
+				digits = Math.ceil(  Math.floor(Math.log(half)/Math.log(10)) + 1 );
+			}
+			var halfx = Math.floor( x / half );
+			var halfy = Math.floor( y / half );
+
+			var path =  this.layername + "/EPSG_4326_" + z + "/"+zeroPadder(halfx ,digits,"")+"_"+zeroPadder(halfy ,digits,"")+"/" + zeroPadder(x ,2*digits,"") + "_" + zeroPadder(y ,2*digits,"") + "." + this.type; 
+			return  path;
+		}
+	},{ tileSize: new OpenLayers.Size(256,256) });
+	map.addLayer(demolayer3);
+	
+	map.zoomToExtent(new OpenLayers.Bounds(120.13,30.287,120.153,30.307));
+	
+	var layer2 = new OpenLayers.Layer.TMS( "TMS",
+                    "http://localhost:8081/geoserver/gwc/service/tms/", {layername: 'gs_lg', type:'gif'} );
+    map.addLayer(layer2);
+	
+	$($('#map')[0].children[0].children[0].children[0]).append("<div id='popup' style='padding:2px;opacity:0.7;position: absolute;display:none; left: 0x; top: 0px; width: 150px; height:100px; background-color: white; z-index: 752;'>asdf</div>");
+		
+	var vectors = new OpenLayers.Layer.Vector("Vector Layer");
+	vectors.events.on({
+		'featureselected': function(feature) {
+			//console.debug(feature);
+		},
+		'featureunselected': function(feature) {
+			//console.debug(feature);
+		}
+	});
+	map.addLayers([vectors]);
+	
+	var layer_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+	layer_style.fillOpacity = 0.2;
+	layer_style.graphicOpacity = 1;
+	vectorLayer = new OpenLayers.Layer.Vector("图层");
+	vectorLayer.events.on({
+		'featureselected': function(feature) {
+			var x = feature.feature.geometry.getCentroid().x;
+			var y = feature.feature.geometry.getCentroid().y;
+			var p = new OpenLayers.LonLat(x,y);
+			var pos = map.getLayerPxFromLonLat(p);
+			$("#popup").css("display","block");
+			$("#popup").css("left",pos.x);
+			$("#popup").css("top",pos.y);
+			$("#popup").html("楼宇编号:"+feature.feature.code_community+"<br/>名称"+feature.feature.name_);
+			//console.debug(feature.feature);
+		},
+		'featureunselected': function(feature) {
+			//map.removePopup(popup);        
+			$("#popup").css("display","none");
+		}
+	});
+	map.addLayer(vectorLayer);
+	
+	feature1 = new OpenLayers.Control.DrawFeature(
+                    vectors, OpenLayers.Handler.Polygon
+                );
+	feature2 = new OpenLayers.Control.SelectFeature(
+                    vectors,
+                    {
+                        clickout: false, toggle: false,
+                        multiple: false, hover: false,
+                        toggleKey: "ctrlKey", // ctrl key removes from selection
+                        multipleKey: "shiftKey", // shift key adds to selection
+                        box: true
+                    }
+                );
+	feature3 = new OpenLayers.Control.SelectFeature(
+                    vectorLayer,
+                    {
+                        multiple: false, hover: true
+                    }
+                );				
+				
+	map.addControl(feature1);
+	map.addControl(feature2);
+	map.addControl(feature3);
+	feature1.activate();
+	
+	OpenLayers.loadURL("http://localhost:8091/test/gis.php","",null,
+		function(a){			
+			eval("var obj = "+a.responseText);			
+			var style_green = {
+                strokeColor: "#00FF00",
+                strokeWidth: 3,
+                strokeDashstyle: "dashdot",
+                pointRadius: 6,
+                pointerEvents: "visiblePainted"
+            };
+			
+
+			for(var i1=0;i1<obj.length;i1++){
+				var pointList = [];
+				for(var i=0;i<obj[i1].array.length;i++){
+					var p = new OpenLayers.Geometry.Point(obj[i1].array[i][0],obj[i1].array[i][1]);
+					pointList.push(p);
+				}
+				var linearRing = new OpenLayers.Geometry.LinearRing(pointList);
+				var polygonFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Polygon([linearRing]));
+				polygonFeature.name_ = obj[i1].name;
+				polygonFeature.code_community = obj[i1].code_community;
+				polygonFeature.id_ = obj[i1].id;
+				vectorLayer.addFeatures([polygonFeature]);
+			}
+            
+		},
+		function(){}
+	);
+}
+
+var serialize = function(a,b){
+	console.debug(a);
+	console.debug(b);
+}
+
+var save = function(){
+	console.debug(vlayer);
+}
+
+var save = function(){
+	console.debug(select);
+}
+
+var functionC = function(a){
+	console.debug(a);
+}
+
+var sel = function(){
+	feature1.deactivate();
+	feature3.deactivate();
+	feature2.activate();
+}
+
+var hover = function(){
+	feature1.deactivate();
+	feature2.deactivate();
+	feature3.activate();
+}
+
+var renderer = function(){
+	console.debug(1);
+}
+
+var add = function(){
+	feature3.deactivate();
+	feature2.deactivate();
+	feature1.activate();
+}
+
+var save = function(){
+	console.debug(feature1);
+}
+
+var zeroPadder = function(number,order, padding) {
+	numberOrder = 1;
+	if (number > 9) {
+		if (number > 11) {
+			numberOrder =  Math.ceil(    Math.floor(Math.log(number)/Math.log(10))    - 0.001);
+		} else {
+			numberOrder = 2;
+		}
+	}
+	var diffOrder = order - numberOrder;
+	if (diffOrder > 0) {
+		while (diffOrder > 1) {
+			padding = padding+""+('0');
+			diffOrder--;
+		}
+		padding = padding+""+(number);
+	} else {
+		padding = padding+""+(number);
+	}
+	return padding;
+}
+</script>
+</head>
+<body onload="init()" style="padding:0px;margin:0px;">
+<table width="80%"><tr><td width="90%"><div id="map" style="width:90%;height:500px;"></div></td><td>
+<button onClick="add();">add</button>
+<button onClick="save();">save</button>
+<button>del</button>
+<button onClick="sel();">sel</button>
+<button onClick="hover();">hover</button>
+</td></tr></table>
+</body>
+</html>

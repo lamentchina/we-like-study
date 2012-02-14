@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" href="http://localhost:8091/libs/OpenLayers-2.11/theme/default/style.css" type="text/css">
+	<script src="http://localhost:8091/libs/OpenLayers-2.11/lib/OpenLayers.js"></script>
+
+<!--
+<link rel="stylesheet" type="text/css" href="http://localhost:8091/libs/ext-2.2.1/resources/css/ext-all.css" />
+<script src="http://localhost:8091/libs/jquery/jquery.js"></script>
+<script src="http://localhost:8091/libs/ext-2.2.1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script src="http://localhost:8091/libs/ext-2.2.1/ext-all.js"></script>
+-->
+
+<script type="text/javascript">
+var map,vlayer,select,vectors,feature1,feature2;
+
+var init = function(){
+
+	var mapOptions = { 
+		resolutions: [0.703125, 0.3515625, 0.17578125, 0.087890625, 0.0439453125, 0.02197265625, 0.010986328125, 0.0054931640625, 0.00274658203125, 0.001373291015625, 6.866455078125E-4, 3.4332275390625E-4, 1.71661376953125E-4, 8.58306884765625E-5, 4.291534423828125E-5, 2.1457672119140625E-5, 1.0728836059570312E-5, 5.364418029785156E-6, 2.682209014892578E-6, 1.341104507446289E-6, 6.705522537231445E-7, 3.3527612686157227E-7, 1.6763806343078613E-7, 8.381903171539307E-8, 4.190951585769653E-8, 2.0954757928848267E-8],
+		projection: new OpenLayers.Projection('EPSG:4326'),
+		maxExtent: new OpenLayers.Bounds(-180.0,-90.0,180.0,90.0),
+		units: "degrees",
+		controls: [
+			//new OpenLayers.Control.Navigation(),
+			new OpenLayers.Control.LayerSwitcher(),
+			new OpenLayers.Control.MousePosition()
+		]
+	};             
+
+	map = new OpenLayers.Map('map',mapOptions );
+/*
+	var demolayer3 = new OpenLayers.Layer.TMS("卫星图底图"," ",{
+		layername:"gs_lg",type:"gif",
+		getURL: function (bounds) {
+			bounds = this.adjustBounds(bounds);
+			var res = this.map.getResolution();
+			var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+			var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
+			var z = this.serverResolutions != null ?
+				OpenLayers.Util.indexOf(this.serverResolutions, res) :
+				this.map.getZoom() + this.zoomOffset;
+			
+			var shift = z / 2;
+			var half = 2 << shift;
+
+			var digits = 1;
+			if (half > 10) {
+				digits = Math.ceil(  Math.floor(Math.log(half)/Math.log(10)) + 1 );
+			}
+			var halfx = Math.floor( x / half );
+			var halfy = Math.floor( y / half );
+
+			var path =  this.layername + "/EPSG_4326_" + z + "/"+zeroPadder(halfx ,digits,"")+"_"+zeroPadder(halfy ,digits,"")+"/" + zeroPadder(x ,2*digits,"") + "_" + zeroPadder(y ,2*digits,"") + "." + this.type; 
+			return  path;
+		}
+	},{ tileSize: new OpenLayers.Size(256,256) });
+	*/
+	//map.addLayer(demolayer3);
+	
+	
+	
+	vectors = new OpenLayers.Layer.Vector("adsf", {isBaseLayer: true});
+	/*
+	vectors.events.on({
+		'featureselected': function(feature) {
+			var win = new Ext.Window({
+				title: 'Layout Window',
+				closable:true,
+				width:600,
+				height:350,
+				//border:false,
+				plain:true,
+				html : "asdfasf"
+			});
+			win.show();
+		},
+		'featureunselected': function(feature) {
+
+		}
+	});
+	*/
+	map.addLayers([vectors]);
+	
+
+	
+	OpenLayers.loadURL("http://localhost:8091/test/gis2.php","",null,
+		function(a){			
+			eval("var obj = "+a.responseText);		
+
+			for(var i1=0;i1<obj.length;i1++){
+				
+				var feature2 = new OpenLayers.Feature.Vector(
+					OpenLayers.Geometry.fromWKT(
+						obj[i1].gis
+					)
+				);
+				
+				//feature2.name_ = obj[i1].name;
+				//feature2.code_community = obj[i1].code_community;
+				//feature2.id_ = obj[i1].id;
+				vectors.addFeatures([feature2]);
+			}     
+	var highlightCtrl = new OpenLayers.Control.SelectFeature(vectors, {
+			hover: true,
+			highlightOnly: true,
+			renderIntent: "temporary"
+		});
+
+	var selectCtrl = new OpenLayers.Control.SelectFeature(vectors,
+		{clickout: true}
+	);
+	map.addControl(highlightCtrl);map.addControl(selectCtrl);
+	selectCtrl.activate();
+	highlightCtrl.activate();	
+
+	 map.addControl(new OpenLayers.Control.EditingToolbar(vectors));
+			map.setCenter(new OpenLayers.LonLat(120.14238,30.29764),16);
+		},
+		function(){}
+	);
+	
+}
+/*
+
+var zeroPadder = function(number,order, padding) {
+	numberOrder = 1;
+	if (number > 9) {
+		if (number > 11) {
+			numberOrder =  Math.ceil(    Math.floor(Math.log(number)/Math.log(10))    - 0.001);
+		} else {
+			numberOrder = 2;
+		}
+	}
+	var diffOrder = order - numberOrder;
+	if (diffOrder > 0) {
+		while (diffOrder > 1) {
+			padding = padding+""+('0');
+			diffOrder--;
+		}
+		padding = padding+""+(number);
+	} else {
+		padding = padding+""+(number);
+	}
+	return padding;
+}
+
+Ext.onReady(function(){	
+		init();return;
+	new Ext.Viewport({
+		layout: 'border',
+		items: [
+				new Ext.BoxComponent({
+					region: 'north',
+					height: 32, // give north and south regions a height
+					autoEl: {
+						tag: 'div',
+						html:'<div id="toolbar"></div>'
+					}
+				}),
+				new Ext.TabPanel({
+					region: 'center', // a center region is ALWAYS required for border layout
+					deferredRender: false,
+					activeTab: 0,     // first tab initially active
+					items: [ {
+						contentEl: 'map',
+						title: 'Center Panel',
+						autoScroll: true
+					}]
+				})
+				, {
+                region: 'west',
+                id: 'west-panel', // see Ext.getCmp() below
+                title: 'West',
+                split: true,
+                width: 200,
+                minSize: 175,
+                maxSize: 400,
+                collapsible: true,
+                margins: '0 0 0 5',
+                layout: {
+                    type: 'accordion',
+                    animate: true
+                },
+                items: [ {
+                    title: 'Settings',
+                    html: '<p>Some settings in here.</p>',
+                    border: false,
+                    iconCls: 'settings'
+                }]
+            }
+		]
+	});
+	
+
+	
+	var tb = new Ext.Toolbar();
+
+    tb.render('toolbar');
+	tb.add({
+		text:'asdf'
+	});	
+	tb.doLayout();
+});
+*/
+</script>
+</head>
+  <body onload="init()">
+<div id="map" style="width:100%;height:400px;"></map>
+</body>
+</html>

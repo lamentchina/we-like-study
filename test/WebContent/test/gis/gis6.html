@@ -1,0 +1,116 @@
+﻿<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="http://localhost:8091/libs/ext-2.2.1/resources/css/ext-all.css" />
+	<script src="http://localhost:8091/libs/jquery/jquery.js"></script>
+	<script src="http://localhost:8091/libs/ext-2.2.1/adapter/jquery/ext-jquery-adapter.js"></script>
+	<script src="http://localhost:8091/libs/ext-2.2.1/ext-all.js"></script>
+
+
+<script type="text/javascript">
+
+Ext.onReady(function(){	
+	var grid = getgrid();
+
+	new Ext.Viewport({
+		layout: 'border',
+		items: [
+				new Ext.BoxComponent({
+					region: 'north',
+					height: 32,
+					autoEl: {
+						tag: 'div',
+						html:'<div id="toolbar"></div>'
+					}
+				}),
+				new Ext.TabPanel({
+					region: 'center', 
+					deferredRender: false,
+					activeTab: 0,     
+					items: [ {
+						html: '<iframe src="gis6_gis.html" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>',
+						title: '地图',
+						autoScroll: false
+					}]
+				})
+				, grid
+		]
+	});
+	
+	var tb = new Ext.Toolbar();
+
+    tb.render('toolbar');
+	tb.add({
+		text:'asdf'
+	},'->',{
+		text:"湖墅街道阳光大管家"
+	});	
+	tb.doLayout();
+});
+
+var getgrid = function(){
+	var store = new Ext.data.JsonStore({
+			autoDestroy : true,
+			url : "gis6.php?action=familygrid",
+			root : 'data',
+			idProperty : 'id',
+			fields : ['id', 'name', 'count', 'type']
+		});
+
+	var cm = new Ext.grid.ColumnModel({
+		columns : [{
+					header : '',
+					dataIndex : 'id',
+					hidden : true
+				}, {
+					header : '户主姓名',
+					dataIndex : 'name',
+					width : 80
+				}, {
+					header :  '家庭人数',
+					dataIndex : 'count',
+					width : 80
+				}, {
+					header :  '类型',
+					dataIndex : 'type',
+					width: 80
+				}]
+	});
+	
+	var tb = new Ext.Toolbar({
+			id : "w_u_p_l_tb",
+			items : [
+			{text:'asdf'}
+			]
+		});
+	
+	var grid = new Ext.grid.GridPanel({
+	
+		region: 'east',
+		title: '表格',
+		split: false,
+		width: 280,
+		collapsible: true,
+		store : store,
+		cm : cm,
+
+		tbar : tb,
+		bbar : new Ext.PagingToolbar({
+					store : store,
+					pageSize : 15,
+					displayInfo : true
+				})
+	});
+	store.load({
+			params : {
+				start : 0,
+				limit : 15
+			}
+		});
+	return grid;
+}
+</script>
+</head>
+<body >
+</body>
+</html>

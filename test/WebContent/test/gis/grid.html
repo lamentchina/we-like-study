@@ -1,0 +1,329 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Test dojox.grid.DataGrid Basic</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+	<link id="themeStyles" rel="stylesheet" href="/libs/dojo-release-1.7.1-src/dijit/themes/tundra/tundra.css"/>
+	<style type="text/css">
+		@import "/libs/dojo-release-1.7.1-src/dojox/grid/resources/Grid.css";
+		@import "/libs/dojo-release-1.7.1-src/dojox/grid/resources/tundraGrid.css";
+	</style>	
+	<script type="text/javascript" src="/libs/dojo-release-1.7.1-src/dojo/dojo.js" 
+		djConfig="isDebug:false, parseOnLoad: true"></script>
+	<script type="text/javascript">
+		dojo.require("dijit.dijit");
+		dojo.require("dojo.data.ItemFileWriteStore");
+		dojo.require("dojox.grid.DataGrid");		
+		dojo.require("dojo.parser");
+		
+		var pers_user_list = function(){
+			var thisObj = this;
+			var currentPage = 0;	
+			var pageCount = 0;
+			var isNetBusy = true;
+			var store;
+			var keyword;
+
+			this.page = {
+				first : function(){
+					if(isNetBusy)return false;
+					var json = dojo.toJson({keyword:dojo.byId("pers_user_list_keyword").value,page:1});
+					thisObj.page.refresh(json);
+				},
+				prev : function(){
+					if(isNetBusy)return false;
+					var json = dojo.toJson({keyword:dojo.byId("pers_user_list_keyword").value,page:(currentPage-1)});
+					thisObj.page.refresh(json);
+				},
+				next : function(){
+					if(isNetBusy)return false;
+					var json = dojo.toJson({keyword:dojo.byId("pers_user_list_keyword").value,page:(currentPage+1)});
+					thisObj.page.refresh(json);
+				},
+				last : function(){
+					if(isNetBusy)return false;
+					var json = dojo.toJson({keyword:dojo.byId("pers_user_list_keyword").value,page:pageCount});
+					thisObj.page.refresh(json);
+				},
+				jump : function(){
+					if(isNetBusy)return false;		
+					var dom = document.getElementById("pers_user_get_page_select");
+					var json = dojo.toJson({keyword:dojo.byId("pers_user_list_keyword").value,page:selectDom.value});
+					thisObj.page.refresh(json);
+				},
+				refresh : function(json){
+					isNetBusy = true;
+					var selectDom = document.getElementById("pers_user_get_page_select");
+					selectDom.disabled=true;	
+					var grid = dijit.byId("pers_user_list_grid");
+					var url = "data.php?page=1&json="+json;	
+					store = new dojo.data.ItemFileWriteStore({url:url});
+					store.fetch({onComplete:function(){
+						//var pageItem = store._arrayOfAllItems[0];
+						currentPage = 1;
+						pageCount = 10;
+						isNetBusy = false;	
+						grid.setStore(store);
+						grid.render();
+						selectDom.options.length = 0;
+						for(var i=1;i<=pageCount;i++){
+							selectDom.options.add(new Option(i,i)); 
+						}
+						selectDom.options[currentPage-1].selected = true;
+						selectDom.disabled=false;			
+					}});	
+				}
+			};	
+			this.search = {
+				simple : function(){
+					if(isNetBusy)return false;	
+					var json = dojo.toJson({keyword:dojo.byId("pser_user_list_keyword").value,page:1});
+					thisObj.page.refresh(json);
+				},
+				showComplex : function(){
+					if(dojo.byId("pser_user_list_search_complex").style.display=="none"){
+						dojo.byId("pser_user_list_search_complex").style.display="";
+					}else{
+						dojo.byId("pser_user_list_search_complex").style.display="none";
+					}
+				},
+				complex : function(){
+					if(isNetBusy)return false;	
+					var json = dojo.toJson(dijit.byId("pser_user_list_form").attr('value'));
+					thisObj.page.refresh(json);
+				}
+			}
+			this.back = function(){
+				keyword = "";
+				this.refresh(dojo.toJson({keyword:keyword,page:1}));
+			}	
+			this.del = function(){
+				var check=confirm("该操作会永久性删除数据\n确认进行删除操作？\n建议先将数据备份");
+				if(check){
+					var grid = dijit.byId("pers_user_list_grid");
+					var selected = grid.selection.getSelected();
+					var Ids = "";
+					for(var i=0;i<selected.length;i++){
+						Ids += selected[i].id+",";
+					}
+					Ids = Ids.substr(0,Ids.length-1);
+					dojo.xhrGet({
+						url:"/app.php?controller=pers_user&action=del&Ids="+Ids,
+						load:function(data,ioArgs){	
+							alert("已删除");
+							grid.removeSelectedRows();
+						},
+						error:function(data,ioArgs){	
+							alert("Net error!");
+						}
+					});				
+				}
+			}
+			
+			this.doOperation = function(dom){
+				switch(dom.value){
+					case "查看":
+						break;
+					case "修改":
+						var node = document.createElement('div');
+						alert(typeof(dojo.byId("pers_user_edit")));
+						if(dojo.byId("pers_user_edit")==null){		
+							dojo.body().appendChild(node);
+							var tmp = new dojox.layout.FloatingPane({
+								title:"编辑",
+								id:"pers_user_edit",
+								dockable: true,
+								closable: true,
+								resizable: true
+							},node);
+							tmp.href = "/app/view/pers/user/edit.html";
+							tmp.startup();		
+							tmp.resize({ w:750, h:450 });
+							tmp.onDownloadEnd = function(){
+								dijit.byId("pers_user_edit_id_search").attr("value",dojo.attr(dom,"myId"));
+								pers_user_edit.search(dojo.attr(dom,"myId"));	
+							}
+						}else{
+							dijit.byId("pers_user_edit").show();
+							dijit.byId("pers_user_edit_id_search").attr("value",dojo.attr(dom,"myId"));
+							pers_user_edit.search(dojo.attr(dom,"myId"));	
+						}					
+						break;
+					default:
+						break;
+				}
+				dom.value = "请选择";
+			}
+			
+			this.introduce = function(){
+				dojo.byId("pers_user_list_upload_frame").src = "/app/view/pers/file/upload.html?whatever="+Math.random();
+				dijit.byId("pers_user_list_upload").show();
+			}
+
+			this.getUpload = function(){
+				var dom = dojo.byId("pers_user_list_upload_frame").contentWindow.document.getElementById("pers_file_uploaded");
+				var content = new Object();
+				if(dom){
+					content.file = dojo.attr(dom,"path")+"/"+dojo.attr(dom,"savedname");
+				}else{
+					alert("操作失败");
+				}		
+				var url = "/app.php?controller=pers_user&action=ImportFile";	
+				if(content.file){
+					dojo.xhrPost({
+						url:url,
+						content:content,
+						load:function(data,ioArgs){	
+							alert(data);
+						},
+						error:function(data,ioArgs){	
+							alert("Net error!");
+						}
+					});
+				}else{
+					alert("操作失败");
+				}
+				dijit.byId("pers_user_list_upload").hide();
+			}	
+			
+			this.operation = new Object();
+			this.operation.data = new Object();
+			this.operation.set = function(){
+				thisObj.operation.lock();
+				dojo.xhrGet({
+					url:"/app.php?controller=pers_user&action=GetOperation",
+					load:function(data,ioArgs){
+						var obj = dojo.fromJson(data);
+						for(var i=0;i<obj.items.length;i++){
+							if(obj.items[i].id=="05op04"){
+								thisObj.operation.data.add = 1;
+								thisObj.operation.data.del = 1;
+								thisObj.operation.data.download = 1;
+								thisObj.operation.data.introduce = 1;
+								thisObj.operation.data.statistics = 1;
+								thisObj.operation.data.search = 1;
+							}
+							if(obj.items[i].id=="05op0401")thisObj.operation.data.add = 1;
+							if(obj.items[i].id=="05op0403")thisObj.operation.data.del = 1;
+							if(obj.items[i].id=="05op0404")thisObj.operation.data.search = 1;
+							if(obj.items[i].id=="05op0405")operations.statistics =1;
+							if(obj.items[i].id=="05op0406")thisObj.operation.data.download = 1;
+							if(obj.items[i].id=="05op0407")thisObj.operation.data.introduce = 1;
+						}
+						thisObj.operation.free();
+					}
+				});
+			}	
+			this.operation.lock = function(args){
+				switch(typeof(args)){
+					case "undefined":
+						dojo.byId("pers_user_list_but_search").style.display = "none";
+						dojo.byId("pers_user_list_but_add").style.display = "none";
+						dojo.byId("pers_user_list_but_del").style.display = "none";			
+						dojo.byId("pers_user_list_but_statistics").style.display = "none";
+						dojo.byId("pers_user_list_but_download").style.display = "none";	
+						dojo.byId("pers_user_list_but_introduce").style.display = "none";	
+						break;
+					case "string":
+						dojo.byId("pers_user_list_but_"+args).style.display = "none";
+						break;
+					case "object":
+						for(var i=0;i<args.length;i++){
+							dojo.byId("pers_user_list_but_"+args[i]).style.display = "none";
+						}
+						break;	
+					default:
+						break;
+				}
+			}	
+			this.operation.free = function(args){
+				switch(typeof(args)){
+					case "undefined":
+						if(thisObj.operation.data.add)dojo.byId("pers_user_list_but_add").style.display = "";
+						if(thisObj.operation.data.search)dojo.byId("pers_user_list_but_search").style.display = "";
+						if(thisObj.operation.data.del)dojo.byId("pers_user_list_but_del").style.display = "";
+						if(thisObj.operation.data.statistics)dojo.byId("pers_user_list_but_statistics").style.display = "";
+						if(thisObj.operation.data.download)dojo.byId("pers_user_list_but_download").style.display = "";
+						if(thisObj.operation.data.introduce)dojo.byId("pers_user_list_but_introduce").style.display = "";
+						break;
+					case "string":
+						dojo.byId("pers_user_list_but_"+args).style.display = "";
+						break;
+					case "object":
+						for(var i=0;i<args.length;i++){
+							dojo.byId("pers_user_list_but_"+args[i]).style.display = "";
+						}
+						break;	
+					default:
+						break;
+				}
+			}		
+			
+			this.il8n = new Object();
+			this.setLocalization = function(){	
+				/*
+				dojo.xhrGet({
+					url:"/app.php?controller=pers_persnistration&action=getIl8n",
+					load:function(data,ioArgs){
+						thisObj.il8n = dojo.i18n.getLocalization("il8n", "publ", data);
+						thisObj.setStructure();							
+					},
+					error:function(data,ioArgs){	
+						alert("Net error!");
+						alert(data);
+					}
+				});
+				*/
+			}	
+			
+			this.setStructure = function(layout){
+				if(!layout){
+					layout = [{
+						cells: [
+							{ name: '编号', field: 'id',width:'20%'},
+							{ name: '名称', field: 'name',width:'60%'},
+							{ name: '操作', field: 'name',width:'18%'}
+						]
+					}];
+				}
+				dijit.byId("pers_user_list_grid").setStructure(layout);
+			}	
+			
+			this.init = function(){
+				keyword = dojo.byId("pers_user_list_keyword").value;
+				//thisObj.setLocalization();
+				thisObj.setStructure();
+				thisObj.page.refresh( dojo.toJson({page:1}) );		
+				//thisObj.operation.set();
+			}
+		}
+		var pers_user_list = new pers_user_list();
+		
+		dojo.addOnLoad(function(){
+			pers_user_list.init();
+		});
+	</script>
+</head>
+<body class="tundra">
+	<div style="width: 98%;">
+		<div id="page" class="dojoxGridRowbar">
+			<span id="pers_user_list_but_search" style="">
+				<button onClick="pers_user_list.page.first();return false;"> |< </button>
+				<button onClick="pers_user_list.page.prev();return false;"> << </button>
+				<button onClick="pers_user_list.page.next();return false;"> >> </button>
+				<button onClick="pers_user_list.page.last();return false;"> >| </button>
+				<select id="pers_user_get_page_select" onChange="pers_user_list.page.jump(this);"> </select>
+				<input type="text" id="pers_user_list_keyword">
+				<button onClick="pers_user_list.search.simple();return false;">?</button>
+				<button onClick="pers_user_list.search.showComplex();return false;">??</button>    
+			</span>
+			<button id="pers_user_list_but_download" style="" onClick="pers_user_list.download();return false;">V</button>
+			<button id="pers_user_list_but_add" style="" onClick="pers_user_list.add();return false;">+</button>
+			<button id="pers_user_list_but_del" style="" onClick="pers_user_list.del();return false;">-</button>
+			<span id="netState"></span>
+		</div>	
+		<div style="height: 400px;" rowSelector="20px" id="pers_user_list_grid" dojoType="dojox.grid.DataGrid"></div>
+	</div>
+</body>
+</html>
