@@ -156,7 +156,7 @@ class basic_user {
                 basic_user.money,
                 basic_user.money2,
                 basic_user.person_id,
-                basic_user.group_id,
+                basic_user.group_id as id_group,
                 basic_user.group_code,
                 basic_user.group_name,
                 basic_user.id,
@@ -173,15 +173,15 @@ class basic_user {
                 basic_user.type,
                 basic_user_session.groups,
                 basic_user_session.ip,
-                basic_user_session.source,
                 basic_user_session.permissions
                 FROM
                 basic_user
-                Left Join basic_person ON basic_user.id_person = basic_person.id
+                Left Join basic_person ON basic_user.person_id = basic_person.id
                 Left Join basic_user_session ON basic_user.id = basic_user_session.id_user
                 WHERE
                 basic_user.username =  '".$_REQUEST['username']."'            
             ";
+            //echo $sql;
             $res2 = mysql_query($sql,$CONN);
             $arr2 = mysql_fetch_array($res2,MYSQL_ASSOC);
 

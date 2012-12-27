@@ -48,9 +48,9 @@ class education_paper {
         if($_REQUEST['usertype']=='2'){ 
             //学生角色
             $sql_where .= "
-    		and education_paper.subject in 
+    		and education_paper.subject_code in 
             (
-                select code_subject from education_subject_2_group_2_teacher where education_subject_2_group_2_teacher.code_group = 
+                select subject_code from education_subject_2_group_2_teacher where education_subject_2_group_2_teacher.group_code = 
                     (
                         select code from basic_group where id = '".$_REQUEST['usergroup']."'
                     )
@@ -59,15 +59,15 @@ class education_paper {
 
             $sql = "     
             SELECT
-    		education_paper.subject AS subjectcode,
-    		education_subject.name AS subjectname,
+    		education_paper.subject_code AS subjectcode,
+    		education_paper.subject_name AS subjectname,
             education_paper.title,
             education_paper.id,
             education_paper.cost,
-            (select max(education_paper_log.mycent) from education_paper_log where education_paper_log.id_creater = '".$_REQUEST['userid']."' and education_paper_log.id_paper =  education_paper.id ) as mycent
+            (select max(education_paper_log.mycent) from education_paper_log where education_paper_log.id_creater = '".$_REQUEST['userid']."' and education_paper_log.paper_id =  education_paper.id ) as mycent
             FROM
             education_paper
-            left Join education_subject ON education_paper.subject = education_subject.code 
+
     		".$sql_where."
     		".$sql_order."
     		limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -82,7 +82,7 @@ class education_paper {
             
             $sql_total = "select count(*) as total from
     		education_paper
-    		left Join education_subject ON education_paper.subject = education_subject.code ".$sql_where;
+    		".$sql_where;
             
             $res = mysql_query($sql_total,$conn);
             $total = mysql_fetch_assoc($res);
@@ -206,10 +206,15 @@ class education_paper {
         $id = $_REQUEST['id'];
         $CONN = tools::conn();
 
-        $sql = " select t1.cost,t1.count_questions,t2.name as subject,t2.code as subjectCode,t1.cent as cent,t1.title 
-            from education_paper t1 left join education_subject t2
-            on t1.subject = t2.code 
-            where t1.id = '".$id."'";
+        $sql = "select 
+        	cost
+        	,count_questions
+        	,subject_name as subject
+        	,subject_code as subjectCode
+        	,cent
+        	,title 
+            from education_paper 
+            where id = '".$id."'";
         //echo $sql;exit();
         $res = mysql_query($sql,$CONN);
         $data = mysql_fetch_assoc($res);
