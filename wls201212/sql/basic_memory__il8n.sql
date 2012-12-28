@@ -1,7 +1,15 @@
 ﻿CREATE FUNCTION `basic_memory__il8n`(in_key varchar(200),in_tablename varchar(200),flag int) RETURNS varchar(200)
 BEGIN
 /*
+国际化语言读取函数
+会被其他存储过程频繁调用的函数,
+根据 basic_memory 表中存储的对应关系,读取对应的 健-值 国际化信息
 
+国际化语言,最初是存储在服务端代码中的 language 文件夹中的一大堆 .ini中
+当系统第一次运行时,这些 .ini 文件会被读取并保存在数据库表 basic_memeory 中
+
+@version 201212
+@author wei1224hf@gmail.com
 */
 	declare out_value varchar(200) CHARACTER SET utf8;
     if in_key is null then
