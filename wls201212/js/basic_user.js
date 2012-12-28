@@ -142,9 +142,12 @@ var basic_user = {
 					,{ display: top.il8n.time_created, name: 'time_created', width: 95 }
 				],  pageSize:20 ,rownumbers:true,
 				parms : {
-					username: top.basic_user.username
-					,session: MD5( top.basic_user.session +((new Date()).getHours()))
-					,search: $.ligerui.toJSON( basic_user.searchOptions )
+	                username: top.basic_user.username
+	                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+	                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+	                ,userid: top.basic_user.loginData.id
+	                ,usergroup: top.basic_user.loginData.id_group
+	                ,usertype: top.basic_user.loginData.type    
 				},
 				url: myAppServer() + "&class=basic_user&function=getGrid",
 				method: "POST",				
@@ -327,9 +330,7 @@ var basic_user = {
 		$("#tb").ligerToolBar({
 			items : items
 		});
-	}
-	
-	
+	}	
 	
 	/**
 	 * 退出 注销 系统

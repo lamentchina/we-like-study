@@ -45,6 +45,45 @@ class education_paper {
         
         $returnData = array();
         //根据不同的用户角色,会有不同的列输出
+        if($_REQUEST['usertype']=='1'){ 
+            //管理员角色
+
+            $sql = "            
+            SELECT
+    		education_paper.subject_code AS subjectcode,
+    		education_paper.subject_name AS subjectname,
+    		education_paper.count_questions,
+    		education_paper.title,
+    		education_paper.cost,
+    		education_paper.teacher_name as author,
+    		education_paper.cent,
+    		education_paper.id,
+    		education_paper.id_creater,
+    		education_paper.status,    		
+    		education_paper.time_created
+    		FROM
+    		education_paper
+    		  		
+    		".$sql_where."
+    		".$sql_order."
+			limit ".(($page-1)*$pagesize).", ".$pagesize;
+            //echo $sql;
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['title'] = tools::cutString($temp['title'],10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total from
+    		education_paper
+			".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+        }        
+        //根据不同的用户角色,会有不同的列输出
         if($_REQUEST['usertype']=='2'){ 
             //学生角色
             $sql_where .= "
@@ -98,8 +137,8 @@ class education_paper {
 
             $sql = "            
             SELECT
-    		education_paper.subject AS subjectcode,
-    		education_subject.name AS subjectname,
+    		education_paper.subject_code AS subjectcode,
+    		education_paper.subject_name AS subjectname,
     		education_paper.count_questions,
     		education_paper.title,
     		education_paper.cost,
@@ -111,7 +150,7 @@ class education_paper {
     		education_paper.time_created
     		FROM
     		education_paper
-    		left Join education_subject ON education_paper.subject = education_subject.code    		
+    		  		
     		".$sql_where."
     		".$sql_order."
 			limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -126,7 +165,7 @@ class education_paper {
             
             $sql_total = "select count(*) as total from
     		education_paper
-    		left Join education_subject ON education_paper.subject = education_subject.code ".$sql_where;
+			".$sql_where;
             
             $res = mysql_query($sql_total,$conn);
             $total = mysql_fetch_assoc($res);

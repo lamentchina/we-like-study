@@ -52,9 +52,10 @@ class education_exam {
             SELECT
             education_exam.title,
             education_exam.count_passed,
-            education_exam.count_students_,
+            education_exam.count_students_planed,
             education_exam.count_students,
-            education_exam.subject,
+            education_exam.subject_code,
+            education_exam.subject_name,
             education_exam.time_start,
             education_exam.time_end,
             education_exam.place,
@@ -92,24 +93,33 @@ class education_exam {
            
         if($_REQUEST['usertype']=='2'){ 
             //学生角色
-            $sql_where .= " and education_paper_log.id_creater = '".$_REQUEST['userid']."' ";
+            $sql_where .= " and education_exam_2_student.student_id = '".$_REQUEST['userid']."' ";
+            $sql_order = ' order by education_exam_2_student.id desc ';
 
             $sql = "     
             SELECT
-    		education_paper.subject AS subjectcode,
-            education_paper.title as papertitle,
-            education_paper.id as paperid,
-            education_paper.type,
-			education_paper_log.id,
-			education_paper_log.time_created,
-			education_paper_log.mycent as score_subjective,
-			education_paper_log.myCentByTeacher as score_objective,
-			education_paper_log.time_created,
-			education_paper_log.status
-			
+            education_exam_2_student.exam_id,
+            education_exam_2_student.exam_title as title,
+            education_exam_2_student.teacher_name,
+            education_exam_2_student.subject_code,
+            education_exam_2_student.subject_name,
+            education_exam_2_student.teacher_id,
+            education_exam_2_student.rank,
+            education_exam_2_student.rank_calss,
+            education_exam_2_student.score,
+            education_exam_2_student.passline,
+            education_exam_2_student.totalcent,
+            education_exam_2_student.id_paper,
+            education_exam_2_student.id_paper_log,
+            education_exam_2_student.time_start,
+            education_exam_2_student.time_end,
+            education_exam_2_student.time_submit,
+            education_exam_2_student.time_mark,
+            education_exam_2_student.`type`,
+            education_exam_2_student.id,
+            education_exam_2_student.`status`
             FROM
-            education_paper_log
-            left Join education_paper ON education_paper_log.id_paper = education_paper.id 
+            education_exam_2_student
     		".$sql_where."
     		".$sql_order."
     		limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -118,15 +128,15 @@ class education_exam {
             $data = array();
             while($temp = mysql_fetch_assoc($res)){
                 //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
-    			$temp['papertitle'] = tools::cutString($temp['papertitle'],10);
-    			$temp['time_created'] = substr( $temp['time_created'],0,10);
+    			$temp['title'] = tools::cutString($temp['title'],10);
+    			$temp['time_start'] = substr( $temp['time_start'],0,10);
+    			$temp['time_end'] = substr( $temp['time_end'],0,10);
                 $data[] = $temp;
             }
             
             $sql_total = "select count(*) as total 
             FROM
-            education_paper_log
-            left Join education_paper ON education_paper_log.id_paper = education_paper.id 
+            education_exam_2_student
     		".$sql_where;
             
             $res = mysql_query($sql_total,$conn);

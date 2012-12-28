@@ -88,7 +88,14 @@ var education_paper = {
     ,grid : function(){
     	var gridColmuns = [
     	   [//管理员列
-    	   
+  	         { display: top.il8n.title, name: 'title', align: 'left', width: 170, minWidth: 60 }
+	        ,{ display: top.il8n.education_paper.subject, name: 'subjectname',isSort : false }
+	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
+	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
+	        ,{ display: top.il8n.education_paper.author, name: 'author' ,width: 90}
+	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
+	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
+	        ,{ display: top.il8n.time_created, name: 'time_created'}
     	   ]
            ,[//教师列
    	         { display: top.il8n.title, name: 'title', align: 'left', width: 170, minWidth: 60 }
@@ -259,7 +266,6 @@ var education_paper = {
         
         $(document.body).ligerGrid(config);
     }
-
     
     ,searchOptions : {}    
     ,search : function(){
@@ -624,7 +630,7 @@ var paper = {
     		return;
     	}
     	if(top.basic_user.loginData.type!='2'){
-    		alert("teacher can't submit");
+    		alert("only student can submit");
     		return;
     	}
         if(this.state=='submitted'){

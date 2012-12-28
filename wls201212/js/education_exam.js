@@ -1,6 +1,10 @@
 /**
  * 在线考试模块
  * 
+ * 各个用户组看到的列,以及可以执行的操作都是不一样的
+ * 教师可以看到的列有:
+ *   试卷标题,发行时间,科目
+ * 
  * @author wei1224hf
  * */
 var education_exam = {
@@ -54,17 +58,14 @@ var education_exam = {
 	 * 还有查看功能
 	 *    查看功能是最基本的,每个用户角色都能看到,不过,不同的角色看到的应该不一样
 	 * */
-	,grid : null
-	,initGrid : function(){		
+	,grid : function(){		
 		var gridColmuns = [
 			[//管理员列
 			 	{ display: top.il8n.education_exam.title, name: 'title', isSort: false }
 			]
 			,[//学生列
-				 { display: top.il8n.education_exam.title, name: 'title', isSort: false }
-				,{ display: top.il8n.education_exam.place, name: 'place', isSort: false, hide: true }				
-				,{ display: top.il8n.education_exam.count_students, name: 'count_students'  ,isSort : false}
-				,{ display: top.il8n.education_exam.count_passed, name: 'count_passed'  ,isSort : false}			  
+				 { display: top.il8n.education_exam.title, name: 'title', isSort: false }			
+				,{ display: top.il8n.education_exam.title, name: 'subject', isSort: false }			
 			  ]			
 			,[//教师列
 			     { display: top.il8n.education_exam.title, name: 'title', isSort: false }
@@ -239,7 +240,7 @@ var education_exam = {
 			}
 		}
 		
-		education_exam.grid = $(document.body).ligerGrid(config);
+		$(document.body).ligerGrid(config);
 	}
 
 	/**
