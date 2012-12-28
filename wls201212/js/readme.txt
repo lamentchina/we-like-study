@@ -80,3 +80,9 @@ A
  2 每一PHP文件代码,任何一个函数
  3 存储过程中的大量代码
  
+关于 查看 功能,是否需要提供额外的权限按钮?权限按钮是否应该都放置到 grid 的toolbar上?
+查看功能,其实也可以这样,仅仅是将业务表中的所有列,所有数据都提出来再显示到网页上即可
+然后,会有一个统一的 fieldset ,显示以下常见的业务字段:
+id,id_creater,id_creater_group,code_creater_group,type,status,
+time_created,time_lastupdated,count_updated
+这样操作起来更方便点
