@@ -99,7 +99,7 @@ class education_exam {
             $sql = "     
             SELECT
             education_exam_2_student.exam_id,
-            education_exam_2_student.exam_title as title,
+            education_exam_2_student.exam_title,
             education_exam_2_student.teacher_name,
             education_exam_2_student.subject_code,
             education_exam_2_student.subject_name,
@@ -128,7 +128,7 @@ class education_exam {
             $data = array();
             while($temp = mysql_fetch_assoc($res)){
                 //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
-    			$temp['title'] = tools::cutString($temp['title'],10);
+    			$temp['exam_title'] = tools::cutString($temp['exam_title'],10);
     			$temp['time_start'] = substr( $temp['time_start'],0,10);
     			$temp['time_end'] = substr( $temp['time_end'],0,10);
                 $data[] = $temp;
