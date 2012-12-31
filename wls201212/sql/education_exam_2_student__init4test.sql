@@ -54,12 +54,16 @@ select max(id) into education_exam_2_student__id from education_exam_2_student;
 
 truncate table education_paper_log ;
 truncate table education_question_log ;
-truncate table education_question_log_wrongs ;
+
+update basic_memory set extend1 = 0 where type = 2 and code in (
+ 'education_paper_log'
+, 'education_question_log'    
+);
 
 #启用事务功能
 START TRANSACTION; 
 
-set count_exam2student = 300;
+set count_exam2student = 4800;
 while_exam2student : while count_exam2student >0 do
     set count_exam2student = count_exam2student - 1;      
     set education_exam_2_student__id = education_exam_2_student__id - 1;    
@@ -105,7 +109,10 @@ while_exam2student : while count_exam2student >0 do
         ,paper_title
         ,teacher_id
         ,teacher_name
-        ,teacher_code
+        ,teacher_code        
+        ,student_id  
+        ,student_name 
+        ,student_code
         
         ,cent
         ,cent_subjective
@@ -141,7 +148,10 @@ while_exam2student : while count_exam2student >0 do
         ,@exam_title
         ,@teacher_id
         ,@teacher_name
-        ,@teacher_code
+        ,@teacher_code        
+        ,student_id_
+        ,student_name_
+        ,student_code_
         
         ,'100'
         ,'0'
@@ -257,9 +267,12 @@ while_exam2student : while count_exam2student >0 do
             ,'0'
         );              
         
-    end while while_question;   
-end while while_exam2student;
+    end while while_question;          
 
+    if mod(count_exam2student,50) = 0 then    
+        commit;          
+        START TRANSACTION; 
+    end if;
+end while while_exam2student;
 commit;
 END;
-

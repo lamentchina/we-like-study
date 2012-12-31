@@ -10,6 +10,7 @@ pro_main:BEGIN
 10   70%  9%
 11   80%  8% 
 12   85%  7%
+
 3    87%  6%
 4    88%  5%
 5    90%  4%
@@ -43,8 +44,9 @@ declare teacher_name_creater_ char(5) default '张三2';
 declare teacher_id_creater_group_ int default '11';
 declare teacher_code_creater_group_ char(4) default '5101';
 
-declare student_id_,student_group_id_ int default '0';
+declare student_id_,student_group_id_ int default '1';
 declare student_name_,student_code_,student_group_code_,student_group_name_ varchar(200) default '0';
+declare status_,type_ int default '0';
 
 #科目信息
 declare subject_code_ char(2) default '00';
@@ -53,8 +55,9 @@ declare subject_name_ char(4) default '0000';
 #各层循环所需要的变量: 月份,科目,试卷,题目,试卷日志,题目日志
 declare count_month,count_subject,count_paper,count_question,count_class,count_student,count_paperlog,count_questionlog int default 0;
 #各个业务表所需要的主键
-declare paperid,examid,questionid,education_exam_2_class__id int default 0;
+declare paperid,examid,questionid,education_exam_2_class__id,education_exam_2_student__id int default 0;
 
+#
 declare papertitle varchar(200) default '';
 declare questiontitle varchar(200) default '';
 
@@ -76,6 +79,16 @@ truncate table education_exam ;
 truncate table education_exam_2_class ;
 truncate table education_exam_2_student ;
 
+update basic_memory set extend1 = 0 where type = 2 and code in (
+'education_paper'    
+,'education_paper_2_question'
+,'education_question'
+,'education_exam'
+,'education_exam_2_class'
+,'education_exam_2_student'
+,'education_paper_log'
+);
+leave pro_main;
 #启用事务功能
 START TRANSACTION; 
 
@@ -833,7 +846,17 @@ while_month:while count_month >0 do
             set count_class = count_class - 1;   
             select id,code,name into @class_id,@class_code,@class_name from basic_group where id = (4+count_class) ;            
             set education_exam_2_class__id = basic_memory__index('education_exam_2_class');    
-    
+        
+            #status 描述: 0 错误, 1 正确并流程已结束, 
+            #2 正在走业务流程, 21 走业务流程,等待某部门审批通过, 22 等待多个部门共同审批,需要全部通过, 23 多审批,单通过
+            #3 原始业务数据编辑状态, 31 新建状态,新建后保存等待下次更改,尚未发布, 32 修改状态,因某种原因,数据正在被修改中,            
+            #4 正式发布            
+
+            #type 描述: 1 一般的多班级统考 , 2 月考 , 3 期中考, 4 期末考            
+            if paperdate = '2011-12-01' then            
+                set status_ = 4;                
+                set type_ = 4;                
+            end if;
             insert into education_exam_2_class (            
                  paper_id
                 ,exam_id
@@ -910,7 +933,7 @@ while_month:while count_month >0 do
                    ,student_code_ 
             from basic_user where id = (count_student + 5); 
             
-            set education_exam_2_class__id = basic_memory__index('education_exam_2_class');
+            set education_exam_2_student__id = basic_memory__index('education_exam_2_student');
                         
             insert into education_exam_2_student (            
                 exam_id
@@ -928,10 +951,13 @@ while_month:while count_month >0 do
                 ,subject_code
                 ,subject_name
                 
-                ,id_paper
+                ,id_paper                
+                ,id_paper_log
                 
                 ,time_start
-                ,time_end
+                ,time_end                
+                ,passline                
+                ,totalcent
                 
                 ,type
                 ,id
@@ -955,21 +981,22 @@ while_month:while count_month >0 do
                 ,subject_code_
                 ,subject_name_
                 
-                ,paperid
+                ,paperid                
+                ,education_exam_2_student__id
                 
                 ,'2010-01-01'
-                ,'2014-01-01'
+                ,'2014-01-01'                
+                ,'60'                
+                ,'100'
                 
                 ,'1'
-                ,education_exam_2_class__id
+                ,education_exam_2_student__id
                 ,student_id_
                 ,student_group_id_
                 ,student_group_code_
                 ,paperdate
             );
-        end while while_student;          
-     
-
+        end while while_student;
     end while while_subject;
 end while while_month;
 commit;
