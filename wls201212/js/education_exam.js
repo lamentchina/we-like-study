@@ -75,11 +75,34 @@ var education_exam = {
 	,grid : function(){		
 		var gridColmuns = [
 			[//管理员列
-			 	{ display: top.il8n.education_exam.title, name: 'title', isSort: false }
+			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
+			  ,{ display: top.il8n.title, name: 'title', isSort: false, width: 140 }
+			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false }
+			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
 			]
 			,[//学生列
-				 { display: top.il8n.education_exam.title, name: 'title', isSort: false }			
-				,{ display: top.il8n.education_exam.title, name: 'subject', isSort: false }			
+			   { display: top.il8n.education_exam.exam_id, name: 'exam_id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.exam_title, name: 'exam_title', isSort: false, width: 140 }
+			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false }
+			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.rank, name: 'rank', isSort: false }
+			  ,{ display: top.il8n.education_exam.rank_calss, name: 'rank_calss', isSort: false }
+			  ,{ display: top.il8n.education_exam.score, name: 'score', isSort: false }
+			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false }
+			  ,{ display: top.il8n.education_exam.totalcent, name: 'totalcent', isSort: false }
+			  ,{ display: top.il8n.education_exam.id_paper, name: 'id_paper', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.id_paper_log, name: 'id_paper_log', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.time_start, name: 'time_start', isSort: false, width: 80 }
+			  ,{ display: top.il8n.education_exam.time_end, name: 'time_end', isSort: false, width: 80 }
+			  ,{ display: top.il8n.education_exam.time_submit, name: 'time_submit', isSort: false, hide:true  }
+			  ,{ display: top.il8n.education_exam.time_mark, name: 'time_mark', isSort: false, hide:true  }
+			  ,{ display: top.il8n.education_exam.type, name: 'type', isSort: false }
+			  ,{ display: top.il8n.education_exam.id, name: 'id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.status, name: 'status', isSort: false }	
 			  ]			
 			,[//教师列
 			     { display: top.il8n.education_exam.title, name: 'title', isSort: false }

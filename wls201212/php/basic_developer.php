@@ -66,7 +66,7 @@ class basic_developer {
         mysql_query($sql,$CONN);
     }  
 
-    public function importPsarameter(){
+    public function importParameter(){
         include_once config::$phpexcel.'PHPExcel.php';
 		include_once config::$phpexcel.'PHPExcel/IOFactory.php';
 		include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
@@ -74,13 +74,13 @@ class basic_developer {
 		$objPHPExcel = new PHPExcel();
 		$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
 		$PHPReader->setReadDataOnly(true);
-		$obj = $PHPReader->load("../file/download/basic_parameter.xls");
+		$obj = $PHPReader->load("../file/download/highschool/basic_parameter.xls");
 		
 		$CONN = tools::conn();
+		mysql_query("truncate table basic_parameter ;",$CONN);        
 		$currentSheet = $obj->getSheetByName("data");
 		$allRow = $currentSheet->getHighestRow();
 		
-		mysql_query("delete from basic_parameter where reference in ('specialty','zone') ;",$CONN);
 		$sql = "INSERT INTO basic_parameter(
 			code,value,reference,remark
 			) VALUES ";
@@ -371,6 +371,7 @@ class basic_developer {
        
         $CONN = tools::conn();
         require_once 'basic_excel.php';
+        $this->importParameter();
 
         mysql_query("truncate table basic_excel ;",$CONN);        
         mysql_query("truncate table basic_memory ;",$CONN);        

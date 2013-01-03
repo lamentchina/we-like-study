@@ -83,23 +83,7 @@ class education_teacher {
 		    }
 			$data[] = $temp;
 		}
-		$config['department'] = $data;	
-		
-		$sql = "select code,value from basic_parameter where reference = 'GB4762' order by code";
-        $res = mysql_query($sql,$CONN);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['GB4762'] = $data;	
-
-		$sql = "select code,value from basic_parameter where reference = 'GB4568' order by code";
-        $res = mysql_query($sql,$CONN);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['GB4568'] = $data;			
+		$config['department'] = $data;			
 
 		if($return=='json'){
 		    echo json_encode($config);
@@ -124,248 +108,8 @@ class education_teacher {
         self::importExcel($uploader->savePath);
     }    
     
-     public function importExcel($path=NULL){
-        if($path==NULL)$path=$_REQUEST['path']; //TODO delete
-        include_once config::$phpexcel.'PHPExcel.php';
-        include_once config::$phpexcel.'PHPExcel/IOFactory.php';
-        include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
-        
-        $objPHPExcel = new PHPExcel();
-        $PHPReader = PHPExcel_IOFactory::createReader('Excel5');
-        $PHPReader->setReadDataOnly(true);
-        $obj = $PHPReader->load($path);
-        
-        $il8n = tools::getLanguage(); 
-        $CONN = tools::conn();
-        $currentSheet = $obj->getSheetByName($il8n['education_teacher']['education_teacher']);
-        if($currentSheet==null){
-            //如果这个sheet页不存在,就报错
-            tools::error(array("state"=>0,"msg"=>$il8n['requestSheetMissing']." : ".$il8n['education_teacher']['education_teacher']),'json');
-        }    
-        
-        $allColmun = $currentSheet->getHighestColumn();
-        $allRow = $currentSheet->getHighestRow();
-        //echo $allColmun;
-        
-        $columns2int = array(
-             'A'=>1
-            ,'B'=>2
-            ,'C'=>3
-            ,'D'=>4
-            ,'E'=>5
-            ,'F'=>6
-            ,'G'=>7
-            ,'H'=>8
-            ,'I'=>9
-            ,'J'=>10
-            ,'K'=>11
-            ,'L'=>12
-            ,'M'=>13
-            ,'N'=>14
-            ,'O'=>15
-            ,'P'=>16
-            ,'Q'=>17
-            ,'R'=>18
-            ,'S'=>19
-            ,'T'=>20
-            ,'U'=>21
-            ,'V'=>22
-            ,'W'=>23
-            ,'X'=>24
-            ,'Y'=>25
-            ,'Z'=>26
-            ,'AA'=>27
-            ,'AB'=>28
-            ,'AC'=>29
-            ,'AD'=>30
-            ,'AE'=>31
-            ,'AF'=>32
-            ,'AG'=>33
-            ,'AH'=>34
-            ,'AI'=>35
-            ,'AJ'=>36
-            ,'AK'=>37
-        
-        );
-        $columns2int_ = array_flip($columns2int);
-        //print_r($columns2int_);
-        
-
-        $keys = $keys2 = array();
-        for($i=1;$i<=$columns2int[$allColmun];$i++){
-            //echo $columns2int_[$i];
-            //echo $currentSheet->getCell('AE1')->getValue();
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['code'])$keys['code'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['department'])$keys['department'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['certificate'])$keys['certificate'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['title'])$keys['title'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['years'])$keys['years'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['type'])$keys['type'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['honor'])$keys['honor'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['specialty'])$keys['specialty'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['experience_work'])$keys['experience_work'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['experience_publish'])$keys['experience_publish'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['experience_project'])$keys['experience_project'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['photo_certificate'])$keys['photo_certificate'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['education_teacher']['photo_degree'])$keys['photo_degree'] = $i;
-
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['name'])$keys2['name'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['birthday'])$keys2['birthday'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['cardType'])$keys2['cardType'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['idcard'])$keys2['idcard'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['photo'])$keys2['photo'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['height'])$keys2['height'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['nationality'])$keys2['nationality'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['gender'])$keys2['gender'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['nation'])$keys2['nation'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['ismarried'])$keys2['ismarried'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['degree'])$keys2['degree'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['degree_school'])$keys2['degree_school'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['politically'])$keys2['politically'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['address_birth'])$keys2['address_birth'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['address'])$keys2['address'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['cellphone'])$keys2['cellphone'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['email'])$keys2['email'] = $i;
-            if($currentSheet->getCell($columns2int_[$i].'1')->getValue()==$il8n['basic_person']['qq'])$keys2['qq'] = $i;
-            
-        }
-        //print_r($keys);
-        
-        $config = self::loadConfig('Array');
-        include_once 'basic_person.php';
-        $basic_person = new basic_person();
-        $config2 = $basic_person->loadConfig('Array');
-        
-        for($i=2;$i<=$allRow;$i++){
-            
-            //先插入一条 个人信息 记录
-            $basic_person_data = Array();
-            $keys2_keys = array_keys($keys2);
-            for($i2=0;$i2<count($keys2);$i2++){
-                $basic_person_data[$keys2_keys[$i2]] = $currentSheet->getCell($columns2int_[$keys2[$keys2_keys[$i2]]].$i)->getValue();
-            }
-            
-            if(isset($keys2['cardType'])){
-                for($i3=0;$i3<count($config2['cardType']);$i3++){
-                    if($basic_person_data['cardType']==$config2['cardType'][$i3]['value'])
-                        $basic_person_data['cardType'] = $config2['cardType'][$i3]['code'];
-                }                
-            }
-            if(isset($keys2['nation'])){
-                for($i3=0;$i3<count($config2['GB3304']);$i3++){
-                    if($basic_person_data['nation'] == $config2['GB3304'][$i3]['value'])
-                        $basic_person_data['nation'] = $config2['GB3304'][$i3]['code'];
-                }                
-            }       
-            if(isset($keys2['degree'])){
-                for($i3=0;$i3<count($config2['GB4568']);$i3++){
-                    if($basic_person_data['degree'] == $config2['GB4568'][$i3]['value'])
-                        $basic_person_data['degree'] = $config2['GB4568'][$i3]['code'];
-                }                
-            }   
-            if(isset($keys2['politically'])){
-                for($i3=0;$i3<count($config2['GB4762']);$i3++){
-                    if($basic_person_data['politically'] == $config2['GB4762'][$i3]['value'])
-                        $basic_person_data['politically'] = $config2['GB4762'][$i3]['code'];
-                }                
-            }     
-            if(isset($keys2['gender'])){
-                for($i3=0;$i3<count($config2['GB2261_1']);$i3++){
-                    if($basic_person_data['gender'] == $config2['GB2261_1'][$i3]['value'])
-                        $basic_person_data['gender'] = $config2['GB2261_1'][$i3]['code'];
-                }                
-            } 
-            if(isset($keys2['ismarried'])){
-                for($i3=0;$i3<count($config2['GB2261_2']);$i3++){
-                    if($basic_person_data['ismarried'] == $config2['GB2261_2'][$i3]['value'])
-                        $basic_person_data['ismarried'] = $config2['GB2261_2'][$i3]['code'];
-                }                
-            }                            
-            $basic_person_data = array_merge($basic_person_data,array(
-                'status'=>'1'
-               ,'remark'=>'teacher excel import'
-            ));
-            $keys_ = array_keys($basic_person_data);
-            $keys_ = implode(",",$keys_);
-            $values = array_values($basic_person_data);
-            $values = implode("','",$values);    
-            $sql = "insert into basic_person (".$keys_.") values ('".$values."') ;";
-            //echo $sql;            
-            mysql_query($sql,$CONN);
-            $id_person = mysql_insert_id($CONN);          
-            
-            //读取教师信息
-            $education_teacher_data = Array();
-            $keys_keys = array_keys($keys);
-            for($i2=0;$i2<count($keys);$i2++){
-                $education_teacher_data[$keys_keys[$i2]] = $currentSheet->getCell($columns2int_[$keys[$keys_keys[$i2]]].$i)->getValue();
-            }
-            $education_teacher_data['id_person'] = $id_person;            
-            
-            //添加一行 系统用户信息 记录
-            $basic_user_data = Array(
-                'username'=>$education_teacher_data['code'].''
-               ,'password'=>md5('888888')
-               ,'id_person'=>$id_person
-               ,'type'=>'3'
-               ,'money'=>'1000'
-               ,'status'=>'1'
-               ,'remark'=>'teacher excel import'
-            );
-            $keys_ = array_keys($basic_user_data);
-            $keys_ = implode(",",$keys_);
-            $values = array_values($basic_user_data);
-            $values = implode("','",$values);    
-            $sql = "insert into basic_user (".$keys_.") values ('".$values."') ;";            
-            mysql_query($sql,$CONN);
-            $id_teacher = mysql_insert_id($CONN);   
-            mysql_query($sql,$CONN);
-            $id_user = mysql_insert_id($CONN);     
-            $education_teacher_data['id_user'] = $id_user;        
-            
-            if(isset($keys['title'])){
-                for($i3=0;$i3<count($config['title']);$i3++){
-                    if($education_teacher_data['title']==$config['title'][$i3]['value'])
-                        $education_teacher_data['title'] = $config['title'][$i3]['code'];
-                }                
-            }
-            if(isset($keys['type'])){
-                for($i3=0;$i3<count($config['type']);$i3++){
-                    if($education_teacher_data['type'] == $config['type'][$i3]['value'])
-                        $education_teacher_data['type'] = $config['type'][$i3]['code'];
-                }                
-            } 
-            if(isset($keys['honor'])){
-                for($i3=0;$i3<count($config['honor']);$i3++){
-                    if($education_teacher_data['honor']==$config['honor'][$i3]['value'])
-                        $education_teacher_data['honor'] = $config['honor'][$i3]['code'];
-                }                
-            }
-            if(isset($keys['department'])){
-                for($i3=0;$i3<count($config['department']);$i3++){
-                    if($education_teacher_data['department'] == $config['department'][$i3]['name'])
-                        $education_teacher_data['department'] = $config['department'][$i3]['code'];
-                }                
-            } 
-            $education_teacher_data = array_merge($education_teacher_data,array(
-                'status'=>'1'
-               ,'remark'=>'teacher excel import'
-            ));
-            $keys_ = array_keys($education_teacher_data);
-            $keys_ = implode(",",$keys_);
-            $values = array_values($education_teacher_data);
-            $values = implode("','",$values);    
-            $sql = "insert into education_teacher (".$keys_.") values ('".$values."') ;";            
-            mysql_query($sql,$CONN);
-            $id_teacher = mysql_insert_id($CONN);        
-
-            //添加一行 用户所属用户组 记录
-            $sql = "insert into basic_group_2_user(username,code_group,remark) values ('".$education_teacher_data['code']."','".$education_teacher_data['department']."','teacher import');";
-            mysql_query($sql,$CONN);    
-               
-        }
-        //print_r($config['department']);
-        echo json_encode(array('state'=>'1','msg'=>'done'));
+    public function importExcel($path=NULL){
+       //TODO
     }   
 
     public function view(){
@@ -403,100 +147,218 @@ class education_teacher {
         
         echo json_encode(array('sql'=>$sql,'state'=>1));
     } 
-
-    public function grid(){
-        $CONN = tools::conn();
-
-        $page = 1;
-        if(isset($_REQUEST['page'])){
-            $page = $_REQUEST['page'];
+    
+	/**
+     * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
+     * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
+     * 是不会对系统的数据做 增删改 这种 写 的操作的,都是 读取 的操作,无需转移到存储过程
+     * 
+     * return 默认是JSON,是作为 WEB前端,手机终端,接口通信 的主要模式,也有可能是XML,如果是 array 的话,就返回一个数组
+     * 输出的数据,其格式为: {Rows:[{key1:'value1',key2:'value2']},Total:12,page:1,pagesize:3,status:1,msg:'处理结果'}
+     * search 默认是NULL,将依赖 $_REQUEST['serach'] 来获取,获取到的应该是一个JSON,内有各种查询参数
+     */
+    public function grid($return='json',$search=NULL,$page=NULL,$pagesize=NULL){
+        if($return<>'array'){
+            //判断当前用户有没有 查询 权限,如果权限没有,将直接在 tools::error 中断
+            if(!tools::checkPermission('19',$_REQUEST['username'],$_REQUEST['session'])){
+                tools::error("access wrong");        
+            }
+            //判断前端是否缺少必要的参数
+            if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) )tools::error('grid action wrong');
+            $search=$_REQUEST['search'];
+            $page=$_REQUEST['page'];
+            $pagesize=$_REQUEST['pagesize'];
         }
-        $pagesize = 20;
-        if(isset($_REQUEST['pagesize'])){
-            $pagesize = $_REQUEST['pagesize'];
-        }   
-
-    	$where = " where 1=1 ";
-		$orderby = " ORDER BY basic_person.name ASC ";
-        //有查询条件
-		if(isset($_REQUEST['search'])){
-			$search = json_decode($_REQUEST['search'],true);
-			$where = " where 1=1 ";
-			if(isset($search['name']) && trim($search['name'])!=''){
-				$where .= " and basic_person.name like '%".$search['name']."%' ";
-			}
-			if(isset($search['code']) && trim($search['code'])!=''){
-				$where .= " and education_teacher.code like '%".$search['code']."%' ";
-			}			
-			if(isset($search['birthday_min']) && trim($search['birthday_min'])!=''){
-				$where .= " and basic_person.birthday >= '".$search['birthday_min']."' ";
-			}
-			if(isset($search['birthday_max']) && trim($search['birthday_max'])!=''){
-				$where .= " and basic_person.birthday >= '".$search['birthday_min']."' ";
-			}			
-			if(isset($search['type']) && trim($search['type'])!=''){
-				$where .= " and education_teacher.type = '".$search['type']."' ";
-			}	
-			if(isset($search['status']) && trim($search['status'])!=''){
-				$where .= " and education_teacher.status = '".$search['status']."' ";
-			}			
-			if(isset($search['department']) && trim($search['department'])!=''){
-				$where .= " and education_teacher.department = '".$search['groups']."' ";
-			}			
-		}
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-		    if($_REQUEST['sortname']=='birthday' || 
-		        $_REQUEST['sortname']=='degree' || 
-		        $_REQUEST['sortname']=='politically'){
-		        $orderby = " order by basic_person.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." "; 
-		    }else{		    
-			    $orderby = " order by education_teacher.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		    }
-		}        
         
-        $sql = "
-SELECT
-education_teacher.code,
-basic_person.name,
-basic_person.birthday,
-basic_person.degree,
-basic_person.politically,
-education_teacher.department,
-education_teacher.id_person,
-education_teacher.id_user,
-education_teacher.id,
-education_teacher.`status`,
-education_teacher.`type`,
-education_teacher.title,
-education_teacher.years
-FROM
-education_teacher
-Left Join basic_person ON education_teacher.id_person = basic_person.id   
+        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+        $conn = tools::conn();
         
-		".$where."
-		".$orderby."        
-                 limit ".($page-1)*$pagesize.",".$pagesize." ; ";
-        //echo $sql;
-        $res = mysql_query($sql,$CONN);
-        $data = array();
-        while($temp = mysql_fetch_assoc($res)){
-            $temp['birthday'] = substr($temp['birthday'], 0 , 10);
-            $data[] = $temp;
-        }        
-        
-        $sql2 = "select count(*) as total FROM
-education_teacher
-Left Join basic_person ON education_teacher.id_person = basic_person.id    ".$where;
-        $res = mysql_query($sql2,$CONN);
-        $total = 0;
-        while($temp = mysql_fetch_assoc($res)){
-            $total = $temp['total'];
+        //列表查询下,查询条件必定是SQL拼凑的
+        $sql_where = " where 1=1 ";
+        //判断前端传递过来的查询条件内容,格式是否正确,因为格式必须是一个 JSON 
+        if(!tools::isjson($search))tools::error('grid,search data, wrong format');
+        $search=json_decode($search,true);
+        $search_keys = array_keys($search);
+        for($i=0;$i<count($search);$i++){
+            if($search_keys[$i]=='subject' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_paper.subject = '".$search[$search_keys[$i]]."' ";
+            }
+            if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_paper.title like '%".$search[$search_keys[$i]]."%' ";
+            }		
         }
-        sleep(0.9);
-        echo json_encode(  array("Rows"=>$data,"Total"=>$total, 'sql'=>$sql) );
-    }   
+        $sql_order = ' order by education_teacher.id desc ';
+        
+        $returnData = array();
+        //根据不同的用户角色,会有不同的列输出
 
+        if($_REQUEST['user_type']=='1'){ 
+            //管理员角色          
+
+            $sql = "     
+            SELECT
+            education_teacher.code,
+            education_teacher.name,
+            education_teacher.department_code,
+            education_teacher.department_name,
+            education_teacher.certificate,
+            education_teacher.years,
+            education_teacher.specialty,
+            education_teacher.specialty_code,
+            education_teacher.id_person,
+            education_teacher.id_user,
+            education_teacher.id,
+            education_teacher.`type`,
+            education_teacher.`status`,
+            basic_person.birthday,
+            basic_person.idcard,
+            basic_person.cardType,
+            basic_person.photo,
+            basic_person.gender,
+            basic_person.degree,
+            basic_person.degree_school,
+            basic_person.degree_school_code,
+            basic_person.politically,
+            basic_person.address_birth,
+            basic_person.address_birth_code,
+            basic_person.cellphone
+            FROM
+            education_teacher
+            Left Join basic_person ON education_teacher.id = basic_person.id
+            
+    		".$sql_where."
+    		".$sql_order."
+    		limit ".(($page-1)*$pagesize).", ".$pagesize;
+            //echo $sql;
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['address_birth'] = tools::cutString($temp['address_birth'],10);
+    			$temp['birthday'] = substr( $temp['birthday'],0,10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total 
+            FROM
+            education_teacher
+            Left Join basic_person ON education_teacher.id = basic_person.id
+    		".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+        }     
+           
+        if($_REQUEST['user_type']=='2'){ 
+            //学生角色
+            $sql_where .= " and education_exam_2_student.student_id = '".$_REQUEST['userid']."' ";
+            $sql_order = ' order by education_exam_2_student.id desc ';
+
+            $sql = "     
+            SELECT
+            education_exam_2_student.exam_id,
+            education_exam_2_student.exam_title,
+            education_exam_2_student.teacher_name,
+            education_exam_2_student.subject_code,
+            education_exam_2_student.subject_name,
+            education_exam_2_student.teacher_id,
+            education_exam_2_student.rank,
+            education_exam_2_student.rank_calss,
+            education_exam_2_student.score,
+            education_exam_2_student.passline,
+            education_exam_2_student.totalcent,
+            education_exam_2_student.id_paper,
+            education_exam_2_student.id_paper_log,
+            education_exam_2_student.time_start,
+            education_exam_2_student.time_end,
+            education_exam_2_student.time_submit,
+            education_exam_2_student.time_mark,
+            education_exam_2_student.`type`,
+            education_exam_2_student.id,
+            education_exam_2_student.`status`
+            FROM
+            education_exam_2_student
+    		".$sql_where."
+    		".$sql_order."
+    		limit ".(($page-1)*$pagesize).", ".$pagesize;
+            //echo $sql;
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['exam_title'] = tools::cutString($temp['exam_title'],10);
+    			$temp['time_start'] = substr( $temp['time_start'],0,10);
+    			$temp['time_end'] = substr( $temp['time_end'],0,10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total 
+            FROM
+            education_exam_2_student
+    		".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+        }
+        
+        if($_REQUEST['user_type']=='3'){ 
+            //教师角色
+            if(tools::checkPermission('150102',$_REQUEST['username'],$_REQUEST['session'])){
+                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['usergroup']."' ";
+            }else{                
+                $sql_where .= " and education_paper.id_creater = '".$_REQUEST['userid']."' ";
+            }
+
+            $sql = "            
+            SELECT
+    		education_paper.subject AS subjectcode,
+    		education_subject.name AS subjectname,
+    		education_paper.count_questions,
+    		education_paper.title,
+    		education_paper.cost,
+    		education_paper.author,
+    		education_paper.cent,
+    		education_paper.id,
+    		education_paper.id_creater,
+    		education_paper.status,    		
+    		education_paper.time_created
+    		FROM
+    		education_paper
+    		left Join education_subject ON education_paper.subject = education_subject.code    		
+    		".$sql_where."
+    		".$sql_order."
+			limit ".(($page-1)*$pagesize).", ".$pagesize;
+
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['papertitle'] = tools::cutString($temp['papertitle'],10);
+    			$temp['time_created'] = substr( $temp['time_created'],0,10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total from
+    		education_paper
+    		left Join education_subject ON education_paper.subject = education_subject.code ".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+                      
+        }
+        
+        $returnData = array(
+            'Rows'=>$data,
+            'sql'=>preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql)),
+            'Total'=>$total['total']
+        );
+        if ($return=='array') {
+            return $returnData;
+        }
+        
+        echo json_encode($returnData);
+    }
+        
     public function delete() {
         $CONN = tools::conn();
         $ids = $_REQUEST['ids'];

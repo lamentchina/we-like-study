@@ -50,25 +50,31 @@ class education_exam {
 
             $sql = "     
             SELECT
-            education_exam.title,
-            education_exam.count_passed,
-            education_exam.count_students_planed,
-            education_exam.count_students,
             education_exam.subject_code,
             education_exam.subject_name,
+            education_exam.count_students_planed,
+            education_exam.title,
             education_exam.time_start,
             education_exam.time_end,
-            education_exam.place,
             education_exam.score,
             education_exam.mode,
             education_exam.passline,
-            education_exam.invigilator,
+            education_exam.teacher_id,
             education_exam.teacher_name,
+            education_exam.teacher_code,
+            education_exam.id_paper,
+            education_exam.type,
             education_exam.id,
+            education_exam.id_creater,
+            education_exam.id_creater_group,
+            education_exam.code_creater_group,
             education_exam.time_created,
-            education_exam.`type`
+            education_exam.status,
+            education_exam.count_students,
+            education_exam.count_passed
             FROM
             education_exam
+            
     		".$sql_where."
     		".$sql_order."
     		limit ".(($page-1)*$pagesize).", ".$pagesize;

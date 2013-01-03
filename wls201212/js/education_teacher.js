@@ -1,3 +1,24 @@
+/**
+ * 分三个用户组看到教师的信息
+ * 管理员
+ *   看到所有的教师信息
+ *   可以 增删改查数,权限按钮有:
+ *     新增 修改 查询 删除 导入 导出 查看
+ * 教师
+ *   看到本部门的教师信息
+ *   可以执行的操作有:
+ *     查询 查看
+ * 学生
+ *   看到与我的学习科目有关的教师信息
+ *   可以执行的操作有
+ *     查询 查看
+ *     
+ * 在教师详细(查看)页面,也有部分按钮,按钮有:
+ *   涉及的学生列表 涉及的科目列表
+ * 
+ * @version 201209
+ * @author wei1224hf@gmail.com
+ * */
 var education_teacher = {
 
 	version: "2012X1"
@@ -8,8 +29,17 @@ var education_teacher = {
 	,loadConfig: function(afterAjax){
 		$.ajax({
 			url: myAppServer()+ "&class=education_teacher&function=loadConfig",
-			dataType: 'json',
-			success : function(response) {
+			dataType: 'json'
+	        ,type: "POST"
+	        ,data: {
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+	        } 
+			,success : function(response) {
 				education_teacher.config = response;
 				if ( typeof(afterAjax) == "string" ){
 					eval(afterAjax);
@@ -23,68 +53,45 @@ var education_teacher = {
 		});	
 	}
 	
-	//页面列表ligerUI控件
-	,grid : null
-	
 	/**
 	 * 初始化页面列表
 	 * 需要依赖一个空的 document.body 
 	 * */
-	,initGrid : function(){
+	,grid: function(){
+		var gridColmuns = [
+			[//管理员列
+			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_teacher.code, name: 'code' }
+			]
+			,[//学生列	
+			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_teacher.code, name: 'code' }			  
+			  ]
+			,[//教师列
+			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
+			   ,{ display: top.il8n.education_teacher.code, name: 'code' }	
+			  ]
+		];
 		var config = {
-				id: 'education_teacher__grid'
-				,height:'100%'
-				,columns: [
-					 { display: top.il8n.basic_person.name, name: 'name' }
-					,{ display: top.il8n.education_teacher.code, name: 'code' }
-					,{ display: top.il8n.basic_person.birthday, name: 'birthday',align:'left' }
-					,{ display: top.il8n.basic_person.degree, name: 'degree', render: function(a,b){
-						for(var i=0; i<education_teacher.config.GB4568.length; i++){
-							if(education_teacher.config.GB4568[i].code == a.degree){
-								return education_teacher.config.GB4568[i].value;
-							}
-						}
-					} }
-					,{ display: top.il8n.basic_person.politically, name: 'degree', render: function(a,b){
-						for(var i=0; i<education_teacher.config.GB4762.length; i++){
-							if(education_teacher.config.GB4762[i].code == a.politically){
-								return education_teacher.config.GB4762[i].value;
-							}
-						}
-					} }	
-					,{ display: top.il8n.education_teacher.department, name: 'department',align:'left', render: function(a,b){
-						for(var i=0; i<education_teacher.config.department.length; i++){
-							if(education_teacher.config.department[i].code == a.department){
-								return education_teacher.config.department[i].name;
-							}
-						}
-					} }		
-					,{ display: top.il8n.education_teacher.type, name: 'type', render: function(a,b){
-						for(var i=0; i<education_teacher.config.type.length; i++){
-							if(education_teacher.config.type[i].code == a.type){
-								return education_teacher.config.type[i].value;
-							}
-						}
-					} }
-					,{ display: top.il8n.education_teacher.title, name: 'title', render: function(a,b){
-						for(var i=0; i<education_teacher.config.title.length; i++){
-							if(education_teacher.config.title[i].code == a.title){
-								return education_teacher.config.title[i].value;
-							}
-						}
-					} }						
-					,{ display: top.il8n.education_teacher.years, name: 'years' }
-					
-				],  pageSize:20 ,rownumbers:true,
-				parms : {
-					username: top.basic_user.username
-					,session: MD5( top.basic_user.session +((new Date()).getHours()))
-					,search: $.ligerui.toJSON( education_teacher.searchOptions )
-				},
-				url: myAppServer() + "&class=education_teacher&function=grid",
-				method: "POST",				
-				toolbar: { items: []}
+			id: 'education_teacher__grid'
+			,height:'100%'
+			,columns: []
+			,pageSize:20 
+			,rownumbers:true
+			,parms: {
+                 username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+				,search: $.ligerui.toJSON( education_teacher.searchOptions )
+			}
+			,url: myAppServer() + "&class=education_teacher&function=grid"
+			,method: "POST"				
+			,toolbar: { items: []}
 		};
+		config.columns = gridColmuns[(top.basic_user.loginData.type)*1-1];  			
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [];
@@ -214,7 +221,7 @@ var education_teacher = {
 			}
 		}
 		
-		this.grid = $(document.body).ligerGrid(config);
+		$(document.body).ligerGrid(config);
 	}
 	
 	,upload : function(){
@@ -670,6 +677,7 @@ var education_teacher = {
 		});
 	}	
 	
+	,searchOptions: {}		
 	/**
 	 * 与表格功能对应的 查询条件 
 	 * 

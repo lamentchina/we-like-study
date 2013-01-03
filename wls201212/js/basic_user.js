@@ -15,17 +15,26 @@ var basic_user = {
 	,config: null
 	,loadConfig: function(afterAjax){
 		$.ajax({
-			url: myAppServer()+ "&class=basic_user&function=loadConfig",
-			dataType: 'json',
-			success : function(response) {
+			url: myAppServer()+ "&class=basic_user&function=loadConfig"
+			,dataType: 'json'
+	        ,type: "POST"
+	        ,data: {
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+	        } 			
+			,success : function(response) {
 				basic_user.config = response;
 				if ( typeof(afterAjax) == "string" ){
 					eval(afterAjax);
 				}else if( typeof(afterAjax) == "function"){
 					afterAjax();
 				}
-			},
-			error : function(){				
+			}
+			,error : function(){				
 				alert(top.il8n.disConnect);
 			}
 		});	
@@ -106,50 +115,38 @@ var basic_user = {
 		});
 	}
 	
-	//页面列表ligerUI控件
-	,grid : null
-	
-	,searchOptions: {}
-	
 	/**
 	 * 初始化页面列表
 	 * 需要依赖一个空的 document.body 
 	 * */
-	,initGrid : function(){
+	,grid : function(){
 		var config = {
 				id: 'basic_user__grid'
 				,height:'100%'
 				,columns: [
-					{ display: top.il8n.basic_user.username, name: 'username' },
-					{ display: top.il8n.basic_person.name, name: 'name' },
-					{ display: top.il8n.money, name: 'money' },
-					{ display: top.il8n.credits, name: 'money2'},
-					{ display: top.il8n.type, name: 'type', isSort: false, render: function(a,b){
-						
-						for(var i=0; i<basic_user.config.type.length; i++){
-							if( basic_user.config.type[i].code == a.type){
-								return basic_user.config.type[i].value;
-							}
-						}				
-					} },
-					{ display: top.il8n.status, name: 'status', width: 55 , render: function(a,b){
-						for(var i=0; i<basic_user.config.status.length; i++){
-							if(basic_user.config.status[i].code == a.status){
-								return basic_user.config.status[i].value;
-							}
-						}
-					} }
-					,{ display: top.il8n.time_created, name: 'time_created', width: 95 }
-				],  pageSize:20 ,rownumbers:true,
-				parms : {
+				    { display: top.il8n.id, name: 'id', isSort: true, hide:true }
+				    ,{ display: top.il8n.basic_user.username, name: 'username', width:120 }
+				    ,{ display: top.il8n.basic_user.money, name: 'money' }
+				    ,{ display: top.il8n.basic_user.money2, name: 'money2', hide:true }
+				    ,{ display: top.il8n.time_created, name: 'time_created', hide:true }
+				    ,{ display: top.il8n.type, name: 'type', isSort: false, hide:true  }
+				    ,{ display: top.il8n.status, name: 'status', isSort: false, hide:true  }
+				    ,{ display: top.il8n.type, name: 'name_type', isSort: false }
+				    ,{ display: top.il8n.status, name: 'name_status', isSort: false }				    
+				    ,{ display: top.il8n.basic_user.person_name, name: 'person_name', width:100 }
+				    ,{ display: top.il8n.basic_user.person_cellphone, name: 'person_cellphone' }
+				    ,{ display: top.il8n.basic_user.group_name, name: 'group_name', isSort: false, width:120 }
+				    ,{ display: top.il8n.basic_user.group_code, name: 'group_code', width:80 }				    
+				],  pageSize:20 ,rownumbers:true
+				,parms : {
 	                username: top.basic_user.username
 	                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
 	                ,search: $.ligerui.toJSON( basic_user.searchOptions )
-	                ,userid: top.basic_user.loginData.id
-	                ,usergroup: top.basic_user.loginData.id_group
-	                ,usertype: top.basic_user.loginData.type    
+	                ,user_id: top.basic_user.loginData.id
+	                ,user_type: top.basic_user.loginData.type    
+	                ,group_id: top.basic_user.loginData.group_id	                
 				},
-				url: myAppServer() + "&class=basic_user&function=getGrid",
+				url: myAppServer() + "&class=basic_user&function=grid",
 				method: "POST",				
 				toolbar: { items: []}
 		};
@@ -266,7 +263,7 @@ var basic_user = {
 			}
 		}
 		
-		basic_user.grid = $(document.body).ligerGrid(config);
+		$(document.body).ligerGrid(config);
 	},
 	
 	/**
@@ -706,6 +703,8 @@ var basic_user = {
 		});
 	}	
 	
+	//页面列表ligerUI控件	
+	,searchOptions: {}	
 	/**
 	 * 与表格功能对应的 查询条件 
 	 * 
@@ -724,10 +723,10 @@ var basic_user = {
 				,space: 40
 				,fields: [
 					 { display: top.il8n.basic_user.username, name: "basic_user__search_username", newline: false, type: "text" }
-					,{ display: top.il8n.type, name: "basic_user__search_type", newline: true, type: "select", options :{data : top.il8n.basic_user__types, valueField : "code" , textField: "value" } }
-					,{ display: top.il8n.status, name: "basic_user__search_status", newline: true, type: "select", options :{data : top.il8n.basic_user__status, valueField : "code" , textField: "value" } }
+					,{ display: top.il8n.type, name: "basic_user__search_type", newline: true, type: "select", options :{data : basic_user.config.type, valueField : "code" , textField: "value" } }
+					,{ display: top.il8n.status, name: "basic_user__search_status", newline: true, type: "select", options :{data : basic_user.config.status, valueField : "code" , textField: "value" } }
 					,{ display: top.il8n.money, name: "basic_user__search_money", newline: true, type: "number" }
-					,{ display: top.il8n.basic_user.groups, name: "basic_user__search_groups", newline: true, type: "text" }
+					,{ display: top.il8n.basic_user.group_code, name: "basic_user__search_group_code", newline: true, type: "text" }
 				]
 			}); 
 			$.ligerDialog.open({
@@ -754,20 +753,22 @@ var basic_user = {
 						var type = $.ligerui.get("basic_user__search_type").getValue();
 						var status = $.ligerui.get("basic_user__search_status").getValue();
 						var money = $.ligerui.get("basic_user__search_money").getValue();
-						var groups = $.ligerui.get("basic_user__search_groups").getValue();
+						var group_code = $.ligerui.get("basic_user__search_group_code").getValue();
 						
 						if(username!="")data.username = username;
 						if(type!="")data.type = type;
 						if(status!="")data.status = status;
-						if(groups!="")data.groups = groups;
+						if(group_code!="")data.group_code = group_code;
 						if(money!=0)data.money = money;
 						
-						$.ligerui.get("basic_user__grid").options.parms = {
-	
-							username: top.basic_user.username
-							,session: MD5( top.basic_user.session +((new Date()).getHours()))
-							,search: $.ligerui.toJSON(data)
-							
+						$.ligerui.get("basic_user__grid").options.parms = {	
+			                username: top.basic_user.username
+			                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+			                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+			                ,user_id: top.basic_user.loginData.id
+			                ,user_type: top.basic_user.loginData.type    
+			                ,group_id: top.basic_user.loginData.group_id
+							,search: $.ligerui.toJSON(data)							
 						};
 						$.ligerui.get("basic_user__grid").loadData();
 				}}]

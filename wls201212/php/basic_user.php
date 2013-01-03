@@ -7,71 +7,118 @@
  * @prerequisites basic_memory__init,basic_memory.il8n()
  * */
 class basic_user {
-    
-    /**
-     * 虽然提倡将业务迁移到数据库的存储过程
-     * 但是,像这种表格查询功能,还是用服务端拼凑SQL比较好
-     * */
-    public function getGrid(){
-        $CONN = tools::conn();
-
-        $page = 1;
-        if(isset($_REQUEST['page'])){
-            $page = $_REQUEST['page'];
+        
+	/**
+     * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
+     * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
+     * 是不会对系统的数据做 增删改 这种 写 的操作的,都是 读取 的操作,无需转移到存储过程
+     * 
+     * return 默认是JSON,是作为 WEB前端,手机终端,接口通信 的主要模式,也有可能是XML,如果是 array 的话,就返回一个数组
+     * 输出的数据,其格式为: {Rows:[{key1:'value1',key2:'value2']},Total:12,page:1,pagesize:3,status:1,msg:'处理结果'}
+     * search 默认是NULL,将依赖 $_REQUEST['serach'] 来获取,获取到的应该是一个JSON,内有各种查询参数
+     */
+    public function grid($return='json',$search=NULL,$page=NULL,$pagesize=NULL){
+        if($return<>'array'){
+            //判断当前用户有没有 查询 权限,如果权限没有,将直接在 tools::error 中断
+            if(!tools::checkPermission('19',$_REQUEST['username'],$_REQUEST['session'])){
+                tools::error("access wrong");        
+            }
+            //判断前端是否缺少必要的参数
+            if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) )tools::error('grid action wrong');
+            $search=$_REQUEST['search'];
+            $page=$_REQUEST['page'];
+            $pagesize=$_REQUEST['pagesize'];
         }
-        $pagesize = 20;
-        if(isset($_REQUEST['pagesize'])){
-            $pagesize = $_REQUEST['pagesize'];
-        }   
-
-    	$where = " where 1=1 ";
-		$orderby = " ORDER BY basic_user.username ASC ";
-        //有查询条件
-		if(isset($_REQUEST['search'])){
-			$search = json_decode($_REQUEST['search'],true);
-			$where = " where 1=1 ";
-			if(isset($search['username']) && trim($search['username'])!=''){
-				$where .= " and basic_user.username like = '%".$search['username']."%' ";
-			}
-			if(isset($search['money']) && trim($search['money'])!=''){
-			    
-				$where .= " and basic_user.money < '".$search['money']."' ";
-			}
-			if(isset($search['type']) && trim($search['type'])!=''){
-				$where .= " and basic_user.type = '".$search['type']."' ";
-			}	
-			if(isset($search['status']) && trim($search['status'])!=''){
-				$where .= " and basic_user.status = '".$search['status']."' ";
-			}			
-			if(isset($search['groups']) && trim($search['groups'])!=''){
-				$where .= " and basic_user.groups like '%".$search['groups']."%' ";
-			}			
-		}
+        
+        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+        $conn = tools::conn();
+        
+        //列表查询下,查询条件必定是SQL拼凑的
+        $sql_where = " where 1=1 ";
+        //判断前端传递过来的查询条件内容,格式是否正确,因为格式必须是一个 JSON 
+        if(!tools::isjson($search))tools::error('grid,search data, wrong format');
+        $search=json_decode($search,true);
+        $search_keys = array_keys($search);
+        for($i=0;$i<count($search);$i++){
+            if($search_keys[$i]=='username' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.username like '%".$search[$search_keys[$i]]."%' ";
+            }
+            if($search_keys[$i]=='group_code' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.group_code like '%".$search[$search_keys[$i]]."%' ";
+            }	
+            if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.status = '".$search[$search_keys[$i]]."' ";
+            }  
+            if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.type = '".$search[$search_keys[$i]]."' ";
+            }                       	
+        }
+        $sql_order = ' order by basic_user.id desc ';
 		//有排序条件
 		if(isset($_REQUEST['sortname'])){
-			$orderby = " order by basic_user.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}        
+			$sql_order = " order by basic_user.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
+		}          
         
-        $sql = "select basic_user.*,basic_person.name from basic_user  left join basic_person on basic_user.id_person = basic_person.id
-		".$where."
-		".$orderby."        
-                 limit ".($page-1)*$pagesize.",".$pagesize." ; ";
-        $res = mysql_query($sql,$CONN);
-        $data = array();
-        while($temp = mysql_fetch_assoc($res)){
-            $data[] = $temp;
+        $returnData = array();
+        //根据不同的用户角色,会有不同的列输出
+
+        if($_REQUEST['user_type']=='1'){ 
+            //管理员角色          
+
+            $sql = "     
+            SELECT
+            basic_user.username,
+            basic_user.id,
+            basic_user.group_code,
+            basic_user.group_name,
+            basic_user.group_id,
+            basic_user.person_name,
+            basic_user.person_id,
+            basic_user.person_cellphone,
+            basic_user.money,
+            basic_user.money2,
+            basic_user.`type`,
+            basic_user.`status`,
+            (select extend4 from basic_memory where extend5='basic_user__type' and code = basic_user.`type`) as name_type,
+            (select extend4 from basic_memory where extend5='basic_user__status' and code = basic_user.`status`) as name_status,           
+            basic_user.time_created,
+            basic_user.id_creater
+            FROM
+            basic_user
+            
+    		".$sql_where."
+    		".$sql_order."
+    		limit ".(($page-1)*$pagesize).", ".$pagesize;
+            //echo $sql;
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['time_created'] = substr( $temp['time_created'],0,10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total 
+            FROM
+            basic_user
+    		".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+        }   
+        
+        $returnData = array(
+            'Rows'=>$data,
+            'sql'=>preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql)),
+            'Total'=>$total['total']
+        );
+        if ($return=='array') {
+            return $returnData;
         }
         
-        $sql = "select count(*) as total from basic_user ".$where;
-        $res = mysql_query($sql,$CONN);
-        $total = 0;
-        while($temp = mysql_fetch_assoc($res)){
-            $total = $temp['total'];
-        }
-        sleep(0.9);
-        echo json_encode(  array("Rows"=>$data,"Total"=>$total) );
+        echo json_encode($returnData);
     }
-    
+        
     public function delete(){//TODO
         $CONN = tools::conn();
         if(!(isset($_REQUEST['ids']))){
@@ -156,7 +203,7 @@ class basic_user {
                 basic_user.money,
                 basic_user.money2,
                 basic_user.person_id,
-                basic_user.group_id as id_group,
+                basic_user.group_id,
                 basic_user.group_code,
                 basic_user.group_name,
                 basic_user.id,
