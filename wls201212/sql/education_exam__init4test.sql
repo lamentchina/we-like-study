@@ -55,7 +55,7 @@ declare subject_name_ char(4) default '0000';
 #各层循环所需要的变量: 月份,科目,试卷,题目,试卷日志,题目日志
 declare count_month,count_subject,count_paper,count_question,count_class,count_student,count_paperlog,count_questionlog int default 0;
 #各个业务表所需要的主键
-declare paperid,examid,questionid,education_exam_2_class__id,education_exam_2_student__id int default 0;
+declare paperid,examid,questionid,education_exam_2_class__id,education_exam_2_student__id,education_paper_log_id_ int default 0;
 
 #
 declare papertitle varchar(200) default '';
@@ -88,7 +88,7 @@ update basic_memory set extend1 = 0 where type = 2 and code in (
 ,'education_exam_2_student'
 ,'education_paper_log'
 );
-leave pro_main;
+
 #启用事务功能
 START TRANSACTION; 
 
@@ -145,15 +145,15 @@ while_month:while count_month >0 do
             ,paperid         
             
             ,papertitle  
-            ,'2005-01-01'                 
-            ,'2012-07-01'            
+            ,paperdate                 
+            ,paperdate          
             ,100            
             ,1            
             ,60            
             ,1            
             ,'net oline'            
-            ,'40'            
-            ,'40'
+            ,'200'            
+            ,'200'
                
             ,subject_code_            
             ,subject_name_     
@@ -850,11 +850,20 @@ while_month:while count_month >0 do
             #status 描述: 0 错误, 1 正确并流程已结束, 
             #2 正在走业务流程, 21 走业务流程,等待某部门审批通过, 22 等待多个部门共同审批,需要全部通过, 23 多审批,单通过
             #3 原始业务数据编辑状态, 31 新建状态,新建后保存等待下次更改,尚未发布, 32 修改状态,因某种原因,数据正在被修改中,            
-            #4 正式发布            
+            #4 正式发布                         
+            #5 作废 , 51 因实文件有效期到期正常作废 , 52 因异常事件作废
+            #在一般的OA中,数据的状态是:            
+            # 31(用户新建) - 21(等待单点审批) - 4(审批通过) - 5(作废)            
+            #或者 31-21-32-21-32-21-4-5, 表示审批驳回修改
 
-            #type 描述: 1 一般的多班级统考 , 2 月考 , 3 期中考, 4 期末考            
-            if paperdate = '2011-12-01' then            
+            #type 描述: 1 统考 , 2 月考 , 3 期中考, 4 期末考        
+            set type_ = 1;set status_ = 1;    
+            if paperdate = '2012-05-01' then            
                 set status_ = 4;                
+                set type_ = 2;                
+            end if;            
+            if paperdate = '2012-06-01' then            
+                set status_ = 31;                
                 set type_ = 4;                
             end if;
             insert into education_exam_2_class (            
@@ -901,7 +910,7 @@ while_month:while count_month >0 do
                 ,'40'
                 ,'40'
                 
-                ,'1'
+                ,type_
                 ,education_exam_2_class__id
                 ,teacher_id_creater_            
                 ,teacher_id_creater_group_            
@@ -909,97 +918,101 @@ while_month:while count_month >0 do
                 ,paperdate
                 ,paperdate
                 ,0
-                ,1
+                ,status_
                 ,'test data '
             );
         end while while_class;        
 
-        #每个学生都要做这张考卷, 学生编号从 5 到 204 ,总计 200 个    
-        set count_student = 200;  
-        while_student: while count_student > 0 do    
-            set count_student = count_student - 1;               
-            select id            
-                   ,group_name
-                   ,group_code
-                   ,group_id
-                   ,person_name
-                   ,username 
-            into 
-                   student_id_                   
-                   ,student_group_name_
-                   ,student_group_code_
-                   ,student_group_id_
-                   ,student_name_
-                   ,student_code_ 
-            from basic_user where id = (count_student + 5); 
-            
-            set education_exam_2_student__id = basic_memory__index('education_exam_2_student');
-                        
-            insert into education_exam_2_student (            
-                exam_id
-                ,exam_title
-                ,class_id
-                ,class_code
-                ,class_name
-                ,teacher_id
-                ,teacher_name
-                ,teacher_code
-                ,student_id
-                ,student_name
-                ,student_code
+        #每个学生都要做这张考卷, 学生编号从 5 到 204 ,总计 200 个   
+        if paperdate < '2012-06-01' then                
+
+            set count_student = 200;  
+            while_student: while count_student > 0 do    
+                set count_student = count_student - 1;               
+                select id            
+                       ,group_name
+                       ,group_code
+                       ,group_id
+                       ,person_name
+                       ,username 
+                into 
+                       student_id_                   
+                       ,student_group_name_
+                       ,student_group_code_
+                       ,student_group_id_
+                       ,student_name_
+                       ,student_code_ 
+                from basic_user where id = (count_student + 5); 
                 
-                ,subject_code
-                ,subject_name
-                
-                ,id_paper                
-                ,id_paper_log
-                
-                ,time_start
-                ,time_end                
-                ,passline                
-                ,totalcent
-                
-                ,type
-                ,id
-                ,id_creater
-                ,id_creater_group
-                ,code_creater_group
-                ,time_created
-            ) values (            
-                examid
-                ,papertitle
-                ,student_group_id_
-                ,student_group_code_
-                ,student_group_name_
-                ,teacher_id_creater_
-                ,teacher_name_creater_
-                ,teacher_code_creater_
-                ,student_id_
-                ,student_name_
-                ,student_code_
-                
-                ,subject_code_
-                ,subject_name_
-                
-                ,paperid                
-                ,education_exam_2_student__id
-                
-                ,'2010-01-01'
-                ,'2014-01-01'                
-                ,'60'                
-                ,'100'
-                
-                ,'1'
-                ,education_exam_2_student__id
-                ,student_id_
-                ,student_group_id_
-                ,student_group_code_
-                ,paperdate
-            );
-        end while while_student;
+                set education_exam_2_student__id = basic_memory__index('education_exam_2_student');
+                set education_paper_log_id_ = education_exam_2_student__id;
+                if paperdate = '2012-05-01' then             
+                    set education_paper_log_id_ = 0;                
+                end if;
+                insert into education_exam_2_student (            
+                    exam_id
+                    ,exam_title
+                    ,class_id
+                    ,class_code
+                    ,class_name
+                    ,teacher_id
+                    ,teacher_name
+                    ,teacher_code
+                    ,student_id
+                    ,student_name
+                    ,student_code
+                    
+                    ,subject_code
+                    ,subject_name
+                    
+                    ,id_paper                
+                    ,id_paper_log
+                    
+                    ,time_start
+                    ,time_end                
+                    ,passline                
+                    ,totalcent
+                    
+                    ,type
+                    ,id
+                    ,id_creater
+                    ,id_creater_group
+                    ,code_creater_group
+                    ,time_created
+                ) values (            
+                    examid
+                    ,papertitle
+                    ,student_group_id_
+                    ,student_group_code_
+                    ,student_group_name_
+                    ,teacher_id_creater_
+                    ,teacher_name_creater_
+                    ,teacher_code_creater_
+                    ,student_id_
+                    ,student_name_
+                    ,student_code_
+                    
+                    ,subject_code_
+                    ,subject_name_
+                    
+                    ,paperid                
+                    ,education_paper_log_id_
+                    
+                    ,paperdate
+                    ,paperdate             
+                    ,'60'                
+                    ,'100'
+                    
+                    ,'1'
+                    ,education_exam_2_student__id
+                    ,student_id_
+                    ,student_group_id_
+                    ,student_group_code_
+                    ,paperdate
+                );
+            end while while_student;        
+        end if;
     end while while_subject;
 end while while_month;
 commit;
-
-
 END;
