@@ -91,7 +91,7 @@ class education_paper {
             (
                 select subject_code from education_subject_2_group_2_teacher where education_subject_2_group_2_teacher.group_code = 
                     (
-                        select code from basic_group where id = '".$_REQUEST['usergroup']."'
+                        select code from basic_group where id = '".$_REQUEST['user_group']."'
                     )
             )
             ";
@@ -103,7 +103,7 @@ class education_paper {
             education_paper.title,
             education_paper.id,
             education_paper.cost,
-            (select max(education_paper_log.mycent) from education_paper_log where education_paper_log.id_creater = '".$_REQUEST['userid']."' and education_paper_log.paper_id =  education_paper.id ) as mycent
+            (select max(education_paper_log.mycent) from education_paper_log where education_paper_log.id_creater = '".$_REQUEST['user_id']."' and education_paper_log.paper_id =  education_paper.id ) as mycent
             FROM
             education_paper
 
@@ -130,9 +130,9 @@ class education_paper {
         if($_REQUEST['usertype']=='3'){ 
             //教师角色
             if(tools::checkPermission('150102',$_REQUEST['username'],$_REQUEST['session'])){
-                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['usergroup']."' ";
+                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['user_group']."' ";
             }else{                
-                $sql_where .= " and education_paper.id_creater = '".$_REQUEST['userid']."' ";
+                $sql_where .= " and education_paper.id_creater = '".$_REQUEST['user_id']."' ";
             }
 
             $sql = "            
@@ -295,11 +295,14 @@ class education_paper {
 		}		
     } 
     
-    //前端提交了一张试卷,服务端接收提交过来的 用户作答答案 ,并入库,然后计算有没有做错,然后返回正确答案跟解题思路
-    public function submitPaper(){
+    /**
+     * 前端提交了一张试卷,服务端接收提交过来的 用户作答答案 ,并入库,
+     * 然后计算有没有做错,然后返回正确答案跟解题思路
+     */
+    public function submit(){
         if(!tools::checkPermission("1590"))tools::error(array('access wrong'));//TODO
         //判断前端是否传递了足够的参数
-        if( (!isset($_REQUEST['json'])) || (!isset($_REQUEST['id'])) || (!isset($_REQUEST['userid'])) )die('wrong post');
+        if( (!isset($_REQUEST['json'])) || (!isset($_REQUEST['id'])) || (!isset($_REQUEST['user_id'])) )die('wrong post');
         $CONN = tools::conn();
         
         $id_paperlog = tools::getId("education_paper_log");
@@ -308,11 +311,13 @@ class education_paper {
             	id_paper
             	,id_creater
             	,id_creater_group
+            	,code_creater_group
             	,id
         	) values (
             	'".$_REQUEST['id']."'
-            	,'".$_REQUEST['userid']."'
-            	,'".$_REQUEST['usergroup']."'
+            	,'".$_REQUEST['user_id']."'
+            	,'".$_REQUEST['group_id']."'
+            	,'".$_REQUEST['group_code']."'
             	,'".$id_paperlog."'
         	);";
         mysql_query($sql,$CONN);
@@ -325,6 +330,7 @@ class education_paper {
         ,myanswer
         ,id_creater
         ,id_creater_group
+        ,code_creater_group
         ,id_paper
         ,id_paper_log
         ,id
@@ -334,8 +340,9 @@ class education_paper {
             $sql .= " (
             '".$arr[$i]['id']."'
             ,'".$arr[$i]['myanswer']."'
-            ,'".$_REQUEST['userid']."'
-            ,'".$_REQUEST['usergroup']."'
+            ,'".$_REQUEST['user_id']."'
+            ,'".$_REQUEST['group_id']."'
+            ,'".$_REQUEST['group_code']."'
             ,'".$_REQUEST['id']."'
             ,'".$id_paperlog."'
             ,'".tools::getId("education_question_log")."'
