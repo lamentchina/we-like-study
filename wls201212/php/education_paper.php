@@ -45,7 +45,7 @@ class education_paper {
         
         $returnData = array();
         //根据不同的用户角色,会有不同的列输出
-        if($_REQUEST['usertype']=='1'){ 
+        if($_REQUEST['user_type']=='1'){ 
             //管理员角色
 
             $sql = "            
@@ -84,29 +84,38 @@ class education_paper {
             $total = mysql_fetch_assoc($res);
         }        
         //根据不同的用户角色,会有不同的列输出
-        if($_REQUEST['usertype']=='2'){ 
+        if($_REQUEST['user_type']=='2'){ 
             //学生角色
             $sql_where .= "
     		and education_paper.subject_code in 
             (
                 select subject_code from education_subject_2_group_2_teacher where education_subject_2_group_2_teacher.group_code = 
                     (
-                        select code from basic_group where id = '".$_REQUEST['user_group']."'
+                        select code from basic_group where id = '".$_REQUEST['group_id']."'
                     )
             )
             ";
 
             $sql = "     
             SELECT
-    		education_paper.subject_code AS subjectcode,
-    		education_paper.subject_name AS subjectname,
+            education_paper.subject_name,
+            education_paper.count_questions,
+            education_paper.cent,
+            education_paper.cost,
             education_paper.title,
             education_paper.id,
-            education_paper.cost,
-            (select max(education_paper_log.mycent) from education_paper_log where education_paper_log.id_creater = '".$_REQUEST['user_id']."' and education_paper_log.paper_id =  education_paper.id ) as mycent
+            education_paper.teacher_name,
+            education_paper.teacher_id,
+            education_paper.teacher_code,
+            education_paper.count_used,
+            education_paper.subject_code,
+            education_paper.time_created,            
+            (select max(education_paper_log.mycent) 
+            	from education_paper_log where 
+            	education_paper_log.id_creater = '".$_REQUEST['user_id']."' 
+            	and education_paper_log.paper_id =  education_paper.id ) as mycent
             FROM
             education_paper
-
     		".$sql_where."
     		".$sql_order."
     		limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -116,6 +125,7 @@ class education_paper {
             while($temp = mysql_fetch_assoc($res)){
                 //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
     			$temp['title'] = tools::cutString($temp['title'],10);
+    			$temp['time_created'] = tools::cutString($temp['time_created'],10);
                 $data[] = $temp;
             }
             
@@ -127,10 +137,10 @@ class education_paper {
             $total = mysql_fetch_assoc($res);
         }
         
-        if($_REQUEST['usertype']=='3'){ 
+        if($_REQUEST['user_type']=='3'){ 
             //教师角色
             if(tools::checkPermission('150102',$_REQUEST['username'],$_REQUEST['session'])){
-                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['user_group']."' ";
+                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['group_code']."' ";
             }else{                
                 $sql_where .= " and education_paper.id_creater = '".$_REQUEST['user_id']."' ";
             }

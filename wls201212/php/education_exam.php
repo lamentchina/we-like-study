@@ -1,7 +1,13 @@
 ﻿<?php
+/**
+ * 考试系统的 在线统考模块 后台代码
+ * 
+ * @version 201301
+ * @author wei1224hf@gmail.com
+ * */
 class education_exam {
     
-/**
+   /**
      * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
      * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
      * 是不会对系统的数据做 增删改 这种 写 的操作的,都是 读取 的操作,无需转移到存储过程
@@ -113,7 +119,7 @@ class education_exam {
             education_exam_2_student.subject_name,
             education_exam_2_student.teacher_id,
             education_exam_2_student.rank,
-            education_exam_2_student.rank_calss,
+            education_exam_2_student.rank_class,
             education_exam_2_student.score,
             education_exam_2_student.passline,
             education_exam_2_student.totalcent,
@@ -184,16 +190,19 @@ class education_exam {
             education_exam.time_start,
             education_exam.time_end,
             education_exam.score,
+            education_exam.passline,
             education_exam.mode,
             education_exam.teacher_id,
             education_exam.teacher_code,
             education_exam.teacher_name,
             education_exam.id_paper,
-            education_exam.`type`,
             education_exam.id,
-            education_exam.`status`,
-            (select extend4 from basic_memory where extend5 = 'education_exam__type' and code = education_exam.type) as name_type,            
-            (select extend4 from basic_memory where extend5 = 'education_exam_2_student__status' and code = education_exam.status) as name_status            
+            education_exam.type,       
+            education_exam.mode,            
+            education_exam.status,
+            (select extend4 from basic_memory where extend5 = 'education_exam__type' and code = education_exam.type) as name_type,      
+            (select extend4 from basic_memory where extend5 = 'education_exam__mode' and code = education_exam.mode) as name_mode,            
+            (select extend4 from basic_memory where extend5 = 'education_exam__status' and code = education_exam.status) as name_status            
             FROM
             education_exam
             
@@ -355,29 +364,10 @@ class education_exam {
          || (!isset($_REQUEST['id'])) )die('wrong post');
         $CONN = tools::conn();
         
-        $res = mysql_query("select id_paper_log from education_exam_2_student where id = ".$_REQUEST['id'],$CONN);
-        $data = mysql_fetch_assoc($res);      
-        if($data['id_paper_log']!='0'){
-            echo json_encode(array('msg'=>'done befor','status'=>'0'));
-            exit();
-        }  
-        
-        $id_paperlog = tools::getId("education_paper_log");
-        //先生成一份试卷做题日志,并得到日志编号
-        $sql = "insert into education_paper_log (
-            	id_paper
-            	,id_creater
-            	,id_creater_group
-            	,code_creater_group
-            	,id
-        	) values (
-            	'".$_REQUEST['id_paper']."'
-            	,'".$_REQUEST['user_id']."'
-            	,'".$_REQUEST['group_id']."'
-            	,'".$_REQUEST['group_code']."'
-            	,'".$id_paperlog."'
-        	);";
-        mysql_query($sql,$CONN);
+        mysql_query("call education_exam__submit(".$_REQUEST['id'].",@state,@msg,@paperlogid)",$CONN);
+        $res = mysql_query("select @state,@msg,@paperlogid",$CONN);
+        $data = mysql_fetch_assoc($res);
+        $id_paperlog = $data['@paperlogid'];
         
         //从前端POST过来的JSON数据中,解析出学生提交的答案
         $arr = json_decode($_REQUEST['json'],true);
@@ -408,15 +398,11 @@ class education_exam {
         $sql = substr($sql,0,strlen($sql)-1);
         //echo $sql;
         mysql_query($sql,$CONN);
-        mysql_query("update education_exam_2_student set
-        id_paper_log = '".$id_paperlog."' 
-        ,status = '23' 
-        ,time_submit = '".date('Y-m-d H:i:s')."'
-        ,time_lastupdated = '".date('Y-m-d H:i:s')."'
-        ,count_updated = count_updated + 1
-        where id = '".$_REQUEST['id']."'",$CONN);
         
         echo json_encode(array('status'=>1,'msg'=>'ok','paperlog'=>$id_paperlog));
     }
+    
+    public function mark(){
+        $CONN = tools::conn();
+    }
 }
-
