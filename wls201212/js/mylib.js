@@ -202,18 +202,18 @@ function MD5 (string) {
 function getParameter(paraStr, url)
 {
     var result = ""; 
-    //获取URL中全部参数列表数据
+    // 获取URL中全部参数列表数据
     var str = "&" + url.split("?")[1];
     var paraName = paraStr + "=";
-    //判断要获取的参数是否存在
+    // 判断要获取的参数是否存在
     if(str.indexOf("&"+paraName)!=-1)
     {
-        //如果要获取的参数到结尾是否还包含“&”
+        // 如果要获取的参数到结尾是否还包含“&”
         if(str.substring(str.indexOf(paraName),str.length).indexOf("&")!=-1)
         {
-            //得到要获取的参数到结尾的字符串
+            // 得到要获取的参数到结尾的字符串
             var TmpStr=str.substring(str.indexOf(paraName),str.length);
-            //截取从参数开始到最近的“&”出现位置间的字符
+            // 截取从参数开始到最近的“&”出现位置间的字符
             result=TmpStr.substr(TmpStr.indexOf(paraName),TmpStr.indexOf("&")-TmpStr.indexOf(paraName));   
         } 
         else
@@ -228,16 +228,16 @@ function getParameter(paraStr, url)
     return (result.replace("&","").split('=')[1]);   
 }
 
-function SetCookie(name,value,Hours)//两个参数，一个是cookie的名子，一个是值,一个是时间(小时)
+function SetCookie(name,value,Hours)// 两个参数，一个是cookie的名子，一个是值,一个是时间(小时)
 {
-	if(Hours!=undefined){//默认的,保存半天,12小时
+	if(Hours!=undefined){// 默认的,保存半天,12小时
 		Hours = 2 ;
 	}	
-    var exp  = new Date();    //new Date("December 31, 9998");
+    var exp  = new Date();    // new Date("December 31, 9998");
     exp.setTime(exp.getTime() + Hours*60*60*1000);
     document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
 }
-function getCookie(name)//取cookies函数        
+function getCookie(name)// 取cookies函数
 {
     var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
     if(arr != null){ 
@@ -247,7 +247,7 @@ function getCookie(name)//取cookies函数
 	}
 
 }
-function delCookie(name)//删除cookie
+function delCookie(name)// 删除cookie
 {
     var exp = new Date();
     exp.setTime(exp.getTime() - 1);
@@ -256,10 +256,10 @@ function delCookie(name)//删除cookie
 }
 
 function importJS(src,oCallback) {     
-    /*   
-     * fpath = fpath.replace(/\./g,'\/'); document.write('<script   
-     * type="text/javascript" src="'+ fpath + '.js"></script>');   
-     */        
+    /*
+	 * fpath = fpath.replace(/\./g,'\/'); document.write('<script
+	 * type="text/javascript" src="'+ fpath + '.js"></script>');
+	 */        
     var headerDom = document.getElementsByTagName('head').item(0);     
     var jsDom = document.createElement('script');     
     jsDom.type = 'text/javascript';     
@@ -288,3 +288,10 @@ function importCSS(file){
 	head.appendChild(css);
 	}
 
+
+function getObjectClass(obj) {    
+	if (typeof obj != "object" || obj === null)         
+		return false;    
+	else         
+		return /(\w+)\(/.exec(obj.constructor.toString())[1];
+}

@@ -39,10 +39,13 @@ var education_paper = {
             ,dataType: 'json'
             ,type: "POST"
             ,data: {
-                 username: top.basic_user.username
-                ,userid: top.basic_user.loginData.id
-                ,usergroup: top.basic_user.loginData.id_group
-                ,usertype: top.basic_user.loginData.type
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
             }        
             ,success : function(response) {
                 education_paper.config = response;
@@ -88,7 +91,7 @@ var education_paper = {
     ,grid : function(){
     	var gridColmuns = [
     	   [//管理员列
-  	         { display: top.il8n.title, name: 'title', align: 'left', width: 170, minWidth: 60 }
+  	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
 	        ,{ display: top.il8n.education_paper.subject, name: 'subjectname',isSort : false }
 	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
 	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
@@ -98,7 +101,7 @@ var education_paper = {
 	        ,{ display: top.il8n.time_created, name: 'time_created'}
     	   ]
            ,[//教师列
-   	         { display: top.il8n.title, name: 'title', align: 'left', width: 170, minWidth: 60 }
+   	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
    	        ,{ display: top.il8n.education_paper.subject, name: 'subjectname',isSort : false }
    	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
    	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
@@ -108,10 +111,19 @@ var education_paper = {
    	        ,{ display: top.il8n.time_created, name: 'time_created'}
            ]
            ,[//学生列
-	         { display: top.il8n.title, name: 'title', align: 'left', width: 170, minWidth: 60 }
-   	        ,{ display: top.il8n.education_paper.subject, name: 'subjectname',isSort : false }
-   	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
-   	        ,{ display: top.il8n.education_paper.mycent, name: 'mycent' ,width: 50, render: function(a,b){
+             { display: top.il8n.id, name: 'id', minWidth: 60, hide:true }
+	        ,{ display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
+	        ,{ display: top.il8n.education_paper.subject, name: 'subject_name',isSort : false }
+   	        ,{ display: top.il8n.education_paper.subject, name: 'subject_code',isSort : false, hide: true }
+			,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',isSort : false, width: 80 }
+			,{ display: top.il8n.education_paper.cent, name: 'cent',isSort : false }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_name',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_code',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_id',isSort : false, hide: true }
+		   	,{ display: top.il8n.time_created, name: 'time_created',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.count_used, name: 'count_used',isSort : false, hide: true, hide: 80 }
+   	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 30}
+   	        ,{ display: top.il8n.education_paper.mycent, name: 'mycent' ,width: 70, render: function(a,b){
 				if(a.mycent==null)return '没做过';
 				return a.mycent;
 			 }}
@@ -127,10 +139,11 @@ var education_paper = {
             parms : {
                 username: top.basic_user.username
                 ,session: MD5( top.basic_user.session +((new Date()).getHours()))
-                ,search: $.ligerui.toJSON( education_paper.searchOptions )
-                ,userid: top.basic_user.loginData.id
-                ,usergroup: top.basic_user.loginData.id_group
-                ,usertype: top.basic_user.loginData.type                
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code              
             },
             toolbar: { items: [] }
         };
@@ -385,14 +398,13 @@ var education_paper = {
     }    
 };
 
-
-
 /**
  * 卷子
  * 这个类是 考卷,随机组卷 的父类
  * */
 var paper = {
     
+	objName: 'paper',
     questions : [],   //题目集
     count : {
         giveup : 0,   //漏题数量,放弃不做的
@@ -408,6 +420,7 @@ var paper = {
     cent_ : 0,        //我的得分
     
     id_paper : null,      //试卷数据库中的 id 编号
+    brief: {foo:'bar'},
     
     /**
      * 点击了题目导航处的序号
@@ -438,7 +451,7 @@ var paper = {
         '        </td></tr>                        '+
         '        <tr><td>                        '+
         '        <br/>                            '+
-        '        <input id="submit" style="width:100px;" class="l-button l-button-submit" onclick="paper.submit();" value="提交"></input>                '+
+        '        <input id="submit" style="width:100px;" class="l-button l-button-submit" onclick="'+this.objName+'.submit();" value="提交"></input>                '+
         '        </td></tr>                        '+
         '        </table>                        '+
         '    </div>                                '+
@@ -490,8 +503,15 @@ var paper = {
     }
     
     ,initBrief : function(){   
-    	$(".l-layout-header",$(".l-layout-center")).html( paper.title );
-        $('#paperBrief').append("asdfadsfasffdadsf");
+    	$(".l-layout-header",$(".l-layout-center")).html( this.title );
+    	var htmlStr = "";
+    	for(var j in this.brief){    		
+    		eval("var value = this.brief."+j);
+    		eval("var key = top.il8n.education_exam."+j);
+    		htmlStr += "<span class='brief' style='width:50px;'>"+key+"</span><span class='brief'>&nbsp;"+value+"</span><br/>";
+    	}; 
+    	
+        $('#paperBrief').append(htmlStr);
     }
     
     ,readPaper : function(afterAjax){
@@ -539,12 +559,13 @@ var paper = {
             url : myAppServer()+ "&class=education_question&function=getForPaper",
             type : "POST",
             data : {id:id
-                    ,session : MD5( top.basic_user.session +((new Date()).getHours()))
-                    ,username: top.basic_user.username
-                    ,userid: top.basic_user.loginData.id
-                    ,usergroup: top.basic_user.loginData.id_group
-                    ,usertype: top.basic_user.loginData.type
-                    },
+                ,username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+            },
             dataType: 'json',
             success : function(responseData) {
                 if(responseData.state!=1){
@@ -624,6 +645,12 @@ var paper = {
         });
     }
     
+    /**
+     * 练习卷模式,提交试卷
+     * 提交后,服务端立刻计算试卷的做对做错情况
+     * 并返回解题思路,直接显示到前端试卷上
+     * 与 统考模式 不同
+     * */
     ,submit: function(){
     	if(this.mode=='client'){
     		this.showDescription();
@@ -653,15 +680,17 @@ var paper = {
         var paperObj = this;
         
         $.ajax({
-            url : "../php/myApp.php?class=education_paper&function=submitPaper",
+            url : "../php/myApp.php?class=education_paper&function=submit",
             type : 'POST',
             data : {
                  json: $.ligerui.toJSON(toSend)
                 ,id: paperObj.id_paper
-                ,userid: top.basic_user.loginData.id
-                ,usergroup: top.basic_user.loginData.id_group
                 ,username: top.basic_user.username
                 ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
             }, 
             dataType: 'json',
             success : function(data) {
@@ -685,10 +714,14 @@ var paper = {
         });
     } 
     
+    /**
+     * 显示解题思路,并标注对错情况
+     * 试卷总分错题总数,不会在此处理
+     * 不过在 question 中,会累加错题总数
+     * */
     ,showDescription : function(){
         for(var i=0;i < this.questions.length;i++){
         	this.questions[i].showDescription();
         }    	
-    }
-    
+    }    
 };

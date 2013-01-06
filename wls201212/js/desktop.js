@@ -1,3 +1,9 @@
+/**
+ * web-desktop 的主界面
+ * 
+ * @version 201206
+ * @author wei1224hf@gmail.com
+ * */
 var desktop = {
 	LINKWIDTH : 90,
 	LINKHEIGHT : 90, 
@@ -5,8 +11,11 @@ var desktop = {
 	links : [],
 	isWindow : false,
 
+	/**
+	 * 点击图标后的弹框
+	 * TODO 弹框的大小,需要额外的代码控制,应该在配置文件中提供
+	 * */
 	f_open : function f_open(url, title, icon , type ,code) {
-
 		if(top.$.ligerui.get("win_"+code)){
 			top.$.ligerui.get("win_"+code).show();
 			return;
@@ -24,9 +33,24 @@ var desktop = {
 		if(code=='14'){
 			hei = 280;
 			wid = 400;
-		}		
-		var win = top.$.ligerDialog.open(
-			{ id : "win_"+code, isHidden:false , height:  hei, url: url, width: wid, showMax: true, showToggle: true, showMin: true, isResize: true, modal: false, title: title, slide: false
+		}
+		if(code=='16'){//多人统一考试
+			hei = 550;
+			wid = 800;
+		}			
+		var win = top.$.ligerDialog.open({ 
+			id : "win_"+code
+			, isHidden:false 
+			, height:  hei
+			, url: url
+			, width: wid
+			, showMax: true
+			, showToggle: true
+			, showMin: true
+			, isResize: true
+			, modal: false
+			, title: title
+			, slide: false
 		});
 		win.close = function(){
 			var g = this, p = this.options;
@@ -40,8 +64,10 @@ var desktop = {
 		return win;
 	},
 	
-	onResize : function() {	
-		
+	/**
+	 * 当屏幕被拉伸的时候,布局会改变
+	 * */
+	onResize : function() {		
 		var linksHeight = $(window).height() - this.TASKBARHEIGHT;
 		var winlinks = $("#winlinks");
 		winlinks.height(linksHeight);
@@ -87,6 +113,10 @@ var desktop = {
 		}
 	},
 
+	/**
+	 * 在用户登录之后,通过用户的 权限编码 ,
+	 * 来初始化用户桌面图标项
+	 * */
 	loadIcons : function(){
 		desktop.links = [];
 
@@ -141,7 +171,6 @@ var desktop = {
 		}
 		
 		desktop.linksInit();
-		desktop.onResize();		
-
+		desktop.onResize();	
 	}
 }

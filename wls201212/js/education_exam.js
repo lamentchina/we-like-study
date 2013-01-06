@@ -36,10 +36,12 @@ var education_exam = {
 	        ,dataType: 'json'
 	        ,type: "POST"
 	        ,data: {
-	             username: top.basic_user.username
-	            ,userid: top.basic_user.loginData.id
-	            ,usergroup: top.basic_user.loginData.id_group
-	            ,usertype: top.basic_user.loginData.type
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
 	        } 
 			,success : function(response) {
 				education_exam.config = response;
@@ -87,12 +89,12 @@ var education_exam = {
 			  ,{ display: top.il8n.education_exam.exam_title, name: 'exam_title', isSort: false, width: 140 }
 			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
-			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false }
+			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false, width:60 }
 			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.rank, name: 'rank', isSort: false }
-			  ,{ display: top.il8n.education_exam.rank_calss, name: 'rank_calss', isSort: false }
+			  ,{ display: top.il8n.education_exam.rank_class, name: 'rank_class', isSort: false, width:60 }
 			  ,{ display: top.il8n.education_exam.score, name: 'score', isSort: false }
-			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false }
+			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false, width:60 }
 			  ,{ display: top.il8n.education_exam.totalcent, name: 'totalcent', isSort: false }
 			  ,{ display: top.il8n.education_exam.id_paper, name: 'id_paper', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.id_paper_log, name: 'id_paper_log', isSort: false, hide:true }
@@ -100,40 +102,30 @@ var education_exam = {
 			  ,{ display: top.il8n.education_exam.time_end, name: 'time_end', isSort: false, width: 80 }
 			  ,{ display: top.il8n.education_exam.time_submit, name: 'time_submit', isSort: false, hide:true  }
 			  ,{ display: top.il8n.education_exam.time_mark, name: 'time_mark', isSort: false, hide:true  }
-			  ,{ display: top.il8n.education_exam.type, name: 'type', isSort: false }
+			  ,{ display: top.il8n.education_exam.type, name: 'name_type', isSort: false }			  
+			  ,{ display: top.il8n.education_exam.status, name: 'name_status', isSort: false }	
+			  ,{ display: top.il8n.education_exam.type, name: 'type', isSort: false, hide:true }			  
+			  ,{ display: top.il8n.education_exam.status, name: 'status', isSort: false, hide:true }				  
 			  ,{ display: top.il8n.education_exam.id, name: 'id', isSort: false, hide:true }
-			  ,{ display: top.il8n.education_exam.status, name: 'status', isSort: false }	
 			  ]			
 			,[//教师列
-			     { display: top.il8n.education_exam.title, name: 'title', isSort: false }
-				,{ display: top.il8n.education_exam.place, name: 'place', isSort: false, hide: true }				
-				,{ display: top.il8n.education_exam.count_students, name: 'count_students'  ,isSort : false}
-				,{ display: top.il8n.education_exam.count_passed, name: 'count_passed'  ,isSort : false}
-				,{ display: top.il8n.education_exam.time_start, name: 'time_start'  ,isSort : false}
-				,{ display: top.il8n.education_exam.time_end, name: 'time_end'  ,isSort : false}
-				,{ display: top.il8n.education_exam.score, name: 'score'  ,isSort : false}
-				,{ display: top.il8n.education_exam.mode, name: 'mode', render: function(a,b){
-					for(var i=0; i<education_exam.config.type.length; i++){
-						if(education_exam.config.mode[i].code == a.mode){
-							return education_exam.config.mode[i].value;
-						}
-					}
-				 }, hide: true }
-				,{ display: top.il8n.education_exam.type, name: 'type', render: function(a,b){
-					for(var i=0; i<education_exam.config.type.length; i++){
-						if(education_exam.config.type[i].code == a.type){
-							return education_exam.config.type[i].value;
-						}
-					}
-				 } }	
-				,{ display: top.il8n.education_exam.subject, name: 'subject', render: function(a,b){
-					for(var i=0; i<education_exam.config.subject.length; i++){
-						if(education_exam.config.subject[i].code == a.subject){
-							return education_exam.config.subject[i].value;
-						}
-					}
-				} }					
-				,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name'  ,isSort : false}			  
+			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
+			  ,{ display: top.il8n.title, name: 'title', isSort: false, width: 140 }
+			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false }
+			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.totalcent, name: 'score', isSort: false }
+			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false }
+			  ,{ display: top.il8n.education_exam.id_paper, name: 'id_paper', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.time_start, name: 'time_start', isSort: false, width: 80 }
+			  ,{ display: top.il8n.education_exam.time_end, name: 'time_end', isSort: false, width: 80 }
+			  ,{ display: top.il8n.education_exam.type, name: 'name_type', isSort: false }			  
+			  ,{ display: top.il8n.education_exam.status, name: 'name_status', isSort: false }	
+			  ,{ display: top.il8n.education_exam.type, name: 'type', isSort: false, hide:true }			  
+			  ,{ display: top.il8n.education_exam.status, name: 'status', isSort: false, hide:true }	
+			  ,{ display: top.il8n.education_exam.mode, name: 'name_mode', isSort: false }	
+			  ,{ display: top.il8n.education_exam.mode, name: 'mode', isSort: false, hide:true }			  
 			]			
 		];
 
@@ -144,12 +136,13 @@ var education_exam = {
 			method  : "POST",
 			id : "education_exam_grid",
 			parms : {
-                 username: top.basic_user.username
+                username: top.basic_user.username
                 ,session: MD5( top.basic_user.session +((new Date()).getHours()))
-                ,search: $.ligerui.toJSON( education_exam.searchOptions )
-                ,userid: top.basic_user.loginData.id
-                ,usergroup: top.basic_user.loginData.id_group
-                ,usertype: top.basic_user.loginData.type    
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
 			},
 			toolbar: { items: [] }
 		};		
@@ -171,6 +164,13 @@ var education_exam = {
 						education_exam.search();
 					}
 				});
+			}else if(permission[i].code=='1602'){
+				config.toolbar.items.push({line: true });
+				config.toolbar.items.push({
+					text: permission[i].name , img:permission[i].icon , click : function(){
+						
+					}
+				});
 			}else if(permission[i].code=='1611'){
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
@@ -178,12 +178,19 @@ var education_exam = {
 						education_exam.upload();
 					}
 				});
-			}else if(permission[i].code=='1603'){
+			}else if(permission[i].code=='1612'){
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
-						var id = education_exam.grid.getSelected().id;
-
+						
+					}
+				});
+			}else if(permission[i].code=='1621'){
+				
+				config.toolbar.items.push({line: true });
+				config.toolbar.items.push({
+					text: permission[i].name , img:permission[i].icon, click : function(){
+						
 					}
 				});
 			}else if(permission[i].code=='1622'){
@@ -194,7 +201,8 @@ var education_exam = {
 						education_exam.delet();
 					}
 				});
-			}else if(permission[i].code=='1605'){
+			}else if(permission[i].code=='1623'){
+				
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
@@ -205,71 +213,72 @@ var education_exam = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name, img:permission[i].icon , click : function(){
-						var id = education_exam.grid.getSelected().id;
-						if(top.$.ligerui.get("win_paper_"+id)){
-							top.$.ligerui.get("win_paper_"+id).show();
-							return;
+						var status_ = $.ligerui.get('education_exam_grid').getSelected().status;
+						if(status_!=22){
+							alert('wrong status');return;
+						}
+						var id = $.ligerui.get('education_exam_grid').getSelected().exam_id;
+						var id_paper = $.ligerui.get('education_exam_grid').getSelected().id_paper;
+						var id_e2s = $.ligerui.get('education_exam_grid').getSelected().id;
+						if(top.$.ligerui.get("win_exam_"+id)){
+						    top.$.ligerui.get("win_exam_"+id).show();
+						    return;
 						}
 						top.$.ligerDialog.open({
-							isHidden:false,
-							id : "win_paper_"+id , height:  550, width: 600,
-							url: "education_exam__do.html?id="+id,  
-							showMax: true, showToggle: true, showMin: true, isResize: true,
-							modal: false, title: education_exam.grid.getSelected().title, slide: false
-	
+						    isHidden:false,
+						    id : "win_exam_"+id , height:  550, width: 600,
+						    url: "education_exam__do.html?id="+id+"&id_paper="+id_paper+"&id_e2s="+id_e2s,  
+						    showMax: true, showToggle: true, showMin: true, isResize: true,
+						    modal: false, title: $.ligerui.get('education_exam_grid').getSelected().exam_title, slide: false
+						
 						}).max();
 						
-						top.$.ligerui.get("win_paper_"+id).close = function(){
-							var g = this, p = this.options;
-							top.$.ligerui.win.removeTask(this);
-							g.unmask();
-							g._removeDialog();
-							top.$.ligerui.remove(top.$.ligerui.get("win_paper_"+id));
-							top.$('body').unbind('keydown.dialog');
+						top.$.ligerui.get("win_exam_"+id).close = function(){
+						    var g = this, p = this.options;
+						    top.$.ligerui.win.removeTask(this);
+						    g.unmask();
+						    g._removeDialog();
+						    top.$.ligerui.remove(top.$.ligerui.get("win_exam_"+id));
+						    top.$('body').unbind('keydown.dialog');
 						}
 					}
 				});
-			}else if(permission[i].code=='1607'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
+			}else if(permission[i].code=='1691'){
 				
+				config.toolbar.items.push({line: true });
+				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
 						
 					}
 				});
-			}else if(permission[i].code=='1608'){
+			}else if(permission[i].code=='1692'){
+				
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon, click : function(){
-						var arr = education_exam.grid.getCheckedRows();
-						if(arr.length==0){
-							$.ligerDialog.error(il8n.GRID.noSelect);
-							return;
-						}
-						var url = 'education_exam__do.html?id='+arr[0].id;
-						if(top===self){
-							$.ligerDialog.open({
-								id : "paper" , height:  550, url: url, width: 650, title: title, slide: false,
-								showMax: true, showToggle: true, showMin: true, isResize: true, modal: false
-							});
-						}else{
-							top.desktop.f_open(url,arr[0].name,"../file"+permission[i].icon,4);
-						}
-						win.max();
-					}
-				});
-			}else if(permission[i].code=='1609'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					
 					text: permission[i].name , img:permission[i].icon, click : function(){
 						
 					}
 				});
-			}else if(permission[i].code=='1610'){
+			}else if(permission[i].code=='1693'){
+				
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
-					
+					text: permission[i].name , img:permission[i].icon, click : function(){
+						
+					}
+				});
+			}else if(permission[i].code=='1694'){
+				
+				config.toolbar.items.push({line: true });
+				config.toolbar.items.push({
+					text: permission[i].name , img:permission[i].icon, click : function(){
+						
+					}
+				});
+			}else if(permission[i].code=='1695'){
+				
+				config.toolbar.items.push({line: true });
+				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
 						
 					}
@@ -294,9 +303,8 @@ var education_exam = {
 			$(form).ligerForm({
 				inputWidth: 170, labelWidth: 90, space: 40,
 				fields: [
-					{ display: top.il8n.title, name: "title", newline: false, type: "text" },
-					{ display: top.il8n.education_subject.subject, name: "subject", newline: true, type: "select", comboboxName: "combo_select", options: { url:'../php/myApp.php?class=education_subject&function=getList', valueField : "code" , textField : "name",slide:false } },
-					{ display: top.il8n.money, name: "money", newline: true, type: "text"  }
+					{ display: top.il8n.title, name: "title", newline: false, type: "text" }
+					,{ display: top.il8n.education_subject.subject, name: "education_exam__search_subject", newline: true, type: "select", options :{data : education_exam.config.subject, valueField : "code" , textField: "value" } }
 				]
 			}); 
 			$.ligerDialog.open({
@@ -308,23 +316,18 @@ var education_exam = {
 				buttons : [
 				    //清空查询条件
 					{text:top.il8n.clear,onclick:function(){
-						$.ligerui.get("education_exam_grid").options.parms = {	};
+						$.ligerui.get("education_exam_grid").options.parms.search = {	};
 						$.ligerui.get("education_exam_grid").loadData();
 						
 						$.ligerui.get("title").setValue('');
-						$.ligerui.get("money").setValue('');
-						$.ligerui.get("combo_select").setValue('');
+						$.ligerui.get("education_exam__search_subject").setValue('');
 					}},
 					//提交查询条件
 				    {text:top.il8n.search,onclick:function(){
-					$.ligerui.get("education_exam_grid").options.parms = {
-						searchJson : $.ligerui.toJSON({
-							name : $.ligerui.get("title").getValue(),
-							subject : $.ligerui.get("combo_select").getValue(),
-							money : $.ligerui.get("money").getValue(),
-							foo : 'bar'
-						})
-					};
+					$.ligerui.get("education_exam_grid").options.parms.search = liger.toJSON({
+						title : $.ligerui.get("title").getValue(),
+						subject : $.ligerui.get("education_exam__search_subject").getValue()
+					});
 					$.ligerui.get("education_exam_grid").loadData();
 				}}]
 			});
@@ -405,6 +408,48 @@ var education_exam = {
 		}		
 	}
 	
+	,mark: function(){
+		//判断 ligerGrid 中,被勾选了的数据
+		selected = education_exam.grid.getSelecteds();
+		//如果一行都没有选中,就报错并退出函数
+		if(selected.length==0){alert(il8n.noSelect);return;}
+		//弹框让用户最后确认一下,是否真的需要删除.一旦删除,数据将不可恢复
+		if(confirm(il8n.areYouSure)){
+			var ids = "";
+			//遍历每一行元素,获得 id 
+			for(var i=0; i<selected.length; i++){
+				ids += selected[i].id+","
+			}
+			ids = ids.substring(0,ids.length-1);				
+			
+			$.ajax({
+				url: myAppServer() + "&class=education_exam&function=mark",
+				data: {
+					 ids: ids 
+					//服务端权限验证所需
+	                ,username: top.basic_user.username
+	                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+	                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+	                ,user_id: top.basic_user.loginData.id
+	                ,user_type: top.basic_user.loginData.type    
+	                ,group_id: top.basic_user.loginData.group_id
+	                ,group_code: top.basic_user.loginData.group_code
+				},
+				type: "POST",
+				dataType: 'json',
+				success: function(response) {
+					if(response.state==1){
+						education_exam.grid.loadData();
+					}
+				},
+				error : function(){
+					//网络通信失败,则删除按钮再也不能点了
+					alert(top.il8n.disConnect);
+				}
+			});				
+		}	
+	}
+	
 	/**
 	 * 查看一张试卷
 	 *   如果是教师
@@ -413,36 +458,95 @@ var education_exam = {
 };
 
 var exam = paper;
-exam.readExam = function(){
+exam.objName='exam';
+exam.readExam = function(afterAjax){
 	var id = getParameter("id", window.location.toString() );
 	
 	$.ajax({
-        url : myAppServer() + "&class=education_exam&function=getOne&id="+id
+        url : myAppServer() + "&class=education_exam&function=view&id="+id
        ,type : "POST"
        ,data : {
             username: top.basic_user.username
-           ,userid: top.basic_user.loginData.id
-           ,usergroup: top.basic_user.loginData.id_group
-           ,usertype: top.basic_user.loginData.type
+           ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+           ,search: $.ligerui.toJSON( basic_user.searchOptions )
+           ,user_id: top.basic_user.loginData.id
+           ,user_type: top.basic_user.loginData.type    
+           ,group_id: top.basic_user.loginData.group_id
        }      
        ,dataType: 'json'
        ,success : function(data) {                
-           exam.cent = data.cent;
-           exam.count.total = data.count_questions;
-           exam.subjectCode = data.subjectCode;
-           exam.subjectName = data.subject;
-           exam.title = data.title;
-           exam.cost = parseInt(data.cost);
-           exam.setPaperBrief();
-           
-           if ( typeof(afterAjax) == "string" ){
-               eval(afterAjax);
-           }else if( typeof(afterAjax) == "function"){
-               afterAjax();
-           }				
+		   exam.cent = data.cent;
+		   exam.count.total = data.count_questions;
+		   exam.title = data.title;
+		   exam.id_paper = data.id_paper;
+		   
+		   exam.brief = {
+		       subject_name: data.subject_name
+		       ,time_start: data.time_start
+		       ,time_end: data.time_end
+		       ,count_questions: data.count_questions
+		       ,teacher_name: data.teacher_name
+		       ,cent: data.cent
+		   };
+		   
+		   if ( typeof(afterAjax) == "string" ){
+		       eval(afterAjax);
+		   }else if( typeof(afterAjax) == "function"){
+		       afterAjax();
+		   }				
        }
        ,error : function(){
            $.ligerDialog.error('网络通信失败');
        }
    });
+}
+exam.submit = function(){
+	if(top.basic_user.loginData.type!='2'){
+		alert("only student can submit");
+		return;
+	}
+    if(this.state=='submitted'){
+        alert("paper has submitted arleady");
+        return;
+    }
+    this.state = 'submitted';
+    $('#submit').val(top.il8n.waitting);
+
+    var toSend = [];
+    var ids = "";
+    for(var i=0;i<this.questions.length;i++){
+        toSend.push({
+            id:this.questions[i].id,
+            myanswer:this.questions[i].getMyAnswer()
+        });
+        ids += this.questions[i].id+",";//搜集所有题目的编号
+    }        
+    ids = ids.substring(0,ids.length-1);//去掉最后一个 ,  TODO 
+    var thisObj = this;
+    
+    $.ajax({
+        url : "../php/myApp.php?class=education_exam&function=submit",
+        type : 'POST',
+        data : {
+             json: $.ligerui.toJSON(toSend)
+            ,id: getParameter("id_e2s", window.location.toString() )
+            ,id_paper: thisObj.id_paper
+            ,username: top.basic_user.username
+            ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+            ,search: $.ligerui.toJSON( basic_user.searchOptions )
+            ,user_id: top.basic_user.loginData.id
+            ,user_type: top.basic_user.loginData.type    
+            ,group_id: top.basic_user.loginData.group_id
+            ,group_code: top.basic_user.loginData.group_code
+        }, 
+        dataType: 'json',
+        success : function(data) {
+        	$('#submit').remove();
+        	if(data.status!='1'){
+        		alert(data.msg);
+        	}else{
+        		alert('submitted now , waitting for teacher\'s markking');
+        	}
+        }
+    });
 }
