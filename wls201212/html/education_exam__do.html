@@ -34,7 +34,6 @@
     <script src='../libs/liger/plugins/ligerToolBar.js' type='text/javascript'></script>
     <script src='../libs/liger/plugins/ligerTree.js' type='text/javascript'></script>
     <script src='../libs/liger/plugins/ligerWindow.js' type='text/javascript'></script>
-
   
     <script src="../js/myApp.js" type="text/javascript"></script>  
 	<script src="../js/basic_user.js" type="text/javascript"></script> 	
@@ -52,7 +51,7 @@
 	</head>
 	<body>
 <script type="text/javascript">
-initWebpage("paper.initLayout();paper.readPaper('paper.readQuestions()');");
+initWebpage("exam.readExam('exam.readQuestions(\"exam.initLayout();exam.initQuestions();exam.initNavigation();exam.initBrief();\")')");
 </script> 
 	</body>
 </html>
