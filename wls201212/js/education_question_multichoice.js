@@ -1,6 +1,7 @@
 ﻿/**
  * 多项选择题
- * 必须先引用 question.js,因为这个JS类要继承 question 这个对象
+ * 必须先引用 question.js,
+ * 因为这个question_multichoice类要继承 question 这个对象
  * 
  * @author wei1224hf
  * */
@@ -57,7 +58,7 @@ var question_multichoice = function(){
 			this.myAnswer = answer;
 			return answer;
 		}
-	},	
+	};	
 	
 	/**
 	 * 如果做对了,题目导航处变蓝

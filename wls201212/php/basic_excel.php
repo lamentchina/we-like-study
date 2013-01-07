@@ -64,10 +64,15 @@ class basic_excel {
         $res = mysql_query($sql,$conn);
         $data = array();
         $sheetindex = 0;
+        $int2column = array_keys($this->columns2int);
         while($temp = mysql_fetch_assoc($res)){
     		$objPHPExcel->createSheet();
     		$objPHPExcel->setActiveSheetIndex($temp['sheetindex']);
     		$objPHPExcel->getActiveSheet()->setTitle($temp['sheetname']);
+    		
+    		for($i=0;$i<$temp['maxcolumn'];$i++){
+    		    $objPHPExcel->getActiveSheet()->setCellValue('A1', 'WLS PAPER EXPORT');
+    		}
         }
           
         	    

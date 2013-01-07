@@ -134,6 +134,10 @@ var education_paper = {
 				return a.mycent;
 			 }}
            ]
+    	   ,[//访客列
+  	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
+   	        ,{ display: top.il8n.education_paper.subject, name: 'subject_name',isSort : false }
+    	     ]
         ];
         
         var config = {
@@ -154,15 +158,7 @@ var education_paper = {
             toolbar: { items: [] }
         };
         
-        if(top.basic_user.loginData.type==='1'){
-        	config.columns = gridColmuns[0];
-        }
-        if(top.basic_user.loginData.type==='2'){
-        	config.columns = gridColmuns[2];
-        }
-        if(top.basic_user.loginData.type==='3'){
-        	config.columns = gridColmuns[1];
-        }
+        config.columns = gridColmuns[(top.basic_user.loginData.type)*1-1];  
         
         var permission = [];
         for(var i=0;i<top.basic_user.permission.length;i++){
