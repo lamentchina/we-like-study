@@ -7,6 +7,41 @@
  * */
 class education_exam {
     
+    public function loadConfig($return='json') {
+        $CONN = tools::conn();
+        $config = array();
+        
+        $sql = "select code,value from basic_parameter where reference = 'education_exam__type' order by code";
+        $res = mysql_query($sql,$CONN);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['type'] = $data;
+		
+        $sql = "select code,value from basic_parameter where reference = 'education_exam__mode' order by code";
+        $res = mysql_query($sql,$CONN);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['mode'] = $data;	
+		
+        $sql = "select code,name as value from education_subject order by code";
+        $res = mysql_query($sql,$CONN);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['subject'] = $data;			
+
+		if($return=='json'){
+		    echo json_encode($config);
+		}else{
+		    return $config;
+		}		
+    } 
+    
    /**
      * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
      * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
@@ -263,42 +298,7 @@ class education_exam {
 		$res = mysql_query("select @state,@msg,@ids",$CONN);
 		$data = mysql_fetch_assoc($res);
 		print_r($data);        
-    }      
-    
-    public function loadConfig($return='json') {
-        $CONN = tools::conn();
-        $config = array();
-        
-        $sql = "select code,value from basic_parameter where reference = 'education_exam__type' order by code";
-        $res = mysql_query($sql,$CONN);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['type'] = $data;
-		
-        $sql = "select code,value from basic_parameter where reference = 'education_exam__mode' order by code";
-        $res = mysql_query($sql,$CONN);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['mode'] = $data;	
-		
-        $sql = "select code,name as value from education_subject order by code";
-        $res = mysql_query($sql,$CONN);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['subject'] = $data;			
-
-		if($return=='json'){
-		    echo json_encode($config);
-		}else{
-		    return $config;
-		}		
-    }           
+    }                
     
     public function delete(){
         if(!(isset($_REQUEST['ids']))){

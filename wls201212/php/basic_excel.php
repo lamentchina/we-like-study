@@ -1,22 +1,17 @@
 <?php
+/**
+ * 对于大数据量的导入导出,
+ * 系统只支持 EXCEL 格式文件的导入导出,不支持 .pdf .txt .doc 操作
+ * 将依赖数据库表中的 basic_excel 
+ * 
+ * @version 201211
+ * @author wei1224hf@gmail.com
+ * */
 class basic_excel {
     
 	public static $guid = '';
 	
-    public static function import($file=NULL,$return='json'){
-        if($file==NULL && isset($_REQUEST['file'])) $file = $_REQUEST['file'];
-        if($file==NULL)tools::error(array('state'=>0,'msg'=>'no file'));
-        
-        include_once config::$phpexcel.'PHPExcel.php';
-        include_once config::$phpexcel.'PHPExcel/IOFactory.php';
-        include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
-        $PHPReader = PHPExcel_IOFactory::createReader('Excel5');
-        $PHPReader->setReadDataOnly(true);
-        $phpexcel = $PHPReader->load($file);
-        
-        $CONN = tools::conn();    
-        
-        $columns2int = array(
+	public static $columns2int = array(
              'A'=>1
             ,'B'=>2
             ,'C'=>3
@@ -57,8 +52,55 @@ class basic_excel {
             ,'AL'=>38
             ,'AM'=>39
             ,'AN'=>40		
-        );  
-        $int2column = array_keys($columns2int);
+        ); 
+	
+	public static function export($guid){
+        include_once config::$phpexcel.'PHPExcel.php';
+        include_once config::$phpexcel.'PHPExcel/IOFactory.php';
+        include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
+        
+        $CONN = tools::conn();
+        $sql = "select * from basic_excel where guid = '".$guid."' order by sheetindex,rowindex";
+        $res = mysql_query($sql,$conn);
+        $data = array();
+        $sheetindex = 0;
+        while($temp = mysql_fetch_assoc($res)){
+    		$objPHPExcel->createSheet();
+    		$objPHPExcel->setActiveSheetIndex($temp['sheetindex']);
+    		$objPHPExcel->getActiveSheet()->setTitle($temp['sheetname']);
+        }
+          
+        	    
+
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['quiz']['paper']);
+
+
+
+	}
+	
+	/**
+	 * 用户在浏览器端上传一个excel,提交到服务端,然后保存在服务端的某个路径
+	 * 服务端再将这个 excel 文件读取,将内容插入到数据库表 basic_excel 中
+	 * 一般而言,批量导入是一个非常复杂的过程,
+	 * 需要对 excel 文件中的每一个单元格的内容检查一遍,每一次检查,都是一次 IO
+	 * 因此,将业务数据判断逻辑,教给数据库端的存储过程去处理
+	 * */
+    public static function import($file=NULL,$return='json'){
+        if($file==NULL && isset($_REQUEST['file'])) $file = $_REQUEST['file'];
+        if($file==NULL)tools::error(array('state'=>0,'msg'=>'no file'));
+        
+        include_once config::$phpexcel.'PHPExcel.php';
+        include_once config::$phpexcel.'PHPExcel/IOFactory.php';
+        include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
+        $PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+        $PHPReader->setReadDataOnly(true);
+        $phpexcel = $PHPReader->load($file);
+        
+        $CONN = tools::conn();
+
+        $int2column = array_keys($this->columns2int);
         $count = $phpexcel->getSheetCount();
         include_once '../libs/guid.php';
         $Guid = new Guid();  
