@@ -2,7 +2,7 @@
 /**
  * 考试系统中的题目
  * 
- * @author wei1224hf
+ * @author wei1224hf@gmail.com
  * @version 201209
  * */
 class education_question {
@@ -44,7 +44,7 @@ class education_question {
     }    
 	
     /**
-     * 得到JSON格式试卷列表
+     * 得到JSON格式目列表
      * */
     public function select(){
         $CONN = tools::conn();
@@ -176,7 +176,7 @@ class education_question {
         tools::checkPermission("1590");//TODO
 		$CONN = tools::conn();//数据库连接
 		
-		$sql = "call education_paper__checkMoney(0,'".$_REQUEST['username']."',".$_REQUEST['id'].",@money_left,@state ,@msg )";
+		$sql = "call education_paper__checkMoney('".$_REQUEST['user_id']."',".$_REQUEST['id'].",@state ,@msg,@money_left )";
 		//echo $sql;
 		mysql_query($sql ,$CONN);
 		$res = mysql_query("select @money_left as money_left,@state as state,@msg as msg",$CONN);

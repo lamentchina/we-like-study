@@ -35,13 +35,19 @@ class education_paper {
         $search_keys = array_keys($search);
         for($i=0;$i<count($search);$i++){
             if($search_keys[$i]=='subject' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and education_paper.subject = '".$search[$search_keys[$i]]."' ";
+                $sql_where .= " and education_paper.subject_code like '%".$search[$search_keys[$i]]."%' ";
             }
             if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and education_paper.title like '%".$search[$search_keys[$i]]."%' ";
+            }
+            if($search_keys[$i]=='money' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_paper.cost < ".$search[$search_keys[$i]]." ";
             }		
         }
         $sql_order = ' order by education_paper.id desc ';
+        if(isset($_REQUEST['sortname'])){
+            $sql_order = ' order by education_paper.'.$_REQUEST['sortname'].' '.$_REQUEST['sortorder'];
+        }
         
         $returnData = array();
         //根据不同的用户角色,会有不同的列输出
@@ -50,13 +56,15 @@ class education_paper {
 
             $sql = "            
             SELECT
-    		education_paper.subject_code AS subjectcode,
-    		education_paper.subject_name AS subjectname,
+    		education_paper.subject_code,
+    		education_paper.subject_name,
     		education_paper.count_questions,
     		education_paper.title,
     		education_paper.cost,
-    		education_paper.teacher_name as author,
     		education_paper.cent,
+    		education_paper.teacher_name,
+    		education_paper.teacher_id,
+    		education_paper.teacher_code,
     		education_paper.id,
     		education_paper.id_creater,
     		education_paper.status,    		
@@ -140,20 +148,22 @@ class education_paper {
         if($_REQUEST['user_type']=='3'){ 
             //教师角色
             if(tools::checkPermission('150102',$_REQUEST['username'],$_REQUEST['session'])){
-                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['group_code']."' ";
+                $sql_where .= " and education_paper.code_creater_group like '".$_REQUEST['group_code']."%' ";
             }else{                
                 $sql_where .= " and education_paper.id_creater = '".$_REQUEST['user_id']."' ";
             }
 
             $sql = "            
             SELECT
-    		education_paper.subject_code AS subjectcode,
-    		education_paper.subject_name AS subjectname,
+    		education_paper.subject_code,
+    		education_paper.subject_name,
     		education_paper.count_questions,
     		education_paper.title,
     		education_paper.cost,
-    		education_paper.author,
     		education_paper.cent,
+    		education_paper.teacher_name,
+    		education_paper.teacher_id,
+    		education_paper.teacher_code,
     		education_paper.id,
     		education_paper.id_creater,
     		education_paper.status,    		
@@ -255,18 +265,22 @@ class education_paper {
         $id = $_REQUEST['id'];
         $CONN = tools::conn();
 
-        $sql = "select 
-        	cost
-        	,count_questions
-        	,subject_name as subject
-        	,subject_code as subjectCode
-        	,cent
-        	,title 
-            from education_paper 
-            where id = '".$id."'";
+        $sql = " 
+        SELECT
+        education_paper.subject_name,
+        education_paper.subject_code,
+        education_paper.title,
+        education_paper.cost,
+        education_paper.teacher_name,
+        education_paper.cent,
+        education_paper.count_questions
+        FROM
+        education_paper        
+        where id = '".$id."'";
         //echo $sql;exit();
         $res = mysql_query($sql,$CONN);
         $data = mysql_fetch_assoc($res);
+        $data['sql'] = preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql));
         echo json_encode($data);
     }
     
@@ -318,7 +332,7 @@ class education_paper {
         $id_paperlog = tools::getId("education_paper_log");
         //先生成一份试卷做题日志,并得到日志编号
         $sql = "insert into education_paper_log (
-            	id_paper
+            	paper_id
             	,id_creater
             	,id_creater_group
             	,code_creater_group
@@ -371,7 +385,7 @@ class education_paper {
         );
         
         //使用存储过程,批改试卷,得到分数
-        mysql_query("call education_paper__submit(".$id_paperlog.",@totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher,@state,@msg)",$CONN);
+        mysql_query("call education_paper__mark(".$id_paperlog.",@state,@msg,@totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher)",$CONN);
         $res = mysql_query("select @totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher,@state,@msg",$CONN);
         $arr = mysql_fetch_array($res);
 		if($arr[6]==0)die($arr[7]);

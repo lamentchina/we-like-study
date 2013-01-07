@@ -40,6 +40,9 @@ class education_exam {
         $search_keys = array_keys($search);
 
         $sql_order = ' order by education_exam.id desc ';
+        if(isset($_REQUEST['sortname'])){
+            $sql_order = ' order by education_paper.'.$_REQUEST['sortname'].' '.$_REQUEST['sortorder'];
+        }        
         
         $returnData = array();
         //根据不同的用户角色,会有不同的列输出
