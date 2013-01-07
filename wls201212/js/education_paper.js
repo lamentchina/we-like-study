@@ -92,20 +92,26 @@ var education_paper = {
     	var gridColmuns = [
     	   [//管理员列
   	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
-	        ,{ display: top.il8n.education_paper.subject, name: 'subjectname',isSort : false }
+  	        ,{ display: top.il8n.education_paper.subject, name: 'subject_name',isSort : false }
+	        ,{ display: top.il8n.education_paper.subject, name: 'subject_code',isSort : false, hide: true }
 	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
 	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
-	        ,{ display: top.il8n.education_paper.author, name: 'author' ,width: 90}
+ 		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_name' }
+ 		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_code',isSort : false, hide: true }
+ 		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_id',isSort : false, hide: true }
 	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
 	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
 	        ,{ display: top.il8n.time_created, name: 'time_created'}
     	   ]
            ,[//教师列
    	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
-   	        ,{ display: top.il8n.education_paper.subject, name: 'subjectname',isSort : false }
+ 	        ,{ display: top.il8n.education_paper.subject, name: 'subject_name',isSort : false }
+   	        ,{ display: top.il8n.education_paper.subject, name: 'subject_code',isSort : false, hide: true }
    	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
    	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
-   	        ,{ display: top.il8n.education_paper.author, name: 'author' ,width: 90}
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_name',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_code',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_id',isSort : false, hide: true }
    	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
    	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
    	        ,{ display: top.il8n.time_created, name: 'time_created'}
@@ -292,7 +298,8 @@ var education_paper = {
                 inputWidth: 170, labelWidth: 90, space: 40,
                 fields: [
                     { display: top.il8n.title, name: "title", newline: false, type: "text" },
-                    { display: top.il8n.education_subject.subject, name: "subject", newline: true, type: "select", comboboxName: "combo_select", options: { url:'../php/myApp.php?class=education_subject&function=getList', valueField : "code" , textField : "name",slide:false } },
+                    { display: top.il8n.education_subject.subject, name: "subject", newline: true, type: "select", comboboxName: "combo_select"
+                    	, options: { data: education_paper.config.subject, valueField : "code" , textField : "value",slide:false } },
                     { display: top.il8n.money, name: "money", newline: true, type: "text"  }
                 ]
             }); 
@@ -507,11 +514,12 @@ var paper = {
     	var htmlStr = "";
     	for(var j in this.brief){    		
     		eval("var value = this.brief."+j);
-    		eval("var key = top.il8n.education_exam."+j);
+    		eval("var key = top.il8n.education_"+this.objName+"."+j);
     		htmlStr += "<span class='brief' style='width:50px;'>"+key+"</span><span class='brief'>&nbsp;"+value+"</span><br/>";
     	}; 
     	
-        $('#paperBrief').append(htmlStr);
+        $('#paperBrief').html(htmlStr);
+        setInterval($('#paperBrief').fadeOut(500).fadeIn(500),2000);
     }
     
     ,readPaper : function(afterAjax){
@@ -522,10 +530,13 @@ var paper = {
              url :  myAppServer()+ "&class=education_paper&function=view&id="+id
             ,type : "POST"
             ,data : {
-	             username: top.basic_user.username
-	            ,userid: top.basic_user.loginData.id
-	            ,usergroup: top.basic_user.loginData.id_group
-	            ,usertype: top.basic_user.loginData.type
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code   
             }      
             ,dataType: 'json'
             ,success : function(data) {  
@@ -539,6 +550,13 @@ var paper = {
                 paper.setPaperBrief();
                 */
             	paperObj.title = data.title;
+            	paperObj.brief = {
+     		       subject_name: data.subject_name
+     		       ,cost: data.cost
+    		       ,count_questions: data.count_questions
+    		       ,teacher_name: data.teacher_name
+    		       ,cent: data.cent
+            	};
                 
                 if ( typeof(afterAjax) == "string" ){
 	                eval(afterAjax);
@@ -565,6 +583,7 @@ var paper = {
                 ,user_id: top.basic_user.loginData.id
                 ,user_type: top.basic_user.loginData.type    
                 ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code   
             },
             dataType: 'json',
             success : function(responseData) {
@@ -691,6 +710,7 @@ var paper = {
                 ,user_id: top.basic_user.loginData.id
                 ,user_type: top.basic_user.loginData.type    
                 ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
             }, 
             dataType: 'json',
             success : function(data) {
@@ -701,15 +721,19 @@ var paper = {
                 	paperObj.questions[i].answer = questions[i].answer;
                 	paperObj.questions[i].description = questions[i].description;
                     
-                }
-                paperObj.count.giveup = parseInt( data.paper.count_giveup );
-                paperObj.count.right = parseInt( data.paper.count_right );
-                paperObj.count.wrong = parseInt( data.paper.count_wrong );
-                paperObj.count.byTeacher = parseInt( data.paper.count_byTeacher );
-                paperObj.cent = parseInt( data.paper.totalCent );
-                paperObj.cent_ = parseInt( data.paper.myTotalCent );
-                
+                }                
                 paperObj.showDescription();
+                
+                paperObj.brief = {
+                	totalCent: data.paper.totalCent
+                	,myTotalCent: data.paper.myTotalCent
+                	,count_giveup: data.paper.count_giveup
+                	,count_right: data.paper.count_right
+                	,count_wrong: data.paper.count_wrong
+                };
+                paperObj.initBrief();
+                
+                $('#submit').remove();
             }
         });
     } 

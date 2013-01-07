@@ -41,9 +41,8 @@
  * @author wei1224hf@gmail.com
  * */
 var education_paper_log = {
-	version: '201211'    
 	        
-	,ajaxState: false        
+	ajaxState: false        
 	
 	/**
 	 * 配置文件中,包含 下拉列表内容, 用户角色(教师,还是学生)
