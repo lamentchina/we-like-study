@@ -63,10 +63,15 @@ update basic_memory set extend1 = 0 where type = 2 and code in (
 #启用事务功能
 START TRANSACTION; 
 
-set count_exam2student = 4800;
+set count_exam2student = 20;
 while_exam2student : while count_exam2student >0 do
     set count_exam2student = count_exam2student - 1;      
-    set education_exam_2_student__id = education_exam_2_student__id - 1;    
+    set education_exam_2_student__id = education_exam_2_student__id - 1;     
+    set paper_log_id_ = basic_memory__index('education_paper_log');   
+    update education_exam_2_student set 
+        status = 23
+        ,id_paper_log = paper_log_id_
+        where id = education_exam_2_student__id;   
     
     select 
         exam_id        
@@ -102,8 +107,6 @@ while_exam2student : while count_exam2student >0 do
         ,@teacher_code
     from education_exam_2_student where id = education_exam_2_student__id;   
          
-    set paper_log_id_ = basic_memory__index('education_paper_log');   
-    
     insert into education_paper_log (    
         paper_id
         ,paper_title
@@ -210,7 +213,7 @@ while_exam2student : while count_exam2student >0 do
     end if; 
     
     select max(id_question) into question_id_max_ from education_paper_2_question where id_paper = paper_id_;        
-    set count_question = 100;    
+    set count_question = 53;    
     while_question: while count_question > 0 do    
         set count_question = count_question - 1;          
         set question_id_ = question_id_max_ - count_question;                
@@ -269,7 +272,7 @@ while_exam2student : while count_exam2student >0 do
         
     end while while_question;          
 
-    if mod(count_exam2student,50) = 0 then    
+    if mod(count_exam2student,500) = 0 then    
         commit;          
         START TRANSACTION; 
     end if;
