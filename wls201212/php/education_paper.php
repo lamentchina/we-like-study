@@ -246,14 +246,9 @@ class education_paper {
             die("no ids");
         }
         $CONN = tools::conn();
-        $ids = $_REQUEST['ids'];
-		$arr = explode(",", $ids);
-		for($i=0;$i<count($arr);$i++){
-		    mysql_query("call education_paper__delete(".$arr[$i].")",$CONN);
-		}
-
-        sleep(1);
-        echo json_encode(array('state'=>1));
+        $sql = "call education_paper__delete('".$_REQUEST['ids']."',@state,@msg)";
+		mysql_query($sql,$CONN);
+        echo json_encode(array('state'=>1,'sql'=>$sql));
     }
     
     public function update(){
@@ -287,7 +282,17 @@ class education_paper {
         education_paper.cost,
         education_paper.teacher_name,
         education_paper.cent,
-        education_paper.count_questions
+        education_paper.count_questions,
+        
+        education_paper.id,
+        education_paper.id_creater,
+        education_paper.id_creater_group,
+        education_paper.code_creater_group,
+        education_paper.time_created,
+        education_paper.time_lastupdated,
+        education_paper.count_updated,
+        education_paper.status,
+        education_paper.remark
         FROM
         education_paper        
         where id = '".$id."'";

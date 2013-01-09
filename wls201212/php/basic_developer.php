@@ -396,12 +396,14 @@ class basic_developer {
         $obj->il8n();        
         $_REQUEST['userid'] = 1;
         
+        
 		basic_excel::import('../file/download/highschool/basic_permission.xls');
 		echo " basic_permission ".basic_excel::$guid; 	
 		mysql_query("call basic_permission__import('".basic_excel::$guid."',@state,@msg,@ids)",$CONN);
 		$res = mysql_query("select @state,@msg,@ids",$CONN);
 		$data = mysql_fetch_assoc($res);
 		print_r($data);
+		
 
 		basic_excel::import('../file/download/highschool/basic_group2.xls');
 		echo " basic_group ".basic_excel::$guid."---------";

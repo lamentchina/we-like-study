@@ -20,7 +20,7 @@ var desktop = {
 			top.$.ligerui.get("win_"+code).show();
 			return;
 		}
-		var hei = 550;
+		var hei = 600;
 		var wid = 650;
 		if(type==1){
 			hei = 200;

@@ -127,11 +127,11 @@ class basic_excel {
                     ,'sheetindex'=>$i+1
                     ,'sheetname'=>$sheetname
                     ,'rowindex'=>$i2+1
-                    ,'maxcolumn'=>$columns2int[$sheetData[1]]
+                    ,'maxcolumn'=>self::$columns2int[$sheetData[1]]
                     ,'id_creater'=>$_REQUEST['userid']
                 );
                 $maxcolumn_check = 0;
-                for($i3=$columns2int[$sheetData[1]];$i3>=1;$i3--){
+                for($i3=self::$columns2int[$sheetData[1]];$i3>=1;$i3--){
                     $value = $currentSheet->getCell($int2column[$i3-1].($i2+1))->getValue();
                     if($maxcolumn_check==0){
                         if($value == NULL) $data['maxcolumn'] = $i3-1;

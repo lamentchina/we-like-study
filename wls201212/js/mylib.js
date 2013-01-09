@@ -1,3 +1,14 @@
+/**
+ * 一些额外的
+ * 与系统业务逻辑无关的小函数,将被包含在这个文件内
+ * 
+ * @author wei1224hf@gmail.com
+ * @version 201201
+ * */
+
+/**
+ * JS实现的MD5加密,单向加密,无法解密
+ * */
 function MD5 (string) {
 
 	function RotateLeft(lValue, iShiftBits) {
@@ -197,8 +208,11 @@ function MD5 (string) {
 	var temp = WordToHex(a)+WordToHex(b)+WordToHex(c)+WordToHex(d);
 
 	return temp.toLowerCase();
-}
+} 
 
+/**
+ * 以JS的方式,获得 URL 地址中的 GET 参数
+ * */
 function getParameter(paraStr, url)
 {
     var result = ""; 
@@ -228,6 +242,9 @@ function getParameter(paraStr, url)
     return (result.replace("&","").split('=')[1]);   
 }
 
+/**
+ * 对 COOKIE 的读写操作
+ * */
 function SetCookie(name,value,Hours)// 两个参数，一个是cookie的名子，一个是值,一个是时间(小时)
 {
 	if(Hours!=undefined){// 默认的,保存半天,12小时
@@ -255,6 +272,9 @@ function delCookie(name)// 删除cookie
     if(cval!=null) document.cookie= name + "="+cval+";expires="+exp.toGMTString();
 }
 
+/**
+ * 异步导入JS文件跟CSS文件
+ * */
 function importJS(src,oCallback) {     
     /*
 	 * fpath = fpath.replace(/\./g,'\/'); document.write('<script
@@ -278,7 +298,6 @@ function importJS(src,oCallback) {
     }
     headerDom.appendChild(jsDom);  
 }
-
 function importCSS(file){
 	var head = document.getElementsByTagName('head').item(0);
 	css = document.createElement('link');
@@ -286,12 +305,14 @@ function importCSS(file){
 	css.href = file;
 	css.type = 'text/css';
 	head.appendChild(css);
+}
+
+function getIl8n(module,key){
+	var key_ = null;
+	var js_ = "key_ = top.il8n."+module+"."+key+";";
+	eval(js_);
+	if(typeof(key_)=='undefined'){
+		eval("key_ = top.il8n."+key+";");
 	}
-
-
-function getObjectClass(obj) {    
-	if (typeof obj != "object" || obj === null)         
-		return false;    
-	else         
-		return /(\w+)\(/.exec(obj.constructor.toString())[1];
+	return key_;
 }

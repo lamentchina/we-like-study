@@ -113,7 +113,7 @@ var education_exam = {
 			  ,{ display: top.il8n.title, name: 'title', isSort: false, width: 140 }
 			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
-			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false }
+			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false, width: 100 }
 			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.totalcent, name: 'score', isSort: false }
 			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false }

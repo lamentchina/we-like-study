@@ -238,3 +238,14 @@ A:hover {text-decoration: none}
 .bt_search{
 	background-image:url("../../../file/images/search16x16.png") !important;
 }
+.brief{
+    font-size:9px;display:block;float:left;-webkit-text-size-adjust:none;
+}
+.view_lable{
+    display:block;float:left;width:19%;background-color: rgb(210,240,235);
+    margin-right: 2px; margin-bottom: 2px;
+}
+.view_data{
+    display:block;float:left;width:29%;
+    margin-right: 2px; margin-bottom: 2px;background-color: rgb(220,250,245);    
+}
