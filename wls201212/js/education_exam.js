@@ -103,7 +103,7 @@ var education_exam = {
 			  ,{ display: top.il8n.education_exam.time_submit, name: 'time_submit', isSort: false, hide:true  }
 			  ,{ display: top.il8n.education_exam.time_mark, name: 'time_mark', isSort: false, hide:true  }
 			  ,{ display: top.il8n.education_exam.type, name: 'name_type', isSort: false }			  
-			  ,{ display: top.il8n.education_exam.status, name: 'name_status', isSort: false }	
+			  ,{ display: top.il8n.education_exam.status, name: 'name_status', isSort: false }
 			  ,{ display: top.il8n.education_exam.type, name: 'type', isSort: false, hide:true }			  
 			  ,{ display: top.il8n.education_exam.status, name: 'status', isSort: false, hide:true }				  
 			  ,{ display: top.il8n.education_exam.id, name: 'id', isSort: false, hide:true }

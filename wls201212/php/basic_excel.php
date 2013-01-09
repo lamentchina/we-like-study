@@ -58,31 +58,31 @@ class basic_excel {
         include_once config::$phpexcel.'PHPExcel.php';
         include_once config::$phpexcel.'PHPExcel/IOFactory.php';
         include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
-        
+        $objPHPExcel = new PHPExcel();
         $CONN = tools::conn();
         $sql = "select * from basic_excel where guid = '".$guid."' order by sheetindex,rowindex";
-        $res = mysql_query($sql,$conn);
+        $res = mysql_query($sql,$CONN);
         $data = array();
-        $sheetindex = 0;
-        $int2column = array_keys($this->columns2int);
+        $sheetindex = null;
+        $int2column = array_keys(self::$columns2int);
+
         while($temp = mysql_fetch_assoc($res)){
-    		$objPHPExcel->createSheet();
-    		$objPHPExcel->setActiveSheetIndex($temp['sheetindex']);
-    		$objPHPExcel->getActiveSheet()->setTitle($temp['sheetname']);
-    		
+            if($sheetindex!=$temp['sheetindex']){
+                $sheetindex = $temp['sheetindex'];
+        		$objPHPExcel->createSheet();
+        		$objPHPExcel->setActiveSheetIndex($temp['sheetindex']);
+        		$objPHPExcel->getActiveSheet()->setTitle($temp['sheetname']);
+            }  
     		for($i=0;$i<$temp['maxcolumn'];$i++){
-    		    $objPHPExcel->getActiveSheet()->setCellValue('A1', 'WLS PAPER EXPORT');
+    		    $objPHPExcel->getActiveSheet()->setCellValue($int2column[$i].$temp['rowindex'], $temp[$int2column[$i]]);
     		}
         }
-          
-        	    
-
-		$objPHPExcel = new PHPExcel();
-		$objPHPExcel->setActiveSheetIndex(0);
-		$objPHPExcel->getActiveSheet()->setTitle($this->il8n['quiz']['paper']);
-
-
-
+		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+		$file =  "../file/download/".date('YmdHis').".xls";
+		$objWriter->save($file);
+		
+		mysql_query("delete from basic_excel where guid = '".self::$guid."' ;",$CONN);
+		return $file;
 	}
 	
 	/**
@@ -105,7 +105,7 @@ class basic_excel {
         
         $CONN = tools::conn();
 
-        $int2column = array_keys($this->columns2int);
+        $int2column = array_keys(self::$columns2int);
         $count = $phpexcel->getSheetCount();
         include_once '../libs/guid.php';
         $Guid = new Guid();  

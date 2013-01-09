@@ -113,6 +113,14 @@ class myclass{
     public function insert(return='json',data=NULL){
     
     }
+    
+    public function upload(return='json',data=NULL){
+    
+    }
+    
+    public function download(return='json',data=NULL){
+    
+    }    
 }
 
 

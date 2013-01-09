@@ -227,6 +227,20 @@ class education_paper {
         self::importOne($uploader->savePath);
     }  
     
+    public function export(){
+        $id = $_REQUEST['id'];
+        $CONN = tools::conn();
+        include_once '../libs/guid.php';
+        $Guid = new Guid();  
+        $guid = $Guid->toString();
+        $sql = "call education_paper__export(".$id.",'".$guid."',NULL,NULL,@out_state,@out_msg,@out_excelid,@out_sheetcount,@out_sheetindex)";
+        mysql_query($sql,$CONN);
+        
+        include_once 'basic_excel.php';
+        $file = basic_excel::export($guid);
+        echo json_encode(array('file'=>$file));
+    }
+    
     public function delete(){
         if(!(isset($_REQUEST['ids']))){
             die("no ids");

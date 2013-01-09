@@ -103,19 +103,6 @@ var education_paper = {
 	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
 	        ,{ display: top.il8n.time_created, name: 'time_created'}
     	   ]
-           ,[//教师列
-   	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
- 	        ,{ display: top.il8n.education_paper.subject, name: 'subject_name',isSort : false }
-   	        ,{ display: top.il8n.education_paper.subject, name: 'subject_code',isSort : false, hide: true }
-   	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
-   	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
-		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_name',isSort : false, hide: true }
-		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_code',isSort : false, hide: true }
-		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_id',isSort : false, hide: true }
-   	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
-   	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
-   	        ,{ display: top.il8n.time_created, name: 'time_created'}
-           ]
            ,[//学生列
              { display: top.il8n.id, name: 'id', minWidth: 60, hide:true }
 	        ,{ display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
@@ -133,6 +120,19 @@ var education_paper = {
 				if(a.mycent==null)return '没做过';
 				return a.mycent;
 			 }}
+           ]
+    	   ,[//教师列
+   	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
+ 	        ,{ display: top.il8n.education_paper.subject, name: 'subject_name',isSort : false }
+   	        ,{ display: top.il8n.education_paper.subject, name: 'subject_code',isSort : false, hide: true }
+   	        ,{ display: top.il8n.education_paper.cent, name: 'cent' ,width: 50 ,isSort : false}
+   	        ,{ display: top.il8n.education_paper.cost, name: 'cost' ,width: 50}
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_name',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_code',isSort : false, hide: true }
+		   	,{ display: top.il8n.education_paper.teacher_name, name: 'teacher_id',isSort : false, hide: true }
+   	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
+   	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
+   	        ,{ display: top.il8n.time_created, name: 'time_created'}
            ]
     	   ,[//访客列
   	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
@@ -167,38 +167,72 @@ var education_paper = {
             }
         }
         
-        for(var i=0;i<permission.length;i++){
+        for(var i=0;i<permission.length;i++){        	
             if(permission[i].code=='1501'){
+            	//查询功能,基本上每个用户组都有
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon , click : function(){
                         education_paper.search();
                     },disable:true
                 });
+            }else if(permission[i].code=='1502'){
+            	//查看功能,查看一张试卷
+                config.toolbar.items.push({line: true });
+                config.toolbar.items.push({
+                    text: permission[i].name , img:permission[i].icon, click : function(){
+                    	if($.ligerui.get('education_paper_grid').options.checkbox==true){
+                    		//启用了多行勾选
+                    	}
+                    	
+                        var id = education_paper.grid.getSelected().id;
+                        
+                    }
+                });
             }else if(permission[i].code=='1511'){
+            	//上传EXCEL文件,批量导入数据
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon , click : function(){
                         education_paper.upload();
                     }
                 });
-            }else if(permission[i].code=='1503'){
+            }else if(permission[i].code=='1512'){
+            	//勾选一张试卷,导出数据,EXCEL下载
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
-                        var id = education_paper.grid.getSelected().id;
-
+                    	var selected = null;
+                    	if($.ligerui.get('education_paper_grid').options.checkbox){
+                    		//启用了多行勾选
+							selected = $.ligerui.get('education_paper_grid').getSelecteds();
+							if(selected.length!=1){
+								alert(top.il8n.selectOne);return;
+							}
+							selected = selected[0];
+                    	}else{
+                    		selected = $.ligerui.get('education_paper_grid').getSelected();
+							if(selected==null){
+								alert(top.il8n.noSelect);return;
+							}
+                    	}
+                    	
+                    	var id = selected.id;
+                    	var title = selected.title;
+                    	education_paper.export_(id,title);
                     }
                 });
             }else if(permission[i].code=='1522'){
+            	//批量删除,将启用 checkBox 功能
                 config.checkbox = true;
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
-                        education_paper.delet();
+                        education_paper.delete_();
                     }
-                });
-            }else if(permission[i].code=='1505'){
+                });            
+            }else if(permission[i].code=='1523'){
+            	//修改功能,一次只能修改一张试卷,不能批量修改
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
@@ -206,6 +240,7 @@ var education_paper = {
                     }
                 });
             }else if(permission[i].code=='1590'){
+            	//做试卷,只有 学生 有这个权限
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name, img:permission[i].icon , click : function(){
@@ -219,8 +254,8 @@ var education_paper = {
                             id : "win_paper_"+id , height:  550, width: 600,
                             url: "education_paper__do.html?id="+id,  
                             showMax: true, showToggle: true, showMin: true, isResize: true,
-                            modal: false, title: $.ligerui.get('education_paper_grid').getSelected().title, slide: false
-    
+                            modal: false, title: $.ligerui.get('education_paper_grid').getSelected().title
+                            , slide: false    
                         }).max();
                         
                         top.$.ligerui.get("win_paper_"+id).close = function(){
@@ -231,49 +266,6 @@ var education_paper = {
                             top.$.ligerui.remove(top.$.ligerui.get("win_paper_"+id));
                             top.$('body').unbind('keydown.dialog');
                         }
-                    }
-                });
-            }else if(permission[i].code=='1507'){
-                config.toolbar.items.push({line: true });
-                config.toolbar.items.push({
-                
-                    text: permission[i].name , img:permission[i].icon, click : function(){
-                        
-                    }
-                });
-            }else if(permission[i].code=='1508'){
-                config.toolbar.items.push({line: true });
-                config.toolbar.items.push({
-                    text: permission[i].name , img:permission[i].icon, click : function(){
-                        var arr = education_paper.grid.getCheckedRows();
-                        if(arr.length==0){
-                            $.ligerDialog.error(il8n.GRID.noSelect);
-                            return;
-                        }
-                        var url = 'education_paper__do.html?id='+arr[0].id;
-                        if(top===self){
-                            $.ligerDialog.open({
-                                id : "paper" , height:  550, url: url, width: 650, title: title, slide: false,
-                                showMax: true, showToggle: true, showMin: true, isResize: true, modal: false
-                            });
-                        }else{
-                            top.desktop.f_open(url,arr[0].name,"../file"+permission[i].icon,4);
-                        }
-                        win.max();
-                    }
-                });
-            }else if(permission[i].code=='1509'){
-                config.toolbar.items.push({line: true });
-                config.toolbar.items.push({                    
-                    text: permission[i].name , img:permission[i].icon, click : function(){
-                        
-                    }
-                });
-            }else if(permission[i].code=='1510'){
-                config.toolbar.items.push({line: true });
-                config.toolbar.items.push({                    
-                    text: permission[i].name , img:permission[i].icon, click : function(){
-                        
                     }
                 });
             }
@@ -360,9 +352,49 @@ var education_paper = {
                 modal : true
             });
         }
-    }    
+    }  
     
-    ,delet: function(){
+    /**
+     * 导出一张试卷
+     * */
+    ,export_: function(id,title){
+    	var download_dom;
+        if($.ligerui.get("download_dom")){
+        	download_dom = $.ligerui.get("download_dom");        	
+        	download_dom.show();
+        }else{                    
+            $.ligerDialog.open({
+                id : "download_dom",
+                width : 350,
+                height : 150,
+                content : "<div id='download_dom_'></div>",
+                title : top.il8n.download
+            });
+        }    	
+    	$.ajax({
+            url: myAppServer() + "&class=education_paper&function=export",
+            data: {
+                id:id 
+                ,username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code  
+            },
+            type: "POST",
+            dataType: 'json',
+            success: function(response) {
+            	$('#download_dom_').append("<a href='"+response.file+"' target='_blank' >&nbsp;"+top.il8n.download+"&nbsp;"+title+"<br/></a>");
+            },
+            error : function(){               
+                alert(top.il8n.disConnect);
+            }
+        });     
+    }
+    
+    ,delete_: function(){
         //判断 ligerGrid 中,被勾选了的数据
         selected = education_paper.grid.getSelecteds();
         //如果一行都没有选中,就报错并退出函数
@@ -374,8 +406,7 @@ var education_paper = {
             for(var i=0; i<selected.length; i++){
                 ids += selected[i].id+","
             }
-            ids = ids.substring(0,ids.length-1);                
-            
+            ids = ids.substring(0,ids.length-1);            
             $.ajax({
                 url: myAppServer() + "&class=education_paper&function=delete",
                 data: {
