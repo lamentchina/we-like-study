@@ -281,8 +281,11 @@ class education_paper {
         education_paper.title,
         education_paper.cost,
         education_paper.teacher_name,
+        education_paper.teacher_id,
+        education_paper.teacher_code,
         education_paper.cent,
         education_paper.count_questions,
+        education_paper.count_used,
         
         education_paper.id,
         education_paper.id_creater,
@@ -292,6 +295,7 @@ class education_paper {
         education_paper.time_lastupdated,
         education_paper.count_updated,
         education_paper.status,
+        education_paper.type,
         education_paper.remark
         FROM
         education_paper        

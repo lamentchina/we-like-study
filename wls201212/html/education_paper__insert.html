@@ -1,79 +1,49 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" style="overflow:hidden;">
 <head>
     <meta http-equiv=content-type content="text/html; charset=UTF-8">
-    <link href="/libs/Source/lib/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css" /> 
-    <script src="/libs/Source/lib/jquery/jquery-1.3.2.min.js" type="text/javascript"></script>    
-    <script src="/libs/Source/lib/ligerUI/js/ligerui.min.js" type="text/javascript"></script> 
-	<script src="/libs/Source/lib/json2.js" type="text/javascript"></script> 
-    <script src="/libs/Source/lib/jquery-validation/jquery.validate.min.js" type="text/javascript"></script> 
-    <script src="/libs/Source/lib/jquery-validation/jquery.metadata.js" type="text/javascript"></script>
-    <script src="/libs/Source/lib/jquery-validation/messages_cn.js" type="text/javascript"></script>	
-	<script type="text/javascript">
-	
-$(function (){
-	$.metadata.setType("attr", "validate");
-	
-	$("#form").ligerForm({
-		inputWidth: 170, labelWidth: 90, space: 40,
-		fields: [
-		{ display: "名称", name: "name",  type: "text" , validate : {required:true,minlength:3,maxlength:10} }, 
-		{ display: "编号", name: "code",  type: "text" , validate : {required:true} }
-		]
-	});
-	$("#form").append('<br/><br/><br/><input type="submit" value="提交" id="Button1" class="l-button l-button-submit" />' );
-	
-	var v = $("#form").validate({
-		debug: true,
-		errorPlacement: function (lable, element) {
-			if (element.hasClass("l-textarea")) {
-			element.addClass("l-textarea-invalid");
-			}
-			else if (element.hasClass("l-text-field")) {
-			element.parent().addClass("l-text-invalid");
-			} 
-		},
-		success: function (lable) {
-			var element = $("[ligeruiid="+$(lable).attr('for')+"]",$("form"));
-			if (element.hasClass("l-textarea")) {
-				element.removeClass("l-textarea-invalid");
-			} else if (element.hasClass("l-text-field")) {
-				element.parent().removeClass("l-text-invalid");
-			}
-		},
-		submitHandler: function () {
-			var obj = $('input[ligerui]',$('#form'));
-			var data = {};
-			for(var i=0;i<obj.length;i++){
-				eval("data."+$(obj[i]).attr("name")+"='"+$(obj[i]).attr("value")+"'" );
-			}
-		
-			var manager = $.ligerDialog.waitting('正在保存中,请稍候...');
-			$.ajax({
-				url : "../php/education_subject.php?function=add",
-				data : {json:JSON.stringify(data)},
-				type : "POST",
-				success : function(msg) {
-					manager.close();
-					if(msg==1){
-						$.ligerDialog.success('保存成功');
-					} else {
-						eval("var obj2 = "+msg+";");
-						$.ligerDialog.error(obj2.msg);
-					}
-				},
-				error : function(){
-					manager.close();
-					$.ligerDialog.error('网络通信失败');
-				}
-			});
-		}
-	});
-});
-		
+    <link href="../libs/liger/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css" /> 
+    <link href="../css/wls.css" rel="stylesheet" type="text/css" /> 
+
+    <script src="../libs/jquery-1.3.2.min.js" type="text/javascript"></script>    
+    <!--script src="../libs/liger/ligerui.min.js" type="text/javascript"></script-->
+     
+    <script src="../libs/liger/core/base.js" type="text/javascript"></script>
+    <script src='../libs/liger/plugins/ligerAccordion.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerButton.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerCheckBox.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerComboBox.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerDateEditor.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerDialog.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerDrag.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerEasyTab.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerFilter.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerForm.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerGrid.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerLayout.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerMenu.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerMenuBar.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerMessageBox.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerRadio.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerResizable.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerSpinner.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerTab.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerTextBox.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerTextarea.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerTip.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerToolBar.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerTree.js' type='text/javascript'></script>
+    <script src='../libs/liger/plugins/ligerWindow.js' type='text/javascript'></script>
+
+    <script src="../js/myApp.js" type="text/javascript"></script>  
+    <script src="../js/basic_user.js" type="text/javascript"></script>  
+    <script src="../js/mylib.js" type="text/javascript"></script>   
+    <script src="../js/education_paper.js" type="text/javascript"></script>	
 </script>
 </head>
 <body>
-    <form id="form"></form>
+<script type="text/javascript">
+initWebpage("education_paper.loadConfig('education_paper.insert()')");
+</script>    
 </body>
 </html>

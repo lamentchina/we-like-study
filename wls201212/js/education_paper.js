@@ -139,12 +139,14 @@ var education_paper = {
         ];
         
         var config = {
-            height:'100%',
-            columns: [],  pageSize:20 ,rownumbers:true,
-            url : myAppServer()+ "&class=education_paper&function=grid",
-            method  : "POST",
-            id : "education_paper_grid",
-            parms : {
+            height:'100%'
+            ,columns: []
+        	,pageSize: 15 
+        	,rownumbers:true
+            ,url : myAppServer()+ "&class=education_paper&function=grid"
+            ,method  : "POST"
+            ,id : "education_paper_grid"
+            ,parms : {
                 username: top.basic_user.username
                 ,session: MD5( top.basic_user.session +((new Date()).getHours()))
                 ,search: $.ligerui.toJSON( basic_user.searchOptions )
@@ -152,12 +154,12 @@ var education_paper = {
                 ,user_type: top.basic_user.loginData.type    
                 ,group_id: top.basic_user.loginData.group_id
                 ,group_code: top.basic_user.loginData.group_code              
-            },
-            toolbar: { items: [] }
+            }
+            ,toolbar: { items: [] }
+            ,frozen: false
         };
         
-        config.columns = gridColmuns[(top.basic_user.loginData.type)*1-1];  
-        
+        config.columns = gridColmuns[(top.basic_user.loginData.type)*1-1]; 
         var permission = [];
         for(var i=0;i<top.basic_user.permission.length;i++){
             if(top.basic_user.permission[i].code=='15'){
@@ -216,8 +218,6 @@ var education_paper = {
                             top.$.ligerui.remove(top.$.ligerui.get("win_paper_view_"+id));
                             top.$('body').unbind('keydown.dialog');
                         }
-                    	
-                        
                     }
                 });
             }else if(permission[i].code=='1511'){
@@ -225,7 +225,7 @@ var education_paper = {
                 config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name 
-                    , img:permission[i].icon , click : function(){
+                    ,img:permission[i].icon , click : function(){
                        
                     }
                 });
@@ -254,6 +254,32 @@ var education_paper = {
                     	education_paper.export_(id,title);
                     }
                 });
+            }else if(permission[i].code=='1521'){
+                //添加功能
+                config.checkbox = true;
+                config.toolbar.items.push({line: true });
+                config.toolbar.items.push({
+                    text: permission[i].name , img:permission[i].icon, click : function(){
+                        top.$.ligerDialog.open({
+                            isHidden:false,
+                            id : "win_paper_insert", height:  550, width: 600,
+                            url: "education_paper__insert.html",  
+                            showMax: true, showToggle: true, showMin: true, isResize: true,
+                            modal: false, title: "s"
+                            , slide: false    
+                        }).max();
+                        
+                        top.$.ligerui.get("win_paper_insert"+id).close = function(){
+                            var g = this, p = this.options;
+                            top.$.ligerui.win.removeTask(this);
+                            g.unmask();
+                            g._removeDialog();
+                            top.$.ligerui.remove(top.$.ligerui.get("win_paper_insert"+id));
+                            top.$('body').unbind('keydown.dialog');
+                        }                    	
+                        
+                    }
+                });            
             }else if(permission[i].code=='1522'){
             	//批量删除,将启用 checkBox 功能
                 config.checkbox = true;
@@ -302,7 +328,6 @@ var education_paper = {
                 });
             }
         }
-        
         $(document.body).ligerGrid(config);
     }
     
@@ -518,19 +543,22 @@ var education_paper = {
             	$("#content").html(htmls);
             	
             	//查看详细,页面上也有按钮的
-            	var items = [];
+            	var items = [];            	
                 var permission = top.basic_user.permission;
                 for(var i=0;i<permission.length;i++){
                     if(permission[i].code=='15'){
                         permission = permission[i].children;
+                        break;
                     }
                 }      
                 for(var i=0;i<permission.length;i++){
                     if(permission[i].code=='1502'){
-                        permission =permission[i].children;
+                    	if(typeof(permission[i].children)=='undefined')return;
+                        permission = permission[i].children;
+                        break;
                     }
                 }    
-                console.debug(permission);
+                
                 for(var i=0;i<permission.length;i++){        	
                     if(permission[i].code=='150201'){
                         items.push({line: true });
@@ -542,8 +570,7 @@ var education_paper = {
                     }else if(permission[i].code=='150202'){
                         items.push({line: true });
                         items.push({
-                            text: permission[i].name , img:permission[i].icon, click : function(){
-                            	
+                            text: permission[i].name , img:permission[i].icon, click : function(){                            	
                                 
                             }
                         });
@@ -563,7 +590,6 @@ var education_paper = {
                         });
                     }
                 }
-                console.debug(items);
                 if(items.length>0){
 	            	$("#buttons").ligerToolBar({
 	            		items:items
@@ -574,6 +600,53 @@ var education_paper = {
                 alert(top.il8n.disConnect);
             }
         });
+    }
+    
+    ,insert: function(){
+		$(document.body).append('<form id="form"></form>');
+		
+		$("#form").ligerForm({
+			inputWidth: 170, labelWidth: 90, space: 40,
+			fields: [
+			     { display: top.il8n.education_paper.subject_code, name: "subject_code", type: "text", validate: {required:true,minlength:3,maxlength:20} }
+				,{ display: top.il8n.education_paper.title, name: "title", type: "text", validate: {required:true,minlength:3,maxlength:20} }
+				,{ display: top.il8n.education_paper.cost, name: "cost", type: "text", validate: {required:true,minlength:3,maxlength:20} }
+			]
+		});
+		$("#form").append('<br/><br/><br/><br/><table style="width:80%"><tr><td style="width:25%"><input type="submit" value="'+top.il8n.submit+'" class="l-button l-button-submit" /></td></tr></table>' );
+		
+		var v = $("#form").validate({
+			debug: true,
+			errorPlacement: function (lable, element) {
+				if (element.hasClass("l-textarea")) {
+				element.addClass("l-textarea-invalid");
+				}
+				else if (element.hasClass("l-text-field")) {
+				element.parent().addClass("l-text-invalid");
+				} 
+			},
+			success: function (lable) {
+				var element = $("[ligeruiid="+$(lable).attr('for')+"]",$("form"));
+				if (element.hasClass("l-textarea")) {
+					element.removeClass("l-textarea-invalid");
+				} else if (element.hasClass("l-text-field")) {
+					element.parent().removeClass("l-text-invalid");
+				}
+			},
+			submitHandler: function () {
+				
+			}
+		});
+    }
+    
+    /**
+     * 需要额外的弹出一个 ligerDialog 
+     * 并引用 education_paper__update.html?id=
+     * 这是一个包含有 HTML 标签的页面
+     * 
+     * */
+    ,update: function(){
+    	
     }
 };
 
