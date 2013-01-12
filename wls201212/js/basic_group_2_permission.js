@@ -57,6 +57,7 @@ var basic_group_2_permission = {
 		);
 		
 		$(document.body).append('<input type="button" onclick="basic_group_2_permission.update()" value="'+top.il8n.modify+'" id="button" class="l-button l-button-submit" style="position:absolute;top:5px;left:200px;"  />' );
+		//$(document.body).append('<div onclick="$.ligerui.get(\'basic_group_2_permission__tree\').collapseAll()" style="position:absolute;top:25px;left:200px;" >asdf</div>' );
 	}
 
 	/**

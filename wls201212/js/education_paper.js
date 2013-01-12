@@ -204,7 +204,7 @@ var education_paper = {
                         top.$.ligerDialog.open({
                             isHidden:false,
                             id : "win_paper_view_"+id , height:  550, width: 600,
-                            url: "http://localhost:81/html/education_paper__view.html?id="+id,  
+                            url: "education_paper__view.html?id="+id,  
                             showMax: true, showToggle: true, showMin: true, isResize: true,
                             modal: false, title: $.ligerui.get('education_paper_grid').getSelected().title
                             , slide: false    
@@ -692,7 +692,7 @@ var paper = {
      * */
     ,initLayout : function() {
         $(document.body).append(''+
-        '<div id="layout1">         '+
+        '<div id="layout1">         '+   
         '    <div position="left" title="导航">    '+
         '        <table><tr><td>                    '+
         '        <div id="navigation" ></div>    '+
@@ -708,6 +708,7 @@ var paper = {
         '        </table>                        '+
         '    </div>                                '+
         '    <div position="center" title="标题" ><div type="submit" id="wls_quiz_main" class="w_q_container"></div></div> '+
+    
         '</div> '+
         '');
         
@@ -764,7 +765,7 @@ var paper = {
     	}; 
     	
         $('#paperBrief').html(htmlStr);
-        setInterval($('#paperBrief').fadeOut(500).fadeIn(500),2000);
+        //setInterval($('#paperBrief').fadeOut(500).fadeIn(500),2000);
     }
     
     ,readPaper : function(afterAjax){

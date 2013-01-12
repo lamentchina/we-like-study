@@ -289,7 +289,7 @@ var basic_user = {
 			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.basic_user.username+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.username+"</td></tr>"
 			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.basic_person.name+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.loginData.name+"</td></tr>"
 			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.status+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.loginData.statusname+"</td></tr>"
-			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.basic_user.group+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.loginData.groupname+"</td></tr>"
+			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.basic_user.group+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.loginData.group_name+"</td></tr>"
 			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.money+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.loginData.money+"</td></tr>"
 			+"<tr height='25px;'><td width='50%' align='right'>"+top.il8n.credits+":&nbsp;&nbsp;</td><td width='50%' align='left'>&nbsp;&nbsp;"+top.basic_user.loginData.money2+"</td></tr>"
 			
