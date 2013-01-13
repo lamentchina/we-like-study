@@ -63,7 +63,7 @@ var basic_group_2_user = {
 			url: myAppServer() + "&class=basic_group_2_user&function=update",
 			data: {
 				codes: ids, 
-				code: getParameter("username", window.location.toString() ), 
+				code: getParameter("usercode", window.location.toString() ), 
 				
 				//服务端权限验证所需
 				username: top.basic_user.username,
@@ -75,10 +75,10 @@ var basic_group_2_user = {
 				//修改成功,就不能再继续执行修改操作了,必须先关闭窗口,再打开
 				$('#button').attr("value",top.il8n.modify);		
 				basic_group_2_user.ajaxState = false;
-				if(response.state==0){			
+				if(response.state!=1){			
 					//如果服务端操作失败,弹框显示服务端提示信息
 					alert(response.msg);
-				}else if(response.state==1){
+				}else{
 					//服务端操作成功
 					alert(top.il8n.done);
 				}

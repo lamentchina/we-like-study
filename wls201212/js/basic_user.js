@@ -6,8 +6,7 @@
  * */
 var basic_user = {
 
-	 version: '201209'
-	,session: ''
+	 session: ''
 	,username: 'admin'
 	,type: ""
 	,loginData: {}
@@ -119,7 +118,7 @@ var basic_user = {
 	 * 初始化页面列表
 	 * 需要依赖一个空的 document.body 
 	 * */
-	,grid : function(){
+	,grid: function(){
 		var config = {
 				id: 'basic_user__grid'
 				,height:'100%'
@@ -144,7 +143,8 @@ var basic_user = {
 	                ,search: $.ligerui.toJSON( basic_user.searchOptions )
 	                ,user_id: top.basic_user.loginData.id
 	                ,user_type: top.basic_user.loginData.type    
-	                ,group_id: top.basic_user.loginData.group_id	                
+	                ,group_id: top.basic_user.loginData.group_id	     
+	                ,group_code: top.basic_user.loginData.group_code	     
 				},
 				url: myAppServer() + "&class=basic_user&function=grid",
 				method: "POST",				
@@ -175,38 +175,38 @@ var basic_user = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_user.upload();
+						basic_user.import_();
 					}
 				});
 			}else if(permission[i].code=='120212'){
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_user.download();
+						basic_user.export_();
 					}
 				});
-			}else if(permission[i].code=='120222'){
+			}else if(permission[i].code=='120223'){
 				//若可以执行删除操作,则必定是多选批量删除,则列表右侧应该提供多选勾选框
 				config.checkbox = true;
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_user.delet();
+						basic_user.delete_();
 					}
 				});
-			}else if(permission[i].code=='120223'){
+			}else if(permission[i].code=='120222'){
 				//拥有 修改一个用户 的权限
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
 						//basic_user.update();
 						var selected;
-						if(basic_user.grid.options.checkbox){
-							selected = basic_user.grid.getSelecteds();
+						if($.ligerui.get('basic_user__grid').options.checkbox){
+							selected = $.ligerui.get('basic_user__grid').getSelecteds();
 							if(selected.length!=1){alert(il8n.selectOneItemOnGrid);return;}
 							selected = selected[0];
 						}else{
-							selected = basic_user.grid.getSelected();
+							selected = $.ligerui.get('basic_user__grid').getSelected();
 							if(selected==null){
 								alert(il8n.GRID.noSelect);return;
 							}
@@ -235,24 +235,64 @@ var basic_user = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_user.view();
+                    	var selected = null;
+                    	if($.ligerui.get('basic_user__grid').options.checkbox){
+                    		//启用了多行勾选
+							selected = $.ligerui.get('basic_user__grid').getSelecteds();
+							if(selected.length!=1){
+								alert(top.il8n.selectOne);return;
+							}
+							selected = selected[0];
+                    	}else{
+                    		selected = $.ligerui.get('basic_user__grid').getSelected();
+							if(selected==null){
+								alert(top.il8n.noSelect);return;
+							}
+                    	}
+                    	
+                    	var id = selected.id;
+                        if(top.$.ligerui.get("win_basic_user__view_"+id)){
+                            top.$.ligerui.get("win_basic_user__view_"+id).show();
+                            return;
+                        }
+                        top.$.ligerDialog.open({
+                            isHidden:false,
+                            id : "win_basic_user__view_"+id , height:  500, width: 780,
+                            url: "basic_user__view.html?id="+id,  
+                            showMax: true, showToggle: true, showMin: true, isResize: true,
+                            modal: false, title: selected.username
+                            , slide: false    
+                        });
+                        
+                        top.$.ligerui.get("win_basic_user__view_"+id).close = function(){
+                            var g = this, p = this.options;
+                            top.$.ligerui.win.removeTask(this);
+                            g.unmask();
+                            g._removeDialog();
+                            top.$.ligerui.remove(top.$.ligerui.get("win_basic_user__view_"+id));
+                            top.$('body').unbind('keydown.dialog');
+                        }
 					}
 				});
 			}else if(permission[i].code=='120290'){
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
-						var selected;
-						if(basic_user.grid.options.checkbox){
-							selected = basic_user.grid.getSelecteds();
-							if(selected.length!=1){alert(il8n.selectOneItemOnGrid);return;}
-							selected = selected[0];
-						}else{
-							selected = basic_user.grid.getSelected();
-							if(selected==null){
-								alert(il8n.GRID.noSelect);return;
+                    	var selected = null;
+                    	if($.ligerui.get('basic_user__grid').options.checkbox){
+                    		//启用了多行勾选
+							selected = $.ligerui.get('basic_user__grid').getSelecteds();
+							if(selected.length!=1){
+								alert(top.il8n.selectOne);return;
 							}
-						}						
+							selected = selected[0];
+                    	}else{
+                    		selected = $.ligerui.get('basic_user__grid').getSelected();
+							if(selected==null){
+								alert(top.il8n.noSelect);return;
+							}
+                    	}
+						
 						top.$.ligerDialog.open({ 
 							url: 'basic_group_2_user__tree.html?usercode='+selected.username+'&random='+Math.random(), height: 500,width: 400
 							,title: top.il8n.basic_user.updateUserGroup
@@ -298,16 +338,17 @@ var basic_user = {
 		+"</table>"
 		+'<div style="position:absolute;right:5px;top:30px;"><img src="'+top.basic_user.loginData.photo+'" width="150" height="160" /></div>'
 		);
-
-		var permission = [];
-		for(var i=0;i<top.basic_user.permission.length;i++){
-			if(top.basic_user.permission[i].code=="11"){
-				permission = top.basic_user.permission[i].children;
-			}
-		}
+       	
+        var permission = top.basic_user.permission;
+        for(var i=0;i<permission.length;i++){
+            if(permission[i].code=='11'){
+            	if(typeof(permission[i].children)=='undefined')return;
+                permission = permission[i].children;
+                break;
+            }
+        }     
 		var items = [];
 		for(var i=0;i<permission.length;i++){
-			
 			items.push({line:true});
 			var config = {text:permission[i].name,img:permission[i].icon};
 			if(permission[i].code == "1199"){
@@ -334,7 +375,7 @@ var basic_user = {
 	 * 清掉浏览器端的 cookie 
 	 * 然后向服务端传达退出指令,服务端再删除数据库session表中的内容
 	 * */
-	,logout : function(){
+	,logout: function(){
 		
 		delCookie("myApp_username");
 		delCookie("myApp_password");
@@ -358,31 +399,31 @@ var basic_user = {
 	 * 使用EXCEL导入的方式,批量上传用户信息
 	 * 后台根据EXCEL中的内容,一次性插入多条用户数据
 	 * */
-	,upload : function(){
+	,import_ : function(){
 		var dialog;
-		if($.ligerui.get("basic_user__grid_upload_d")){
-			dialog = $.ligerui.get("basic_user__grid_upload_d");
+		if($.ligerui.get("basic_user__grid_import__d")){
+			dialog = $.ligerui.get("basic_user__grid_import__d");
 			dialog.show();
 		}else{
 
 			$(document.body).append( $("<div id='basic_user__grid_file'></div>"));
-			var uploader = new qq.FileUploader({
+			var import_er = new qq.FileUploader({
 				element: document.getElementById('basic_user__grid_file'),
 				action: '../php/myApp.php?class=basic_user&function=import',
 				allowedExtensions: ["xls"],
 				params: {username: top.basic_user.username,
 					session: MD5( top.basic_user.session +((new Date()).getHours()))},
-				downloadExampleFile : "../file/download/basic_user.xls",
+				export_ExampleFile : "../file/export_/basic_user.xls",
 				debug: true,
 				onComplete: function(id, fileName, responseJSON){
-					basic_user.grid.loadData();
+					$.ligerui.get('basic_user__grid').loadData();
 				}
 	        });    
 			
 			$.ligerDialog.open({
 				title: top.il8n.importFile,
 				
-				id : "basic_user__grid_upload_d",
+				id : "basic_user__grid_import__d",
 				width : 350,
 				height : 200,
 				target : $("#basic_user__grid_file"),
@@ -391,38 +432,35 @@ var basic_user = {
 		}
 	}
 	
-	,download: function(){
+	,export_: function(){
 		var dialog;
-		if($.ligerui.get("basic_user__grid_download_d")){
-			dialog = $.ligerui.get("basic_user__grid_download_d");
+		if($.ligerui.get("basic_user__grid_export__d")){
+			dialog = $.ligerui.get("basic_user__grid_export__d");
 			dialog.show();
 		}else{
-			$(document.body).append( $("<div id='basic_user__grid_download'></div>"));   
+			$(document.body).append( $("<div id='basic_user__grid_export_'></div>"));   
 			$.ligerDialog.open({
-				title: top.il8n.importFile,
-				id : "basic_user__grid_download_d",
+				title: top.il8n.exportFile,
+				id : "basic_user__grid_export__d",
 				width : 350,
 				height : 200,
-				target : $("#basic_user__grid_download"),
+				target : $("#basic_user__grid_export_"),
 				modal : true
 			});
 		}
 		$.ajax({
-			url : "../php/myApp.php?class=basic_user&function=downloadAll",
-			type : "POST",
-			dataType: 'json',
-			data: {username: top.basic_user.username,
-				session: MD5( top.basic_user.session +((new Date()).getHours()))
-				 },
-			success : function(response) {
+			url : "../php/myApp.php?class=basic_user&function=export"
+			,type : "POST"
+			,dataType: 'json'
+			,data: $.ligerui.get('basic_user__grid').options.parms
+			,success : function(response) {
 				if(response.state==0){
 					alert(response.msg);
 				}else if(response.state==1){
-					$("#basic_user__grid_download").append("<a target='_blank' href='"+response.path+"'>"+response.file+"</a><br/>");
+					$("#basic_user__grid_export_").append("<a target='_blank' href='"+response.path+"'>"+response.file+"</a><br/>");
 				}
-			},
-			error : function(){
-				
+			}
+			,error : function(){
 				alert(top.il8n.disConnect);
 			}
 		});		
@@ -433,9 +471,9 @@ var basic_user = {
 	 * 如果用户拥有 删除权限 
 	 * 则前端列表必定是一个带 checkBox 的
 	 * */
-	,delet: function(){
+	,delete_: function(){
 		//判断 ligerGrid 中,被勾选了的数据
-		selected = basic_user.grid.getSelecteds();
+		var selected = $.ligerui.get('basic_user__grid').getSelecteds();
 		//如果一行都没有选中,就报错并退出函数
 		if(selected.length==0){alert(il8n.noSelect);return;}
 		//弹框让用户最后确认一下,是否真的需要删除.一旦删除,数据将不可恢复
@@ -460,7 +498,9 @@ var basic_user = {
 				dataType: 'json',
 				success: function(response) {
 					if(response.state==1){
-						basic_user.grid.loadData();
+						$.ligerui.get('basic_user__grid').loadData();
+					}else{
+						alert(response.msg);
 					}
 				},
 				error : function(){
@@ -489,7 +529,6 @@ var basic_user = {
 				,{ display: top.il8n.type, name: "basic_user__type", type: "select" , options :{data : basic_user.config.type, valueField : "code" , textField: "value", slide: false }, validate: {required:true} }
 				,{ display: top.il8n.money, name: "basic_user__money",  type: "text" , validate: {required: true, digits: true}}
 				,{ display: top.il8n.basic_user.money2, name: "basic_user__money2",  type: "text" , validate: {digits: true}}
-				,{ display: top.il8n.basic_user.money3, name: "basic_user__money3",  type: "text" , validate: {digits: true}}
 				,{ display: top.il8n.status, name: "basic_user__status", type: "select" , options :{data : basic_user.config.status, valueField : "code" , textField: "value", slide: false }, validate: {required:true} }
 				,{ display: top.il8n.remark, name: "basic_user__remark",  type: "text" }
 			]
@@ -543,18 +582,19 @@ var basic_user = {
 							json:$.ligerui.toJSON({
 								username: $.ligerui.get('basic_user__username').getValue()
 								,password: $.ligerui.get('basic_user__password').getValue()
-		
 								,type: $.ligerui.get('basic_user__type').getValue()
-								
 								,money: $.ligerui.get('basic_user__money').getValue()
 								,money2: $.ligerui.get('basic_user__money2').getValue()
-								,money3: $.ligerui.get('basic_user__money3').getValue()
 								,remark: $.ligerui.get('basic_user__remark').getValue()
 							}),
 							
-							//服务端权限验证所需
-							username: top.basic_user.username,
-							session: MD5( top.basic_user.session +((new Date()).getHours()))
+			                username: top.basic_user.username
+			                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+			                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+			                ,user_id: top.basic_user.loginData.id
+			                ,user_type: top.basic_user.loginData.type    
+			                ,group_id: top.basic_user.loginData.group_id	     
+			                ,group_code: top.basic_user.loginData.group_code	
 						},
 						type: "POST",
 						dataType: 'json',						
@@ -780,6 +820,115 @@ var basic_user = {
 	 * 查看一个用户信息
 	 * */
 	,view: function(){
-		
+		var id = getParameter("id", window.location.toString() );
+    	$(document.body).html("<div id='menu'  ></div><div id='content' style='width:"+($(window).width()-250)+"px;margin-top:5px;'></div>");
+    	var htmls = "";
+    	$.ajax({
+            url: myAppServer() + "&class=basic_user&function=view",
+            data: {
+                id:id 
+                ,username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code  
+            },
+            type: "POST",
+            dataType: 'json',
+            success: function(response) {
+            	
+            	for(var j in response){   
+            		if(j=='sql')continue;
+            		if(j=='photo'){
+            			htmls += '<div style="position:absolute;right:5px;top:32px;background-color: rgb(220,250,245);width:254px;height:304px;"><img style="margin:2px;" src="'+response[j]+'" width="250" height="300" /></div>'
+            			continue;
+            		}
+            		if(j=='id'||j=='remark'||j=='birthday')htmls+="<div style='width:100%;float:left;display:block;margin-top:5px;'/>";            		
+            		if(j=='gender'||j=='degree_school'||j=='birthday'||j=='address'||j=='ismarried'||j=='degree'||j=='politically'){
+	            		eval("var key = getIl8n('basic_person','"+j+"');");
+	            		htmls += "<span class='view_lable'>"+key+"</span><span class='view_data'>"+response[j]+"</span>";
+            		}else{
+            			eval("var key = getIl8n('basic_user','"+j+"');");
+                		htmls += "<span class='view_lable'>"+key+"</span><span class='view_data'>"+response[j]+"</span>";
+            		}
+            	}; 
+            	$("#content").html(htmls);
+            	            	
+            	//查看详细,页面上也有按钮的
+            	var items = [];            	
+                var permission = top.basic_user.permission;
+                for(var i=0;i<permission.length;i++){
+                    if(permission[i].code=='12'){
+                    	if(typeof(permission[i].children)=='undefined')return;
+                        permission = permission[i].children;
+                        break;
+                    }
+                }      
+                for(var i=0;i<permission.length;i++){
+                    if(permission[i].code=='1202'){
+                    	if(typeof(permission[i].children)=='undefined')return;
+                        permission = permission[i].children;
+                        break;
+                    }
+                }   
+                for(var i=0;i<permission.length;i++){
+                    if(permission[i].code=='120202'){
+                    	if(typeof(permission[i].children)=='undefined')return;
+                        permission = permission[i].children;
+                        break;
+                    }
+                }            
+                
+                for(var i=0;i<permission.length;i++){        	
+                    if(permission[i].code=='12020222'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon , click : function(){
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='12020223'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){                            	
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='12020290'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='12020291'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='12020203'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){
+                                
+                            }
+                        });
+                    }
+                }
+                
+
+            	$("#menu").ligerToolBar({
+            		items:items
+            	});
+
+            },
+            error : function(){               
+                alert(top.il8n.disConnect);
+            }
+        });
 	}
 };

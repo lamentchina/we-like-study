@@ -2,6 +2,46 @@
 /**
  * 系统用户相关操作的服务端
  * 
+ * 关于新建用户
+ *   新建一个用户的时候,往往是在系统前端 注册 而来的.
+ *   注册时,所必填的内容只有 
+ *     用户名
+ *     密码
+ *     手机电话号
+ *     邮箱
+ *     类型
+ *   其中的 手机电话号 跟 邮箱,是要勇于系统验证的.并且,手机号 跟 邮箱,必须唯一性
+ *   当然,管理员在登录系统后直接添加也可以
+ * 既然新建一个用户时,所必须的信息输入项这么少,那么,就可以教给存储过程来实现了
+ * 
+ * 关于修改用户信息
+ *   管理员可以直接修改一个用户的 密码 邮箱 手机号 ,
+ *   但是,登录用户,就只能修改密码
+ * 
+ * 那么,如果用户要修改业务身份呢？
+ * 因为用户信息是跟业务身份联系在一起的,一个会计想修改自己的会计身份信息,那么,
+ * 他就必须到 会计列表 那里,找到自己的那一条会计记录,然后修改
+ * 
+ * 至于修改个人档案,在用户信息修改界面上,是可以直接修改的,包括
+ *   照片
+ *   出生日期
+ *   国籍
+ *   籍贯
+ *   民族
+ *   学历
+ *   身高
+ *   
+ * 等等.
+ * 这些个人信息档案,是跟 用户信息修改 直接联系在一起的,应该在修改的时候直接可以操作
+ * 由于字段很多,修改操作不应该教给数据库的存储过程,因为这样要提供一大串的参数,编程比较麻烦
+ * 直接在服务端代码实现好了
+ * 
+ * 或者,提供一个 修改个人档案 按钮,额外的修改个人信息,在 basic_person 模块中操作   
+ * 
+ * 注册 跟 添加,是否可以引用同一个后台?
+ *   添加,后台是需要判断权限的
+ *   注册,后台不需要判断权限
+ * 
  * @version 201210
  * @author wei1224hf@gmail.com
  * @prerequisites basic_memory__init,basic_memory.il8n()
@@ -51,7 +91,10 @@ class basic_user {
             }  
             if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and basic_user.type = '".$search[$search_keys[$i]]."' ";
-            }                       	
+            }  
+            if($search_keys[$i]=='money' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.money > '".$search[$search_keys[$i]]."' ";
+            }                      	
         }
         $sql_order = ' order by basic_user.id desc ';
 		//有排序条件
@@ -120,20 +163,15 @@ class basic_user {
     }
         
     public function delete(){//TODO
+        if(!tools::checkPermission("120223"))return;
         $CONN = tools::conn();
-        if(!(isset($_REQUEST['ids']))){
-            die("no ids");
-        }
-        $ids = $_REQUEST['ids'];
-        $arr = explode(",",$ids);
-        //print_r($arr);exit();
+
+        mysql_query("call basic_user__delete('".$_REQUEST['ids']."',@state,@msg)",$CONN);
+        $res = mysql_query("select @state as state, @msg as msg",$CONN);
+        $data = mysql_fetch_assoc($res);
         
-        for($i=0;$i<count($arr);$i++){
-            //echo "call basic_user_delete(".$arr[$i].")";
-            mysql_query("call basic_user_delete(".$arr[$i].")",$CONN);
-        }
-        sleep(2.5);
-        echo json_encode(array("msg"=>'done',"state"=>'1'));
+        sleep(1.5);
+        echo json_encode($data);
     }
     
     private function getPermission($username=NULL){
@@ -169,11 +207,20 @@ class basic_user {
             if($len==2){
                 $data[] = $temp;
             }else if($len==4){
-                $data[count($data)-1]['children'][] = $temp;
+                $pos_1 = count($data)-1;
+                $data[$pos_1]['children'][] = $temp;
             }else if($len==6){
-                $data[count($data)-1]['children'][count($data[count($data)-1]['children'])-1]['children'][] = $temp;
+                $pos_1 = count($data)-1;
+                $pos_2 = count($data[$pos_1]['children'])-1;
+                $data[$pos_1]['children'][$pos_2]['children'][] = $temp;
+            }else if($len==8){
+                $pos_1 = count($data)-1;
+                $pos_2 = count($data[$pos_1]['children'])-1;
+                $pos_3 = count($data[$pos_1]['children'][$pos_2]['children'])-1;
+                $data[$pos_1]['children'][$pos_2]['children'][$pos_3]['children'][] = $temp;
             }
         }
+
         return $data;
     }
     
@@ -248,7 +295,6 @@ class basic_user {
         $res = mysql_query("select @state as state,@msg as msg" ,$CONN);
         $arr = mysql_fetch_array($res,MYSQL_ASSOC);
         echo json_encode($arr);
-        
     }
     
     public function changePWD(){
@@ -310,15 +356,110 @@ class basic_user {
 		mysql_query("call basic_user__import('".basic_excel::guid."',@state,@msg,@ids)",$CONN);
     }
     
+    public function export() {
+        $CONN = tools::conn();
+        include_once '../libs/guid.php';
+        $Guid = new Guid();  
+        $guid = $Guid->toString();
+        $search=$_REQUEST['search'];
+        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+        $conn = tools::conn();
+        
+        //列表查询下,查询条件必定是SQL拼凑的
+        $sql_where = " where 1=1 ";
+        //判断前端传递过来的查询条件内容,格式是否正确,因为格式必须是一个 JSON 
+        if(!tools::isjson($search))tools::error('grid,search data, wrong format');
+        $search=json_decode($search,true);
+        $search_keys = array_keys($search);
+        for($i=0;$i<count($search);$i++){
+            if($search_keys[$i]=='username' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.username like '%".$search[$search_keys[$i]]."%' ";
+            }
+            if($search_keys[$i]=='group_code' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.group_code like '%".$search[$search_keys[$i]]."%' ";
+            }	
+            if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.status = '".$search[$search_keys[$i]]."' ";
+            }  
+            if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.type = '".$search[$search_keys[$i]]."' ";
+            }  
+            if($search_keys[$i]=='money' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and basic_user.money > '".$search[$search_keys[$i]]."' ";
+            }                      	
+        }
+        $sql_order = ' order by basic_user.id desc ';  
+        $sql = "insert into basic_excel (
+             guid 
+            ,sheets 
+            ,sheetindex 
+            ,sheetname
+            ,rowindex 
+            ,maxcolumn 
+        
+            ,A 
+            ,B  
+            ,C   
+            ,D   
+            ,E   
+        ) values (
+			'".$guid."'     
+			,'1'       
+			,'0'
+			,basic_memory__il8n('user','basic_user',1)
+			,1
+			,5  
+
+            ,basic_memory__il8n('username','basic_user',1)
+            ,basic_memory__il8n('password','basic_user',1)
+            ,basic_memory__il8n('type','basic_user',1)
+            ,basic_memory__il8n('money','basic_user',1)
+            ,basic_memory__il8n('group_code','basic_user',1)
+        ); ";
+        mysql_query($sql,$CONN);
+        $sql = "insert into basic_excel (
+             guid 
+            ,sheets 
+            ,sheetindex 
+            ,sheetname
+            ,rowindex 
+            ,maxcolumn 
+        
+            ,A 
+            ,B  
+            ,C   
+            ,D   
+            ,E        
+        ) select 
+            '".$guid."'
+            ,'1'
+            ,'0'   
+            ,basic_memory__il8n('user','basic_user',1)
+            ,1      
+            ,5
+            
+            ,username
+            ,password
+            ,basic_memory__il8n(type,'basic_user__type',3)
+            ,money
+            ,group_code
+          
+		from basic_user  ".$sql_where.$sql_order." limit 1000";
+        
+        mysql_query($sql,$CONN);
+        include_once 'basic_excel.php';
+        $file = basic_excel::export($guid);
+        echo json_encode(array('path'=>$file,'state'=>1,'file'=>'download'));
+    }
+    
     /**
      * 添加一个用户,往数据库中插入一条记录
      * */
     public function insert($data=NULL,$retur='json') {
-        tools::checkPermission("120101");//TODO
         if ($data==NULL) {
             $data = json_decode($_REQUEST['json'],true);
         }
-        $il8n = tools::getLanguage(); 
+
         $CONN = tools::conn();    
         //为了防止用户误点,导致重复提交,设置 2.5 秒的服务端暂停
         sleep(2.5);
@@ -384,10 +525,52 @@ class basic_user {
     public function view(){
         $CONN = tools::conn();    
         $id = $_REQUEST['id'];
-        $res = mysql_query( "select * from basic_user where id = '".$id."' " , $CONN );
+        $sql = "
+        SELECT
+        basic_user.username,
+        basic_user.money,
+        basic_user.money2,
+        basic_user.person_name,
+        basic_user.person_cellphone,
+        basic_user.person_email,
+        basic_user.group_code,
+        basic_user.group_name,
+        basic_user.group_all,
+
+        basic_user.lastlogintime,
+        basic_user.lastlogouttime,
+        basic_user.count_actions,
+        basic_user.count_actions_period,
+        
+        basic_person.birthday,
+        basic_person.degree_school,
+        basic_person.photo,
+        basic_person.address,
+        basic_memory__il8n(gender,'basic_person__gender',3) as  gender,
+        basic_memory__il8n(ismarried,'basic_person__ismarried',3) as  ismarried,
+        basic_memory__il8n(degree,'basic_person__degree',3) as  degree,
+        basic_memory__il8n(politically,'basic_person__politically',3) as  politically,                     
+        
+        basic_user.id,
+        basic_user.`type`,
+        basic_user.id_creater,
+        basic_user.id_creater_group,
+        basic_user.code_creater_group,
+        basic_user.time_created,
+        basic_user.time_lastupdated,
+        basic_user.count_updated,
+        basic_user.`status`,
+        basic_user.remark
+                
+        FROM
+        basic_user
+        Left Join basic_person ON basic_person.id = basic_user.person_id
+        where basic_user.id = '".$id."'
+        ";
+        $res = mysql_query($sql, $CONN );
 
         $data= mysql_fetch_assoc($res);
-        
+        $data['sql'] = preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql));
         echo json_encode($data);
     }
     

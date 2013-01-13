@@ -66,16 +66,19 @@ class basic_excel {
         $sheetindex = null;
         $int2column = array_keys(self::$columns2int);
 
+        $rowindex = 1;
         while($temp = mysql_fetch_assoc($res)){
             if($sheetindex!=$temp['sheetindex']){
                 $sheetindex = $temp['sheetindex'];
         		$objPHPExcel->createSheet();
         		$objPHPExcel->setActiveSheetIndex($temp['sheetindex']);
         		$objPHPExcel->getActiveSheet()->setTitle($temp['sheetname']);
+        		$rowindex = 1;
             }  
     		for($i=0;$i<$temp['maxcolumn'];$i++){
-    		    $objPHPExcel->getActiveSheet()->setCellValue($int2column[$i].$temp['rowindex'], $temp[$int2column[$i]]);
+    		    $objPHPExcel->getActiveSheet()->setCellValue($int2column[$i].$rowindex, $temp[$int2column[$i]]);
     		}
+    		$rowindex ++;
         }
 		$objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
 		$file =  "../file/download/".date('YmdHis').".xls";
