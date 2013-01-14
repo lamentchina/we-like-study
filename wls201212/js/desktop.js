@@ -27,8 +27,8 @@ var desktop = {
 			wid = 450;
 		}
 		if(code=='10'){
-			hei = 200;
-			wid = 400;
+			hei = 180;
+			wid = 340;
 		}
 		if(code=='14'){
 			hei = 280;
@@ -146,7 +146,7 @@ var desktop = {
 		var username = getCookie("myApp_username");
 		var password = getCookie("myApp_password");
 		if(username==null){
-			basic_user.login("guest",MD5( MD5( "guest" ) +((new Date()).getHours())),"desktop.loadIcons();")
+			basic_user.login("guest",MD5( MD5( "guest" ) +((new Date()).getHours())),"desktop.loadIcons();");
 		}else{
 			basic_user.login(username,password,"desktop.loadIcons();")
 		}

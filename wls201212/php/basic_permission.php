@@ -1,8 +1,14 @@
 <?php
-
+/**
+ * 权限操作
+ * 一个用户登录系统后,他可访问的模块,可执行的操作,
+ * 要先通过 用户组,再通过 权限表 ,来获得
+ * 
+ * @version 201209
+ * @author wei1224hf
+ * */
 class basic_permission {
-    
-    
+     
     public function loadConfig($return='json') {
         $CONN = tools::conn();
         $config = array();

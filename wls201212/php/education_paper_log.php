@@ -37,13 +37,13 @@ class education_paper_log {
         $search_keys = array_keys($search);
         for($i=0;$i<count($search);$i++){
             if($search_keys[$i]=='subject' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and education_paper.subject = '".$search[$search_keys[$i]]."' ";
+                $sql_where .= " and education_paper_log.subject_code = '".$search[$search_keys[$i]]."' ";
             }
             if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and education_paper.title like '%".$search[$search_keys[$i]]."%' ";
+                $sql_where .= " and education_paper_log.paper_title like '%".$search[$search_keys[$i]]."%' ";
             }		
         }
-        $sql_order = ' order by education_paper.id desc ';
+        $sql_order = ' order by education_paper_log.id desc ';
         
         $returnData = array();
         //根据不同的用户角色,会有不同的列输出
@@ -53,20 +53,27 @@ class education_paper_log {
 
             $sql = "     
             SELECT
-    		education_paper.subject AS subjectcode,
-            education_paper.title as papertitle,
-            education_paper.id as paperid,
-            education_paper.type,
-			education_paper_log.id,
-			education_paper_log.time_created,
-			education_paper_log.mycent as score_subjective,
-			education_paper_log.myCentByTeacher as score_objective,
-			education_paper_log.time_created,
-			education_paper_log.status
-			
+            education_paper_log.paper_title,
+            education_paper_log.mycent,
+            education_paper_log.cent,
+            education_paper_log.count_right,
+            education_paper_log.count_wrong,
+            education_paper_log.count_giveup,
+            education_paper_log.id,
+            education_paper_log.paper_id,
+            education_paper_log.`type`,
+            education_paper_log.subject_name,
+            education_paper_log.subject_code,
+            education_paper_log.teacher_id,
+            education_paper_log.teacher_name,
+            education_paper_log.teacher_code,
+            education_paper_log.student_id,
+            education_paper_log.student_name,
+            education_paper_log.student_code,
+            education_paper_log.time_created
             FROM
             education_paper_log
-            left Join education_paper ON education_paper_log.id_paper = education_paper.id 
+            
     		".$sql_where."
     		".$sql_order."
     		limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -75,15 +82,14 @@ class education_paper_log {
             $data = array();
             while($temp = mysql_fetch_assoc($res)){
                 //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
-    			$temp['papertitle'] = tools::cutString($temp['papertitle'],10);
+    			$temp['paper_title'] = tools::cutString($temp['paper_title'],10);
     			$temp['time_created'] = substr( $temp['time_created'],0,10);
                 $data[] = $temp;
             }
             
             $sql_total = "select count(*) as total 
             FROM
-            education_paper_log
-            left Join education_paper ON education_paper_log.id_paper = education_paper.id 
+            education_paper_log            
     		".$sql_where;
             
             $res = mysql_query($sql_total,$conn);
@@ -92,28 +98,30 @@ class education_paper_log {
         
         if($_REQUEST['usertype']=='3'){ 
             //教师角色
-            if(tools::checkPermission('150102',$_REQUEST['username'],$_REQUEST['session'])){
-                $sql_where .= " and education_paper.id_creater_group = '".$_REQUEST['usergroup']."' ";
-            }else{                
-                $sql_where .= " and education_paper.id_creater = '".$_REQUEST['userid']."' ";
-            }
+            $sql_where .= " and education_paper_log.teacher_id = '".$_REQUEST['userid']."' ";
 
             $sql = "            
             SELECT
-    		education_paper.subject AS subjectcode,
-    		education_subject.name AS subjectname,
-    		education_paper.count_questions,
-    		education_paper.title,
-    		education_paper.cost,
-    		education_paper.author,
-    		education_paper.cent,
-    		education_paper.id,
-    		education_paper.id_creater,
-    		education_paper.status,    		
-    		education_paper.time_created
-    		FROM
-    		education_paper
-    		left Join education_subject ON education_paper.subject = education_subject.code    		
+            education_paper_log.paper_title,
+            education_paper_log.mycent,
+            education_paper_log.cent,
+            education_paper_log.count_right,
+            education_paper_log.count_wrong,
+            education_paper_log.count_giveup,
+            education_paper_log.id,
+            education_paper_log.paper_id,
+            education_paper_log.`type`,
+            education_paper_log.subject_name,
+            education_paper_log.subject_code,
+            education_paper_log.teacher_id,
+            education_paper_log.teacher_name,
+            education_paper_log.teacher_code,
+            education_paper_log.student_id,
+            education_paper_log.student_name,
+            education_paper_log.student_code,
+            education_paper_log.time_created
+            FROM
+            education_paper_log  		
     		".$sql_where."
     		".$sql_order."
 			limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -122,18 +130,14 @@ class education_paper_log {
             $data = array();
             while($temp = mysql_fetch_assoc($res)){
                 //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
-    			$temp['papertitle'] = tools::cutString($temp['papertitle'],10);
+    			$temp['paper_title'] = tools::cutString($temp['paper_title'],10);
     			$temp['time_created'] = substr( $temp['time_created'],0,10);
                 $data[] = $temp;
             }
             
-            $sql_total = "select count(*) as total from
-    		education_paper
-    		left Join education_subject ON education_paper.subject = education_subject.code ".$sql_where;
-            
+            $sql_total = "select count(*) as total from education_paper ".$sql_where;
             $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-                      
+            $total = mysql_fetch_assoc($res);     
         }
         
         $returnData = array(
@@ -144,7 +148,7 @@ class education_paper_log {
         if ($return=='array') {
             return $returnData;
         }
-        
+        header("Content-type:text/json");
         echo json_encode($returnData);
     }     
     
@@ -189,6 +193,7 @@ class education_paper_log {
 		$config['department'] = $data;			
 
 		if($return=='json'){
+		    header("Content-type:text/json");
 		    echo json_encode($config);
 		}else{
 		    return $config;
@@ -196,70 +201,80 @@ class education_paper_log {
     } 	
     
     public function view(){
-        
-        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+        tools::checkPermission("1590");//TODO
+        $returnData = array();
+        $id = $_REQUEST['id'];
         $CONN = tools::conn();
-        $jsonData = array();
 
-        $sql = "select 
-        education_paper_log.mycent
-        ,education_paper_log.status
-        ,education_paper_log.myCentByTeacher
-        ,education_paper_log.count_right
-        ,education_paper_log.count_wrong
-        ,education_paper_log.count_giveup
-        ,education_paper_log.time_created
-        
-        ,education_paper.subject
-        ,education_paper.title
-        ,education_paper.cost
-        ,education_paper.count_questions
-        
-        from education_paper_log left join education_paper on education_paper_log.id_paper = education_paper.id 
-        where education_paper_log.id =".$_REQUEST['id'];
-        //echo $sql;
+        $sql = " 
+        SELECT
+        education_paper_log.paper_title,
+        education_paper_log.mycent,
+        education_paper_log.cent,
+        education_paper_log.count_right,
+        education_paper_log.count_wrong,
+        education_paper_log.count_giveup,
+        education_paper_log.id,
+        education_paper_log.paper_id,
+        education_paper_log.`type`,
+        education_paper_log.subject_name,
+        education_paper_log.subject_code,
+        education_paper_log.teacher_id,
+        education_paper_log.teacher_name,
+        education_paper_log.teacher_code,
+        education_paper_log.student_id,
+        education_paper_log.student_name,
+        education_paper_log.student_code,
+        education_paper_log.time_created
+        FROM
+        education_paper_log        
+        where id = '".$id."'";
+        //echo $sql;exit();
         $res = mysql_query($sql,$CONN);
-		$jsonData['paper'] = mysql_fetch_assoc($res);
-		
-		$sql = "
-		select
-		
-		 education_question_log.myanswer		 
-		,education_question.title
-		,education_question.type
-		,education_question.answer
-		,4 as optionlength
-		,education_question.option1
-		,education_question.option2
-		,education_question.option3
-		,education_question.option4
-		,education_question.option5
-		,education_question.option6
-		,education_question.option7		
-		,education_question.description
-		,education_question.cent
-		,education_question.layout
-		,education_question.id_parent
-		,education_question.path_listen
-		,education_question.path_image
-		,education_question.id_parent
-		,education_question.id
-		
-		from
-		education_question_log left join education_question on education_question_log.id_question = education_question.id
-		where education_question_log.id_paper_log = ".$_REQUEST['id']."
-		order by education_question_log.id_question
-		";
-		
+        $data = mysql_fetch_assoc($res);
+        $returnData['paperlog'] = $data;
+        
+        //输出试卷的正确答案跟解题思路
+        $sql = "
+        SELECT
+        education_question_log.id_paper,
+        education_question_log.id_paper_log,
+        education_question_log.id_question,
+        education_question_log.myanswer,
+        education_question.id,
+        education_question.title,
+        education_question.answer,
+        education_question.optionlength,
+        education_question.option1,
+        education_question.option2,
+        education_question.option3,
+        education_question.option4,
+        education_question.option5,
+        education_question.option6,
+        education_question.option7,
+        education_question.description,
+        education_question.layout,
+        education_question.cent,
+        education_question.id_parent,
+        education_question.path_listen,
+        education_question.path_image,
+        education_question.`type`
+        FROM
+        education_question_log
+        Left Join education_question ON education_question_log.id_question = education_question.id
+
+            where education_question_log.id_paper_log = '".$id."'
+            order by education_question.id ";
+                  
         $res = mysql_query($sql,$CONN);
         
         $data = array();
         while($temp = mysql_fetch_assoc($res)){
             $data[] = $temp;
         }
-        
-        $jsonData['question'] = $data;
-        
-        echo json_encode($jsonData);
+        $returnData['question'] = $data;
+        header("Content-type:text/json");
+        $returnData['sql'] = preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql));
+        echo json_encode($returnData);
     }
 }

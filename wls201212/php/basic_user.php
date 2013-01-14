@@ -309,7 +309,7 @@ class basic_user {
         $CONN = tools::conn();
         $config = array();
         
-        $sql = "select code,value from basic_parameter where reference = 'basic_user__type' order by code";
+        $sql = "select code,value from basic_parameter where reference = 'basic_user__type' and code not in ('1','9')  order by code";
         $res = mysql_query($sql,$CONN);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
@@ -457,69 +457,22 @@ class basic_user {
      * */
     public function insert($data=NULL,$retur='json') {
         if ($data==NULL) {
-            $data = json_decode($_REQUEST['json'],true);
+            $data = json_decode($_REQUEST['data'],true);
         }
-
-        $CONN = tools::conn();    
-        //为了防止用户误点,导致重复提交,设置 2.5 秒的服务端暂停
-        sleep(2.5);
         
-        //检查用户名是否已存在
-        $sql = "select * from basic_user where username = '".$data['username']."';";
-        $res = mysql_query($sql,$CONN);
-        $temp = mysql_fetch_assoc($res);
-        if($temp===false){
-            //1 插入一条个人信息
-            $sql = "insert into basic_person (cellphone,email) values ('".$data['cellphone']."','".$data['email']."');";
-            mysql_query($sql,$CONN);        
-            $data['id_person'] = mysql_insert_id($CONN);
-            $data['password'] = md5($data['password']);
-            
-            //2 插入一条用户信息
-            $keys = array_keys($data);
-            $keys = implode(",",$keys);
-            $values = array_values($data);
-            $values = implode("','",$values);    
-            $sql2 = "insert into basic_user (".$keys.") values ('".$values."')";
-            mysql_query($sql2,$CONN);  
-            $id_user = mysql_insert_id($CONN);
-            
-            //3 根据用户类型,再插 扩展用户类型
-            $id_extend = 0;
-            if($data['type']=='2'){
-                //学生
-                $sql3 = "insert into education_student (id_user,id_person,code) values ('".$id_user."','".$data['id_person']."','000000') ";
-                mysql_query($sql3);
-                $id_extend = mysql_insert_id($CONN);                
-            }else if($data['type']=='3'){
-                //教师
-                $sql3 = "insert into education_teacher (id_user,id_person,code) values ('".$id_user."','".$data['id_person']."','000000') ";
-                mysql_query($sql3);
-                $id_extend = mysql_insert_id($CONN);                
-            }
-            
-            $return = array(
-                'state'=>'1',
-                'msg'=>'done',
-                'data'=>array(
-                    'id_user'=>$id_user,
-                    'id_person'=>$data['id_person'],
-                    'id_extend'=>$id_extend
-                )
-            );
-            if($retur=='json'){
-                echo json_encode($return);
-            }else if($retur=='array'){
-                return $return;
-            }
-        }else{
-            $return = array('state'=>'0','msg'=>'username already existed');
-            if($retur=='json'){
-                echo json_encode($return);
-            }else if($retur=='array'){
-                return $return;
-            }
-        }
+        $CONN = tools::conn();    
+        mysql_query("call basic_user__insert(
+        	'".$data['username']."'
+        	,'".$data['password']."'
+        	,'".$data['type']."'
+        	,'".$data['cellphone']."'
+        	,'".$data['email']."'
+        	,@state,@msg)",$CONN);
+        $res = mysql_query("select @state as state, @msg as msg",$CONN);
+        $data = mysql_fetch_assoc($res);
+        
+        sleep(1.5);
+        echo json_encode($data);
     }
     
     public function view(){

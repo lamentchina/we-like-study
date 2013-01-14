@@ -36,6 +36,7 @@ class basic_group_2_user {
 				$data[count($data)-1]['children'][count($data[count($data)-1]['children'])-1]['children'][] = $temp;
 			}
 		}
+		header("Content-type:text/json");
 		echo json_encode($data);
 	}
 	

@@ -28,7 +28,7 @@ var question_choice = function(){
 			for (var i = 0; i < parseInt(this.optionLength); i++) {
 				var optionStr = "<td width='"+parseInt(100/this.optionLength)+"%' onclick=\"  $('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" 
 									+ String.fromCharCode(i + 65) // A B C D ...
-									+ ":&nbsp;<input type='radio' "
+									+ ":&nbsp;<input type='radio' id='w_qs_" + this.id +'_'+ String.fromCharCode(i + 65) + "' "
 									+ " onclick='question_done("+this.id+")' " //选项点击之后,改变颜色,并设置 选择答案
 									+ " name='w_qs_" + this.id + "' value='" + String.fromCharCode(i + 65) + "' />&nbsp;" 
 									+ this.options[i]+"</td>";
@@ -46,7 +46,7 @@ var question_choice = function(){
 			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
 			
 			for (var i = 0; i < parseInt(this.optionLength); i++) {
-				var str = "<div onclick=\"  $('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
+				var str = "<div onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
 						+ ":&nbsp;<input type='radio' "
 						+ " onclick='question_done("+this.id+")' name='w_qs_" //选项点击之后,改变颜色,并设置 选择答案
 						+ this.id + "' value='"
@@ -118,8 +118,9 @@ var question_choice = function(){
 	this.setMyAnswer = function() {
 		var myAnswer = this.myAnswer;
 		if (myAnswer != 'I_DONT_KNOW') {
-			var c = $("input[name=w_qs_" + this.id + ",value='"+myAnswer+"']");
-			c.checked = true;
+			//var c = $("input[name=w_qs_" + this.id + "][value='"+myAnswer+"']");
+			var c = $("#w_qs_"+this.id+"_"+myAnswer);
+			c.attr("checked","checked");
 		}
 	}	
 }

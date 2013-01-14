@@ -9,11 +9,11 @@ var question_check = function(){
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id + "'></div>");
 		$("#w_qs_" + this.id).append("<div class='w_qw_title'>" + this.index + "&nbsp;<span class='w_qw_tool'></span>"
 				+ this.title + "</div>");
-		$("#w_qs_" + this.id).append("<div class='w_qw_options'></div>");
-		$(".w_qw_options", "#w_qs_" + this.id).append("<span><input type='radio' onclick='question_done("+this.id+")' name='w_qs_" 
+		$("#w_qs_" + this.id).append("<div class='w_qw_options' style='width:100%;height:17px;' ></div>");
+		$(".w_qw_options", "#w_qs_" + this.id).append("<span style='display:block;float:left;width:50%' onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" ><input type='radio' name='w_qs_" 
 						+ this.id + "' value='A' />&nbsp;&nbsp;对&nbsp;&nbsp;</span>");
 		$(".w_qw_options", "#w_qs_" + this.id)
-				.append("<span><input type='radio' onclick='question_done("+this.id+")' name='w_qs_"
+				.append("<span style='display:block;float:left;width:50%' onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" ><input type='radio'  name='w_qs_"
 						+ this.id + "' value='B' />&nbsp;&nbsp;错&nbsp;&nbsp;</span>");
 	},	
 	

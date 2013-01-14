@@ -78,66 +78,33 @@ var education_paper_log = {
     	var gridColmuns = [
     	   [//管理员列
     	   
-    	   ]
-           ,[//教师列
-   	         { display: top.il8n.education_paper_log.paperid, name: 'paperid',hide:true }
-   	        ,{ display: top.il8n.education_paper_log.id, name: 'id',hide:true }
-   	        ,{ display: top.il8n.education_paper_log.studentname, name: 'studentname' }
-   	        ,{ display: top.il8n.education_paper_log.studentcode, name: 'studentcode',hide:true }
-   	        ,{ display: top.il8n.education_paper_log.studentclass, name: 'studentclass' }
-   	        ,{ display: top.il8n.education_paper_log.papertitle, name: 'papertitle' }
-   	        ,{ display: top.il8n.education_paper_log.time_created, name: 'time_created',hide:true }   	     
-	        ,{ display: top.il8n.education_paper_log.type, name: 'type', render: function(a,b){
-	        	for(var i=0; i<education_paper_log.config.type.length; i++){
-					if(education_paper_log.config.type[i].code == a.type){
-						return education_paper_log.config.type[i].value;
-					}
-				}
-			} }
-	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject', render: function(a,b){
-	        	for(var i=0; i<education_paper_log.config.subject.length; i++){
-					if(education_paper_log.config.subject[i].code == a.subjectcode){
-						return education_paper_log.config.subject[i].value;
-					}
-				}
-			} } 	
-	        ,{ display: top.il8n.education_paper_log.status, name: 'status', render: function(a,b){
-	        	for(var i=0; i<education_paper_log.config.status.length; i++){
-					if(education_paper_log.config.status[i].code == a.status){
-						return education_paper_log.config.status[i].value;
-					}
-				}
-			} }    	        
-           ]
-           ,[//学生列
-   	         { display: top.il8n.education_paper_log.paperid, name: 'paperid',hide:true }
-	        ,{ display: top.il8n.education_paper_log.id, name: 'id',hide:true }
-	        ,{ display: top.il8n.education_paper_log.score_subjective, name: 'score_subjective' }
-	        ,{ display: top.il8n.education_paper_log.score_objective, name: 'score_objective',hide:true }
-	        ,{ display: top.il8n.education_paper_log.time_created, name: 'time_created' }  
-	        ,{ display: top.il8n.education_paper_log.papertitle, name: 'papertitle' }	        
-	        ,{ display: top.il8n.education_paper_log.type, name: 'type', render: function(a,b){
-	        	for(var i=0; i<education_paper_log.config.type.length; i++){
-					if(education_paper_log.config.type[i].code == a.type){
-						return education_paper_log.config.type[i].value;
-					}
-				}
-			} }
-	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject', render: function(a,b){
-	        	for(var i=0; i<education_paper_log.config.subject.length; i++){
-					if(education_paper_log.config.subject[i].code == a.subjectcode){
-						return education_paper_log.config.subject[i].value;
-					}
-				}
-			} } 	
-	        ,{ display: top.il8n.education_paper_log.status, name: 'status', render: function(a,b){
-	        	for(var i=0; i<education_paper_log.config.status.length; i++){
-					if(education_paper_log.config.status[i].code == a.status){
-						return education_paper_log.config.status[i].value;
-					}
-				}
-			} } 
-           ]
+    	   ],[//学生列
+  	         { display: top.il8n.title, name: 'paper_title', align: 'left', width: 140, minWidth: 60 }
+    	    ,{ display: top.il8n.education_paper_log.subject, name: 'subject_name',isSort : false }
+  	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code',isSort : false, hide: true }
+  	        ,{ display: top.il8n.education_paper_log.cent, name: 'cent' ,width: 50 ,isSort : false}
+  	        ,{ display: top.il8n.education_paper_log.mycent, name: 'mycent' ,width: 50}
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_name' }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_name' }
+   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_code',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_id',isSort : false, hide: true }
+  	        ,{ display: top.il8n.time_created, name: 'time_created', width: 80 } 
+           ],[//教师列
+   	         { display: top.il8n.title, name: 'paper_title', align: 'left', width: 140, minWidth: 60 }
+    	    ,{ display: top.il8n.education_paper_log.subject, name: 'subject_name',isSort : false }
+  	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code',isSort : false, hide: true }
+  	        ,{ display: top.il8n.education_paper_log.cent, name: 'cent' ,width: 50 ,isSort : false}
+  	        ,{ display: top.il8n.education_paper_log.cost, name: 'cost' ,width: 50}
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_name' }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_name' }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_code',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_id',isSort : false, hide: true }
+  	        ,{ display: top.il8n.time_created, name: 'time_created', width: 80 }  
+            ]
         ];
 		
         var config = {
@@ -161,16 +128,17 @@ var education_paper_log = {
         	config.columns = gridColmuns[0];
         }
         if(top.basic_user.loginData.type==='2'){
-        	config.columns = gridColmuns[2];
+        	config.columns = gridColmuns[1];
         }
         if(top.basic_user.loginData.type==='3'){
-        	config.columns = gridColmuns[1];
+        	config.columns = gridColmuns[2];
         }        
         
 		var permission = [];
 		for(var i=0;i<top.basic_user.permission.length;i++){
 			if(top.basic_user.permission[i].code=='19'){
 				permission = top.basic_user.permission[i].children;
+				break;
 			}
 		}
 		
@@ -188,6 +156,7 @@ var education_paper_log = {
                     text: permission[i].name , img:permission[i].icon , click : function(){
 
                         var id = $.ligerui.get('education_paper_log_grid').getSelected().id;
+                        var id_paper = $.ligerui.get('education_paper_log_grid').getSelected().paper_id;
                         if(top.$.ligerui.get("win_paper_log_"+id)){
                             top.$.ligerui.get("win_paper_log_"+id).show();
                             return;
@@ -196,7 +165,7 @@ var education_paper_log = {
                             isHidden:false,
                             id : "win_paper_log_"+id , height:  550, width: 600,
                             title: "做题日志"+id,
-                            url: "education_paper_log__view.html?id="+id,  
+                            url: "education_paper_log__view.html?id="+id+"&id_paper="+id_paper,
                             showMax: true, showToggle: true, showMin: true, isResize: true,
                             modal: false, 
                             slide: false
@@ -221,7 +190,6 @@ var education_paper_log = {
 
 	
 	,searchOptions : {}
-	
 	,search : function(){
 		var form_epl_search;
 		if($.ligerui.get("form_epl_search")){
@@ -268,39 +236,6 @@ var education_paper_log = {
 				]
 			});
 		}
-	}
-	
-	,upload : function(){
-		var dialog;
-		if($.ligerui.get("education_paper_log__grid_upload_d")){
-			dialog = $.ligerui.get("education_paper_log__grid_upload_d");
-			dialog.show();
-		}else{
-
-			$(document.body).append( $("<div id='education_paper_log__grid_file'></div>"));
-			var uploader = new qq.FileUploader({
-				element: document.getElementById('education_paper_log__grid_file'),
-				action: '../php/myApp.php?class=education_paper_log&function=import',
-				allowedExtensions: ["xls"],
-				params: {username: top.basic_user.username,
-					session: MD5( top.basic_user.session +((new Date()).getHours()))},
-				downloadExampleFile : "../file/download/education_paper_log.xls",
-				debug: true,
-				onComplete: function(id, fileName, responseJSON){
-					education_paper_log.grid.loadData();
-				}
-	        });    
-			
-			$.ligerDialog.open({
-				title: top.il8n.importFile,
-				
-				id : "education_paper_log__grid_upload_d",
-				width : 350,
-				height : 200,
-				target : $("#education_paper_log__grid_file"),
-				modal : true
-			});
-		}
 	}	
 	
 	,view: function(){
@@ -310,101 +245,124 @@ var education_paper_log = {
 };
 
 var paperlog = paper;
-paperlog.readlog = function(logid){
-	 $.ajax({
-         url :  myAppServer()+ "&class=education_paper_log&function=view&id="+logid
-        ,type : "POST"
-        ,data : {
-             username: top.basic_user.username
-            ,session: MD5( top.basic_user.session +((new Date()).getHours()))
-            ,userid: top.basic_user.loginData.id
-            ,usergroup: top.basic_user.loginData.id_group
-            ,usertype: top.basic_user.loginData.type   
-        }      
-        ,dataType: 'json'
-        ,success : function(response) {
-            var data = response.paper;                
-            paperlog.initLayout();
-
-            paperlog.cent = data.cent;
-            paperlog.count.total = data.count_questions;
-            paperlog.subjectCode = data.subject;
-            paperlog.subjectName = data.subject;
-            paperlog.title = data.title;
-            paperlog.cost = parseInt(data.cost);
-            paperlog.setPaperBrief();
-            
-            var quesData = response.question;
-            var index = 1;
-            for(var i=0;i<quesData.length;i++){
-                var question = null;
-                if(quesData[i].type==1){//单项选择题
-                    question = new question_choice();
-                    question.optionLength = quesData[i].optionlength;
-                    question.options = [];
-                    for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
-                        eval("question.options.push(quesData[i].option"+ii+")");
-                    }
-                    question.index = index;index++;
-                    question.layout = quesData[i].layout;
-                    question.title = quesData[i].title; 
-                    
-                }                    
-                else if(quesData[i].type==2){//多项选择题
-                    question = new question_multichoice();
-                    question.optionLength = quesData[i].optionlength;
-                    question.index = index;index++;
-                    question.layout = quesData[i].layout;
-                    question.title = quesData[i].title;
-                    question.options = [];
-                    for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
-                        eval("question.options.push(quesData[i].option"+ii+")");
-                    }
-                }
-                else if(quesData[i].type==3){//判断题
-                    question = new question_check();
-                    question.index = index;index++;
-                    question.layout = quesData[i].layout;
-                    question.title = quesData[i].title;
-                    question.options = [quesData[i].option1,quesData[i].option2];
-                }else if(quesData[i].type==7){//大题, 不需要题编号
-                    question = new question_big();
-                    question.title = quesData[i].title;
-                }else if(quesData[i].type==4){//填空题
-                    question = new question_blank();
-                    if(quesData[i].cent!=0){//填空题题干不需要题编号
-                        question.index = index;
-                        index++;
-                    }
-                    question.title = quesData[i].title;
-                }else if(quesData[i].type==5){//组合题, 不需要题编号
-                    question = new question_mixed();
-                    question.title = quesData[i].title;
-                }else{
-                    continue;
-                }
-                //console.debug(index+"     "+quesData[i].type);
-                question.type = quesData[i].type;
-                question.answer = quesData[i].answer;
-                question.myAnswer = quesData[i].myanswer;
-                question.description = quesData[i].description;
-                question.path_listen = quesData[i].path_listen;
-                question.cent = quesData[i].cent;
-                question.id = quesData[i].id;
-                question.id_parent = quesData[i].id_parent;
-                question.paper = paper;
-                paperlog.questions.push(question);
-            }
-            paperlog.initQuestions();
-            
-            for(var i=0;i < paperlog.questions.length;i++){
-            	paperlog.questions[i].setMyAnswer();
-                paperlog.questions[i].showDescription();
-            }
-
-        }
-        ,error : function(){
-            $.ligerDialog.error('网络通信失败');
-        }
-    });
+paperlog.initLayout=function() {
+    $(document.body).append(''+
+    '<div id="layout1">         '+   
+    '    <div position="left" title="导航">    '+
+    '        <table><tr><td>                    '+
+    '        <div id="navigation" ></div>    '+
+    '        </td></tr>                        '+
+    '        <tr><td>                        '+
+    '        <br/>                            '+
+    '        <div id="paperBrief" style=" background-color: #FAFAFA; border: 1px solid #DDDDDD;" ></div>'+
+    '        </td></tr>                        '+
+    '        <tr><td>                        '+
+    '        <br/>                            '+
+    '        </td></tr>                        '+
+    '        </table>                        '+
+    '    </div>                                '+
+    '    <div position="center" title="标题" ><div type="submit" id="wls_quiz_main" class="w_q_container"></div></div> '+
+    '</div> '+
+    '');
+    $("#layout1").ligerLayout(); 
+}  
+paperlog.readLog = function(afterAjax){
+	var id = getParameter("id", window.location.toString() );
+	var paperObj = this;
+	$.ajax({
+        url : myAppServer() + "&class=education_paper_log&function=view&id="+id
+       ,type : "POST"
+       ,data : {
+            username: top.basic_user.username
+           ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+           ,search: $.ligerui.toJSON( basic_user.searchOptions )
+           ,user_id: top.basic_user.loginData.id
+           ,user_type: top.basic_user.loginData.type    
+           ,group_id: top.basic_user.loginData.group_id
+       }      
+       ,dataType: 'json'
+       ,success : function(response) {
+    	   var data = response.paperlog;
+		   paperlog.cent = data.cent;
+		   paperlog.title = data.title;
+		   paperlog.id_paper = data.paper_id;
+		   paperlog.brief = {
+		       subject_name: data.subject_name
+		       ,cent: data.cent
+		   };
+		   
+		   var quesData = response.question;
+		   var index = 1;
+           for(var i=0;i<quesData.length;i++){
+               var question = null;
+               if(quesData[i].type==1){//单项选择题
+                   question = new question_choice();
+                   question.optionLength = quesData[i].optionlength;
+                   question.options = [];
+                   for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
+                       eval("question.options.push(quesData[i].option"+ii+")");
+                   }
+                   question.index = index;index++;
+                   question.layout = quesData[i].layout;
+                   question.title = quesData[i].title;                 
+               }
+               else if(quesData[i].type==2){//多项选择题
+                   question = new question_multichoice();
+                   question.optionLength = quesData[i].optionlength;
+                   question.index = index;index++;
+                   question.layout = quesData[i].layout;
+                   question.title = quesData[i].title;
+                   question.options = [];
+                   for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
+                       eval("question.options.push(quesData[i].option"+ii+")");
+                   }
+               }
+               else if(quesData[i].type==3){//判断题
+                   question = new question_check();
+                   question.index = index;index++;
+                   question.layout = quesData[i].layout;
+                   question.title = quesData[i].title;
+               }else if(quesData[i].type==7){//大题, 不需要题编号
+                   question = new question_big();
+                   question.title = quesData[i].title;
+               }else if(quesData[i].type==4){//填空题
+                   question = new question_blank();
+                   if(quesData[i].cent!=0){//填空题题干不需要题编号
+                       question.index = index;
+                       index++;
+                   }
+                   question.title = quesData[i].title;
+               }else if(quesData[i].type==5){//组合题, 不需要题编号
+                   question = new question_mixed();
+                   question.title = quesData[i].title;
+               }else{
+                   continue;
+               }
+               //console.debug(index+"     "+quesData[i].type);
+               question.type = quesData[i].type;
+               question.path_listen = quesData[i].path_listen;
+               question.cent = quesData[i].cent;
+               question.id = quesData[i].id;
+               question.id_parent = quesData[i].id_parent;
+               question.paper = paperlog;
+               question.answer = quesData[i].answer;         
+               question.myAnswer = quesData[i].myanswer;          
+               question.description  = quesData[i].description;                  
+               paperlog.questions.push(question);
+           }
+		   
+           paperlog.initLayout();
+           paperlog.initQuestions();
+           paperlog.initNavigation();
+           paperlog.initBrief();
+           paperlog.showDescription();
+           for(var i=0;i<paperlog.questions.length;i++){
+        	   var que = paperlog.questions[i];
+        	   que.setMyAnswer();
+           }
+       }
+       ,error : function(){
+           $.ligerDialog.error('网络通信失败');
+       }
+   });
 }

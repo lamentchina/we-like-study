@@ -15,23 +15,52 @@ var question_multichoice = function(){
 	 */
 	this.initDom = function() {
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id + "'></div>");
-		
-		$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
-				+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
-				+ this.title + "</div>");
-		$("#w_qs_" + this.id)
-				.append("<span class='w_qw_options'></span>");
-		for (var i = 0; i < parseInt(this.optionLength); i++) {
-			var str = "<div>" + String.fromCharCode(i + 65)
-					+ ":&nbsp;<input type='checkbox' onclick='question_done("+this.id+")' name='w_qs_"
-					+ this.id + "_" + i + "' value='"
-					+ String.fromCharCode(i + 65) + "' />&nbsp;"
-					+ this.options[i];
-			if (i != parseInt(this.optionLength) - 1) {
-				str += "</div>";
-			}
+
+		if(this.layout == '1'){
+			$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
+					+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
+					+ this.title + "</div>");
+			
+			//为了确保每个选项都是等长,使用 TABLE 标签控制
+			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
+			var str = "<table width='90%'><tr>";
+			
+			for (var i = 0; i < parseInt(this.optionLength); i++) {
+				var optionStr = "<td width='"+parseInt(100/this.optionLength)+"%' onclick=\"  $('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" 
+									+ String.fromCharCode(i + 65) // A B C D ...
+									+ ":&nbsp;<input type='checkbox' name='w_qs_"
+				+ this.id + "_" + i + "' value='"
+				+ String.fromCharCode(i + 65) + "' />&nbsp;" 
+									+ this.options[i]+"</td>";
+									
+				str += optionStr;
+			}					
+			str += "</tr></table>";
+			
 			$(".w_qw_options", "#w_qs_" + this.id).append(str);
-		}
+			
+		}else{
+			//默认题目是纵向排列的,就用DIV标签
+			console.debug(this.optionLength);
+			$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
+					+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
+					+ this.title + "</div>");
+			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
+			
+			for (var i = 0; i < parseInt(this.optionLength); i++) {
+				var str = "<div onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
+						+ ":&nbsp;<input type='checkbox' name='w_qs_"
+				+ this.id + "_" + i + "' value='"
+				+ String.fromCharCode(i + 65) + "' />&nbsp;"
+						+ this.options[i];
+				if (i != parseInt(this.optionLength) - 1) {
+					str += "</div>";
+				}
+				$(".w_qw_options", "#w_qs_" + this.id).append(str);
+			}
+			
+		}			
+
 	};	
 	
 	this.getMyAnswer = function(){

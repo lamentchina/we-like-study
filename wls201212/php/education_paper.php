@@ -347,27 +347,12 @@ class education_paper {
      * 然后计算有没有做错,然后返回正确答案跟解题思路
      */
     public function submit(){
-        if(!tools::checkPermission("1590"))tools::error(array('access wrong'));//TODO
-        //判断前端是否传递了足够的参数
-        if( (!isset($_REQUEST['json'])) || (!isset($_REQUEST['id'])) || (!isset($_REQUEST['user_id'])) )die('wrong post');
         $CONN = tools::conn();
         
-        $id_paperlog = tools::getId("education_paper_log");
-        //先生成一份试卷做题日志,并得到日志编号
-        $sql = "insert into education_paper_log (
-            	paper_id
-            	,id_creater
-            	,id_creater_group
-            	,code_creater_group
-            	,id
-        	) values (
-            	'".$_REQUEST['id']."'
-            	,'".$_REQUEST['user_id']."'
-            	,'".$_REQUEST['group_id']."'
-            	,'".$_REQUEST['group_code']."'
-            	,'".$id_paperlog."'
-        	);";
-        mysql_query($sql,$CONN);
+        mysql_query("call education_paper__submit(".$_REQUEST['id'].",'".$_REQUEST['user_id']."',@state,@msg,@paperlogid)",$CONN);
+        $res = mysql_query("select @state,@msg,@paperlogid",$CONN);
+        $data = mysql_fetch_assoc($res);
+        $id_paperlog = $data['@paperlogid'];
         
         //从前端POST过来的JSON数据中,解析出学生提交的答案
         $arr = json_decode($_REQUEST['json'],true);
@@ -383,7 +368,7 @@ class education_paper {
         ,id
         ) values ";
     
-        for($i=1;$i<count($arr);$i++){
+        for($i=0;$i<count($arr);$i++){
             $sql .= " (
             '".$arr[$i]['id']."'
             ,'".$arr[$i]['myanswer']."'
@@ -438,6 +423,7 @@ class education_paper {
         while($temp = mysql_fetch_assoc($res)){
             $data[] = $temp;
         }
+        header("Content-type:text/json"); 
         echo json_encode(array(
             'questions'=>$data
             ,'paper'=>$paper
