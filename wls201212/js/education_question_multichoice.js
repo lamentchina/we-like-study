@@ -7,7 +7,7 @@
  * */
 var question_multichoice = function(){
 
-	this.optionLength = 4; //单项选择题中的备选的答案个数,默认为 4,就是 A B C D四个选项
+	this.optionlength = 4; //单项选择题中的备选的答案个数,默认为 4,就是 A B C D四个选项
 	this.options = [];     //选项的具体内容,一个包含一堆字符串的数组,可能会有一个空元素(因此需要 opentionLength 字段描述真实长度)
 	
 	/**
@@ -25,8 +25,8 @@ var question_multichoice = function(){
 			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
 			var str = "<table width='90%'><tr>";
 			
-			for (var i = 0; i < parseInt(this.optionLength); i++) {
-				var optionStr = "<td width='"+parseInt(100/this.optionLength)+"%' onclick=\"  $('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" 
+			for (var i = 0; i < parseInt(this.optionlength); i++) {
+				var optionStr = "<td width='"+parseInt(100/this.optionlength)+"%' onclick=\"$('input:eq(0)',$(this)).attr('checked',(-1)*($('input:eq(0)',$(this)).attr('checked')-1));question_done("+this.id+"); \" >" 
 									+ String.fromCharCode(i + 65) // A B C D ...
 									+ ":&nbsp;<input type='checkbox' name='w_qs_"
 				+ this.id + "_" + i + "' value='"
@@ -41,26 +41,24 @@ var question_multichoice = function(){
 			
 		}else{
 			//默认题目是纵向排列的,就用DIV标签
-			console.debug(this.optionLength);
+			console.debug(this.optionlength);
 			$("#w_qs_" + this.id).append("<div class='w_qw_title'>"
 					+ this.index + "&nbsp;<span class='w_qw_tool'></span>"
 					+ this.title + "</div>");
 			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
 			
-			for (var i = 0; i < parseInt(this.optionLength); i++) {
-				var str = "<div onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
+			for (var i = 0; i < parseInt(this.optionlength); i++) {
+				var str = "<div onclick=\"$('input:eq(0)',$(this)).attr('checked',(-1)*($('input:eq(0)',$(this)).attr('checked')-1));question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
 						+ ":&nbsp;<input type='checkbox' name='w_qs_"
 				+ this.id + "_" + i + "' value='"
 				+ String.fromCharCode(i + 65) + "' />&nbsp;"
 						+ this.options[i];
-				if (i != parseInt(this.optionLength) - 1) {
+				if (i != parseInt(this.optionlength) - 1) {
 					str += "</div>";
 				}
 				$(".w_qw_options", "#w_qs_" + this.id).append(str);
 			}
-			
 		}			
-
 	};	
 	
 	this.getMyAnswer = function(){
@@ -69,7 +67,7 @@ var question_multichoice = function(){
 		
 		var answer = '';
 		var valueList = [];
-		for (var i = 0; i < this.optionLength; i++) {
+		for (var i = 0; i < this.optionlength; i++) {
 			var value = $('input[name=w_qs_' + this.id + "_" + i
 					+ ']:checked').val();
 			if (typeof(value) == 'undefined') {

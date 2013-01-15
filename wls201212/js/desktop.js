@@ -26,10 +26,14 @@ var desktop = {
 			hei = 200;
 			wid = 450;
 		}
-		if(code=='10'){
-			hei = 180;
+		if(code=='10'){//登录
+			hei = 220;
 			wid = 340;
 		}
+		if(code=='17'){
+			hei = 550;
+			wid = 690;
+		}		
 		if(code=='14'){
 			hei = 280;
 			wid = 400;

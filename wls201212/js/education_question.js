@@ -608,7 +608,7 @@ var education_question = {
 				
                 if(response.type==1){//单项选择题
                 	education_question.questionObj = new question_choice();
-                	education_question.questionObj.optionLength = response.optionlength;
+                	education_question.questionObj.optionlength = response.optionlength;
                 	education_question.questionObj.options = [];
                     for(var ii=1;ii<=parseInt(response.optionlength);ii++){
                     	eval("education_question.questionObj.options.push(response.option"+ii+")");
@@ -619,7 +619,7 @@ var education_question = {
                 }
                 else if(response.type==2){//多项选择题
                 	education_question.questionObj = new question_multichoice();
-                	education_question.questionObj.optionLength = response.optionlength;
+                	education_question.questionObj.optionlength = response.optionlength;
                 	education_question.questionObj.options = [];
                     for(var ii=1;ii<=parseInt(response.optionlength);ii++){
                     	eval("education_question.questionObj.options.push(response.option"+ii+")");

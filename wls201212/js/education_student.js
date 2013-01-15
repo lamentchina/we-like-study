@@ -6,9 +6,7 @@
  * */
 var education_student = {
 	//用于做系统的版本匹配计算,用于系统程序自检,与业务无关
-	version: '201210'
 
-	,id: 0 
 	
 	/**
 	 * 模块内部的配置文件
@@ -16,18 +14,27 @@ var education_student = {
 	 *   所有的下拉列表元素,那些都是存储在数据库的
 	 *   当前用户的类型 学生 还是教师
 	 * */
-	,config: null
+	 config: null
 	,loadConfig: function(afterAjax){
 		$.ajax({
-			url: myAppServer()+ "&class=education_student&function=loadConfig",
-			dataType: 'json',
-			success : function(response) {
+			url: myAppServer()+ "&class=education_student&function=loadConfig"
+			,dataType: 'json'
+			,data: {
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
+			}
+			,success : function(response) {
 				education_student.config = response;
 				if ( typeof(afterAjax) == "string" ){
 					eval(afterAjax);
 				}
-			},
-			error : function(){				
+			}
+			,error : function(){				
 				alert(top.il8n.disConnect);
 			}
 		});	
@@ -53,162 +60,100 @@ var education_student = {
 	 *     教师领导,
 	 *         可以对学生信息执行 增删改 操作,并且可以查询到所有
 	 * */
-	,grid : null
-	,initGrid : function(){
+	,grid: function(){
+		var gridColmuns = [
+   			 { display: top.il8n.education_student.code, name: 'code',isSort : false, width:120 }
+   			,{ display: top.il8n.education_student.name, name: 'name',isSort : false, width:100 }
+   			,{ display: top.il8n.education_student.class_code, name: 'class_code',isSort : false, hide:true }
+   			,{ display: top.il8n.education_student.class_name, name: 'class_name',isSort : false, width:100 }
+   			,{ display: top.il8n.education_student.class_teacher_name, name: 'class_teacher_name',isSort : false, width:100 }
+   			,{ display: top.il8n.education_student.class_teacher_code, name: 'class_teacher_code',isSort : false, hide:true  }
+   			,{ display: top.il8n.education_student.class_teacher_id, name: 'class_teacher_id',isSort : false, hide:true  }
+   			,{ display: top.il8n.education_student.class_manager, name: 'class_manager',isSort : false, width:50 }
+   			,{ display: top.il8n.education_student.id_user, name: 'id_user',isSort : false, hide:true  }
+   			,{ display: top.il8n.education_student.id_person, name: 'id_person',isSort : false , hide:true}
+   			,{ display: top.il8n.education_student.scorerank, name: 'scorerank',isSort : false, width:50 }
+   			,{ display: top.il8n.education_student.scorerank2, name: 'scorerank2',isSort : false, width:50 }
+   			,{ display: top.il8n.education_student.scorerank3, name: 'scorerank3',isSort : false, width:50 }
+   			
+   			,{ display: top.il8n.status, name: 'status',isSort : false, hide:true  }
+   			,{ display: top.il8n.type, name: 'type',isSort : false, hide:true  }
+   			,{ display: top.il8n.id_creater, name: 'id_creater',isSort : false, hide:true  }
+   			,{ display: top.il8n.id_creater_group, name: 'id_creater_group',isSort : false, hide:true  }
+   			,{ display: top.il8n.time_created, name: 'time_created',isSort : false, hide:true  }
+   			,{ display: top.il8n.id, name: 'id',isSort : false, hide:true  }
+
+   			];
 		var config = {
-				id: 'education_student__grid'
-				,height:'100%'
-				,columns: [
-					{ display: top.il8n.education_student.username, name: 'username' },
-					{ display: top.il8n.money, name: 'money' },
-					{ display: top.il8n.education_student.money2, name: 'money2', hide: true },
-					{ display: top.il8n.education_student.money3, name: 'money3', hide: true },
-					{ display: top.il8n.type, name: 'type', isSort: false, render: function(a,b){
-						if(a.type=="1"){
-							return top.il8n.education_student.system;
-						}else if(a.type=="2"){
-							return top.il8n.education_student.student;
-						}else if(a.type=="3"){
-							return top.il8n.education_student.teacher;
-						}else{
-							return a.type;
-						}
-					} },
-					{ display: top.il8n.status, name: 'status', width: 55 , render: function(a,b){
-						for(var i=0; i<top.il8n.education_student__status.length; i++){
-							if(top.il8n.education_student__status[i].code == a.status){
-								return top.il8n.education_student__status[i].value;
-							}
-						}
-					} },
-					{ display: top.il8n.education_student.groups, name: 'groups', width: 55, isSort : false },
-					{ display: top.il8n.education_student.email, name: 'email', width: 55 },
-					{ display: top.il8n.education_student.cellphone, name: 'cellphone', width: 55 },
-					{ display: top.il8n.education_student.creater, name: 'creater', width: 55, isSort : false },
-					{ display: top.il8n.time_created, name: 'time_created', width: 55 }
-				],  pageSize:20 ,rownumbers:true,
-				parms : {
-					username: top.education_student.username
-					,session: MD5( top.education_student.session +((new Date()).getHours()))
-					,search: $.ligerui.toJSON( education_student.searchOptions )
-				},
-				url: myAppServer() + "&class=education_student&function=getGrid",
-				method: "POST",				
-				toolbar: { items: []}
+			id: 'education_student__grid'
+			,height:'100%'
+			,columns: gridColmuns
+			,pageSize:20 
+			,rownumbers:true
+			,parms : {
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
+			}
+			,url: myAppServer() + "&class=education_student&function=grid"
+			,method: "POST"				
+			,toolbar: { items: []}
 		};
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
-		var permission = [];
-		for(var i=0;i<top.education_student.permission.length;i++){
-			if(top.education_student.permission[i].code=='12'){
-				permission = top.education_student.permission[i].children;
-				for(var j=0;j<permission.length;j++){
-					if(permission[j].code=='1202'){
-						permission = permission[j].children;
-					}
-				}				
-			}
-		}
+		var permission = top.basic_user.permission;
 		for(var i=0;i<permission.length;i++){
-			if(permission[i].code=='120201'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						education_student.search();
-					}
-				});
-			}else if(permission[i].code=='120202'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						education_student.upload();
-					}
-				});
-			}else if(permission[i].code=='120203'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						education_student.download();
-					}
-				});
-			}else if(permission[i].code=='120204'){
-				//若可以执行删除操作,则必定是多选批量删除,则列表右侧应该提供多选勾选框
-				config.checkbox = true;
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						education_student.delet();
-					}
-				});
-			}else if(permission[i].code=='120205'){
-				//拥有 修改一个用户 的权限
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						//education_student.update();
-						var selected;
-						if(education_student.grid.options.checkbox){
-							selected = education_student.grid.getSelecteds();
-							if(selected.length!=1){alert(il8n.selectOneItemOnGrid);return;}
-							selected = selected[0];
-						}else{
-							selected = education_student.grid.getSelected();
-							if(selected==null){
-								alert(il8n.GRID.noSelect);return;
-							}
-						}						
-						top.$.ligerDialog.open({ 
-							url: 'education_student__update.html?id='+selected.id+'&random='+Math.random(), height: 500,width: 400
-							,title: top.il8n.modify
-							,isHidden: false
-						});						
-					}
-				});
-			}else if(permission[i].code=='120206'){
-				//拥有 添加一个用户 的权限
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						//education_student.insert();
-						top.$.ligerDialog.open({ 
-							url: 'education_student__insert.html?random='+Math.random(), height: 500,width: 400
-							,title: top.il8n.add
-						});
-					}
-				});
-			}else if(permission[i].code=='120207'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						education_student.view();
-					}
-				});
-			}else if(permission[i].code=='120208'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						var selected;
-						if(education_student.grid.options.checkbox){
-							selected = education_student.grid.getSelecteds();
-							if(selected.length!=1){alert(il8n.selectOneItemOnGrid);return;}
-							selected = selected[0];
-						}else{
-							selected = education_student.grid.getSelected();
-							if(selected==null){
-								alert(il8n.GRID.noSelect);return;
-							}
-						}						
-						top.$.ligerDialog.open({ 
-							url: 'basic_group_2_user__tree.html?username='+selected.username+'&random='+Math.random(), height: 500,width: 400
-							,title: top.il8n.education_student.updateUserGroup
-							,isHidden: false
-						});	
-					}
-				});
+			if(permission[i].code=='17'){
+				permission = permission[i].children;
+				break;
 			}
 		}
 		
-		this.grid = $(document.body).ligerGrid(config);
+		for(var i=0;i<permission.length;i++){
+			config.toolbar.items.push({line: true });
+			config.toolbar.items.push({text: permission[i].name , img:permission[i].icon });
+			if(permission[i].code=='1701'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};			
+			if(permission[i].code=='1702'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};
+			if(permission[i].code=='1711'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};			
+			if(permission[i].code=='1712'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};
+			if(permission[i].code=='1721'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};			
+			if(permission[i].code=='1722'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};	
+			if(permission[i].code=='1723'){
+				config.toolbar.items[i].click = function(){
+					education_student.search();
+				}
+			};
+		}
+		
+		$(document.body).ligerGrid(config);
 	}
 	
 	/**
@@ -676,10 +621,9 @@ var education_student = {
 				,labelWidth: 90
 				,space: 40
 				,fields: [
-					{ display: top.il8n.education_student.username, name: "education_student__search_username", newline: false, type: "text" }
+					 { display: top.il8n.education_student.username, name: "education_student__search_username", newline: false, type: "text" }
 					,{ display: top.il8n.type, name: "education_student__search_type", newline: true, type: "select", options :{data : top.il8n.education_student__types, valueField : "code" , textField: "value" } }
 					,{ display: top.il8n.status, name: "education_student__search_status", newline: true, type: "select", options :{data : top.il8n.education_student__status, valueField : "code" , textField: "value" } }
-					,{ display: top.il8n.money, name: "education_student__search_money", newline: true, type: "number" }
 					,{ display: top.il8n.education_student.groups, name: "education_student__search_groups", newline: true, type: "text" }
 				]
 			}); 

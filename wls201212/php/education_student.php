@@ -1,67 +1,110 @@
 <?php
 class education_student {
     
-    public function getGrid(){
-        $CONN = tools::conn();
-
-        $page = 1;
-        if(isset($_REQUEST['page'])){
-            $page = $_REQUEST['page'];
+    /**
+     * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
+     * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
+     * 是不会对系统的数据做 增删改 这种 写 的操作的,都是 读取 的操作,无需转移到存储过程
+     * 
+     * return 默认是JSON,是作为 WEB前端,手机终端,接口通信 的主要模式,也有可能是XML,如果是 array 的话,就返回一个数组
+     * 输出的数据,其格式为: {Rows:[{key1:'value1',key2:'value2']},Total:12,page:1,pagesize:3,status:1,msg:'处理结果'}
+     * search 默认是NULL,将依赖 $_REQUEST['serach'] 来获取,获取到的应该是一个JSON,内有各种查询参数
+     */
+    public function grid($return='json',$search=NULL,$page=NULL,$pagesize=NULL){
+        if($return<>'array'){
+            //判断当前用户有没有 查询 权限,如果权限没有,将直接在 tools::error 中断
+            tools::checkPermission('1501',$_REQUEST['username'],$_REQUEST['session']);
+            //判断前端是否缺少必要的参数
+            if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) )tools::error('grid action wrong');
+            $search=$_REQUEST['search'];
+            $page=$_REQUEST['page'];
+            $pagesize=$_REQUEST['pagesize'];
         }
-        $pagesize = 20;
-        if(isset($_REQUEST['pagesize'])){
-            $pagesize = $_REQUEST['pagesize'];
-        }   
-
-    	$where = " where 1=1 ";
-		$orderby = " ORDER BY education_student.id ASC ";
-        //有查询条件
-		if(isset($_REQUEST['search'])){
-			$search = json_decode($_REQUEST['search'],true);
-			if(isset($search['name']) && trim($search['name'])!=''){
-				$where .= " and basic_person.name like = '%".$search['name']."%' ";
-			}			
-		}
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-			$orderby = " order by education_student.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}        
         
-        $sql = "        
+        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+        $conn = tools::conn();
+        
+        //列表查询下,查询条件必定是SQL拼凑的
+        $sql_where = " where 1=1 ";
+        //判断前端传递过来的查询条件内容,格式是否正确,因为格式必须是一个 JSON 
+        if(!tools::isjson($search))tools::error('grid,search data, wrong format');
+        $search=json_decode($search,true);
+        $search_keys = array_keys($search);
+        for($i=0;$i<count($search);$i++){
+            if($search_keys[$i]=='name' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_student.name like '%".$search[$search_keys[$i]]."%' ";
+            }	
+        }
+        $sql_order = ' order by education_student.id desc ';
+        if(isset($_REQUEST['sortname'])){
+            $sql_order = ' order by education_student.'.$_REQUEST['sortname'].' '.$_REQUEST['sortorder'];
+        }
+        
+        $sql = "
         SELECT
         education_student.code,
+        education_student.name,
         education_student.class_code,
+        education_student.class_name,
         education_student.class_teacher_name,
+        education_student.class_teacher_code,
+        education_student.class_teacher_id,
         education_student.class_manager,
-        education_student.scorerank,
-        basic_person.birthday,
-        basic_person.name,
-        education_student.id,
+        education_student.id_user,
         education_student.id_person,
-        education_student.id_user
+        education_student.scorerank,
+        education_student.scorerank2,
+        education_student.scorerank3,
+        education_student.id,
+        education_student.`status`,
+        education_student.`type`,
+        education_student.id_creater,
+        education_student.id_creater_group,
+        education_student.code_creater_group
         FROM
         education_student
-        Inner Join basic_person ON education_student.id_person = basic_person.id 
-		".$where."
-		".$orderby."        
-                 limit ".($page-1)*$pagesize.",".$pagesize." ; ";
-        $res = mysql_query($sql,$CONN);
+        ";
+        
+        $returnData = array();
+        //根据不同的用户角色,会有不同的列输出
+        if($_REQUEST['user_type']=='1'){ 
+            //管理员角色
+        }        
+        //根据不同的用户角色,会有不同的列输出
+        if($_REQUEST['user_type']=='2'){ 
+            //学生角色
+            $sql_where .= " and education_student.class_code = '".$_REQUEST['group_code']."' ";
+        }
+        
+        if($_REQUEST['user_type']=='3'){ 
+            //教师角色
+            $sql_where .= " and education_student.class_code in (select group_code from education_subject_2_group_2_teacher where teacher_code = '".$_REQUEST['user_code']."') ";
+        }
+        
+        $sql = $sql.$sql_where.$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+        $res = mysql_query($sql,$conn);
         $data = array();
         while($temp = mysql_fetch_assoc($res)){
+            //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+
             $data[] = $temp;
         }
         
-        $sql = " select count(*) as total FROM
-education_student
-Left Join basic_person ON education_teacher.id_person = basic_person.id ".$where;
-        $res = mysql_query($sql,$CONN);
-        $total = 0;
-        while($temp = mysql_fetch_assoc($res)){
-            $total = $temp['total'];
+        $sql_total = "select count(*) as total from education_student ".$sql_where;
+        $res = mysql_query($sql_total,$conn);
+        $total = mysql_fetch_assoc($res);        
+        
+        $returnData = array(
+            'Rows'=>$data,
+            'sql'=>preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql)),
+            'Total'=>$total['total']
+        );
+        if ($return=='array') {
+            return $returnData;
         }
-        sleep(0.9);
-        echo json_encode(  array("Rows"=>$data,"Total"=>$total) );
-    }
+        header("Content-type:text/json");
+        echo json_encode($returnData);
+    }   
     
     public function insert($data=NULL,$retur='json') {
         tools::checkPermission("120101");//TODO

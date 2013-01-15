@@ -7,7 +7,7 @@
  * */
 var question_choice = function(){
 	
-	this.optionLength = 4; //单项选择题中的备选的答案个数,默认为 4,就是 A B C D四个选项
+	this.optionlength = 4; //单项选择题中的备选的答案个数,默认为 4,就是 A B C D四个选项
 	this.options = [];     //选项的具体内容,一个包含一堆字符串的数组,可能会有一个空元素(因此需要 opentionLength 字段描述真实长度)
 	
 	/**
@@ -23,10 +23,10 @@ var question_choice = function(){
 					+ this.title + "</div>");
 			
 			//为了确保每个选项都是等长,使用 TABLE 标签控制
-			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
+			$("#w_qs_" + this.id).append("<span class='w_qw_options' ></span>");
 			var str = "<table width='90%'><tr>";
-			for (var i = 0; i < parseInt(this.optionLength); i++) {
-				var optionStr = "<td width='"+parseInt(100/this.optionLength)+"%' onclick=\"  $('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" 
+			for (var i = 0; i < parseInt(this.optionlength); i++) {
+				var optionStr = "<td width='"+parseInt(100/this.optionlength)+"%' onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" 
 									+ String.fromCharCode(i + 65) // A B C D ...
 									+ ":&nbsp;<input type='radio' id='w_qs_" + this.id +'_'+ String.fromCharCode(i + 65) + "' "
 									+ " onclick='question_done("+this.id+")' " //选项点击之后,改变颜色,并设置 选择答案
@@ -45,14 +45,14 @@ var question_choice = function(){
 					+ this.title + "</div>");
 			$("#w_qs_" + this.id).append("<span class='w_qw_options'></span>");
 			
-			for (var i = 0; i < parseInt(this.optionLength); i++) {
-				var str = "<div onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
+			for (var i = 0; i < parseInt(this.optionlength); i++) {
+				var str = "<div  onclick=\"$('input:eq(0)',$(this)).attr('checked','checked');question_done("+this.id+"); \" >" + String.fromCharCode(i + 65) // A B C D
 						+ ":&nbsp;<input type='radio' "
 						+ " onclick='question_done("+this.id+")' name='w_qs_" //选项点击之后,改变颜色,并设置 选择答案
 						+ this.id + "' value='"
 						+ String.fromCharCode(i + 65) + "' />&nbsp;"
 						+ this.options[i];
-				if (i != parseInt(this.optionLength) - 1) {
+				if (i != parseInt(this.optionlength) - 1) {
 					str += "</div>";
 				}
 				$(".w_qw_options", "#w_qs_" + this.id).append(str);

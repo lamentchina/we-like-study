@@ -240,12 +240,12 @@ var education_paper_log = {
 	
 	,view: function(){
 		var logid = getParameter("id", window.location.toString() );
-		paperlog.readlog(logid);
+		paper.readlog(logid);
 	}
 };
 
-var paperlog = paper;
-paperlog.initLayout=function() {
+
+paper.initLayout=function() {
     $(document.body).append(''+
     '<div id="layout1">         '+   
     '    <div position="left" title="导航">    '+
@@ -266,7 +266,7 @@ paperlog.initLayout=function() {
     '');
     $("#layout1").ligerLayout(); 
 }  
-paperlog.readLog = function(afterAjax){
+paper.readLog = function(afterAjax){
 	var id = getParameter("id", window.location.toString() );
 	var paperObj = this;
 	$.ajax({
@@ -283,32 +283,35 @@ paperlog.readLog = function(afterAjax){
        ,dataType: 'json'
        ,success : function(response) {
     	   var data = response.paperlog;
-		   paperlog.cent = data.cent;
-		   paperlog.title = data.title;
-		   paperlog.id_paper = data.paper_id;
-		   paperlog.brief = {
+		   paper.cent = data.cent;
+		   paper.title = data.title;
+		   paper.id_paper = data.paper_id;
+		   paper.brief = {
 		       subject_name: data.subject_name
 		       ,cent: data.cent
 		   };
-		   
-		   var quesData = response.question;
-		   var index = 1;
+
+           paper.initLayout();
+
+           var quesData = response.question;
+           var questions_ = [];
+           var index = 1;
            for(var i=0;i<quesData.length;i++){
                var question = null;
                if(quesData[i].type==1){//单项选择题
                    question = new question_choice();
-                   question.optionLength = quesData[i].optionlength;
+                   question.optionlength = quesData[i].optionlength;
                    question.options = [];
                    for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
                        eval("question.options.push(quesData[i].option"+ii+")");
                    }
                    question.index = index;index++;
                    question.layout = quesData[i].layout;
-                   question.title = quesData[i].title;                 
+                   question.title = quesData[i].title;                       
                }
                else if(quesData[i].type==2){//多项选择题
                    question = new question_multichoice();
-                   question.optionLength = quesData[i].optionlength;
+                   question.optionlength = quesData[i].optionlength;
                    question.index = index;index++;
                    question.layout = quesData[i].layout;
                    question.title = quesData[i].title;
@@ -322,6 +325,7 @@ paperlog.readLog = function(afterAjax){
                    question.index = index;index++;
                    question.layout = quesData[i].layout;
                    question.title = quesData[i].title;
+                   question.options = [quesData[i].option1,quesData[i].option2];
                }else if(quesData[i].type==7){//大题, 不需要题编号
                    question = new question_big();
                    question.title = quesData[i].title;
@@ -343,23 +347,21 @@ paperlog.readLog = function(afterAjax){
                question.path_listen = quesData[i].path_listen;
                question.cent = quesData[i].cent;
                question.id = quesData[i].id;
+               question.answer = quesData[i].answer;
+               question.myAnswer = quesData[i].myanswer;
                question.id_parent = quesData[i].id_parent;
-               question.paper = paperlog;
-               question.answer = quesData[i].answer;         
-               question.myAnswer = quesData[i].myanswer;          
-               question.description  = quesData[i].description;                  
-               paperlog.questions.push(question);
-           }
-		   
-           paperlog.initLayout();
-           paperlog.initQuestions();
-           paperlog.initNavigation();
-           paperlog.initBrief();
-           paperlog.showDescription();
-           for(var i=0;i<paperlog.questions.length;i++){
-        	   var que = paperlog.questions[i];
-        	   que.setMyAnswer();
-           }
+               question.paper = paper;
+               question.initDom();question.setMyAnswer();
+               questions_.push(question);
+           }    	
+           paper.questions = questions_;   	
+
+           $('#wls_quiz_main').parent().css("overflow","auto");           
+           
+           paper.initNavigation();
+           paper.initBrief();
+           paper.showDescription();
+           
        }
        ,error : function(){
            $.ligerDialog.error('网络通信失败');

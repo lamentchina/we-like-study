@@ -691,26 +691,25 @@ var paper = {
      *   右边部分是卷子的题目浏览
      * */
     ,initLayout : function() {
-        $(document.body).append(''+
-        '<div id="layout1">         '+   
-        '    <div position="left" title="导航">    '+
-        '        <table><tr><td>                    '+
-        '        <div id="navigation" ></div>    '+
-        '        </td></tr>                        '+
-        '        <tr><td>                        '+
-        '        <br/>                            '+
-        '        <div id="paperBrief" style=" background-color: #FAFAFA; border: 1px solid #DDDDDD;" ></div>            '+
-        '        </td></tr>                        '+
-        '        <tr><td>                        '+
-        '        <br/>                            '+
-        '        <input id="submit" style="width:100px;" class="l-button l-button-submit" onclick="'+this.objName+'.submit();" value="提交"></input>                '+
-        '        </td></tr>                        '+
-        '        </table>                        '+
-        '    </div>                                '+
-        '    <div position="center" title="标题" ><div type="submit" id="wls_quiz_main" class="w_q_container"></div></div> '+
-    
-        '</div> '+
-        '');
+		 $(document.body).append(''+
+		 '<div id="layout1"> '+ 
+		 ' <div position="left" title="导航"> '+
+		 ' <table><tr><td> '+
+		 ' <div id="navigation" ></div> '+
+		 ' </td></tr> '+
+		 ' <tr><td> '+
+		 ' <br/> '+
+		 ' <div id="paperBrief" style=" background-color: #FAFAFA; border: 1px solid #DDDDDD;" ></div>'+
+		 ' </td></tr> '+
+		 ' <tr><td> '+
+		 ' <br/> '+
+		 ' <input id="submit" style="width:100px;" class="l-button l-button-submit" onclick="'+this.objName+'.submit();" value="提交"></input> '+
+		 ' </td></tr> '+
+		 ' </table> '+
+		 ' </div> '+
+		 ' <div position="center" title="标题" ><div type="submit" id="wls_quiz_main" class="w_q_container"></div></div> '+
+		 '</div> '+
+		 '');
         
         $("#layout1").ligerLayout(); 
     }  
@@ -729,7 +728,7 @@ var paper = {
             var question = null;
             if(quesData[i].type==1){//单项选择题
                 question = new question_choice();
-                question.optionLength = quesData[i].optionlength;
+                question.optionlength = quesData[i].optionlength;
                 question.options = [];
                 for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
                     eval("question.options.push(quesData[i].option"+ii+")");
@@ -740,7 +739,7 @@ var paper = {
             }
             else if(quesData[i].type==2){//多项选择题
                 question = new question_multichoice();
-                question.optionLength = quesData[i].optionlength;
+                question.optionlength = quesData[i].optionlength;
                 question.index = index;index++;
                 question.layout = quesData[i].layout;
                 question.title = quesData[i].title;
