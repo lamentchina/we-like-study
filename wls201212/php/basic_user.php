@@ -283,7 +283,7 @@ class basic_user {
             $arr['permission'] = $this->getPermission($_REQUEST['username']);
             $arr['il8n'] = tools::getLanguage();
         }
-
+        header("Content-type:text/json");
         echo json_encode($arr);
     }
     

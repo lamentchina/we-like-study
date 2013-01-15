@@ -193,6 +193,7 @@ class education_question {
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
+        header("Content-type:text/json");
 		echo json_encode(array('Rows'=>$data,'moneyLeft'=>$arr['money_left'],'sql'=>$sql,'state'=>1) );		
 	}
 	

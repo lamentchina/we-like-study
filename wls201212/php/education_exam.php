@@ -386,7 +386,7 @@ class education_exam {
         ,id
         ) values ";
     
-        for($i=1;$i<count($arr);$i++){
+        for($i=0;$i<count($arr);$i++){
             $sql .= " (
             '".$arr[$i]['id']."'
             ,'".$arr[$i]['myanswer']."'

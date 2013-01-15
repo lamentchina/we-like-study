@@ -720,17 +720,70 @@ var paper = {
      * 每一种题型,都有 initDom() 这个函数
      * */
     ,initQuestions : function() {
-         for (var i = 0; i < this.questions.length; i++) {
-             this.questions[i].quiz = this;
-             this.questions[i].state = 'INIT';
-             this.questions[i].cent_ = 0;
-             this.questions[i].initDom();
-         }
-         this.state = 'INIT';
-         this.cent = 0;
-         this.cent_ = 0;
-         
-         $('#wls_quiz_main').parent().css("overflow","auto");
+    	
+    	var quesData = this.questions;
+    	var questions_ = [];
+    	
+    	var index = 1;
+        for(var i=0;i<quesData.length;i++){
+            var question = null;
+            if(quesData[i].type==1){//单项选择题
+                question = new question_choice();
+                question.optionLength = quesData[i].optionlength;
+                question.options = [];
+                for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
+                    eval("question.options.push(quesData[i].option"+ii+")");
+                }
+                question.index = index;index++;
+                question.layout = quesData[i].layout;
+                question.title = quesData[i].title;                       
+            }
+            else if(quesData[i].type==2){//多项选择题
+                question = new question_multichoice();
+                question.optionLength = quesData[i].optionlength;
+                question.index = index;index++;
+                question.layout = quesData[i].layout;
+                question.title = quesData[i].title;
+                question.options = [];
+                for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
+                    eval("question.options.push(quesData[i].option"+ii+")");
+                }
+            }
+            else if(quesData[i].type==3){//判断题
+                question = new question_check();
+                question.index = index;index++;
+                question.layout = quesData[i].layout;
+                question.title = quesData[i].title;
+                question.options = [quesData[i].option1,quesData[i].option2];
+            }else if(quesData[i].type==7){//大题, 不需要题编号
+                question = new question_big();
+                question.title = quesData[i].title;
+            }else if(quesData[i].type==4){//填空题
+                question = new question_blank();
+                if(quesData[i].cent!=0){//填空题题干不需要题编号
+                    question.index = index;
+                    index++;
+                }
+                question.title = quesData[i].title;
+            }else if(quesData[i].type==5){//组合题, 不需要题编号
+                question = new question_mixed();
+                question.title = quesData[i].title;
+            }else{
+                continue;
+            }
+            //console.debug(index+"     "+quesData[i].type);
+            question.type = quesData[i].type;
+            question.path_listen = quesData[i].path_listen;
+            question.cent = quesData[i].cent;
+            question.id = quesData[i].id;
+            question.id_parent = quesData[i].id_parent;
+            question.paper = this;
+            question.initDom();
+            questions_.push(question);
+        }    	
+        this.questions = questions_;   	
+
+    	$('#wls_quiz_main').parent().css("overflow","auto");
      }
      
      /**
@@ -816,7 +869,7 @@ var paper = {
         });
     }   
     
-    ,readQuestions : function(afterAjax){
+    ,readQuestions: function(afterAjax){
         var id = this.id_paper;
         var paperObj = this;
         $.ajax({
@@ -836,67 +889,10 @@ var paper = {
                 if(responseData.state!=1){
                     alert(responseData.msg);return;
                 }
-                //console.debug(responseData);
-                quesData = responseData.Rows;
-                $('#paperBrief').append("剩余金币:" + responseData.moneyLeft + "<br/>" );
-                
-                var index = 1;
-                for(var i=0;i<quesData.length;i++){
-                    var question = null;
-                    if(quesData[i].type==1){//单项选择题
-                        question = new question_choice();
-                        question.optionLength = quesData[i].optionlength;
-                        question.options = [];
-                        for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
-                            eval("question.options.push(quesData[i].option"+ii+")");
-                        }
-                        question.index = index;index++;
-                        question.layout = quesData[i].layout;
-                        question.title = quesData[i].title;                       
-                    }
-                    else if(quesData[i].type==2){//多项选择题
-                        question = new question_multichoice();
-                        question.optionLength = quesData[i].optionlength;
-                        question.index = index;index++;
-                        question.layout = quesData[i].layout;
-                        question.title = quesData[i].title;
-                        question.options = [];
-                        for(var ii=1;ii<=parseInt(quesData[i].optionlength);ii++){
-                            eval("question.options.push(quesData[i].option"+ii+")");
-                        }
-                    }
-                    else if(quesData[i].type==3){//判断题
-                        question = new question_check();
-                        question.index = index;index++;
-                        question.layout = quesData[i].layout;
-                        question.title = quesData[i].title;
-                        question.options = [quesData[i].option1,quesData[i].option2];
-                    }else if(quesData[i].type==7){//大题, 不需要题编号
-                        question = new question_big();
-                        question.title = quesData[i].title;
-                    }else if(quesData[i].type==4){//填空题
-                        question = new question_blank();
-                        if(quesData[i].cent!=0){//填空题题干不需要题编号
-                            question.index = index;
-                            index++;
-                        }
-                        question.title = quesData[i].title;
-                    }else if(quesData[i].type==5){//组合题, 不需要题编号
-                        question = new question_mixed();
-                        question.title = quesData[i].title;
-                    }else{
-                        continue;
-                    }
-                    //console.debug(index+"     "+quesData[i].type);
-                    question.type = quesData[i].type;
-                    question.path_listen = quesData[i].path_listen;
-                    question.cent = quesData[i].cent;
-                    question.id = quesData[i].id;
-                    question.id_parent = quesData[i].id_parent;
-                    question.paper = paperObj;
-                    paperObj.questions.push(question);
-                }
 
+                $('#paperBrief').append("剩余金币:" + responseData.moneyLeft + "<br/>" );
+                paperObj.questions = responseData.Rows;
+                
                 if ( typeof(afterAjax) == "string" ){
 	                eval(afterAjax);
 	            }else if( typeof(afterAjax) == "function"){

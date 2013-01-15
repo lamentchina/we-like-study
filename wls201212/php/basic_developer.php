@@ -467,6 +467,8 @@ class basic_developer {
 		$data = mysql_fetch_assoc($res);
 		print_r($data);	
         
+		mysql_query("call education_paper__init4test(21)",$CONN);  
+		mysql_query("call education_paper_log__int4test(20,@state,@msg)",$CONN);  
     }     
 
     public function importAll4() {
