@@ -60,9 +60,7 @@ class basic_user {
     public function grid($return='json',$search=NULL,$page=NULL,$pagesize=NULL){
         if($return<>'array'){
             //判断当前用户有没有 查询 权限,如果权限没有,将直接在 tools::error 中断
-            if(!tools::checkPermission('19',$_REQUEST['username'],$_REQUEST['session'])){
-                tools::error("access wrong");        
-            }
+            
             //判断前端是否缺少必要的参数
             if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) )tools::error('grid action wrong');
             $search=$_REQUEST['search'];
@@ -163,7 +161,7 @@ class basic_user {
     }
         
     public function delete(){//TODO
-        if(!tools::checkPermission("120223"))return;
+        if(!tools::checkPermission("120223"))tools::error("access denied");
         $CONN = tools::conn();
 
         mysql_query("call basic_user__delete('".$_REQUEST['ids']."',@state,@msg)",$CONN);
@@ -171,6 +169,7 @@ class basic_user {
         $data = mysql_fetch_assoc($res);
         
         sleep(1.5);
+        header("Content-type:text/json");
         echo json_encode($data);
     }
     
@@ -203,6 +202,7 @@ class basic_user {
         $res = mysql_query($sql,$CONN);
         $data = array();
         while($temp = mysql_fetch_assoc($res)){
+            //$data[] = $temp;continue;
             $len = strlen($temp['code']);
             if($len==2){
                 $data[] = $temp;
@@ -220,7 +220,6 @@ class basic_user {
                 $data[$pos_1]['children'][$pos_2]['children'][$pos_3]['children'][] = $temp;
             }
         }
-
         return $data;
     }
     
@@ -288,12 +287,15 @@ class basic_user {
     }
     
     public function logout(){
+        
         $CONN = tools::conn();
         $username = $_REQUEST['username'];
         $session = $_REQUEST['session'];        
         mysql_query("call basic_user__logout('".$username."','".$session."',@msg,@state)",$CONN);
         $res = mysql_query("select @state as state,@msg as msg" ,$CONN);
         $arr = mysql_fetch_array($res,MYSQL_ASSOC);
+        
+        header("Content-type:text/json");
         echo json_encode($arr);
     }
     
@@ -326,6 +328,7 @@ class basic_user {
 		$config['status'] = $data;
 		
 		if($return=='json'){
+		    header("Content-type:text/json");
 		    echo json_encode($config);
 		}else{
 		    return $config;
@@ -357,6 +360,7 @@ class basic_user {
     }
     
     public function export() {
+        
         $CONN = tools::conn();
         include_once '../libs/guid.php';
         $Guid = new Guid();  
@@ -449,6 +453,8 @@ class basic_user {
         mysql_query($sql,$CONN);
         include_once 'basic_excel.php';
         $file = basic_excel::export($guid);
+        
+        header("Content-type:text/json");
         echo json_encode(array('path'=>$file,'state'=>1,'file'=>'download'));
     }
     
@@ -523,7 +529,9 @@ class basic_user {
         $res = mysql_query($sql, $CONN );
 
         $data= mysql_fetch_assoc($res);
-        $data['sql'] = preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql));
+        $data['sql'] = $sql;
+        
+        header("Content-type:text/json");
         echo json_encode($data);
     }
     

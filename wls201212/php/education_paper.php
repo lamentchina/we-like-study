@@ -213,18 +213,24 @@ class education_paper {
 	 * @param $file EXCEL文件路径
 	 * */    
     public function import(){
-        tools::checkPermission("18");
+        if(!tools::checkPermission("1511"))tools::error("access denied");
         include_once '../libs/ajaxUpload/php.php';
-        // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array("xls");
-        // max file size in bytes
         $sizeLimit = 10 * 1024 * 1024;
-        
         $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
         $result = $uploader->handleUpload('../file/upload/');
-        // to pass data through iframe you will need to encode all html tags
         
-        self::importOne($uploader->savePath);
+        $path = $uploader->savePath;        
+        tools::import($path);
+        
+        $CONN = tools::conn();
+        $sql = "call education_paper__import('".tools::$guid."',@state,@msg,@id)";
+        mysql_query($sql,$CONN);
+        $res = mysql_query("select @state as state, @msg as msg,@id as id",$CONN);
+        $data = mysql_fetch_assoc($res);
+        
+        header("Content-type:text/json");        
+        echo json_encode($data);
     }  
     
     public function export(){
