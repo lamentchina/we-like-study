@@ -200,7 +200,7 @@ class education_paper {
         if ($return=='array') {
             return $returnData;
         }
-        
+        header("Content-type:text/json");        
         echo json_encode($returnData);
     }       
     

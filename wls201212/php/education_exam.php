@@ -224,6 +224,7 @@ class education_exam {
             education_exam.count_students_planed,
             education_exam.count_students,
             education_exam.count_passed,
+            (select sum(education_exam_2_class.count_submit) from education_exam_2_class where education_exam_2_class.exam_id = education_exam.id) as count_submit,
             education_exam.title,
             education_exam.time_start,
             education_exam.time_end,
@@ -274,7 +275,7 @@ class education_exam {
         if ($return=='array') {
             return $returnData;
         }
-        
+        header("Content-type:text/json");        
         echo json_encode($returnData);
     }     
     
@@ -367,10 +368,13 @@ class education_exam {
          || (!isset($_REQUEST['id'])) )die('wrong post');
         $CONN = tools::conn();
         
-        mysql_query("call education_exam__submit(".$_REQUEST['id'].",@state,@msg,@paperlogid)",$CONN);
-        $res = mysql_query("select @state,@msg,@paperlogid",$CONN);
+        mysql_query("call education_exam__submit('".$_REQUEST['id']."',@state,@msg,@paperlogid)",$CONN);
+        $res = mysql_query("select @state as state,@msg as msg ,@paperlogid as paperlogid",$CONN);
         $data = mysql_fetch_assoc($res);
-        $id_paperlog = $data['@paperlogid'];
+        if($data['state']!='1'){
+            echo json_encode($data);exit();
+        }
+        $id_paperlog = $data['paperlogid'];
         
         //从前端POST过来的JSON数据中,解析出学生提交的答案
         $arr = json_decode($_REQUEST['json'],true);
@@ -405,7 +409,17 @@ class education_exam {
         echo json_encode(array('status'=>1,'msg'=>'ok','paperlog'=>$id_paperlog));
     }
     
+    /**
+     * 教师批改统考卷
+     * */
     public function mark(){
+        if(!tools::checkPermission("1694"))tools::error(array('access wrong'));//TODO
         $CONN = tools::conn();
+        
+        mysql_query("call education_exam__mark('".$_REQUEST['id']."',@state,@msg,@out_passed,@out_failed,@out_giveup)",$CONN);
+        $res = mysql_query("select @state as state,@msg as msg@,out_passed as out_passed,@out_failed as out_failed,@out_giveup as out_giveup",$CONN);
+        $data = mysql_fetch_assoc($res);   
+        header("Content-type:text/json");        
+        echo json_encode($data);   
     }
 }

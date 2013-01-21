@@ -1,4 +1,3 @@
-
 body{ padding:5px; margin:0; padding-bottom:15px;}
 #layout1{  width:100%;margin:0; padding:0;  }  
 .l-page-top{ height:80px; background:#f8f8f8; margin-bottom:1px;}
@@ -245,9 +244,9 @@ A:hover {text-decoration: none}
 }
 .view_lable{
     display:block;float:left;width:19%;background-color: rgb(210,240,235);
-    margin-right: 2px; margin-bottom: 2px;
+    margin-left: 3px; margin-bottom: 2px;
 }
 .view_data{
     display:block;float:left;width:29%;
-    margin-right: 2px; margin-bottom: 2px;background-color: rgb(220,250,245);    
+    margin-left: 3px; margin-bottom: 2px;background-color: rgb(220,250,245);    
 }

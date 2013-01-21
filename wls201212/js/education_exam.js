@@ -115,6 +115,7 @@ var education_exam = {
 			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false, width: 100 }
 			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.count_submit, name: 'count_submit', isSort: false }
 			  ,{ display: top.il8n.education_exam.totalcent, name: 'score', isSort: false }
 			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false }
 			  ,{ display: top.il8n.education_exam.id_paper, name: 'id_paper', isSort: false, hide:true }
@@ -134,7 +135,7 @@ var education_exam = {
 			pageSize:20 ,rownumbers:true,
 			url : myAppServer() +"&class=education_exam&function=grid",
 			method  : "POST",
-			id : "education_exam_grid",
+			id : "education_exam__grid",
 			parms : {
                 username: top.basic_user.username
                 ,session: MD5( top.basic_user.session +((new Date()).getHours()))
@@ -198,7 +199,7 @@ var education_exam = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
-						education_exam.delet();
+						education_exam.delete_();
 					}
 				});
 			}else if(permission[i].code=='1623'){
@@ -213,13 +214,13 @@ var education_exam = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name, img:permission[i].icon , click : function(){
-						var status_ = $.ligerui.get('education_exam_grid').getSelected().status;
+						var status_ = $.ligerui.get('education_exam__grid').getSelected().status;
 						if(status_!=22){
 							alert('wrong status');return;
 						}
-						var id = $.ligerui.get('education_exam_grid').getSelected().exam_id;
-						var id_paper = $.ligerui.get('education_exam_grid').getSelected().id_paper;
-						var id_e2s = $.ligerui.get('education_exam_grid').getSelected().id;
+						var id = $.ligerui.get('education_exam__grid').getSelected().exam_id;
+						var id_paper = $.ligerui.get('education_exam__grid').getSelected().id_paper;
+						var id_e2s = $.ligerui.get('education_exam__grid').getSelected().id;
 						if(top.$.ligerui.get("win_exam_"+id)){
 						    top.$.ligerui.get("win_exam_"+id).show();
 						    return;
@@ -229,7 +230,7 @@ var education_exam = {
 						    id : "win_exam_"+id , height:  550, width: 600,
 						    url: "education_exam__do.html?id="+id+"&id_paper="+id_paper+"&id_e2s="+id_e2s,  
 						    showMax: true, showToggle: true, showMin: true, isResize: true,
-						    modal: false, title: $.ligerui.get('education_exam_grid').getSelected().exam_title, slide: false
+						    modal: false, title: $.ligerui.get('education_exam__grid').getSelected().exam_title, slide: false
 						
 						}).max();
 						
@@ -272,7 +273,7 @@ var education_exam = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
-						
+						education_exam.mark();
 					}
 				});
 			}else if(permission[i].code=='1695'){
@@ -316,19 +317,19 @@ var education_exam = {
 				buttons : [
 				    //清空查询条件
 					{text:top.il8n.clear,onclick:function(){
-						$.ligerui.get("education_exam_grid").options.parms.search = {	};
-						$.ligerui.get("education_exam_grid").loadData();
+						$.ligerui.get("education_exam__grid").options.parms.search = {	};
+						$.ligerui.get("education_exam__grid").loadData();
 						
 						$.ligerui.get("title").setValue('');
 						$.ligerui.get("education_exam__search_subject").setValue('');
 					}},
 					//提交查询条件
 				    {text:top.il8n.search,onclick:function(){
-					$.ligerui.get("education_exam_grid").options.parms.search = liger.toJSON({
+					$.ligerui.get("education_exam__grid").options.parms.search = liger.toJSON({
 						title : $.ligerui.get("title").getValue(),
 						subject : $.ligerui.get("education_exam__search_subject").getValue()
 					});
-					$.ligerui.get("education_exam_grid").loadData();
+					$.ligerui.get("education_exam__grid").loadData();
 				}}]
 			});
 		}
@@ -370,7 +371,7 @@ var education_exam = {
 		}
 	}	
 	
-	,delet: function(){
+	,delete_: function(){
 		//判断 ligerGrid 中,被勾选了的数据
 		selected = education_exam.grid.getSelecteds();
 		//如果一行都没有选中,就报错并退出函数
@@ -408,24 +409,32 @@ var education_exam = {
 		}		
 	}
 	
+	/**
+	 * 教师批改试卷
+	 * 一次只能批改一套试卷,无法批量处理
+	 * */
 	,mark: function(){
-		//判断 ligerGrid 中,被勾选了的数据
-		selected = education_exam.grid.getSelecteds();
-		//如果一行都没有选中,就报错并退出函数
-		if(selected.length==0){alert(il8n.noSelect);return;}
-		//弹框让用户最后确认一下,是否真的需要删除.一旦删除,数据将不可恢复
-		if(confirm(il8n.areYouSure)){
-			var ids = "";
-			//遍历每一行元素,获得 id 
-			for(var i=0; i<selected.length; i++){
-				ids += selected[i].id+","
+		var selected = null;
+    	if($.ligerui.get('education_exam__grid').options.checkbox){
+    		//启用了多行勾选
+			selected = $.ligerui.get('education_exam__grid').getSelecteds();
+			if(selected.length!=1){
+				alert(top.il8n.selectOne);return;
 			}
-			ids = ids.substring(0,ids.length-1);				
-			
+			selected = selected[0];
+    	}else{
+    		selected = $.ligerui.get('education_exam__grid').getSelected();
+			if(selected==null){
+				alert(top.il8n.noSelect);return;
+			}
+    	}
+    	var id = selected.id;
+    	
+		if(confirm(il8n.areYouSure)){		
 			$.ajax({
 				url: myAppServer() + "&class=education_exam&function=mark",
 				data: {
-					 ids: ids 
+					 id: id 
 					//服务端权限验证所需
 	                ,username: top.basic_user.username
 	                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
@@ -439,7 +448,9 @@ var education_exam = {
 				dataType: 'json',
 				success: function(response) {
 					if(response.state==1){
-						education_exam.grid.loadData();
+						$.ligerui.get('education_exam__grid').loadData();
+					}else{
+						alert(response.msg);
 					}
 				},
 				error : function(){

@@ -28,8 +28,6 @@ var basic_group_2_user = {
 		
 		$(document.body).append('<input type="button" onclick="basic_group_2_user.update()" value="'+top.il8n.modify+'" id="button" class="l-button l-button-submit" style="position:absolute;top:5px;left:200px;"  />' );
 	}
-
-	
 	
 	//执行修改操作的AJAX状态,tree表示还在通信中
 	,ajaxState: false

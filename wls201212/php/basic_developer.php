@@ -467,8 +467,11 @@ class basic_developer {
 		$data = mysql_fetch_assoc($res);
 		print_r($data);	
         
-		mysql_query("call education_paper__init4test(21)",$CONN);  
-		mysql_query("call education_paper_log__int4test(20,@state,@msg)",$CONN);  
+		//mysql_query("call education_paper__init4test(21)",$CONN);  
+		//mysql_query("call education_paper_log__int4test(20,@state,@msg)",$CONN);  
+		
+		mysql_query("call education_exam__init4test()",$CONN);  
+		mysql_query("call education_exam_2_student__init4test(40)",$CONN);		
     }     
 
     public function importAll4() {

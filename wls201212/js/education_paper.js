@@ -167,10 +167,10 @@ var education_paper = {
             }
         }
         
-        for(var i=0;i<permission.length;i++){        	
+        for(var i=0;i<permission.length;i++){      
+        	config.toolbar.items.push({line: true });
             if(permission[i].code=='1501'){
             	//查询功能,基本上每个用户组都有
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon , click : function(){
                         education_paper.search();
@@ -178,7 +178,6 @@ var education_paper = {
                 });
             }else if(permission[i].code=='1502'){
             	//查看功能,查看一张试卷
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
                     	var selected = null;
@@ -222,16 +221,14 @@ var education_paper = {
                 });
             }else if(permission[i].code=='1511'){
             	//上传EXCEL文件,批量导入数据
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name 
                     ,img:permission[i].icon , click : function(){
-                       
+                    	education_paper.import_();
                     }
                 });
             }else if(permission[i].code=='1512'){
             	//勾选一张试卷,导出数据,EXCEL下载
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
                     	var selected = null;
@@ -256,8 +253,6 @@ var education_paper = {
                 });
             }else if(permission[i].code=='1521'){
                 //添加功能
-                config.checkbox = true;
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
                         top.$.ligerDialog.open({
@@ -283,7 +278,6 @@ var education_paper = {
             }else if(permission[i].code=='1522'){
             	//批量删除,将启用 checkBox 功能
                 config.checkbox = true;
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
                         education_paper.delete_();
@@ -291,7 +285,6 @@ var education_paper = {
                 });            
             }else if(permission[i].code=='1523'){
             	//修改功能,一次只能修改一张试卷,不能批量修改
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon, click : function(){
                         
@@ -299,7 +292,6 @@ var education_paper = {
                 });
             }else if(permission[i].code=='1590'){
             	//做试卷,只有 学生 有这个权限
-                config.toolbar.items.push({line: true });
                 config.toolbar.items.push({
                     text: permission[i].name, img:permission[i].icon , click : function(){
                         var id = $.ligerui.get('education_paper_grid').getSelected().id;
@@ -394,15 +386,29 @@ var education_paper = {
                 ,action: '../php/myApp.php?class=education_paper&function=import'
                 ,allowedExtensions: ["xls"]
                 ,params: {
-                	username: top.basic_user.username,
-                    session: MD5( top.basic_user.session +((new Date()).getHours()))
+                     username: top.basic_user.username
+                    ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                    ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                    ,user_id: top.basic_user.loginData.id
+                    ,user_type: top.basic_user.loginData.type    
+                    ,group_id: top.basic_user.loginData.group_id
+                    ,group_code: top.basic_user.loginData.group_code  
                 }
                 ,downloadExampleFile : "../file/download/education_paper.xls"
                 ,debug: true
                 ,onComplete: function(id, fileName, responseJSON){
                     
                 }
-            });   
+            });  
+            
+			$.ligerDialog.open({
+				title: top.il8n.importFile,
+				id : "education_paper__grid_import_d",
+				width : 350,
+				height : 200,
+				target : $("#education_paper__grid_file"),
+				modal : true
+			});
         }
     }  
     
