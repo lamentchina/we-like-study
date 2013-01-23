@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css">
+    <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" /><![endif]-->
+    <script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+    <script src="/libs/kekscom-osmbuildings-d0cf7bd/examples/js/censusData.js"></script>
+    <script src="/libs/kekscom-osmbuildings-d0cf7bd/dist/L.BuildingsLayer.js"></script>
+    <script type="text/javascript">
+    var fun1 = function(){
+	    var map = new L.Map('map').setView([37.80000, -96.0000], 4);
+	    function getColor(d) {
+	        return d > 1000 ? '#80002680' :
+	               d > 500  ? '#BD002680' :
+	               d > 200  ? '#E31A1C80' :
+	               d > 100  ? '#FC4E2A80' :
+	               d > 50   ? '#FD8D3C80' :
+	               d > 20   ? '#FEB24C80' :
+	               d > 10   ? '#FED97680' :
+	                          '#FFEDA080';
+	    }
+	
+	    var feature;
+	    for (var i = 0, il = censusData.features.length; i < il; i++) {
+	        feature = censusData.features[i];
+	        feature.properties.color = getColor(feature.properties.density);
+	        feature.properties.height = feature.properties.density * 4000; // scale height a bit to make it more visible
+	    }
+	
+	    new L.BuildingsLayer().addTo(map).geoJSON(censusData).setStyle({ strokeRoofs: true });
+    }
+    </script>
+</head>
+
+<body onload="fun1()">
+    <div id="map" style='height:600px;width:100%;'></div>
+</body>
+</html>

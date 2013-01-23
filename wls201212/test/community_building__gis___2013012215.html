@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css">
+    <!--[if lte IE 8]><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" /><![endif]-->
+    <script src="/libs/Leaflet-master/dist/leaflet-src.js"></script>
+    <script src="/libs/kekscom-osmbuildings-d0cf7bd/examples/js/censusData.js"></script>
+    <script src="/libs/kekscom-osmbuildings-d0cf7bd/dist/L.BuildingsLayer-debug.js"></script>
+    <script src="L..js"></script>
+    <script src="/libs/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript">
+    var fun1 = function(){
+        var height = $(window).height();
+        $('#map').css('height',height);
+	    var map = new L.Map('map').setView([52.50440, 13.33522], 18);
+	    //var osmb = new L.BuildingsLayer({ url: '/libs/kekscom-osmbuildings-d0cf7bd/server/?w={w}&n={n}&e={e}&s={s}&z={z}' }).addTo(map);
+	    //L.control.layers({}, { Buildings: osmb }).addTo(map);
+	    
+	    var x = new L.Polygon([new L.LatLng(52.50633827537857, 13.327891230583191),new L.LatLng(50.5, 30.5),new L.LatLng(50.50633827537857, 13.327891230583191)]);
+
+	    
+	    var str = "POLYGON((52.431195961408 13.245235742983,52.522669962653 13.244865402897,52.518966561793 13.282269751584,52.523040302739 13.283751111928,52.521558942395 13.295601994681,52.516003841105 13.31708171967,52.512300440244 13.328562262336,52.503041938094 13.331154642938,52.484524933794 13.357078448959,52.453786706655 13.3189334201,52.43008494115 13.248568803757,52.431195961408 13.245235742983));"
+	    var p = str.indexOf("))");
+	    var str = str.substring(9,p);
+	    var arr = str.split(",");
+	    var arr2 = [];
+	    for(var i=0;i<arr.length;i++){
+	    	var temp = arr[i].split(" ");
+	    	arr2.push(new L.LatLng(temp[0], temp[1]));
+	    }
+	    var y = new L.Polygon(arr2);
+	    L.control.layers({Buildings2: y}, { Buildings: x }).addTo(map);
+	    
+	    
+	    
+	    $.ajax({
+	    	url: "http://localhost:81/libs/kekscom-osmbuildings-d0cf7bd/server/?w=13.327891230583191&n=52.50633827537857&e=13.342546820640564&s=52.50245907041455&z=18"
+    		,dataType: 'json'
+	    	,success: function(response){
+	    		var d = response.data;
+	    		for(var i=0;i<d.length;i++){
+	    		    var ds = d[i][1];
+	    		    
+	    			
+	    		}
+	    	}
+	        ,error: function(){
+	        	
+	        }
+	    });
+    }
+    </script>
+</head>
+
+<body onload="fun1()" style="margin: 0px;">
+    <div id="map" style="width:100%;height:600px;"></div>
+
+
+
+
+</body>
+</html>
