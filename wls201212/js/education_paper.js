@@ -99,6 +99,7 @@ var education_paper = {
 	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
 	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
 	        ,{ display: top.il8n.time_created, name: 'time_created', width: 80 }
+	        ,{ display: top.il8n.type, name: 'type_' }
     	   ]
            ,[//学生列
              { display: top.il8n.id, name: 'id', minWidth: 60, hide:true }
@@ -117,6 +118,7 @@ var education_paper = {
 				if(a.mycent==null)return '没做过';
 				return a.mycent;
 			 }}
+   	        ,{ display: top.il8n.type, name: 'type' }
            ]
     	   ,[//教师列
     	     { display: top.il8n.id, name: 'id', minWidth: 60, hide:true }
@@ -131,6 +133,7 @@ var education_paper = {
    	        ,{ display: top.il8n.education_paper.count_questions, name: 'count_questions',width: 55,isSort : false }
    	        ,{ display: top.il8n.education_paper.count_used, name: 'count_questions',width: 55,isSort : false }
    	        ,{ display: top.il8n.time_created, name: 'time_created', width: 80 }
+   	        ,{ display: top.il8n.type, name: 'type' }
            ]
     	   ,[//访客列
   	         { display: top.il8n.title, name: 'title', align: 'left', width: 140, minWidth: 60 }
@@ -922,10 +925,12 @@ var paper = {
     		this.showDescription();
     		return;
     	}
+    	/*
     	if(top.basic_user.loginData.type!='2'){
     		alert("only student can submit");
     		return;
     	}
+    	*/
         if(this.state=='submitted'){
             alert("paper has submitted arleady");
             return;

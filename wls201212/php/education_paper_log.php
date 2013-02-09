@@ -94,12 +94,53 @@ class education_paper_log {
             
             $res = mysql_query($sql_total,$conn);
             $total = mysql_fetch_assoc($res);
-        }
-        
+        }        
         if($_REQUEST['usertype']=='3'){ 
             //教师角色
             $sql_where .= " and education_paper_log.teacher_id = '".$_REQUEST['userid']."' ";
 
+            $sql = "            
+            SELECT
+            education_paper_log.paper_title,
+            education_paper_log.mycent,
+            education_paper_log.cent,
+            education_paper_log.count_right,
+            education_paper_log.count_wrong,
+            education_paper_log.count_giveup,
+            education_paper_log.id,
+            education_paper_log.paper_id,
+            education_paper_log.`type`,
+            education_paper_log.subject_name,
+            education_paper_log.subject_code,
+            education_paper_log.teacher_id,
+            education_paper_log.teacher_name,
+            education_paper_log.teacher_code,
+            education_paper_log.student_id,
+            education_paper_log.student_name,
+            education_paper_log.student_code,
+            education_paper_log.time_created
+            FROM
+            education_paper_log  		
+    		".$sql_where."
+    		".$sql_order."
+			limit ".(($page-1)*$pagesize).", ".$pagesize;
+
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['paper_title'] = tools::cutString($temp['paper_title'],10);
+    			$temp['time_created'] = substr( $temp['time_created'],0,10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total from education_paper ".$sql_where;
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);     
+        }
+        if($_REQUEST['usertype']=='1'){ 
+            //管理员角色
+            
             $sql = "            
             SELECT
             education_paper_log.paper_title,

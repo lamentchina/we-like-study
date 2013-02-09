@@ -90,6 +90,7 @@ class education_exam {
             education_exam.subject_code,
             education_exam.subject_name,
             education_exam.count_students_planed,
+            (select sum(education_exam_2_class.count_submit) from education_exam_2_class where education_exam_2_class.exam_id = education_exam.id) as count_submit,
             education_exam.title,
             education_exam.time_start,
             education_exam.time_end,
@@ -122,6 +123,8 @@ class education_exam {
                 //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
     			$temp['title'] = tools::cutString($temp['title'],10);
     			$temp['time_created'] = substr( $temp['time_created'],0,10);
+    			$temp['time_start'] = substr( $temp['time_start'],0,10);
+    			$temp['time_end'] = substr( $temp['time_end'],0,10);    			
                 $data[] = $temp;
             }
             
@@ -245,7 +248,6 @@ class education_exam {
             FROM
             education_exam
             
-    				
     		".$sql_where."
     		".$sql_order."
 			limit ".(($page-1)*$pagesize).", ".$pagesize;
@@ -294,12 +296,27 @@ class education_exam {
         include_once 'basic_excel.php';
         basic_excel::import($path);        
         
-        echo basic_excel::$guid;
-		mysql_query("call education_exam__import('".basic_excel::$guid."',@state,@msg,@ids)",$CONN);
-		$res = mysql_query("select @state,@msg,@ids",$CONN);
+        //echo basic_excel::$guid;
+        
+		mysql_query("call education_exam__import('".basic_excel::$guid."',@ids,@state,@msg)",$CONN);
+		$res = mysql_query("select @state as state, @msg as msg, @ids as ids",$CONN);
 		$data = mysql_fetch_assoc($res);
-		print_r($data);        
-    }                
+		echo json_encode($data);
+    }  
+
+    public function export(){
+        $id = $_REQUEST['id'];
+        $CONN = tools::conn();
+        include_once '../libs/guid.php';
+        $Guid = new Guid();  
+        $guid = $Guid->toString();
+        $sql = "call education_exam__export(".$id.",'".$guid."',NULL,NULL,@out_state,@out_msg,@out_excelid,@out_sheetcount,@out_sheetindex)";
+        mysql_query($sql,$CONN);
+        
+        include_once 'basic_excel.php';
+        $file = basic_excel::export($guid);
+        echo json_encode(array('file'=>$file));
+    }    
     
     public function delete(){
         if(!(isset($_REQUEST['ids']))){
@@ -416,9 +433,11 @@ class education_exam {
         if(!tools::checkPermission("1694"))tools::error(array('access wrong'));//TODO
         $CONN = tools::conn();
         
-        mysql_query("call education_exam__mark('".$_REQUEST['id']."',@state,@msg,@out_passed,@out_failed,@out_giveup)",$CONN);
+        $sql = "call education_exam__mark('".$_REQUEST['id']."',@state,@msg,@out_passed,@out_failed,@out_giveup)";
+        mysql_query($sql,$CONN);
         $res = mysql_query("select @state as state,@msg as msg@,out_passed as out_passed,@out_failed as out_failed,@out_giveup as out_giveup",$CONN);
         $data = mysql_fetch_assoc($res);   
+        $data['sql'] = $sql;
         header("Content-type:text/json");        
         echo json_encode($data);   
     }

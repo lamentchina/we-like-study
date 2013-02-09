@@ -55,6 +55,7 @@ class basic_excel {
         ); 
 	
 	public static function export($guid){
+	    self::$guid = $guid;
         include_once config::$phpexcel.'PHPExcel.php';
         include_once config::$phpexcel.'PHPExcel/IOFactory.php';
         include_once config::$phpexcel.'PHPExcel/Writer/Excel5.php';
@@ -84,7 +85,9 @@ class basic_excel {
 		$file =  "../file/download/".date('YmdHis').".xls";
 		$objWriter->save($file);
 		
-		mysql_query("delete from basic_excel where guid = '".self::$guid."' ;",$CONN);
+		$sql = "delete from basic_excel where guid = '".self::$guid."' ;";
+	
+		mysql_query($sql,$CONN);
 		return $file;
 	}
 	

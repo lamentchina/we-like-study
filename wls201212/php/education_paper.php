@@ -68,6 +68,8 @@ class education_paper {
     		education_paper.id,
     		education_paper.id_creater,
     		education_paper.status,    		
+    		(select extend4 from basic_memory where extend5 = 'education_paper__type' and code = education_paper.type) as type_,   
+    		education_paper.type, 		
     		education_paper.time_created
     		FROM
     		education_paper
@@ -102,6 +104,7 @@ class education_paper {
                         select code from basic_group where id = '".$_REQUEST['group_id']."'
                     )
             )
+            and type = '1'
             ";
 
             $sql = "     
@@ -117,6 +120,8 @@ class education_paper {
             education_paper.teacher_code,
             education_paper.count_used,
             education_paper.subject_code,
+    		(select extend4 from basic_memory where extend5 = 'education_paper__type' and code = education_paper.type) as type_,   
+    		education_paper.type,	
             education_paper.time_created,            
             (select max(education_paper_log.mycent) 
             	from education_paper_log where 
@@ -164,6 +169,44 @@ class education_paper {
     		education_paper.teacher_name,
     		education_paper.teacher_id,
     		education_paper.teacher_code,
+    		education_paper.id,
+    		education_paper.id_creater,
+    		education_paper.status,    		
+    		(select extend4 from basic_memory where extend5 = 'education_paper__type' and code = education_paper.type) as type_,   
+    		education_paper.type,		
+    		education_paper.time_created
+    		FROM
+    		education_paper
+    		  		
+    		".$sql_where."
+    		".$sql_order."
+			limit ".(($page-1)*$pagesize).", ".$pagesize;
+
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['title'] = tools::cutString($temp['title'],10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total from
+    		education_paper
+			".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+                      
+        }
+        if($_REQUEST['user_type']=='9'){ 
+            //访客角色
+            $sql_where .= " and education_paper.cost = '0' ";
+            $sql = "            
+            SELECT
+    		education_paper.subject_code,
+    		education_paper.subject_name,
+    		education_paper.count_questions,
+    		education_paper.title,
     		education_paper.id,
     		education_paper.id_creater,
     		education_paper.status,    		

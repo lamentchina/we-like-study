@@ -79,10 +79,15 @@ var education_exam = {
 			[//管理员列
 			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
 			  ,{ display: top.il8n.title, name: 'title', isSort: false, width: 140 }
-			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.count_students, name: 'count_students', isSort: false, width: 100 }
+			  ,{ display: top.il8n.education_exam.count_submit, name: 'count_submit', isSort: false }
+			  ,{ display: top.il8n.education_exam.teacher_name, name: 'teacher_name', isSort: false }
 			  ,{ display: top.il8n.education_exam.subject_code, name: 'subject_code', isSort: false, hide:true }
 			  ,{ display: top.il8n.education_exam.subject_name, name: 'subject_name', isSort: false }
+			  ,{ display: top.il8n.education_exam.passline, name: 'passline', isSort: false, width:60 }
 			  ,{ display: top.il8n.education_exam.teacher_id, name: 'teacher_id', isSort: false, hide:true }
+			  ,{ display: top.il8n.education_exam.time_start, name: 'time_start', isSort: false, width: 80 }
+			  ,{ display: top.il8n.education_exam.time_end, name: 'time_end', isSort: false, width: 80 }			  
 			]
 			,[//学生列
 			   { display: top.il8n.education_exam.exam_id, name: 'exam_id', isSort: false, hide:true }
@@ -106,7 +111,7 @@ var education_exam = {
 			  ,{ display: top.il8n.education_exam.status, name: 'name_status', isSort: false }
 			  ,{ display: top.il8n.education_exam.type, name: 'type', isSort: false, hide:true }			  
 			  ,{ display: top.il8n.education_exam.status, name: 'status', isSort: false, hide:true }				  
-			  ,{ display: top.il8n.education_exam.id, name: 'id', isSort: false, hide:true }
+			  ,{ display: top.il8n.id, name: 'id', isSort: false, hide:true }
 			  ]			
 			,[//教师列
 			   { display: top.il8n.id, name: 'id', isSort: false, hide:true }
@@ -169,8 +174,52 @@ var education_exam = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon , click : function(){
-						
+						var selected = null;
+	                	if($.ligerui.get('education_exam__grid').options.checkbox){
+	                		//启用了多行勾选
+							selected = $.ligerui.get('education_exam__grid').getSelecteds();
+							if(selected.length!=1){
+								alert(top.il8n.selectOne);return;
+							}
+							selected = selected[0];
+	                	}else{
+	                		selected = $.ligerui.get('education_exam__grid').getSelected();
+							if(selected==null){
+								alert(top.il8n.noSelect);return;
+							}
+	                	}
+	                	
+	                	var id = selected.id;
+	                	var title = selected.name;
+	                    if(top.$.ligerui.get("education_exam__view_win_"+id)){
+	                        top.$.ligerui.get("education_exam__view_win_"+id).show();
+	                        return;
+	                    }
+	                    top.$.ligerDialog.open({
+	                        isHidden:false
+	                        ,id: "education_exam__view_win_"+id 
+	                        ,height: 550
+	                        ,width: 600
+	                        ,url: "education_exam__view.html?id="+id
+	                        ,showMax: true
+	                        ,showToggle: true
+	                        ,showMin: true
+	                        ,isResize: true
+	                        ,modal: false
+	                        ,title: title
+	                        ,slide: false    	
+	                    }).max();
+	                    
+	                    top.$.ligerui.get("education_exam__view_win_"+id).close = function(){
+	                        var g = this, p = this.options;
+	                        top.$.ligerui.win.removeTask(this);
+	                        g.unmask();
+	                        g._removeDialog();
+	                        top.$.ligerui.remove(top.$.ligerui.get("education_exam__view_win_"+id));
+	                        top.$('body').unbind('keydown.dialog');
+	                    }
 					}
+					
 				});
 			}else if(permission[i].code=='1611'){
 				config.toolbar.items.push({line: true });
@@ -183,7 +232,25 @@ var education_exam = {
 				config.toolbar.items.push({line: true });
 				config.toolbar.items.push({
 					text: permission[i].name , img:permission[i].icon, click : function(){
-						
+						//勾选一张试卷,导出数据,EXCEL下载
+                    	var selected = null;
+                    	if($.ligerui.get('education_exam__grid').options.checkbox){
+                    		//启用了多行勾选
+							selected = $.ligerui.get('education_exam__grid').getSelecteds();
+							if(selected.length!=1){
+								alert(top.il8n.selectOne);return;
+							}
+							selected = selected[0];
+                    	}else{
+                    		selected = $.ligerui.get('education_exam__grid').getSelected();
+							if(selected==null){
+								alert(top.il8n.noSelect);return;
+							}
+                    	}
+                    	
+                    	var id = selected.id;
+                    	var title = selected.title;
+                    	education_exam.export_(id,title);
 					}
 				});
 			}else if(permission[i].code=='1621'){
@@ -355,7 +422,7 @@ var education_exam = {
 					,downloadExampleFile : "../file/download/education_exam.xls"
 					,debug: true}
 				,onComplete: function(id, fileName, responseJSON){
-					education_exam.grid.loadData();
+					$.ligerui.get("education_exam__grid").loadData();
 				}
 	        });    
 			
@@ -370,6 +437,49 @@ var education_exam = {
 			});
 		}
 	}	
+	
+	/**
+	 * 实现EXCEL导出
+     * 先从业务表到 basic_excel 
+     * 再从 basic_excel 到 .xls
+     * 然后前端再下载
+     * */
+    ,export_: function(id,title){
+    	var download_dom;
+        if($.ligerui.get("download_dom")){
+        	download_dom = $.ligerui.get("download_dom");        	
+        	download_dom.show();
+        }else{                    
+            $.ligerDialog.open({
+                id : "download_dom",
+                width : 350,
+                height : 150,
+                content : "<div id='download_dom_'></div>",
+                title : top.il8n.download
+            });
+        }    	
+    	$.ajax({
+            url: myAppServer() + "&class=education_exam&function=export",
+            data: {
+                id:id 
+                ,username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code  
+            },
+            type: "POST",
+            dataType: 'json',
+            success: function(response) {
+            	$('#download_dom_').append("<a href='"+response.file+"' target='_blank' >&nbsp;"+top.il8n.download+"&nbsp;"+title+"<br/></a>");
+            },
+            error : function(){               
+                alert(top.il8n.disConnect);
+            }
+        });     
+    }
 	
 	,delete_: function(){
 		//判断 ligerGrid 中,被勾选了的数据
@@ -465,7 +575,93 @@ var education_exam = {
 	 * 查看一张试卷
 	 *   如果是教师
 	 * */
-	,view: function(){}
+	,view: function(){
+		var id = getParameter("id", window.location.toString() );
+    	$(document.body).html("<div id='buttons' style='width:95%' ></div><div id='content' style='width:98%;margin-top:5px;'></div>");
+    	var htmls = "";
+    	$.ajax({
+            url: myAppServer() + "&class=education_exam&function=view",
+            data: {
+                id:id 
+                ,username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code  
+            },
+            type: "POST",
+            dataType: 'json',
+            success: function(response) {
+            	for(var j in response){   
+            		if(j=='sql')continue;
+            		if(j=='id'||j=='remark')htmls+="<div style='width:100%;float:left;display:block;margin-top:5px;'/>";
+            		eval("var key = getIl8n('education_exam','"+j+"');");
+            		htmls += "<span class='view_lable'>"+key+"</span><span class='view_data'>"+response[j]+"</span>";
+            	}; 
+            	$("#content").html(htmls);
+            	
+            	//查看详细,页面上也有按钮的
+            	var items = [];            	
+                var permission = top.basic_user.permission;
+                for(var i=0;i<permission.length;i++){
+                    if(permission[i].code=='15'){
+                        permission = permission[i].children;
+                        break;
+                    }
+                }      
+                for(var i=0;i<permission.length;i++){
+                    if(permission[i].code=='1502'){
+                    	if(typeof(permission[i].children)=='undefined')return;
+                        permission = permission[i].children;
+                        break;
+                    }
+                }    
+                
+                for(var i=0;i<permission.length;i++){        	
+                    if(permission[i].code=='150201'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon , click : function(){
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='150202'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){                            	
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='150222'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){
+                                
+                            }
+                        });
+                    }else if(permission[i].code=='150223'){
+                        items.push({line: true });
+                        items.push({
+                            text: permission[i].name , img:permission[i].icon, click : function(){
+                                
+                            }
+                        });
+                    }
+                }
+                if(items.length>0){
+	            	$("#buttons").ligerToolBar({
+	            		items:items
+	            	});
+            	}
+            },
+            error : function(){               
+                alert(top.il8n.disConnect);
+            }
+        });		
+		
+	}
 };
 
 var exam = paper;

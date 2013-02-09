@@ -1,5 +1,7 @@
 var il8n = {};
-var myAppServer = function(){return "../php/myApp.php?random="+Math.random();};
+var myAppServer = function(){
+	return "../php/myApp.php?random="+Math.random();
+};
 var initWebpage = function(afterAjax){
 	// 页面是单独打开的,可能是处于测试或开发需要,
 	if (top === self) { 

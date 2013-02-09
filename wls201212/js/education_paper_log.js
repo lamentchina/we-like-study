@@ -22,6 +22,8 @@
  *   查询,批改,查看
  * 只有具有任课关系的教师才可以看到,没有任课关系的教师只能看到一张空表
  * 教师只能看到需要批改的试卷,全部自动批改的卷子看不到
+ * 管理员可以看到的列有:
+ *  TODO
  *   
  * 学生可以看到的列有:
  *   试卷名称,科目,做题时间,客观题成绩,主观题成绩,批卷时间,类型,状态
@@ -77,32 +79,45 @@ var education_paper_log = {
 	,grid : function(){
     	var gridColmuns = [
     	   [//管理员列
-    	   
+ 	         { display: top.il8n.title, name: 'paper_title', align: 'left', width: 140, minWidth: 60 }
+     	    ,{ display: top.il8n.education_paper_log.subject, name: 'subject_name',isSort : false }
+   	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code', isSort: false, hide: true }
+   	        ,{ display: top.il8n.education_paper_log.cent, name: 'cent' ,width: 50 ,isSort : false}
+   	        ,{ display: top.il8n.education_paper_log.mycent, name: 'mycent' ,width: 50}
+		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_name' }
+		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code', isSort: false, hide: true }
+		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id', isSort: false, hide: true }
+		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_name', hide: true }
+		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_code', isSort: false, width: 100 }
+		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_id', isSort: false, hide: true }
+		    ,{ display: top.il8n.id, name: 'id', isSort: false, hide: true }
+		    ,{ display: top.il8n.time_created, name: 'time_created', width: 80 } 
     	   ],[//学生列
   	         { display: top.il8n.title, name: 'paper_title', align: 'left', width: 140, minWidth: 60 }
     	    ,{ display: top.il8n.education_paper_log.subject, name: 'subject_name',isSort : false }
-  	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code',isSort : false, hide: true }
+  	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code', isSort: false, hide: true }
   	        ,{ display: top.il8n.education_paper_log.cent, name: 'cent' ,width: 50 ,isSort : false}
   	        ,{ display: top.il8n.education_paper_log.mycent, name: 'mycent' ,width: 50}
    		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_name' }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code',isSort : false, hide: true }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id',isSort : false, hide: true }
-   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_name' }
-   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_code',isSort : false, hide: true }
-   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_id',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code', isSort: false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id', isSort: false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_name', hide: true }
+   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_code', isSort: false, width: 100 }
+   		   	,{ display: top.il8n.education_paper_log.student_name, name: 'student_id', isSort: false, hide: true }
+   		    ,{ display: top.il8n.id, name: 'id', isSort: false, hide: true }
   	        ,{ display: top.il8n.time_created, name: 'time_created', width: 80 } 
            ],[//教师列
    	         { display: top.il8n.title, name: 'paper_title', align: 'left', width: 140, minWidth: 60 }
     	    ,{ display: top.il8n.education_paper_log.subject, name: 'subject_name',isSort : false }
-  	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code',isSort : false, hide: true }
+  	        ,{ display: top.il8n.education_paper_log.subject, name: 'subject_code', isSort: false, hide: true }
   	        ,{ display: top.il8n.education_paper_log.cent, name: 'cent' ,width: 50 ,isSort : false}
   	        ,{ display: top.il8n.education_paper_log.cost, name: 'cost' ,width: 50}
    		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_name' }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code',isSort : false, hide: true }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id',isSort : false, hide: true }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_name' }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_code',isSort : false, hide: true }
-   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_id',isSort : false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_code', isSort: false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'teacher_id', isSort: false, hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_name', hide: true }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_code', isSort: false, width: 100 }
+   		   	,{ display: top.il8n.education_paper_log.teacher_name, name: 'student_id', isSort: false, hide: true }
   	        ,{ display: top.il8n.time_created, name: 'time_created', width: 80 }  
             ]
         ];

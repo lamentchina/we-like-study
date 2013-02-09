@@ -144,7 +144,7 @@ var education_student = {
                     }
                     top.$.ligerDialog.open({
                         isHidden:false
-                        ,id: "education_student__view_"+id 
+                        ,id: "education_student__view_win_"+id 
                         ,height: 550
                         ,width: 600
                         ,url: "education_student__view.html?id="+id
