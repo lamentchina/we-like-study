@@ -1,7 +1,7 @@
 <?php
 class config{
 
-	public static $host = 'localhost:3306';
+	public static $host = 'localhost';
 	public static $unm = 'root';
 	public static $pwd = '';
 	public static $db = 'myapp';

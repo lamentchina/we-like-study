@@ -506,6 +506,9 @@ create table education_paper_log (
     ,teacher_id  int default '0' not null comment ' 出卷老师编号,用户编号,来源 basic_user,非 education_teacher '
     ,teacher_name varchar(200) default '0' comment ' 出卷老师姓名 '
     ,teacher_code varchar(200) default '0' comment ' 出卷老师编码,用户名,层级编码,可以按层级统计 ' 
+    ,student_id  int default '0' not null comment ' 学生编号 '
+    ,student_name varchar(200) default '0' comment ' 学生姓名 '
+    ,student_code varchar(200) default '0' comment ' 学生编码 '     
 
     ,cent int default '0' comment ' 试卷总分 '
     ,cent_subjective int default '0' comment ' 主观题分数,如果这张试卷中有 填空题 等需要教师批改的话,人工批改的得分 '
@@ -8985,3 +8988,4 @@ $content.=
 $file_handle = fopen("config.php","w");
 fwrite($file_handle,$content);
 fclose($file_handle);
+mysql_query("DELIMITER ;",$conn);
