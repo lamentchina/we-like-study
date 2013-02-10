@@ -161,8 +161,19 @@ var education_paper = {
             ,toolbar: { items: [] }
             ,frozen: false
         };
+        if(top.basic_user.loginData.type=='1'){
+            config.columns = gridColmuns[0];
+        }
+        if(top.basic_user.loginData.type=='2'){
+            config.columns = gridColmuns[1];
+        }
+        if(top.basic_user.loginData.type=='3'){
+            config.columns = gridColmuns[2];
+        }
+        if(top.basic_user.loginData.type=='9'){
+            config.columns = gridColmuns[3];
+        }        
         
-        config.columns = gridColmuns[(top.basic_user.loginData.type)*1-1]; 
         var permission = [];
         for(var i=0;i<top.basic_user.permission.length;i++){
             if(top.basic_user.permission[i].code=='15'){

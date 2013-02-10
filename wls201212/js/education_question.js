@@ -7,47 +7,53 @@ var education_question = {
 	,config: null
 	,loadConfig: function(afterAjax){
 		$.ajax({
-			url: myAppServer()+ "&class=education_question&function=loadConfig",
-			dataType: 'json',
-			success : function(response) {
+			 url: myAppServer()+ "&class=education_question&function=loadConfig"
+			,dataType: 'json'
+            ,type: "POST"
+            ,data: {
+                username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
+            }   			
+			,success : function(response) {
 				education_question.config = response;
 				if ( typeof(afterAjax) == "string" ){
 					eval(afterAjax);
 				}else if( typeof(afterAjax) == "function"){
 					afterAjax();
 				}
-			},
-			error : function(){				
+			}
+			,error : function(){				
 				alert(top.il8n.disConnect);
 			}
 		});	
 	}
 
-	,grid : null
-	
-	,initGrid : function(){
+	,grid: function(){
 		var config = {
 			height:'100%',
 			columns: [
 				{ display: top.il8n.title, name: 'title', align: 'left', width: 170, minWidth: 60 }
-				,{ display: top.il8n.education_question.subject, name: 'subjectname',isSort : false }
-				,{ display: top.il8n.type, name: 'type', render: function(a,b){
-					for(var i=0; i<education_question.config.type.length; i++){
-						if(education_question.config.type[i].code == a.type){
-							return education_question.config.type[i].value;
-						}
-					}
-				} }				
-				,{ display: top.il8n.author, name: 'author' ,width: 90}
+				,{ display: top.il8n.education_question.subject, name: 'subject_name',isSort : false }		
+				,{ display: top.il8n.author, name: 'teacher_name' ,width: 90}
 				,{ display: top.il8n.time_created, name: 'time_created'}
+				,{ display: top.il8n.type, name: 'type_'}
 			],  pageSize:20 ,rownumbers:true,
-			url : "../php/myApp.php?class=education_question&function=select",
+			url : myAppServer() + "&class=education_question&function=grid",
 			method  : "POST",
-			id : "education_question_grid",
+			id : "education_question__grid",
 			parms : {
-				 username: top.basic_user.username
-				,session: MD5( top.basic_user.session +((new Date()).getHours()))
-				,search: $.ligerui.toJSON( education_question.searchOptions )
+                 username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
 			},
 			toolbar: { items: [] }
 		};
@@ -78,18 +84,18 @@ var education_question = {
 					text: permission[i].name , img:permission[i].icon , click : function(){
 						//education_question.view();
 						var selected;
-						if(education_question.grid.options.checkbox){
-							selected = education_question.grid.getSelecteds();
+						if($.ligerui.get('education_question__grid').options.checkbox){
+							selected = $.ligerui.get('education_question__grid').getSelecteds();
 							if(selected.length!=1){alert(il8n.selectOneItemOnGrid);return;}
 							selected = selected[0];
 						}else{
-							selected = education_question.grid.getSelected();
+							selected = $.ligerui.get('education_question__grid').getSelected();
 							if(selected==null){
 								alert(il8n.GRID.noSelect);return;
 							}
 						}						
 						top.$.ligerDialog.open({ 
-							url: 'education_question__view.html?id='+selected.id+'&random='+Math.random(), height: 550,width: 700
+							url: 'education_question__view.html?id='+selected.id+'&random='+Math.random(), height: 550,width: 750
 							,title: top.il8n.details
 							,isHidden: false
 						});							
@@ -134,12 +140,12 @@ var education_question = {
 					text: permission[i].name , img:permission[i].icon, click : function(){
 						//education_question.update();
 						var selected;
-						if(education_question.grid.options.checkbox){
-							selected = education_question.grid.getSelecteds();
+						if($.ligerui.get('education_question__grid').options.checkbox){
+							selected = $.ligerui.get('education_question__grid').getSelecteds();
 							if(selected.length!=1){alert(il8n.selectOneItemOnGrid);return;}
 							selected = selected[0];
 						}else{
-							selected = education_question.grid.getSelected();
+							selected = $.ligerui.get('education_question__grid').getSelected();
 							if(selected==null){
 								alert(il8n.GRID.noSelect);return;
 							}
@@ -161,7 +167,7 @@ var education_question = {
 			}
 		}
 	
-		education_question.grid = $(document.body).ligerGrid(config);
+		$(document.body).ligerGrid(config);
 	}
 	
 	/**
@@ -507,7 +513,7 @@ var education_question = {
 	
 	,delet: function(){
 		//判断 ligerGrid 中,被勾选了的数据
-		selected = education_question.grid.getSelecteds();
+		selected = $.ligerui.get('education_question__grid').getSelecteds();
 		//如果一行都没有选中,就报错并退出函数
 		if(selected.length==0){alert(top.il8n.noSelect);return;}
 		//弹框让用户最后确认一下,是否真的需要删除.一旦删除,数据将不可恢复
@@ -532,7 +538,7 @@ var education_question = {
 				dataType: 'json',
 				success: function(response) {
 					if(response.state==1){
-						education_question.grid.loadData();
+						$.ligerui.get('education_question__grid').loadData();
 					}
 				},
 				error : function(){
@@ -569,23 +575,22 @@ var education_question = {
 				buttons : [
 				    //清空查询条件
 					{text:top.il8n.clear,onclick:function(){
-						education_question.grid.options.parms = {	};
-						education_question.grid.loadData();
+						$.ligerui.get('education_question__grid').options.parms.search = "{}";
+						$.ligerui.get('education_question__grid').loadData();
 						
 						$.ligerui.get("search_title").setValue('');
 						$.ligerui.get("search_subject").setValue('');
 						$.ligerui.get("search_type").setValue('');
 					}},
 					//提交查询条件
-				    {text:top.il8n.search,onclick:function(){
-				    	education_question.grid.options.parms = {
-							searchJson : $.ligerui.toJSON({
-								 title : $.ligerui.get("search_title").getValue()
-								,subject : $.ligerui.get("search_subject").getValue()
-								,type : $.ligerui.get("search_type").getValue()
-							})
-				    	};
-				    	education_question.grid.loadData();
+				    {text: top.il8n.search, onclick: function(){
+				    	
+				    	$.ligerui.get('education_question__grid').options.parms.search =  $.ligerui.toJSON({
+							 title : $.ligerui.get("search_title").getValue()
+							,subject : $.ligerui.get("search_subject").getValue()
+							,type : $.ligerui.get("search_type").getValue()
+						});
+				    	$.ligerui.get('education_question__grid').loadData();
 				}}]
 			});
 		}
@@ -593,14 +598,18 @@ var education_question = {
 	
 	,questionObj: {}
 	,view: function(){
+		var id = getParameter("id", window.location.toString() );
 		$.ajax({
 			 url: myAppServer() + "&class=education_question&function=view"
 			,data: {
-				id: getParameter("id", window.location.toString() )
-				
-				//服务端权限验证所需
-				,personname: top.basic_user.username
-				,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                 username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
+                ,id: id
 			}
 			,type: "POST"
 			,dataType: 'json'						
@@ -629,7 +638,8 @@ var education_question = {
                     education_question.questionObj.title = response.title;                    
                 }
                 else if(response.type==3){//判断题
-                	education_question.questionObj = new question_blank();
+                	
+                	education_question.questionObj = new question_check();
                     education_question.questionObj.index = "";
                     education_question.questionObj.title = response.title;                    
                 }else{
@@ -646,6 +656,7 @@ var education_question = {
                 education_question.questionObj.answer = response.answer;
                     
                 $(document.body).append("<div id = 'wls_quiz_main'></div>");
+  
                 education_question.questionObj.initDom();
                 education_question.questionObj.submitButton();
 			}

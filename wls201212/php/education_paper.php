@@ -397,64 +397,67 @@ class education_paper {
      */
     public function submit(){
         $CONN = tools::conn();
-        
         mysql_query("call education_paper__submit(".$_REQUEST['id'].",'".$_REQUEST['user_id']."',@state,@msg,@paperlogid)",$CONN);
         $res = mysql_query("select @state,@msg,@paperlogid",$CONN);
         $data = mysql_fetch_assoc($res);
         $id_paperlog = $data['@paperlogid'];
+        $paper = array();
+                    
+        if($_REQUEST['user_type']!='9'){
+                    
+            //从前端POST过来的JSON数据中,解析出学生提交的答案
+            $arr = json_decode($_REQUEST['json'],true);
+            //并将做题答案直接插入到数据库表中
+            $sql = "insert into education_question_log (
+             id_question
+            ,myanswer
+            ,id_creater
+            ,id_creater_group
+            ,code_creater_group
+            ,id_paper
+            ,id_paper_log
+            ,id
+            ) values ";
         
-        //从前端POST过来的JSON数据中,解析出学生提交的答案
-        $arr = json_decode($_REQUEST['json'],true);
-        //并将做题答案直接插入到数据库表中
-        $sql = "insert into education_question_log (
-         id_question
-        ,myanswer
-        ,id_creater
-        ,id_creater_group
-        ,code_creater_group
-        ,id_paper
-        ,id_paper_log
-        ,id
-        ) values ";
-    
-        for($i=0;$i<count($arr);$i++){
-            $sql .= " (
-            '".$arr[$i]['id']."'
-            ,'".$arr[$i]['myanswer']."'
-            ,'".$_REQUEST['user_id']."'
-            ,'".$_REQUEST['group_id']."'
-            ,'".$_REQUEST['group_code']."'
-            ,'".$_REQUEST['id']."'
-            ,'".$id_paperlog."'
-            ,'".tools::getId("education_question_log")."'
-            ),";            
+            for($i=0;$i<count($arr);$i++){
+                $sql .= " (
+                '".$arr[$i]['id']."'
+                ,'".$arr[$i]['myanswer']."'
+                ,'".$_REQUEST['user_id']."'
+                ,'".$_REQUEST['group_id']."'
+                ,'".$_REQUEST['group_code']."'
+                ,'".$_REQUEST['id']."'
+                ,'".$id_paperlog."'
+                ,'".tools::getId("education_question_log")."'
+                ),";            
+            }
+            $sql = substr($sql,0,strlen($sql)-1);
+            //echo $sql;
+            mysql_query($sql,$CONN);
+            $paper = array(
+                'totalCent'=>1
+                ,'myTotalCent'=>1
+                ,'count_right'=>1
+                ,'count_wrong'=>1
+                ,'count_giveup'=>1
+                ,'count_byTeacher'=>1
+            );
+            
+            //使用存储过程,批改试卷,得到分数
+            mysql_query("call education_paper__mark(".$id_paperlog.",@state,@msg,@totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher)",$CONN);
+            $res = mysql_query("select @totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher,@state,@msg",$CONN);
+            $arr = mysql_fetch_array($res);
+    		if($arr[6]==0)die($arr[7]);
+            $paper = array(
+                'totalCent' => $arr[0]   ,
+                'myTotalCent' => $arr[1],
+                'count_right' => $arr[2],
+                'count_wrong' => $arr[3],
+                'count_giveup' => $arr[4],
+                'count_byTeacher' => $arr[5]
+            );
+        
         }
-        $sql = substr($sql,0,strlen($sql)-1);
-        //echo $sql;
-        mysql_query($sql,$CONN);
-        $paper = array(
-            'totalCent'=>1
-            ,'myTotalCent'=>1
-            ,'count_right'=>1
-            ,'count_wrong'=>1
-            ,'count_giveup'=>1
-            ,'count_byTeacher'=>1
-        );
-        
-        //使用存储过程,批改试卷,得到分数
-        mysql_query("call education_paper__mark(".$id_paperlog.",@state,@msg,@totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher)",$CONN);
-        $res = mysql_query("select @totalCent,@myTotalCent,@count_right,@count_wrong,@count_giveup,@count_byTeacher,@state,@msg",$CONN);
-        $arr = mysql_fetch_array($res);
-		if($arr[6]==0)die($arr[7]);
-        $paper = array(
-            'totalCent' => $arr[0]   ,
-            'myTotalCent' => $arr[1],
-            'count_right' => $arr[2],
-            'count_wrong' => $arr[3],
-            'count_giveup' => $arr[4],
-            'count_byTeacher' => $arr[5]
-        );
-        
         //输出试卷的正确答案跟解题思路
         $sql = "
         select        

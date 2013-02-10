@@ -80,7 +80,7 @@ class tools{
 	 * */
 	public static function conn(){
 		if(self::$CONN==null){
-			self::$CONN = mysql_connect(config::$host,config::$unm,config::$pwd);
+			self::$CONN = mysql_connect(config::$host,config::$unm,config::$pwd,1,131072);
 			mysql_select_db(config::$db,self::$CONN);
 			mysql_query('SET NAMES UTF8');
 		}

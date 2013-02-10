@@ -367,9 +367,27 @@ class basic_developer {
 		mysql_query("call education_paper__import('".basic_excel::$guid."',@state,@msg,@ids)",$CONN);		        
     }
     
+    public function importTest(){
+        if(!isset($_REQUEST['key']))exit();
+        $CONN = tools::conn();
+        $sql = "call basic_permission__import('".$_REQUEST['key']."',@state,@msg,@ids);";
+        //$sql = "call ccc(@xxx);";
+        echo $sql;
+        try{
+            mysql_query($sql,$CONN);
+        }catch(Exception $e){
+            echo $e;
+        }
+        echo mysql_errno().mysql_error();
+		$res = mysql_query("select @state as c",$CONN);
+		$data = mysql_fetch_assoc($res);
+		print_r($data);		
+    }
+    
     public function importAll4Highschool() {
        
         $CONN = tools::conn();
+        
         require_once 'basic_excel.php';
         $this->importParameter();
 

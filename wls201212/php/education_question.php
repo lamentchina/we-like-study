@@ -46,71 +46,157 @@ class education_question {
     }    
 	
     /**
-     * 得到JSON格式目列表
-     * */
-    public function select(){
-        $CONN = tools::conn();
-        
-        if(!isset($_REQUEST['page']))$_REQUEST['page'] = 1;
-        if(!isset($_REQUEST['pagesize']))$_REQUEST['pagesize'] = 15;
-		
-		$where = " where 1=1 ";
-		$orderby = " ORDER BY education_question.time_created ASC ";
-        //有查询条件
-		if(isset($_REQUEST['searchJson'])){
-			$search = json_decode($_REQUEST['searchJson'],true);
-			//print_r($search);
-			$where = " where 1=1 ";
-			if(trim($search['subject'])!=''){
-				$where .= " and education_question.subject = '".$search['subject']."' ";
-			}
-			if(trim($search['type'])!=''){
-				$where .= " and education_question.type = '".$search['type']."' ";
-			}
-			if(trim($search['title'])!=''){
-				$where .= " and education_question.title like '%".$search['title']."%' ";
-			}	
-		}
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-			$orderby = " order by education_question.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}
-		
-        $sql = " 
-		SELECT
-		
-		education_question.*,
-		education_subject.name AS subjectname
-		
-		FROM
-		education_question
-		left Join education_subject ON education_question.subject = education_subject.code
-		
-		".$where."
-		".$orderby."
-		limit ".($_REQUEST['page']-1)*$_REQUEST['pagesize'].",".$_REQUEST['pagesize']."
-		";
-		
-        $res = mysql_query($sql,$CONN);
-        
-        $data = array();
-        while($temp = mysql_fetch_assoc($res)){
-			$temp['time_created'] = substr($temp['time_created'],0,10);
-			if(strlen($temp['title']) >= 16 ){
-			    $temp['title'] = tools::cut_str($temp['title'], 8);
-			}			
-            $data[] = $temp;
+     * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
+     * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
+     * 是不会对系统的数据做 增删改 这种 写 的操作的,都是 读取 的操作,无需转移到存储过程
+     * 
+     * return 默认是JSON,是作为 WEB前端,手机终端,接口通信 的主要模式,也有可能是XML,如果是 array 的话,就返回一个数组
+     * 输出的数据,其格式为: {Rows:[{key1:'value1',key2:'value2']},Total:12,page:1,pagesize:3,status:1,msg:'处理结果'}
+     * search 默认是NULL,将依赖 $_REQUEST['serach'] 来获取,获取到的应该是一个JSON,内有各种查询参数
+     */
+    public function grid($return='json',$search=NULL,$page=NULL,$pagesize=NULL){
+        if($return<>'array'){
+            //判断当前用户有没有 查询 权限,如果权限没有,将直接在 tools::error 中断
+            //tools::checkPermission('1501',$_REQUEST['username'],$_REQUEST['session']);
+            //判断前端是否缺少必要的参数
+            if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) )tools::error('grid action wrong');
+            $search=$_REQUEST['search'];
+            $page=$_REQUEST['page'];
+            $pagesize=$_REQUEST['pagesize'];
         }
         
-        $sql2 = "select count(*) as total from education_question ".$where;
-        $res = mysql_query($sql2,$CONN);
-        $total = 0;
-        while($temp = mysql_fetch_assoc($res)){
-            $total = $temp['total'];
+        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+        $conn = tools::conn();
+        
+        //列表查询下,查询条件必定是SQL拼凑的
+        $sql_where = " where 1=1 ";
+        //判断前端传递过来的查询条件内容,格式是否正确,因为格式必须是一个 JSON 
+        if(!tools::isjson($search))tools::error('grid,search data, wrong format');
+        $search=json_decode($search,true);
+        $search_keys = array_keys($search);
+        //print_r($search);
+        for($i=0;$i<count($search);$i++){
+            if($search_keys[$i]=='subject' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_question.subject_code like '%".$search[$search_keys[$i]]."%' ";
+            }
+            if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_question.title like '%".$search[$search_keys[$i]]."%' ";
+            }	
+            if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and education_question.type = '".$search[$search_keys[$i]]."' ";
+            }	            
         }
-        $data = array("Rows"=>$data,"Total"=>$total,'sql'=>preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql)));
-        echo json_encode($data);
-    }    
+        $sql_order = ' order by education_question.id desc ';
+        if(isset($_REQUEST['sortname'])){
+            $sql_order = ' order by education_question.'.$_REQUEST['sortname'].' '.$_REQUEST['sortorder'];
+        }
+        
+        $returnData = array();
+        //根据不同的用户角色,会有不同的列输出
+        if($_REQUEST['user_type']=='1'){ 
+            //管理员角色 
+            $sql = "            
+SELECT
+education_question.type2,
+education_question.title,
+education_question.`type`,
+(select extend4 from basic_memory where extend5 = 'education_question__type' and code = education_question.type) as type_,   
+education_question.time_created,
+education_question.teacher_name,
+education_question.subject_name,
+education_question.subject_code,
+education_question.teacher_id,
+education_question.teacher_code,
+education_question.count_used,
+education_question.difficulty,
+education_question.id_creater,
+education_question.id_creater_group,
+education_question.id,
+education_question.code_creater_group
+FROM
+education_question
+    		".$sql_where."
+    		".$sql_order."
+			limit ".(($page-1)*$pagesize).", ".$pagesize;
+            //echo $sql;
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['title'] = tools::cutString($temp['title'],10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total from
+    		education_question
+			".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+        }        
+        //根据不同的用户角色,会有不同的列输出
+        if($_REQUEST['user_type']=='2'){ 
+           
+        }
+        
+        if($_REQUEST['user_type']=='3'){ 
+            //教师角色              
+            $sql_where .= " and education_question.id_creater = '".$_REQUEST['user_id']."' ";
+            $sql = "            
+SELECT
+education_question.type2,
+education_question.title,
+education_question.`type`,
+(select extend4 from basic_memory where extend5 = 'education_question__type' and code = education_question.type) as type_,   
+education_question.time_created,
+education_question.teacher_name,
+education_question.subject_name,
+education_question.subject_code,
+education_question.teacher_id,
+education_question.teacher_code,
+education_question.count_used,
+education_question.difficulty,
+education_question.id_creater,
+education_question.id_creater_group,
+education_question.id,
+education_question.code_creater_group
+FROM
+education_question
+    		".$sql_where."
+    		".$sql_order."
+			limit ".(($page-1)*$pagesize).", ".$pagesize;
+
+            $res = mysql_query($sql,$conn);
+            $data = array();
+            while($temp = mysql_fetch_assoc($res)){
+                //做一些数据格式转化,比如 长title 的短截取,时间日期的截取,禁止在此插入HTML标签
+    			$temp['title'] = tools::cutString($temp['title'],10);
+                $data[] = $temp;
+            }
+            
+            $sql_total = "select count(*) as total from
+    		education_question
+			".$sql_where;
+            
+            $res = mysql_query($sql_total,$conn);
+            $total = mysql_fetch_assoc($res);
+                      
+        }
+        if($_REQUEST['user_type']=='9'){            
+                      
+        }
+        
+        $returnData = array(
+            'Rows'=>$data,
+            'sql'=>preg_replace("/\s(?=\s)/","",preg_replace('/[\n\r\t]/'," ",$sql)),
+            'Total'=>$total['total']
+        );
+        if ($return=='array') {
+            return $returnData;
+        }
+        header("Content-type:text/json");        
+        echo json_encode($returnData);
+    }       
     
      public function insert($data=NULL,$retur='json') {
         tools::checkPermission("120101");//TODO
@@ -137,7 +223,7 @@ class education_question {
         $res = mysql_query( "select * from education_question where id = '".$id."' " , $CONN );
 
         $data= mysql_fetch_assoc($res);
-        
+        header("Content-type:text/json");
         echo json_encode($data);
     } 	
     

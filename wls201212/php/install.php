@@ -5,7 +5,7 @@ $db_password = $_REQUEST['db_password'];
 $db_name = $_REQUEST['db_name'];
 
 
-$conn = mysql_connect($db_server,$db_username,$db_password);
+$conn = mysql_connect($db_server,$db_username,$db_password,1,131072);
 mysql_select_db($db_name,$conn);
 mysql_query('SET NAMES UTF8');
 mysql_query("DELIMITER ;",$conn);
