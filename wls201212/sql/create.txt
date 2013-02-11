@@ -1,0 +1,886 @@
+-- phpMyAdmin SQL Dump
+-- version 3.3.10
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Feb 11, 2013 at 08:01 AM
+-- Server version: 5.0.19
+-- PHP Version: 5.3.5
+
+--
+-- Database: 'myapp'
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_department'
+--
+
+DROP TABLE IF EXISTS basic_department;
+CREATE TABLE basic_department (
+  `code` varchar(200) default '0' COMMENT ' 部门编码 通过这个可以查看此部门的所有上级跟下级部门 ,与 basic_group 中的 code 保持一致 ',
+  `name` varchar(200) NOT NULL default '0' COMMENT ' 名称 ',
+  count_person int(11) default '0' COMMENT ' 部门总人数,并不一定等于部门用户组总人数,可能包含非本公司的,临时外包成员 ',
+  address varchar(200) default '0' COMMENT ' 部门办公地点 ',
+  phone varchar(200) default '0' COMMENT ' 办公室电话 ',
+  fax varchar(200) default '0' COMMENT ' 办公室传真 ',
+  functions varchar(200) default '0' COMMENT ' 部门主要职能 ',
+  photo varchar(200) default '0' COMMENT ' 部门的内景照片 ',
+  manager_id int(11) default '0' COMMENT ' 管理员编号,参考 basic_user 表, 部门管理员可能不属于此部门 ',
+  manager_name varchar(200) default '部门管理员' COMMENT ' 用于前端列表显示所用 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT= '- 行政部门,组织机构,一个员工属于并且只能属于一个部门 - ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_excel'
+--
+
+DROP TABLE IF EXISTS basic_excel;
+CREATE TABLE basic_excel (
+  guid char(36) default '0 ',
+  sheets int(11) default NULL COMMENT '  上传的文件的 sheet 总数  ',
+  sheetindex int(11) NOT NULL COMMENT '  这行记录来自哪个 sheet   ',
+  sheetname varchar(200) NOT NULL,
+  rowindex int(11) NOT NULL,
+  maxcolumn int(11) NOT NULL,
+  A varchar(500) default NULL,
+  B varchar(500) default NULL,
+  C varchar(500) default NULL,
+  D varchar(500) default NULL,
+  E varchar(500) default NULL,
+  F varchar(500) default NULL,
+  G varchar(500) default NULL,
+  H varchar(500) default NULL,
+  I varchar(500) default NULL,
+  J varchar(500) default NULL,
+  K varchar(500) default NULL,
+  L varchar(500) default NULL,
+  M varchar(500) default NULL,
+  N varchar(500) default NULL,
+  O varchar(500) default NULL,
+  P varchar(500) default NULL,
+  Q varchar(500) default NULL,
+  R varchar(500) default NULL,
+  S varchar(500) default NULL,
+  T varchar(500) default NULL,
+  U varchar(500) default NULL,
+  V varchar(500) default NULL,
+  W varchar(500) default NULL,
+  X varchar(500) default NULL,
+  Y varchar(500) default NULL,
+  Z varchar(500) default NULL,
+  AA varchar(500) default NULL,
+  AB varchar(500) default NULL,
+  AC varchar(500) default NULL,
+  AD varchar(500) default NULL,
+  AE varchar(500) default NULL,
+  AF varchar(500) default NULL,
+  AG varchar(500) default NULL,
+  AH varchar(500) default NULL,
+  AI varchar(500) default NULL,
+  AJ varchar(500) default NULL,
+  AK varchar(500) default NULL,
+  AL varchar(500) default NULL,
+  AM varchar(500) default NULL,
+  AN varchar(500) default NULL,
+  id int(11) NOT NULL auto_increment COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  PRIMARY KEY  (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='  用户经常向系统上传 EXCEL 文件,来实现业务数 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_group'
+--
+
+DROP TABLE IF EXISTS basic_group;
+CREATE TABLE basic_group (
+  `name` varchar(200) default '0' COMMENT '  用户组名称,随意修改不会影响业务逻辑  ',
+  `code` varchar(200) default NULL COMMENT '  有级层联系的用户组编码,不能随便修改,影响业务逻辑,系统用户组的编码 10(管理员) 99(访客) 的非常重要,不能改   ',
+  count_users int(11) default '0' COMMENT '  用户数量 缓存数据  ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT ' 类型 ',
+  `status` int(11) default '1' COMMENT ' 状态 ',
+  remark text,
+  PRIMARY KEY  (id),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  用户组表,权限模块中的核心表  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_group_2_permission'
+--
+
+DROP TABLE IF EXISTS basic_group_2_permission;
+CREATE TABLE basic_group_2_permission (
+  id_permission int(11) NOT NULL default '0' COMMENT '  权限编号,int类型的数据在查询的时候速度更快,所以在初始化用户权限 这一过程中,依赖此字段  ',
+  id_group int(11) NOT NULL default '0' COMMENT '  用户组编号  ',
+  code_group varchar(200) NOT NULL default '0' COMMENT '  用户组编码,有层级关系,也便于技术人员后台运维  ',
+  code_permission varchar(200) NOT NULL default '0' COMMENT '  权限编码,有层级关系  ',
+  cost int(11) default '0' COMMENT '  执行此操作,将会从当前用户的 money 中扣除多少金币  ',
+  credits int(11) default '0' COMMENT '  执行此操作,将会给当前用户增加多少积分 , 积分是用来判断某一个用户在系统的活跃程度的   ',
+  id int(11) NOT NULL auto_increment COMMENT '  主键编号  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY basic_g2p_u (id_permission,id_group)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  权限表 系统的权限是通过 权限-用户组-用户  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_group_2_user'
+--
+
+DROP TABLE IF EXISTS basic_group_2_user;
+CREATE TABLE basic_group_2_user (
+  id_user int(11) default '0' COMMENT '  用户编号  ',
+  id_group int(11) default '0' COMMENT '  用户组编号  ',
+  username varchar(200) default '0' COMMENT '  用户名称,为了便于运维  ',
+  code_group varchar(200) default '0' COMMENT '  用户的组织机构编码,有层级关系  ',
+  `type` int(11) default '0' COMMENT ' 用户所属用户组类型, 此用户的主要身份归属查看  1 行政归属类型 2 业务处理类型  ',
+  id int(11) NOT NULL auto_increment COMMENT '  主键编号  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY basic_g2u_u (id_user,id_group)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  系统的权限是通过 权限-用户组-用户 来实现 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_log'
+--
+
+DROP TABLE IF EXISTS basic_log;
+CREATE TABLE basic_log (
+  id int(11) NOT NULL auto_increment COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT ' 类型 ',
+  username varchar(200) default 'system' COMMENT ' 日志来源 ',
+  msg varchar(300) default 'log' COMMENT ' 日志内容 ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  PRIMARY KEY  (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='  系统日志表  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_memory'
+--
+
+DROP TABLE IF EXISTS basic_memory;
+CREATE TABLE basic_memory (
+  `code` varchar(200) default '0' COMMENT '  编码  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  extend1 int(11) default NULL COMMENT '  扩展数字字段  ',
+  extend2 int(11) default NULL COMMENT '  扩展数字字段  ',
+  extend3 int(11) default NULL COMMENT '  扩展数字字段  ',
+  extend4 varchar(200) default NULL COMMENT '  扩展字符串字段  ',
+  extend5 varchar(200) default NULL COMMENT '  扩展字符串字段  ',
+  extend6 varchar(200) default NULL COMMENT '  扩展字符串字段 '
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 COMMENT='  内存表,将被各个存储过程频繁调用  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_parameter'
+--
+
+DROP TABLE IF EXISTS basic_parameter;
+CREATE TABLE basic_parameter (
+  `code` varchar(200) default '0 ',
+  `value` varchar(200) default '0 ',
+  reference varchar(200) default '0 ',
+  id int(11) NOT NULL auto_increment,
+  extend1 int(11) default NULL,
+  extend2 int(11) default NULL,
+  extend3 int(11) default NULL,
+  extend4 varchar(200) default NULL,
+  extend5 varchar(200) default NULL,
+  extend6 varchar(200) default NULL,
+  remark text,
+  PRIMARY KEY  (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='  系统参数表,存储在硬盘上,非内存表 -';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_permission'
+--
+
+DROP TABLE IF EXISTS basic_permission;
+CREATE TABLE basic_permission (
+  `name` varchar(200) default '0' COMMENT '  名称,前端展示用,随便改名称不影响业务逻辑  ',
+  `type` int(11) default '0' COMMENT '  类型: 节点 页面 按钮 逻辑  ',
+  `code` varchar(200) default NULL COMMENT '  权限编码,有级层关系的,不能随便改,会影响前端跟服务端的逻辑  ',
+  icon varchar(200) default NULL COMMENT '  图标 具体使用时,其实是一个图标CLASS样式  ',
+  path varchar(200) default NULL COMMENT '  如果这个节点是 图标 类型,点击以后会以iframe形式弹出一个新的窗口,这里就保存其路径  ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `status` int(11) default '1' COMMENT ' 状态 ',
+  remark text,
+  PRIMARY KEY  (id),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  权限表 系统的权限是通过 权限-用户组-用户  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_person'
+--
+
+DROP TABLE IF EXISTS basic_person;
+CREATE TABLE basic_person (
+  `name` varchar(200) default 'Default Name' COMMENT ' 姓名 ',
+  birthday datetime default '1900-01-01 00:00:00' COMMENT ' 生日 ',
+  cardType int(11) default '1' COMMENT ' 身份鉴别卡类型: 1 身份证, 2 军员证 ,3 港澳台证,等等其他类型 ',
+  idcard varchar(200) default '0' COMMENT ' 卡内容 ',
+  photo varchar(200) default '../file/tavatar.gif' COMMENT ' 照片 ',
+  height int(11) default '171' COMMENT ' 身高 ',
+  nationality varchar(200) default '中国' COMMENT ' 国籍 ',
+  gender int(11) default '1' COMMENT '  根据国标 GB2261.1 要求， 男1 女2 默认男性  ',
+  nation int(11) default '1' COMMENT ' 民族 参考 GB3304  ',
+  ismarried int(11) default '2' COMMENT ' 婚姻状况 1 已婚 2 未婚 ',
+  degree int(11) default '20' COMMENT ' 最高学历 默认为 大学本科 ',
+  degree_school varchar(200) default '四川师范大学' COMMENT ' 最高学历对应的学校  ',
+  degree_school_code varchar(200) default '0' COMMENT ' 高校编码 ',
+  politically int(11) default '99' COMMENT ' 政治面貌 默认为 无党派人士 ',
+  address_birth varchar(200) default '浙江省 宁波市 余姚市' COMMENT ' 籍贯 ',
+  address_birth_code varchar(200) default '330281' COMMENT ' 籍贯 行政区划编码 在前端,这个是 input hidden ',
+  cellphone varchar(200) default '13456105470' COMMENT ' 手机号码 ',
+  email varchar(200) default 'wei1224hf@gmail.com' COMMENT ' 邮箱 ',
+  qq varchar(200) default '0 ',
+  address varchar(200) default '浙江省.宁波市.余姚市.陆埠镇.江南村 XXX路XX号' COMMENT ' 居住地址 ',
+  address_code varchar(200) default '居住地址编码' COMMENT ' 居住地址的地理位置编码,用于统计 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment = ' 个人信息表 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_user'
+--
+
+DROP TABLE IF EXISTS basic_user;
+CREATE TABLE basic_user (
+  username varchar(200) default '0' COMMENT '  用户名 是否应该支持汉字登录呢？ ',
+  `password` varchar(200) default '0' COMMENT '  密码 当然是要MD5加密的，参数是域名  ',
+  money int(11) default '0' COMMENT '  金币,用于积分政策,可消耗品,涉及到扣除扣分  ',
+  money2 int(11) default '0' COMMENT '  积分之类的  ',
+  lastlogintime datetime default '1900-01-01 00:00:00' COMMENT '  最后一次登录时间  ',
+  lastlogouttime datetime default '1900-01-01 00:00:00' COMMENT '  最后一次退出时间  ',
+  count_actions int(11) default '0' COMMENT '  这个账号总计的系统操作次数  ',
+  count_actions_period int(11) default '0' COMMENT '  最近一段时间的操作次数,即最近3个月的操作数,如果3个月内操作数为0,就要将此账号关闭   ',
+  person_id int(11) default '0' COMMENT ' 每一个用户必定有一条 详细个人信息 的记录 ',
+  person_name varchar(200) default '0' COMMENT '  真实姓名,冗余数据存储,便于前端列显示  ',
+  person_cellphone varchar(200) default '0' COMMENT '  手机号码,涉及短信通知收发  ',
+  person_email varchar(200) default '0' COMMENT '  邮箱,涉及邮件收发  ',
+  group_id int(11) default '0' COMMENT '  此用户的组织机构编号  ',
+  group_code varchar(200) default '0' COMMENT '  此用户的组织机构编码,有层级关系,可按层级统计  ',
+  group_name varchar(200) default '0' COMMENT '  此用户的组织机构名称,冗余存储,便于前台显示.用户换部门的时候,此冗余字段要改  ',
+  group_all varchar(200) default '0' COMMENT '  此用户所有的其他用户组编号集合.一个用户可能属于多个用户组  ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY username (username),
+  UNIQUE KEY person_id (person_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  用户表  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_user_moneylog'
+--
+
+DROP TABLE IF EXISTS basic_user_moneylog;
+CREATE TABLE basic_user_moneylog (
+  money int(11) default '0' COMMENT '  充值金额  ',
+  `code` char(10) default '0000000000' COMMENT '  充值校验码  ',
+  ordernum varchar(200) default '0' COMMENT '  订单编号 在使用支付宝的时候  ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  用户的充值记录  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_user_session'
+--
+
+DROP TABLE IF EXISTS basic_user_session;
+CREATE TABLE basic_user_session (
+  id_user int(11) NOT NULL COMMENT ' 用户编码 ',
+  username varchar(200) default '0' COMMENT ' 用户名 ',
+  id_group int(11) default '0' COMMENT ' 用户主要用户组的编码 ',
+  groups varchar(200) default '0' COMMENT ' 用户的其他用户组编码 ',
+  ip varchar(200) default '0' COMMENT ' 用户的登录IP ',
+  permissions varchar(1000) default NULL COMMENT ' 权限编号 ',
+  lastaction varchar(15) default '0' COMMENT '  最后一次操作的操作名称  ',
+  lastactiontime datetime default '1900-01-01 00:00:00' COMMENT '  最后一次执行操作的操作时间  ',
+  count_actions int(11) default '0' COMMENT '  本次登录系统后,执行的操作总数   ',
+  count_login int(11) default '0' comment ' 在本周期内,登录次数 ',
+  `session` varchar(200) default '0' COMMENT '  通过 session 来判断用户的上线状态,通过 工作流中的每隔一段时间更新   ',
+  `status` int(11) default '0 ',
+  PRIMARY KEY  (id_user)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8 COMMENT='  SESSION  内存表,弃用各种WEB服务端程序 APAHCE TO ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'basic_workflow'
+--
+
+DROP TABLE IF EXISTS basic_workflow;
+CREATE TABLE basic_workflow (
+  msg varchar(800) default '通知公告' COMMENT ' 通知公告内容 ',
+  filepath varchar(200) default '' COMMENT ' 如果有附件上传的话,只能有一个附件 ',
+  receive varchar(500) default '' COMMENT '  有哪些人也接收到了此节点  ',
+  receive_count int(11) default '0' COMMENT ' 总共有多少人收到此节点 ',
+  apppath varchar(200) default 'basic_workflow__msg.html' COMMENT '  程序路径  ',
+  node_source int(11) default '0' COMMENT '  事件的最初发起点 ',
+  node_from int(11) default '0' COMMENT ' 流转到本节点的上一个节点 ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  工作流表   ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_exam'
+--
+
+DROP TABLE IF EXISTS education_exam;
+CREATE TABLE education_exam (
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  count_students_planed int(11) default '0' COMMENT '  预计参加考试总人数  ',
+  count_students int(11) default '0' COMMENT '  实际参加考试人数  ',
+  count_passed int(11) default '0' COMMENT ' 考试通过人数 ',
+  title varchar(200) default '0' COMMENT '  考试名称,跟 paper title 一致  ',
+  place varchar(200) default '网上在线考试' COMMENT '  考试场所  ',
+  time_start datetime default '2012-01-01 00:00:00' COMMENT '  考试开始时间  ',
+  time_end datetime default '2100-01-01 00:00:00' COMMENT '  考试结束时间  ',
+  score int(11) default '0' COMMENT '  试卷总分  ',
+  `mode` int(11) default '0' COMMENT '  模式  ',
+  passline int(11) default '0' COMMENT ' 及格线 ',
+  invigilator varchar(200) default NULL COMMENT ' 监考老师 ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名,如果有批改的话,也是他批改  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名  ',
+  id_unified int(11) default '0' COMMENT '  统考编号.如果这个是属于统考的话  ',
+  id_paper int(11) default '0' COMMENT '  试卷编号  ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  多人在线测验,测验结果会被统计,得到排名结 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_exam_2_class'
+--
+
+DROP TABLE IF EXISTS education_exam_2_class;
+CREATE TABLE education_exam_2_class (
+  paper_id int(11) NOT NULL default '0' COMMENT '  试卷编号  ',
+  exam_id int(11) NOT NULL default '0' COMMENT '  考试编号  ',
+  exam_title varchar(200) default '0' COMMENT ' 考试标题 ',
+  class_id int(11) NOT NULL default '0' COMMENT '  班级编号  ',
+  class_code varchar(200) default '0' COMMENT '  班级编码  ',
+  class_name varchar(200) default '0' COMMENT '  班级名称  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名  ',
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  rank int(11) default '0' COMMENT '   此班级在这次联合考试中的排名,按平均分算   ',
+  top_score int(11) default '0' COMMENT ' 班级最高分 ',
+  top_student varchar(200) default '0' COMMENT ' 最高分学生姓名 ',
+  top_student_id int(11) default '0' COMMENT ' 最高分学生的编号 ',
+  avg_scroe int(11) default '0' COMMENT ' 平均分 ',
+  count_students_planed int(11) default '0' COMMENT '  预计参加考试总人数  ',
+  count_students int(11) default '0' COMMENT '  实际参加考试人数  ',
+  count_passed int(11) default '0' COMMENT ' 考试通过人数 ',
+  count_submit int(11) default '0' COMMENT '  已经提交试卷的人数  ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY education_e2c_u (exam_id,class_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  班级考试记录,用户组考试记录  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_exam_2_student'
+--
+
+DROP TABLE IF EXISTS education_exam_2_student;
+CREATE TABLE education_exam_2_student (
+  exam_id int(11) NOT NULL default '0' COMMENT '  考试编号  ',
+  exam_title varchar(200) default '0' COMMENT ' 考试标题 ',
+  class_id int(11) NOT NULL default '0' COMMENT '  班级编号  ',
+  class_code varchar(200) default '0' COMMENT '  班级编码  ',
+  class_name varchar(200) default '0' COMMENT '  班级名称  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名  ',
+  student_id int(11) NOT NULL default '0' COMMENT '  学生编号  ',
+  student_name varchar(200) default '0' COMMENT '  学生姓名  ',
+  student_code varchar(200) default '0' COMMENT '  学生编码,用户名  ',
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  rank int(11) default '0' COMMENT '  学生在这次考试中的总排名  ',
+  rank_class int(11) default '0' COMMENT '  学生在这次考试中的班级排名  ',
+  score int(11) default '0' COMMENT ' 得分 ',
+  passline int(11) default '0' COMMENT '  及格线  ',
+  totalcent int(11) default '0' COMMENT '  试卷总分  ',
+  id_paper int(11) default '0' COMMENT ' 试卷编号 ',
+  id_paper_log int(11) default '0' COMMENT '  做题日志编号  ',
+  time_start datetime default '2012-01-01 00:00:00' COMMENT '  考试开始时间  ',
+  time_end datetime default '2100-01-01 00:00:00' COMMENT '  考试结束时间  ',
+  time_submit datetime default '1987-03-18 00:00:00' COMMENT '  交卷时间  ',
+  time_mark datetime default '1987-03-18 00:00:00' COMMENT '  批卷时间  ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY education_e2s_u (exam_id,student_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  学生考试记录  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_exam_unified'
+--
+
+DROP TABLE IF EXISTS education_exam_unified;
+CREATE TABLE education_exam_unified (
+  `name` varchar(200) default '统考 ',
+  schedule text,
+  time_start datetime default '1900-01-01 00:00:00 ',
+  time_end datetime default '1900-01-01 00:00:00 ',
+  ids_classes varchar(200) default '0 ',
+  id int(11) NOT NULL auto_increment,
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment=' 统一联合考试 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_paper'
+--
+
+DROP TABLE IF EXISTS education_paper;
+CREATE TABLE education_paper (
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  count_questions int(11) default '0' COMMENT '  题目数量  ',
+  count_used int(11) default '0' COMMENT '  被学生使用的次数  ',
+  title varchar(200) default '0' COMMENT '  试卷名称  ',
+  cost int(11) default '0' COMMENT '  所耗费的金币  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名  ',
+  cent int(11) default '0' COMMENT '  试卷总分  ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  试卷表.考卷,统考卷,他们的试卷内容也是存在此表 -';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_paper_2_question'
+--
+
+DROP TABLE IF EXISTS education_paper_2_question;
+CREATE TABLE education_paper_2_question (
+  id_paper int(11) NOT NULL COMMENT '  试卷编号  ',
+  id_question int(11) NOT NULL COMMENT '  题目编号  ',
+  rank int(11) NOT NULL default '0' COMMENT '  显示排序  ',
+  id int(11) NOT NULL auto_increment COMMENT '  主键  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY education_p2q (id_paper,id_question)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  试卷跟题目的多对多映射表.为了支持 题库出 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_paper_log'
+--
+
+DROP TABLE IF EXISTS education_paper_log;
+CREATE TABLE education_paper_log (
+  paper_id int(11) default '0' COMMENT '  试卷编号  ',
+  paper_title varchar(200) default '0' COMMENT '  试卷标题  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号,用户编号,来源 basic_user,非 education_teacher  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名,层级编码,可以按层级统计  ',
+  student_id int(11) NOT NULL default '0' COMMENT '  学生编号  ',
+  student_name varchar(200) default '0' COMMENT '  学生姓名  ',
+  student_code varchar(200) default '0' COMMENT '  学生编码  ',
+  cent int(11) default '0' COMMENT '  试卷总分  ',
+  cent_subjective int(11) default '0' COMMENT '  主观题分数,如果这张试卷中有 填空题 等需要教师批改的话,人工批改的得分  ',
+  cent_objective int(11) default '0' COMMENT '  客观题分数,系统自动批改  ',
+  mycent int(11) default '0' COMMENT ' 我的得分 ',
+  mycent_subjective int(11) default '0' COMMENT '  学生的主观题分数  ',
+  mycent_objective int(11) default '0' COMMENT '  学生的客观题分数  ',
+  count_right int(11) default '0' COMMENT ' 我做对的题目数 ',
+  count_wrong int(11) default '0' COMMENT ' 我做错的题目数 ',
+  count_giveup int(11) default '0' COMMENT ' 我放弃的题目数 ',
+  count_total int(11) default '0' COMMENT ' 试卷的总题目数 ',
+  count_subjective int(11) default '0' COMMENT '  主观题目数  ',
+  count_objective int(11) default '0' COMMENT '  客观题目数  ',
+  proportion int(11) default '0' COMMENT ' 我题目作对的比率  (做对总数/题总数)*100  ',
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码,层级编码,可以按层级统计  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  试卷日志  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_question'
+--
+
+DROP TABLE IF EXISTS education_question;
+CREATE TABLE education_question (
+  type2 varchar(200) default '0' COMMENT ' -- 用户自定义的题目类型 , 主要用在 组合题类型上, 比如完形填空 , 阅读理解 , 快速阅读 等 -- ',
+  title text NOT NULL COMMENT ' 题目标题 ',
+  answer text NOT NULL COMMENT ' 答案 ',
+  optionlength int(11) default '0' COMMENT ' 题目选项数 ',
+  option1 text COMMENT ' 选项1 ',
+  option2 text COMMENT ' 选项2 ',
+  option3 text,
+  option4 text,
+  option5 text,
+  option6 text,
+  option7 text COMMENT ' 规定一道选择题 无论是 单选 多选  , 选项个数最多不能超过 7 个 ',
+  description text COMMENT ' 解体思路 ',
+  cent float default '0' COMMENT ' 分值 ',
+  layout int(11) default '1' COMMENT ' 如果是 单选题 多选题,选项的排列方式 ',
+  id_parent int(11) default '0' COMMENT ' --  像 完型填空 这样的组合题, 它有很多 子题目 的,这些子题目通过 id_parent 找到其归属的组合题编号  -- ',
+  path_listen varchar(200) default '0' COMMENT ' 听力文件路径 ',
+  path_image varchar(200) default '0' COMMENT ' 图片路径 ',
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码,层级编码,可以按层级统计  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号,用户编号,来源 basic_user,非 education_teacher  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名,层级编码,可以按层级统计  ',
+  count_used int(11) default '0' COMMENT ' 被使用的次数 ',
+  count_right int(11) default '0' COMMENT ' 被答对的次数 ',
+  count_wrong int(11) default '0' COMMENT ' 被答错的次数 ',
+  count_giveup int(11) default '0' COMMENT ' 被放弃解答的次数 ',
+  comment_ywrong_1 int(11) default '0' COMMENT ' 如果答错了,学生可以对这道题说明自己答错的原因: 我的确不会做 ',
+  comment_ywrong_2 int(11) default '0' COMMENT ' 我粗心,不小心答错了 ',
+  comment_ywrong_3 int(11) default '0' COMMENT ' 看了解题思路后,我仍然不能明白错在哪里 ',
+  comment_ywrong_4 int(11) default '0' COMMENT ' 我没有做错,是题目本身错了 ',
+  difficulty int(11) default '0' COMMENT ' 难度 ',
+  ids_level_knowledge varchar(200) default '0' COMMENT ' 知识点编号 ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  题目表  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_question_log'
+--
+
+DROP TABLE IF EXISTS education_question_log;
+CREATE TABLE education_question_log (
+  id_paper int(11) default '0' COMMENT '  试卷编号  ',
+  id_paper_log int(11) default '0' COMMENT '  试卷日志编号  ',
+  id_question int(11) default '0' COMMENT '  题目编号  ',
+  myanswer text COMMENT '  我的回答  ',
+  correct int(11) default '0' COMMENT '  是否作对 1 作对 2 做错 0 放弃  ',
+  mycent float default '0' COMMENT '  我的得分  ',
+  application int(11) default '0' COMMENT '  1 练习试卷 2 考试试卷 3 统考试卷 4  题型练习 5 单题做题  ',
+  id_teacher int(11) default '0 ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  做题记录,不会有对应的前端列表  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_question_log_wrongs'
+--
+
+DROP TABLE IF EXISTS education_question_log_wrongs;
+CREATE TABLE education_question_log_wrongs (
+  count_wrong int(11) default '0' COMMENT '  作错次数  ',
+  count_right int(11) default '0' COMMENT '  作对次数,当累计到4的时候,这行记录将被删除  ',
+  question_id int(11) default '0' COMMENT '  题目编号  ',
+  question_title varchar(200) default '0' COMMENT ' 题目的标题,冗余字段,方便前端查询 ',
+  paper_title varchar(200) default '0' COMMENT '  试卷的标题,这个做题日志的来源  ',
+  paper_id int(11) default '0' COMMENT '  试卷编号  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号,用户编号,来源 basic_user,非 education_teacher  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名,层级编码,可以按层级统计  ',
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码,层级编码,可以按层级统计  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  comment_student int(11) default '0' COMMENT ' -- 用户对这道题目的评价 1 我做错了,我知识点掌握不足 2 我不小心错了,我粗心导致的 3 我还是没有弄懂为什么会错 4 我没有错,答案或者题目设计错了 -- ',
+  comment_teracher varchar(200) default '0' COMMENT ' -- 教师在批改这道题目的时候,下的评论.一般是在题目做错的情况下评论 -- ',
+  `type` int(11) default '0' COMMENT ' 类别 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编号  ',
+  code_creater_group varchar(200) default '0' COMMENT '  数据创建人所在的部门编码,有层级关系,可用于统计  ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY education_question_log_wrongs_u (id_creater,question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  做题记录,查询条件 : 标题关键字 科目 权重 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_student'
+--
+
+DROP TABLE IF EXISTS education_student;
+CREATE TABLE education_student (
+  `code` varchar(200) NOT NULL default '000000' COMMENT ' 学号 也是basic_user 中的用户名  ',
+  `name` varchar(200) default ' 姓名 ' COMMENT '  姓名,数据冗余存储  ',
+  class_code varchar(200) NOT NULL default '0' COMMENT '  来源 basic_group ,有层级关系  ',
+  class_name varchar(200) default '0' COMMENT '  班级名称,冗余数据存储,用户列表前端展示  ',
+  class_teacher_name varchar(200) default '班主任姓名' COMMENT ' 不用这个字段的话,就要从人员信息表里链接,很耗资源的,必须数据冗余 ',
+  class_teacher_code varchar(200) default '班主任编码' COMMENT '  教师的用户名,来源 basic_user  ',
+  class_teacher_id varchar(200) default '班主任id' COMMENT '  教师的编号  ',
+  specialty varchar(200) default '0' COMMENT ' 艺体特长,多位存储  ',
+  hobby varchar(200) default '0' COMMENT ' 兴趣爱好,多位存储 ',
+  characters varchar(200) default '0' COMMENT ' 性格特征,多位存储 ',
+  growth varchar(200) default '0' COMMENT ' 身体发育情况描述 ',
+  health varchar(200) default '0' COMMENT ' 身体健康状况描述 ',
+  healthdefect varchar(200) default '0' COMMENT ' 生理缺陷描述 ',
+  mentalhealth varchar(200) default '0' COMMENT ' 心理健康描述 ',
+  attitude_life int(11) default '0' COMMENT ' 对生活的态度,单选 ',
+  attitude_learn int(11) default '0' COMMENT ' 学习态度 0 未知 11 厌恶 1 抵触 2 附和 21 主动 22 喜欢 ',
+  attitude_teacher int(11) default '0' COMMENT ' 对教师的态度 0 未知 1 不喜欢 2 普通 21 喜欢 22   ',
+  attitude_classmate int(11) default '0' COMMENT ' 对同学的态度 ',
+  attitude_oppositesex int(11) default '0' COMMENT ' 对异性的态度 ',
+  intelligence int(11) default '0' COMMENT ' 智力水平 ',
+  class_manager int(11) default '0' COMMENT ' 班干部所担任职务,如果没有担任任何职务,就用0 ',
+  junior_school varchar(200) default '0' COMMENT ' 来自哪个初中 ',
+  junior_graduated datetime default '1900-01-01 00:00:00' COMMENT ' 初中毕业时间 ',
+  junior_scores int(11) default '0' COMMENT ' 中考考试总成绩 ',
+  junior_rank int(11) default '0' COMMENT ' 全市中考总排名  ',
+  parents_name varchar(200) default '家长' COMMENT ' 家长姓名,可以填两个名字 ',
+  parents_cellphone varchar(200) default '0' COMMENT ' 家长的手机电话号码,只能填一个号码,自动短信功能要用到  ',
+  id_user int(11) NOT NULL default '0' COMMENT ' 用户编号 ',
+  id_person int(11) NOT NULL default '0' COMMENT ' 人员信息编号 ',
+  scorerank int(11) default '0' COMMENT ' 班级学习成绩排名, 每次月考 期中考 期末考 都会更新此字段   不可修改 系统自动生成 ',
+  scorerank2 int(11) default '0' COMMENT ' 年级学习成绩排名 ',
+  scorerank3 int(11) default '0' COMMENT ' 全市统考成绩排名 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY `code` (`code`),
+  UNIQUE KEY id_user (id_user),
+  UNIQUE KEY id_person (id_person)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  学生信息表 TODO 很多没必要的字段  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_subject'
+--
+
+DROP TABLE IF EXISTS education_subject;
+CREATE TABLE education_subject (
+  `code` varchar(200) default '0' COMMENT '  科目编码,有层级关系,可按层级统计  ',
+  `name` varchar(200) default '0' COMMENT '  科目名称,将在其他业务表中冗余存储,用于前端显示  ',
+  count_papers int(11) default '0' COMMENT '  这个科目对应的试卷总数,从 education_paper 统计  ',
+  count_questions int(11) default '0' COMMENT '  这个科目对应的题目总数,从 education_question 统计  ',
+  count_students int(11) default '0' COMMENT '  学生数目,从education_subject_2_group_2_teacher 统计   ',
+  `type` int(11) default '0 ',
+  `status` int(11) default '0 ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  remark text,
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=' 学科分类编码,没有参照教育部发布的行业标准 ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_subject_2_group_2_teacher'
+--
+
+DROP TABLE IF EXISTS education_subject_2_group_2_teacher;
+CREATE TABLE education_subject_2_group_2_teacher (
+  subject_code varchar(200) default NULL COMMENT '  考试科目编码,层级编码,可以按层级统计  ',
+  subject_name varchar(200) default NULL COMMENT '  考试科目名称  ',
+  group_code varchar(200) default NULL COMMENT '  考试科目编码,层级编码,可以按层级统计  ',
+  group_name varchar(200) default NULL COMMENT '  用户组名称  ',
+  teacher_id int(11) NOT NULL default '0' COMMENT '  出卷老师编号,用户编号,来源 basic_user,非 education_teacher  ',
+  teacher_name varchar(200) default '0' COMMENT '  出卷老师姓名  ',
+  teacher_code varchar(200) default '0' COMMENT '  出卷老师编码,用户名,层级编码,可以按层级统计  ',
+  id int(11) NOT NULL auto_increment COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id),
+  UNIQUE KEY education_s2g2t_u (subject_code,group_code,teacher_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='  科目 用户组 教师对应表  ';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table 'education_teacher'
+--
+
+DROP TABLE IF EXISTS education_teacher;
+CREATE TABLE education_teacher (
+  `code` varchar(200) NOT NULL default '0' COMMENT ' 教师编号 ',
+  `name` varchar(200) default ' 姓名 ' COMMENT '  姓名,数据冗余存储  ',
+  department_code varchar(200) NOT NULL default '0' COMMENT ' 组织机构编码 ',
+  department_name varchar(200) default '0' COMMENT ' 组织机构名称 ',
+  is_head_teacherr int(11) default NULL COMMENT ' 是否是班主任  ',
+  certificate varchar(200) default '0' COMMENT '  教师资格证编号.如果没有教师资格证,就默认是0 ',
+  title int(11) default '0' COMMENT ' 职称 ',
+  years int(11) default '1' COMMENT ' 工作年龄 ',
+  honor varchar(200) default '' COMMENT ' 荣誉称号,多位存储 ',
+  specialty varchar(200) default NULL COMMENT ' 学术专业 ',
+  specialty_code varchar(200) default NULL COMMENT ' 学术专业编码 ',
+  experience_work text COMMENT ' 工作经历 ',
+  experience_publish text COMMENT ' 著作发表经历 ',
+  experience_project text COMMENT ' 科研项目经历 ',
+  photo_certificate varchar(200) default '../file/nophoto.jpg' COMMENT ' 教师资格证扫描照片 ',
+  photo_degree varchar(200) default '../file/nophoto.jpg' COMMENT ' 最高学历文凭的扫描照片 ',
+  id_person int(11) default '0' COMMENT '  人员表扩展  ',
+  id_user int(11) default '0' COMMENT '  默认的,每个教师都是一个系统用户  ',
+  id int(11) NOT NULL COMMENT '  主键编号  ',
+  `type` int(11) default '0' COMMENT '  类型  ',
+  id_creater int(11) default '0' COMMENT '  创建人编号  ',
+  id_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门  ',
+  code_creater_group int(11) default '0' COMMENT '  创建人当时所在的行政部门编码,有层级关系,可用于统计   ',
+  time_created timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT '  创建时间  ',
+  time_lastupdated datetime default '1900-01-01 00:00:00' COMMENT '  最后修改时间  ',
+  count_updated int(11) default '0' COMMENT '  修改次数  ',
+  `status` int(11) default '1' COMMENT '  状态  ',
+  remark text COMMENT '  备注  ',
+  PRIMARY KEY  (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=' 教师信息表 ';

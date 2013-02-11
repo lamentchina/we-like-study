@@ -490,6 +490,7 @@ class basic_developer {
 		//模拟6个月
 		mysql_query("call education_exam__init4test(2,@msg,@state)",$CONN);  
 		mysql_query("call education_exam_2_student__init4test(140)",$CONN);		
+		mysql_query("call education_paper_log__int4test(100)",$CONN);		
     }     
 
     public function importAll4() {

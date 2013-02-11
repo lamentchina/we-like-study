@@ -49,7 +49,7 @@ var education_question_log_wrongs = {
             ,rownumbers:true
             ,url : myAppServer()+ "&class=education_question_log_wrongs&function=grid"
             ,method  : "POST"
-            ,id : "education_question_log_wrongs_grid"
+            ,id : "education_question_log_wrongs__grid"
             ,parms : {
                 username: top.basic_user.username
                 ,session: MD5( top.basic_user.session +((new Date()).getHours()))
@@ -99,29 +99,21 @@ var education_question_log_wrongs = {
                 config.toolbar.items.push({
                     text: permission[i].name , img:permission[i].icon , click : function(){
 
-                        var id = $.ligerui.get('education_question_log_wrongs_grid').getSelected().id;
-                        var id_paper = $.ligerui.get('education_question_log_wrongs_grid').getSelected().paper_id;
-                        if(top.$.ligerui.get("win_wrongsbook_log_"+id)){
-                            top.$.ligerui.get("win_wrongsbook_log_"+id).show();
-                            return;
-                        }
                         top.$.ligerDialog.open({
                             isHidden:false,
-                            id : "win_wrongsbook_log_"+id , height:  550, width: 600,
-                            title: "做题日志"+id,
-                            url: "education_question_log_wrongs__view.html?id="+id+"&id_paper="+id_paper,
+                            id : "win_wrongsbook_log" , height:  550, width: 600,                            
+                            url: "education_question_log_wrongs__do.html",
                             showMax: true, showToggle: true, showMin: true, isResize: true,
                             modal: false, 
-                            slide: false
-    
+                            slide: false    
                         }).max();
                         
-                        top.$.ligerui.get("win_wrongsbook_log_"+id).close = function(){
+                        top.$.ligerui.get("win_wrongsbook_log").close = function(){
                             var g = this, p = this.options;
                             top.$.ligerui.win.removeTask(this);
                             g.unmask();
                             g._removeDialog();
-                            top.$.ligerui.remove(top.$.ligerui.get("win_wrongsbook_log_"+id));
+                            top.$.ligerui.remove(top.$.ligerui.get("win_wrongsbook_log"));
                             top.$('body').unbind('keydown.dialog');
                         }
                     }
@@ -168,20 +160,20 @@ var education_question_log_wrongs = {
 				buttons : [
 				    //清空查询条件
 					{text:top.il8n.clear,onclick:function(){
-                        $.ligerui.get("education_question_log_wrongs_grid").options.parms.search =  $.ligerui.toJSON({foo:1});
-                        $.ligerui.get("education_question_log_wrongs_grid").loadData();
+                        $.ligerui.get("education_question_log_wrongs__grid").options.parms.search =  $.ligerui.toJSON({foo:1});
+                        $.ligerui.get("education_question_log_wrongs__grid").loadData();
 						
 						$.ligerui.get("title").setValue('');
 						$.ligerui.get("combo_select").setValue('');
 					}},
 					//提交查询条件
 				    {text:top.il8n.search,onclick:function(){
-				    	$.ligerui.get("education_question_log_wrongs_grid").options.parms.search =  $.ligerui.toJSON({					
+				    	$.ligerui.get("education_question_log_wrongs__grid").options.parms.search =  $.ligerui.toJSON({					
 							title : $.ligerui.get("title").getValue(),
 							subject : $.ligerui.get("combo_select").getValue(),
 							foo : 'bar'
 						});					
-				    	$.ligerui.get("education_question_log_wrongs_grid").loadData();
+				    	$.ligerui.get("education_question_log_wrongs__grid").loadData();
 				    }}
 				]
 			});

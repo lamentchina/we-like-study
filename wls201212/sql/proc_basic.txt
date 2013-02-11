@@ -1,0 +1,1769 @@
+/*
+Navicat MySQL Data Transfer
+Source Host     : localhost:3306
+Source Database : myapp
+Target Host     : localhost:3306
+Target Database : myapp
+Date: 2013-02-11 16:06:35
+*/
+
+-- ----------------------------
+-- Procedure structure for basic_group__import
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_group__import`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_group__import`(IN in_guid char(36),OUT out_state int,OUT out_msg varchar(200),OUT out_ids varchar(2000))
+pro_main:BEGIN
+/**
+批量导入用户组信息
+用户将一个EXCEL文件上传到系统,系统将EXCEL文件中的内容读取到 basic_excel 表
+数据库存储过程分析basic_excel表中的内容,读取出业务数据,插入到各个业务表中
+前提条件:
+basic_excel 有待处理的业务数据XXX
+
+@param in_guid 标识一次EXCEL文件导入的唯一健
+@param out_state 存储过程执行结果,1为正确通过,其他都表示错误.系统处理错误,2 3 4 为业务数据错误
+@param out_msg 存储过程执行后返回的执行描述结果
+@version 201212
+@author wei1224hf@gmail.com
+@qqgroup 135426431 
+*/
+    declare fig int;         
+    declare rowindex__ int;
+    declare A_,B_,C_,D_,E_,F_,G_ varchar(200);    
+    declare code_,row1_,row2_ varchar(200); 
+    declare id_creater_,id_creater_group_,rowindex_ int default 0;   
+    declare code_creater_group_ varchar(200);
+    #内存表游标,用于模拟数组,处理EXCEL表头列,检验格式
+    declare cur_array cursor for     
+        SELECT code,row1,row2 from array_group;           
+    #核心游标,处理业务数据
+    declare cur_group cursor for 
+        SELECT A,B,C,D,E,F,G,rowindex from basic_excel where sheetname = basic_memory__il8n('group','basic_group',1)         
+            and guid = in_guid            
+            and rowindex > 1
+            order by rowindex;         
+    #MYSQL游标必须得变量
+    declare CONTINUE HANDLER FOR SQLSTATE '02000' SET fig = 1; 
+    #如果guid是空的,就报错
+
+    if in_guid is null then        
+        set out_state = 0;        
+        set out_msg = 'null guid';   
+        insert into basic_log (type,username,msg) values (1,'system','basic_group__import wrong , no guid' );               
+        leave pro_main;
+    end if;
+    #数据库内存表,用于实现数组,处理EXCEL表头列
+
+    drop TEMPORARY table if exists array_group;
+    create  TEMPORARY  table array_group (
+        code varchar(2)        
+        ,row1 varchar(200)   
+        ,row2 varchar(200)        
+    ) engine = memory ;         
+    
+    select A,B,C,D,E,F,G,id_creater into A_,B_,C_,D_,E_,F_,G_,id_creater_ from basic_excel 
+        where guid = in_guid 
+        and rowindex = 1 
+        and sheetname = basic_memory__il8n('group','basic_group',1); 
+    if A_ is null then    
+        #EXCEL中缺少必要的 sheet 
+        set out_msg = basic_memory__il8n('sheetMissing','basic_excel',1); 
+        set out_state = 0;        
+        insert into basic_log (type,username,msg) values (1,'system',out_msg );             
+        leave pro_main;
+    end if;       
+    
+    set out_state = 0;    
+    set out_msg = "";    
+    set out_ids = "";      
+
+    insert into array_group values 
+        ('A', basic_memory__il8n( A_,'basic_group', 2) ,A_ ),        
+        ('B', basic_memory__il8n( B_,'basic_group', 2) ,B_ ),        
+        ('C', basic_memory__il8n( C_,'basic_group', 2) ,C_ ),        
+        ('D', basic_memory__il8n( D_,'basic_group', 2) ,D_ ),        
+        ('E', basic_memory__il8n( E_,'basic_group', 2) ,E_ ),        
+        ('F', basic_memory__il8n( F_,'basic_group', 2) ,F_ ),        
+        ('G', basic_memory__il8n( G_,'basic_group', 2) ,G_ )
+    ;
+    #select * from array_group;
+    #开始检查excel列结构
+    
+    set @sufficient = "name,code,type,remark";
+    set @keys = "";    
+    set @columns = "";
+    set fig = 0;    
+    open cur_array;        
+    fetch cur_array into code_,row1_,row2_;        
+    while( fig = 0 ) do     
+        if row1_ is null then        
+            set out_msg = concat(row2_," ",code_,"2"," ","wrong column");                             
+        elseif FIND_IN_SET(row1_,@sufficient) = 0 then        
+            #如果有一些不需要的列
+            set out_msg = concat(row2_," ",code_,"2"," ","wrong column");                   
+            set out_state = 2;  
+            insert into basic_log (type,username,msg) values (1,'system',out_msg );             
+            leave pro_main;                
+        else                    
+            #select code_;
+            set @keys = concat(",",row1_,@keys);       
+            set @columns = concat(",",code_,@columns);         
+        end if;  
+    fetch cur_array into code_,row1_,row2_;     
+    end while;
+    close cur_array;          
+
+    #如果一些必需的列没有
+    if FIND_IN_SET('name',@keys) = 0 then    
+        set out_state = 0;
+        set out_msg = concat(basic_memory__il8n('columnMissing','basic_excel',1)," ",basic_memory__il8n('name','basic_group',1));             
+        insert into basic_log (type,username,msg) values (1,'system',out_msg );          
+        leave pro_main;        
+    elseif FIND_IN_SET('type',@keys) = 0 then    
+        set out_state = 0;
+        set out_msg = concat(basic_memory__il8n('columnMissing','basic_excel',1)," ",basic_memory__il8n('type','basic_group',1));             
+        insert into basic_log (type,username,msg) values (1,'system',out_msg );        
+        leave pro_main;        
+    elseif FIND_IN_SET('code',@keys) = 0 then    
+        set out_state = 0;
+        set out_msg = concat(basic_memory__il8n('columnMissing','basic_excel',1)," ",basic_memory__il8n('code','basic_group',1));             
+        insert into basic_log (type,username,msg) values (1,'system',out_msg );   
+        leave pro_main;
+    end if;     
+
+    if id_creater_ = 1 then            
+        #是超级管理员 admin 导入的数据        
+        set id_creater_group_ = 1;        
+        set code_creater_group_ = '10';
+    else   
+        select group_id,group_code into id_creater_group_,code_creater_group_ from basic_user where id =  id_creater_;
+    end if;
+
+    #select @keys;        
+    #开始拼凑核心SQL语句
+    set @keys = concat(@keys,",");        
+    set @columns = concat(@columns,",");    
+    set @columncount = basic_stringcount(@keys,",");    
+    select max(rowindex) into @maxrow from basic_excel where guid = in_guid and sheetname = basic_memory__il8n('group','basic_group',1);  
+    set @sql_insert = concat("insert into basic_group (id",@keys,"status) values ");         
+
+    set fig = 0;    
+    open cur_group; 
+    fetch cur_group into A_,B_,C_,D_,E_,F_,G_,rowindex_;    
+    while ( fig = 0 ) do            
+        #select A_,B_,C_,D_,E_,F_,G_,rowindex_;
+        set @sql_values = '';  
+        set @p = 0;         
+        set @spotpos = 1;   
+        set @spotpos2 = 1;   
+        set @spotpos_ = 1;   
+        set @spotpos2_ = 1;             
+        set @tempvalue = '';    
+        set @student_sql_values = '';                            
+        set @person_sql_values = '';           
+
+        inerLoop: LOOP
+            SET @p = @p + 1;  
+            set @spotpos = LOCATE(',', @columns,@spotpos2);
+            set @spotpos2 = LOCATE(',', @columns,@spotpos+1);
+            set @alphaindex = SUBSTRING(@columns,@spotpos+1,@spotpos2-@spotpos-1);                
+
+            set @spotpos_ = LOCATE(',', @keys,@spotpos2_);
+            set @spotpos2_ = LOCATE(',', @keys,@spotpos_+1);
+            set @keyindex = SUBSTRING(@keys,@spotpos_+1,@spotpos2_-@spotpos_-1); 
+            
+            if @alphaindex = 'A' then set @tempvalue = A_; end if; 
+            if @alphaindex = 'B' then set @tempvalue = B_; end if; 
+            if @alphaindex = 'C' then set @tempvalue = C_; end if; 
+            if @alphaindex = 'D' then set @tempvalue = D_; end if; 
+            if @alphaindex = 'E' then set @tempvalue = E_; end if; 
+            if @alphaindex = 'F' then set @tempvalue = F_; end if; 
+            if @alphaindex = 'G' then set @tempvalue = G_; end if;          
+            #select @alphaindex,@keyindex,@tempvalue,@columns;            
+
+            if @keyindex = 'type' then   
+                #检查此用户组类型是否正确        
+                set @temp = null;
+                select code into @temp from basic_memory where extend5 = 'basic_group__type' and extend4 = @tempvalue;            
+                #select @temp,@tempvalu;
+                if @temp is null then                 
+                    set out_state = 3;
+                    set out_msg = concat( basic_memory__il8n('wrongType','basic_group',1) ," ",@tempvalue," ",@alphaindex,rowindex_);                    
+                    insert into basic_log (type,username,msg) values (1,'system',out_msg );   
+                    leave pro_main;
+                end if;     
+                set @tempvalue = @temp;                                
+            elseif @keyindex = 'name' then                 
+                set @groupname_temp = @tempvalue;      
+            elseif @keyindex = 'code' then    
+                #检查此用户组编码是否重复       
+                set @codetemp = 0;       
+                select count(*) into @codetemp from basic_group where code = @tempvalue ;                  
+                if @codetemp > 0 then                                        
+                    set out_state = 4;                        
+                    set out_msg = concat(basic_memory__il8n('existCode','basic_group',1)," ",@tempvalue," ",@alphaindex,rowindex_);  
+                    insert into basic_log (type,username,msg) values (1,'system',out_msg );       
+                    leave pro_main;
+                end if;                                        
+            end if;       
+                     
+            set @sql_values = concat(@sql_values,",'",@tempvalue,"'");
+                     
+            IF @p < @columncount-1 THEN
+               ITERATE inerLoop;
+            END IF;
+            LEAVE inerLoop;            
+        END LOOP inerLoop;          
+        set @id = basic_memory__index('basic_group');   
+        set out_ids = concat(out_ids,",",@id);       
+        if rowindex_ = @maxrow then                 
+            set @sql_insert = concat(@sql_insert,"('",@id,"'",@sql_values,",1) ;");            
+        else
+            set @sql_insert = concat(@sql_insert,"('",@id,"'",@sql_values,",1) ,");            
+        end if;
+        #select @sql_values;         
+        #leave pro_main;
+    fetch cur_group into A_,B_,C_,D_,E_,F_,G_,rowindex_;    
+    end while;
+    close cur_group;    
+
+    #select @sql_insert;    
+
+    PREPARE stmt FROM @sql_insert;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;             
+
+    insert into basic_department (
+           id,code,name,id_creater,id_creater_group,code_creater_group,type
+    ) select basic_memory__index('basic_department'),code,name,1,1,10,(case when code like '50%' then 1 else 2 end)  from basic_group where type = 2;
+    
+    set out_state = 1;  
+    set out_msg =  'OK';
+
+    delete from basic_excel where guid = in_guid;           
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_group_2_permission__import
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_group_2_permission__import`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_group_2_permission__import`(IN in_guid char(36),OUT out_state int,OUT out_msg varchar(200))
+pro_main:BEGIN
+/**
+用户将一个EXCEL文件上传到系统,系统将EXCEL文件中的内容读取到 basic_excel 表
+数据库存储过程分析basic_excel表中的内容,读取出业务数据,插入到各个业务表中
+用户组-权限 的对应关系处理
+
+前提条件:
+basic_group , basic_permission 表已经被创建并有数据
+basic_excel 有待处理的业务数据
+
+@param in_guid 标识一次EXCEL文件导入的唯一健
+@param out_state 存储过程执行结果,1为正确通过,其他都表示错误.系统处理错误,2 3 4 为业务数据错误
+@param out_msg 存储过程执行后返回的执行描述结果
+@version 201212
+@author wei1224hf@gmail.com
+@qqgroup 135426431 
+*/
+    declare fig int;           
+    declare rowindex_ int;    
+    declare code_,row1_ varchar(200);       
+    declare B_,C_,D_,E_,F_,G_,H_,I_,J_,K_,L_,M_,N_,O_,P_,Q_,R_,S_,T_,U_,V_ varchar(200); 
+    #内存表游标,模拟数组
+    declare cur_array cursor for
+        select code,row1 from array_g2p;       
+    #核心业务游标    
+    declare cur_g2p cursor for 
+        SELECT B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,rowindex from basic_excel where sheetname = basic_memory__il8n('group2permission','basic_group_2_permission',1)         
+            and guid = in_guid            
+            and rowindex > 2 order by rowindex;   
+    declare CONTINUE HANDLER FOR SQLSTATE '02000' SET fig = 1;       
+        
+    #如果 guid 是空的
+
+
+    if in_guid is null then        
+        set out_state = 0;        
+        set out_msg = basic_memory__il8n('guidNULL','basic_excel',1);   
+        insert into basic_log (type,username,msg) values (1,'system','basic_group_2_permission__import wrong , no guid , line 35' );            
+        leave pro_main;
+    end if;        
+    #初始化临时内存表,用于模拟数组,处理EXCEL表头列
+
+    drop TEMPORARY  table if exists array_g2p;
+    create TEMPORARY  table array_g2p (
+        code varchar(2)        
+        ,row1 varchar(200)         
+    ) engine = memory ;      
+
+    #检查第一行业务数据, C2 必定是 管理员用户组编码 10 ,如果空,则说明EXCEL错误
+    select C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,maxcolumn into C_,D_,E_,F_,G_,H_,I_,J_,K_,L_,M_,N_,O_,P_,Q_,R_,S_,T_,U_,V_,@maxcolumn from basic_excel 
+        where guid = in_guid 
+        and rowindex = 2 
+        and sheetname = basic_memory__il8n('group2permission','basic_group_2_permission',1) ;  
+    if C_ is null then          
+        set out_state = 0;        
+        set out_msg = basic_memory__il8n('guidWrong','basic_excel',1);        
+        insert into basic_log (type,username,msg) values (1,'system','basic_group_2_permission__import wrong , key group cde 10 missing , line 54' );    
+        leave pro_main;
+    end if;    
+    
+    set out_state = "";
+    set out_msg = "";  
+        
+    #开始检查用户组,判断用户组是否正确
+
+
+    insert into array_g2p values 
+        ('C',   C_),
+        ('D',   D_),
+        ('E',   E_),
+        ('F',   F_),
+        ('G',   G_),
+        ('H',   H_),
+        ('I',   I_),
+        ('J',   J_),
+        ('K',   K_),
+        ('L',   L_),
+        ('M',   M_),
+        ('N',   N_),
+        ('O',   O_),
+        ('P',   P_),
+        ('Q',   Q_),
+        ('R',   R_),
+        ('S',   S_),
+        ('T',   T_),
+        ('U',   U_),
+        ('V',   V_);        
+    #select * from array_g2p;        
+    set @columns = '';    
+    set @groups = '';    
+    set @groupids = '';
+    set fig = 0;    
+    open cur_array;        
+    fetch cur_array into code_,row1_;        
+    set @columnIndex = 1;
+    while_arr:while( fig = 0 ) do           
+        if row1_ is null then        
+            set out_msg = concat(out_msg,code_,'1','null;');     
+            leave while_arr;           
+        end if;                         
+        set @temp = null;
+        select id into @temp from basic_group where code = row1_;     
+        #如果用户组不存在   
+        if @temp is null then                
+            set out_state = 2;     
+            if row1_ is null then
+                set row1_ = 'null';
+            end if;       
+            set out_msg = concat( basic_memory__il8n('wrongGroupcode','basic_group_2_permission',1), row1_ );          
+            insert into basic_log (type,username,msg) values (1,'system','basic_group_2_permission__import wrong , group worng , line 108' );    
+            leave pro_main;
+        end if;
+        set @columns = concat(@columns,",",code_);      
+        set @groups = concat(@groups,",",row1_);              
+        set @groupids = concat(@groupids,",",@temp);      
+    fetch cur_array into code_,row1_;    
+    end while while_arr;
+    close cur_array;  
+    
+    set @columns = concat(@columns,",");    
+    set @groupids = concat(@groupids,",");      
+    set @groups = concat(@groups,",");  
+    set @columncount = basic_stringcount(@columns,",");
+    #select @columns,@groupids,@columncount;         
+
+    #开始拼凑SQL语句,准备插入 用户组-权限 的对应关系
+
+
+    select max(rowindex) into @maxrow from basic_excel where guid = in_guid and sheetname = basic_memory__il8n('group2permission','basic_group_2_permission',1) ;             
+    set @sql_insert = "insert into basic_group_2_permission (id_permission,id_group,code_permission,code_group,cost,credits) values ";    
+    set @x = 0;
+    set fig = 0;    
+    open cur_g2p;            
+    fetch cur_g2p into B_,C_,D_,E_,F_,G_,H_,I_,J_,K_,L_,M_,N_,O_,P_,Q_,R_,S_,T_,U_,V_,rowindex_;    
+    #开启游标,逐行检查数据
+
+
+    cur_while: while (fig = 0) do    
+        #先检查这一行的B列数据,也就是权限编码   
+        set @temp = null;   
+        select id into @temp from basic_permission where code = B_;        
+        if @temp is null then                
+            set out_state = 3;                        
+            select rowindex_,@sql_insert;            
+            if row1_ is null then             
+                set row1_ = 'null' ;                               
+            end if;
+            set out_msg = concat( basic_memory__il8n('wrongPermissioncode','basic_group_2_permission',1), row1_ );  
+            insert into basic_log (type,username,msg) values (1,'system','basic_group_2_permission__import wrong , permission worng , line 141' );    
+            leave pro_main;
+        end if;                
+        
+        set @sql_values = '';  
+        set @p = 0;         
+        set @spotpos = 1;   
+        set @spotpos2 = 1;   
+        set @spotpos_ = 1;   
+        set @spotpos2_ = 1;    
+        set @spotpos__ = 1;   
+        set @spotpos2__ = 1;                   
+        set @tempvalue = '';    
+        set @sql_values = '';  
+        set @keyindex = '';     
+        set @alphaindex = '';                                  
+
+        #循环检查这一行每一个单元格里的内容
+        inerLoop: LOOP
+            SET @p = @p + 1;   
+            set @spotpos = LOCATE(',', @columns,@spotpos2);
+            set @spotpos2 = LOCATE(',', @columns,@spotpos+1);
+            set @alphaindex = SUBSTRING(@columns,@spotpos+1,@spotpos2-@spotpos-1);                
+
+            set @spotpos_ = LOCATE(',', @groupids,@spotpos2_);
+            set @spotpos2_ = LOCATE(',', @groupids,@spotpos_+1);
+            set @groupid = SUBSTRING(@groupids,@spotpos_+1,@spotpos2_-@spotpos_-1);   
+            
+            set @spotpos__ = LOCATE(',', @groups,@spotpos2__);
+            set @spotpos2__ = LOCATE(',', @groups,@spotpos__+1);
+            set @groupcode = SUBSTRING(@groups,@spotpos__+1,@spotpos2__-@spotpos__-1);             
+
+            if @groupid is null or @groupid = '' then  
+                set out_state = 4;                    
+                set out_msg = 'worng id or code';
+                leave pro_main;
+            end if;         
+        
+            if @alphaindex = 'C' then set @tempvalue = C_; end if;      
+            if @alphaindex = 'D' then set @tempvalue = D_; end if;      
+            if @alphaindex = 'E' then set @tempvalue = E_; end if;      
+            if @alphaindex = 'F' then set @tempvalue = F_; end if;      
+            if @alphaindex = 'G' then set @tempvalue = G_; end if;      
+            if @alphaindex = 'H' then set @tempvalue = H_; end if;      
+            if @alphaindex = 'I' then set @tempvalue = I_; end if;      
+            if @alphaindex = 'J' then set @tempvalue = J_; end if;      
+            if @alphaindex = 'K' then set @tempvalue = K_; end if;      
+            if @alphaindex = 'L' then set @tempvalue = L_; end if;      
+            if @alphaindex = 'M' then set @tempvalue = M_; end if;      
+            if @alphaindex = 'N' then set @tempvalue = N_; end if;      
+            if @alphaindex = 'O' then set @tempvalue = O_; end if;      
+            if @alphaindex = 'P' then set @tempvalue = P_; end if;      
+            if @alphaindex = 'Q' then set @tempvalue = Q_; end if;      
+            if @alphaindex = 'R' then set @tempvalue = R_; end if;      
+            if @alphaindex = 'S' then set @tempvalue = S_; end if;      
+            if @alphaindex = 'T' then set @tempvalue = T_; end if;      
+            if @alphaindex = 'U' then set @tempvalue = U_; end if;              
+
+            if (@tempvalue is null) or @tempvalue = '' then         
+               set out_msg = '';               
+            else    
+               set @x = @x + 1;              
+               set @sql_insert = concat(@sql_insert,"(",@temp,",",@groupid,",'",B_,"','",@groupcode,"',",@tempvalue,") ,");
+            end if;   
+  
+            IF @p < @columncount-1 THEN       
+               ITERATE inerLoop;
+            END IF;
+            LEAVE inerLoop;
+        END LOOP inerLoop;          
+     
+    fetch cur_g2p into B_,C_,D_,E_,F_,G_,H_,I_,J_,K_,L_,M_,N_,O_,P_,Q_,R_,S_,T_,U_,V_,rowindex_;
+    end while cur_while;
+    close cur_g2p;             
+
+    #先删除原先已有的那些用户组原有的权限关系
+    set @sql_delete = concat( "delete from basic_group_2_permission where id_group in (99999",@groupids,"99998);");    
+    PREPARE stmt FROM @sql_delete;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;    
+  
+    set @sql_insert = SUBSTRING( @sql_insert , 1 , LENGTH(@sql_insert)-1 );    
+    #select @x;
+    #select @columns,@groups,@groupids;     
+    #select @sql_insert;      
+
+    PREPARE stmt FROM @sql_insert;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;      
+    set out_state = 1;    
+    set out_msg = 'done';
+
+    drop TEMPORARY table if exists array_g2p; 
+    delete from basic_excel where guid = in_guid; 
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_group_2_user__update
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_group_2_user__update`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_group_2_user__update`(
+in in_username varchar(200)
+,in in_groupcodes varchar(200)
+,out out_state int
+,out out_msg varchar(200)
+)
+pro_main:BEGIN
+/*
+更新一个用户的用户组
+
+
+
+@version 201301
+@author wei1224hf@gmail.com
+*/
+declare _hasmain,
+        _grouptype,        
+        _groupid,        
+        _userid,
+        _groupcount int ;
+declare _groupcode,
+        _groupname varchar(100) ;
+
+    if in_username = 'admin' or in_username = 'guest' or in_username is null then        
+        set out_state = 0;        
+        set out_msg = 'username wrong';        
+        leave pro_main;
+    end if;    
+    select id into _userid from basic_user where username = in_username;    
+    if _userid is NULL then        
+        set out_state = 10;        
+        set out_msg = 'username wrong';        
+        leave pro_main;
+    end if;
+    START TRANSACTION;       
+    delete from basic_group_2_user where username = in_username; 
+    set _groupcount = basic_stringcount( in_groupcodes , ',' ) + 1;                
+    set @pos = 0;        
+    set @loop = 0;
+    while _groupcount > 0 do        
+        set @pos2 = LOCATE(',', in_groupcodes,@pos+1);  
+        if @pos2 = 0 then        
+            set _groupcode = SUBSTRING(in_groupcodes,@pos+1,char_length(in_groupcodes));                  
+        else         
+            set _groupcode = SUBSTRING(in_groupcodes,@pos+1,@pos2-1-@pos);                  
+            set @pos = @pos2;             
+        end if;   
+        set _grouptype = NULL;
+        select type,id,name into _grouptype,_groupid,_groupname from basic_group where code = _groupcode;        
+        if _grouptype is NULL then                
+            set out_state = 2;            
+            set out_msg = 'wrong groupcode';                        
+            rollback;
+            leave pro_main;            
+        elseif _grouptype = 2 then        
+            if _hasmain = 1 then                        
+                set out_state = 3;                
+                set out_msg = 'one department only';                                
+                rollback;
+                leave pro_main;                
+            else     
+                update basic_user set
+                    group_id = _groupid
+                    ,group_name = _groupname
+                    ,group_code = _groupcode  where username = in_username;       
+                set _hasmain = 1;
+            end if;
+        end if;        
+        insert into basic_group_2_user (
+               username
+               ,code_group
+               ,id_user
+               ,id_group
+        ) values (
+               in_username               
+               ,_groupcode               
+               ,_userid        
+               ,_groupid
+        );
+        set _groupcount = _groupcount - 1;
+    end while;  
+    update basic_user set group_all = in_groupcodes where username = in_username;           
+    COMMIT;    
+
+    set out_state = 1;    
+    set out_msg = 'OK';
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_immunity
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_immunity`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_immunity`()
+BEGIN
+    #Routine body goes here...
+
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_memory__init
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_memory__init`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_memory__init`()
+BEGIN
+/*
+初始化系统内存表.
+内存表中主要存放一些会被存储过程频繁读取调用的数据,
+比如系统运行参数,各个模块的下拉列表中的业务数据,语言包,各个业务表的主键
+
+@version 201209
+@author wei1224hf@gmail.com
+*/           
+    declare id_ int;       #业务表索引
+
+
+
+
+
+
+    
+    #初始化业务表下拉列表参数
+    delete from basic_memory where extend5 like '%\_%\_%\__%' ;
+    insert into basic_memory (code,type,extend4,extend5)
+        select code,1,value,reference from basic_parameter where reference like '%\_%\_%\__%' ;
+
+    #初始化业务表索引    
+    delete from basic_memory where code = 'basic_person' and type = 2 ;
+    select max(id) from basic_person into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_person',id_,0,'2');        
+
+    delete from basic_memory where code = 'basic_user' and type = '2' ;
+    select max(id) from basic_user into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_user',id_,0,'2'); 
+    
+    delete from basic_memory where code = 'basic_group' and type = '2' ;
+    select max(id) from basic_group into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_group',id_,0,'2');         
+
+    delete from basic_memory where code = 'basic_department' and type = '2' ;
+    select max(id) from basic_department into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_department',id_,0,'2');     
+    
+    delete from basic_memory where code = 'basic_permission' and type = '2' ;
+    select max(id) from basic_permission into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_permission',id_,0,'2');      
+    
+    delete from basic_memory where code = 'basic_workflow' and type = '2' ;
+    select max(id) from basic_workflow into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_workflow',id_,0,'2');    
+    
+    delete from basic_memory where code = 'basic_log' and type = '2' ;
+    select max(id) from basic_log into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_log',id_,0,'2');          
+
+    delete from basic_memory where code = 'basic_department' and type = '2' ;
+    select max(id) from basic_department into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values ('basic_department',id_,0,'2');   
+    
+    /****************************************************************************************/
+    delete from basic_memory where code = 'education_subject' and type = '2' ;
+    select max(id) from education_subject into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_subject',id_,0,'2');   
+
+
+    delete from basic_memory where code = 'education_paper' and type = '2' ;
+    select max(id) from education_paper into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_paper',id_,0,'2');         
+
+    delete from basic_memory where code = 'education_paper_log' and type = '2' ;
+    select max(id) from education_paper_log into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_paper_log',id_,0,'2');  
+
+    delete from basic_memory where code like 'education_exam' and type = '2' ;
+    select max(id) from education_exam into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_exam',id_,0,'2');  
+
+    delete from basic_memory where code like 'education_exam_2_class' and type = '2' ;
+    select max(id) from education_exam_2_class into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_exam_2_class',id_,0,'2');  
+
+    delete from basic_memory where code like 'education_exam_2_student' and type = '2' ;
+    select max(id) from education_exam_2_student into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_exam_2_student',id_,0,'2');  
+
+    delete from basic_memory where code like 'education_exam_unified' and type = '2' ;
+    select max(id) from education_exam_unified into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_exam_unified',id_,0,'2');  
+
+    delete from basic_memory where code like 'education_question' and type = '2' ;
+    select max(id) from education_question into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_question',id_,0,'2');    
+    
+    delete from basic_memory where code = 'education_question_log' and type = '2' ;
+    select max(id) from education_question_log into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_question_log',id_,0,'2');     
+    
+    delete from basic_memory where code = 'education_question_log_wrongs' and type = '2' ;
+    select max(id) from education_question_log_wrongs into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_question_log_wrongs',id_,0,'2');                   
+
+    delete from basic_memory where code like 'education_student' and type = '2' ;
+    select max(id) from education_student into id_;    
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_student',id_,0,'2');        
+
+    delete from basic_memory where code like 'education_teacher' and type = '2' ;
+    select max(id)  into id_ from education_teacher;
+    if id_ is null then     
+        set id_ = 0;        
+    end if;
+    insert into basic_memory (code,extend1,extend2,type) values (  'education_teacher',id_,0,'2');    
+
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_permission__import
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_permission__import`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_permission__import`(IN in_guid char(36),OUT out_state int,OUT out_msg varchar(200),OUT out_ids varchar(2000))
+pro_main:BEGIN 
+/*
+权限导入
+服务端上传一个 EXCEL 文件,并读取存储到 basic_excel 中
+
+
+然后此存储过程分析业务数据插入到业务表
+
+
+
+@version 201212
+@author wei1224hf@gmail.com
+*/
+    declare fig int;         
+    declare rowindex__ int;
+    declare A_,B_,C_,D_,E_,F_,G_ varchar(200);    
+    declare code_,row1_,row2_ varchar(200); 
+    declare id_creater_,id_creater_permission_,rowindex_ int default 0;    
+
+    declare cur_array cursor for     
+        SELECT code,row1,row2 from array_permission;   
+    declare cur_permission cursor for 
+        SELECT A,B,C,D,E,F,G,rowindex from basic_excel where sheetname = basic_memory__il8n('permission','basic_permission',1)         
+            and guid = in_guid            
+            and rowindex > 1
+            order by rowindex;         
+     
+    #以下变量用于游标
+    declare CONTINUE HANDLER FOR SQLSTATE '02000' SET fig = 1;       
+    
+    if in_guid is null then        
+        set out_state = 0;        
+        set out_msg = basic_memory__il8n('guidNULL','basic_excel',1);    
+        leave pro_main;
+    end if;
+    
+    drop TEMPORARY table if exists array_permission;
+    create  TEMPORARY  table array_permission (
+        code varchar(2)        
+        ,row1 varchar(200)   
+        ,row2 varchar(200)        
+    ) engine = memory ;         
+    
+    select A,B,C,D,E,F,id_creater into A_,B_,C_,D_,E_,F_,id_creater_ from basic_excel 
+        where guid = in_guid 
+        and rowindex = 1 
+        and sheetname = basic_memory__il8n('permission','basic_permission',1); 
+    if A_ is null then
+        set out_msg = basic_memory__il8n('guidWrong','basic_excel',1); 
+        set out_state = 0;
+        leave pro_main;
+    end if;     
+
+    set out_state = 0;    
+    set out_msg = "";    
+    set out_ids = "";                
+
+    #select 'A', basic_memory__il8n( A_,'basic_permission', 2) ,A_ ,'G', basic_memory__il8n( G_,'basic_permission', 2) ,G_ ;leave pro_main;
+    insert into array_permission values 
+        ('A', basic_memory__il8n( A_,'basic_permission', 2) ,A_ ),        
+        ('B', basic_memory__il8n( B_,'basic_permission', 2) ,B_ ),        
+        ('C', basic_memory__il8n( C_,'basic_permission', 2) ,C_ ),        
+        ('D', basic_memory__il8n( D_,'basic_permission', 2) ,D_ ),        
+        ('E', basic_memory__il8n( E_,'basic_permission', 2) ,E_ ),        
+        ('F', basic_memory__il8n( F_,'basic_permission', 2) ,F_ )
+    ;
+    #select * from array_permission;
+
+    set @sufficient = "name,code,type,remark,icon,path";
+    set @keys = "";
+    set @columns = "";
+
+    set fig = 0;    
+    open cur_array;        
+    fetch cur_array into code_,row1_,row2_;        
+    while( fig = 0 ) do      
+    
+        if row1_ is null then        
+            set out_msg = concat(row2_," ",code_,"2"," ","wrong column");                             
+        elseif FIND_IN_SET(row1_,@sufficient) = 0 then             
+            set out_msg = concat(row2_," ",code_,"2"," ","wrong column");                   
+            set out_state = 0;                
+            leave pro_main;                
+        else            
+            set @keys = concat(",",row1_,@keys);       
+            set @columns = concat(",",code_,@columns);         
+        end if;  
+
+    fetch cur_array into code_,row1_,row2_;     
+    end while;
+    close cur_array;      
+    if FIND_IN_SET('name',@keys) = 0 then    
+        set out_state = 7;
+        set out_msg = concat(basic_memory__il8n('columnMissing','basic_excel',1)," ",basic_memory__il8n('name','basic_permission',1));                  
+        leave pro_main;        
+    elseif FIND_IN_SET('type',@keys) = 0 then    
+        set out_state = 0;
+        set out_msg = concat(basic_memory__il8n('columnMissing','basic_excel',1)," ",basic_memory__il8n('type','basic_permission',1));                
+        leave pro_main;        
+    elseif FIND_IN_SET('code',@keys) = 0 then    
+        set out_state = 0;
+        set out_msg = concat(basic_memory__il8n('columnMissing','basic_excel',1)," ",basic_memory__il8n('code','basic_permission',1));                 
+        leave pro_main;
+    end if; 
+
+    #select @keys;    
+    set @keys = concat(@keys,",");        
+    set @columns = concat(@columns,",");    
+    set @columncount = basic_stringcount(@keys,",");    
+    select max(rowindex) into @maxrow from basic_excel where guid = in_guid and sheetname = basic_memory__il8n('permission','basic_permission',1);  
+    set @sql_insert = concat("insert into basic_permission (id",@keys,"status) values ");        
+
+    set fig = 0;    
+    open cur_permission; 
+    fetch cur_permission into A_,B_,C_,D_,E_,F_,G_,rowindex_;    
+    while ( fig = 0 ) do        
+        set @sql_values = '';  
+        set @p = 0;         
+        set @spotpos = 1;   
+        set @spotpos2 = 1;   
+        set @spotpos_ = 1;   
+        set @spotpos2_ = 1;             
+        set @tempvalue = '';    
+        set @student_sql_values = '';                            
+        set @person_sql_values = '';           
+
+        inerLoop: LOOP
+            SET @p = @p + 1;  
+            set @spotpos = LOCATE(',', @columns,@spotpos2);
+            set @spotpos2 = LOCATE(',', @columns,@spotpos+1);
+            set @alphaindex = SUBSTRING(@columns,@spotpos+1,@spotpos2-@spotpos-1);                
+
+            set @spotpos_ = LOCATE(',', @keys,@spotpos2_);
+            set @spotpos2_ = LOCATE(',', @keys,@spotpos_+1);
+            set @keyindex = SUBSTRING(@keys,@spotpos_+1,@spotpos2_-@spotpos_-1); 
+            
+            #select @alphaindex,@keyindex;
+            
+            if @alphaindex = 'A' then set @tempvalue = A_; end if; 
+            if @alphaindex = 'B' then set @tempvalue = B_; end if; 
+            if @alphaindex = 'C' then set @tempvalue = C_; end if; 
+            if @alphaindex = 'D' then set @tempvalue = D_; end if; 
+            if @alphaindex = 'E' then set @tempvalue = E_; end if; 
+            if @alphaindex = 'F' then set @tempvalue = F_; end if; 
+            if @alphaindex = 'G' then set @tempvalue = G_; end if;             
+
+            if @keyindex = 'type' then           
+                set @temp = null;
+                select code into @temp from basic_memory where extend5 = 'basic_permission__type' and extend4 = @tempvalue;            
+                #select @temp;
+                if @temp is null then 
+                    set out_state = 0;
+                    set out_msg = concat( basic_memory__il8n('wrongType','basic_permission',1) ," ",@tempvalue," ",@alphaindex,rowindex_);                    
+                    delete from basic_excel where guid = in_guid;
+                    leave pro_main;
+                end if;     
+                set @tempvalue = @temp;  
+            elseif @keyindex = 'code' then           
+                set @codetemp = 0;       
+                select count(*) into @codetemp from basic_permission where code = @tempvalue ;                  
+                if @codetemp > 0 then                                        
+                    set out_state = 0;                        
+                    set out_msg = concat(basic_memory__il8n('existCode','basic_permission',1)," ",@tempvalue," ",@alphaindex,rowindex_);  
+                    delete from basic_excel where guid = in_guid;                   
+                    leave pro_main;
+                end if;                                               
+            end if;       
+                     
+            set @sql_values = concat(@sql_values,",'",@tempvalue,"'");
+                     
+            IF @p < @columncount-1 THEN
+               ITERATE inerLoop;
+            END IF;
+            LEAVE inerLoop;            
+        END LOOP inerLoop;          
+        set @id = basic_memory__index('basic_permission');   
+        set out_ids = concat(out_ids,",",@id);       
+        if rowindex_ = @maxrow then                 
+            set @sql_insert = concat(@sql_insert,"('",@id,"'",@sql_values,",1) ;");            
+        else
+            set @sql_insert = concat(@sql_insert,"('",@id,"'",@sql_values,",1) ,");            
+        end if;
+        #select @sql_values;         
+        #leave pro_main;
+    fetch cur_permission into A_,B_,C_,D_,E_,F_,G_,rowindex_;    
+    end while;
+    close cur_permission;    
+
+    #select @sql_insert;    
+
+    PREPARE stmt FROM @sql_insert;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;       
+    set out_state = 1;    
+    set out_msg = 'done';
+    delete from basic_excel where guid = in_guid;         
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_user__action
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_user__action`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_user__action`(IN `in_username` varchar(200),IN `in_session` varchar(200),IN in_action varchar(32),OUT out_state int,OUT out_msg varchar(200) )
+BEGIN
+/*
+用户在前端每一次操作,
+如果那个操作是设计扣费或者记积分的,
+都会调用此存储过程
+
+
+
+用户的 积分-金币 策略,会根据用户组的关系来读取出 最该加积分-最低扣金币 的关系
+
+
+
+@author wei1224hf@gmail.com
+@version 201209
+*/
+    declare username_ varchar(200);
+    declare session_ varchar(200);        
+    declare permissions_ varchar(1000);    
+    declare actionsub char(2);    
+    declare cost_ int;    
+    declare credits_ int;    
+    declare mymoney_ int;
+
+    select session,permissions into session_,permissions_ from basic_user_session where username = in_username;                  
+    if session_ is null then
+        set out_msg = 'no login';                    
+        set out_state = 0;                    
+        
+    elseif ( in_session  = md5( concat(session_, hour(now())-0) ) )or                                                
+           ( in_session  = md5( concat(session_, hour(now())-2) ) )or                       
+           ( in_session  = md5( concat(session_, hour(now())-1) ) ) then  
+        #这个用户的 session 是符合条件的,接下来要判断这个用户有没有这个权限了    
+        if  locate(concat(',',in_action,','), permissions_) = 0 then                    
+            set out_state = 0;                         
+            set out_msg = 'access denied';       
+        else      
+            #拥有这个权限,那么就需要更新 session 表     
+            update basic_user_session set 
+                   lastaction = in_action
+                   ,lastactiontime=now()
+                   ,count_actions = count_actions + 1
+            where username = in_username;     
+            
+            #如果这个操作是涉及扣金币的话 
+            set actionsub = right(in_action,2);    
+            if actionsub > '09' then                        
+               select min(cost),max(credits) into cost_,credits_  from 
+                (
+                SELECT
+                basic_group_2_permission.cost,
+                basic_group_2_permission.credits
+                FROM
+                    basic_permission
+                    Right Join basic_group_2_permission ON basic_permission.id = basic_group_2_permission.id_permission
+                    Right Join basic_group_2_user ON basic_group_2_permission.id_group = basic_group_2_user.id_group
+                    Right Join basic_user ON basic_group_2_user.id_user = basic_user.id
+                WHERE
+                basic_permission.code =  in_action AND
+                basic_user.username =  in_username
+                ) t;                            
+
+                select money into mymoney_ from basic_user where username = in_username;                            
+                if mymoney_ < cost_ then                            
+                   set out_state = 2 ;
+                   set out_msg = concat('need money:',cost_,'; but I have:', mymoney_);                               
+                else   
+                    update basic_user set money = money - cost_, money2 = money2 + credits_ where username = in_username;  
+                    set out_state = 1;                         
+                    set out_msg = concat('money cost ',cost_,'; now I have ', mymoney_ - cost_ );                      
+                end if;                
+            else         
+                #如果这个操作不必扣金币,就直接输出. 一般情况下 , 查询 查看 等常用的功能,都是这样的   
+                set out_state = 1;                         
+                set out_msg = 'success';     
+            end if;  
+        end if;
+    else        
+        set out_msg = 'wrong session';                                     
+        #set out_msg = concat( md5( concat(session_, hour(now())-0) )  , ' ', md5( concat(session_, hour(now())-1) )  , ' ', md5( concat(session_, hour(now())-2) ), ' ', md5( concat(session_, hour(now())+1) )  );
+        set out_state = 0;                    
+    end if;                
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_user__delete
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_user__delete`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_user__delete`(
+in in_user_ids varchar(80),
+out out_state int,
+out out_msg varchar(80)
+)
+pro_main:BEGIN
+/*
+删除多个用户
+涉及多个用户组的操作
+
+@author wei1224hf@gmail.com
+@version 201212
+*/
+declare _person_id,
+        _user_id,
+        _student_id,
+        _teacher_id,
+        _usercount int ;      
+    
+    if in_user_ids is NULL then
+        set out_state = 0;
+        set out_msg = 'null';          
+        leave pro_main;        
+    end if;
+    START TRANSACTION;       
+    set _usercount = basic_stringcount( in_user_ids , ',' ) + 1;                
+    set @pos = 0;        
+    while _usercount > 0 do        
+        set @pos2 = LOCATE(',', in_user_ids,@pos+1);  
+        if @pos2 = 0 then        
+            set _user_id = SUBSTRING(in_user_ids,@pos+1,char_length(in_user_ids));                  
+        else         
+            set _user_id = SUBSTRING(in_user_ids,@pos+1,@pos2-1-@pos);                  
+            set @pos = @pos2;             
+        end if;           
+        set _person_id = NULL;
+        select person_id into _person_id from basic_user where id = _user_id;        
+        if _person_id is NULL then                
+            set out_state = 0;            
+            set out_msg = 'wrong user';  
+            rollback;          
+            leave pro_main;
+        end if;
+        delete from basic_person where id = _person_id;        
+        delete from basic_user where id = _user_id;        
+        delete from education_student where id_user = _user_id;        
+        delete from education_teacher where id_user = _user_id;        
+        set _usercount = _usercount - 1;        
+    end while;
+    commit;    
+
+    set out_state = 1;    
+    set out_msg = 'OK';
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_user__import
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_user__import`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_user__import`(IN in_guid char(36),OUT out_state int,OUT out_msg varchar(200),OUT out_ids varchar(2000))
+pro_main:BEGIN
+/**
+批量导入用户信息
+
+用户将一个EXCEL文件上传到系统,系统将EXCEL文件中的内容读取到 basic_excel 表
+
+
+数据库存储过程分析basic_excel表中的内容,读取出业务数据,插入到各个业务表中
+
+
+
+
+前提条件:
+basic_group , basic_permission 表已经被创建并有数据
+basic_excel 有待处理的业务数据
+
+
+
+@param in_guid 标识一次EXCEL文件导入的唯一健
+
+
+@param out_state 存储过程执行结果,1为正确通过,其他都表示错误.系统处理错误,2 3 4 为业务数据错误
+
+
+@param out_msg 存储过程执行后返回的执行描述结果
+@param out_ids 成功插入多个用户后,返回的用户表编号集
+
+
+
+@version 201212
+@author wei1224hf@gmail.com
+@qqgroup 135426431 
+*/
+    declare fig int;         
+    declare rowindex__ int;
+    declare A_,B_,C_,D_,E_,F_,G_ varchar(200);    
+    declare code_,row1_,row2_ varchar(200); 
+    declare id_creater_,id_creater_group_,rowindex_ int default 0;        
+    declare code_creater_group_ varchar(200) default '0';
+
+    #内存表游标,模拟数组
+    declare cur_array cursor for     
+        SELECT code,row1,row2 from array_user;           
+    #核心业务游标
+    declare cur cursor for 
+        SELECT A,B,C,D,E,F,G,rowindex from basic_excel where sheetname = basic_memory__il8n('user','basic_user',1)         
+            and guid = in_guid            
+            and rowindex > 1
+            order by rowindex;         
+     
+    #以下变量用于游标
+    declare CONTINUE HANDLER FOR SQLSTATE '02000' SET fig = 1;       
+        
+    #如果 guid 是空的
+
+
+    if in_guid is null then        
+        set out_state = 0;        
+        set out_msg = 'null guid';        
+        insert into basic_log (type,username,msg) values (1,'system','basic_user__import wrong , no guid , line 47' );  
+        leave pro_main;
+    end if;
+        
+    #创建内存表,模拟数组
+    drop TEMPORARY table if exists array_user;
+    create  TEMPORARY  table array_user (
+        code varchar(2)        
+        ,row1 varchar(200)   
+        ,row2 varchar(200)        
+    ) engine = memory ;         
+    
+    select A,B,C,D,E,F,G,id_creater into A_,B_,C_,D_,E_,F_,G_,id_creater_ from basic_excel 
+        where guid = in_guid 
+        and rowindex = 1 
+        and sheetname = basic_memory__il8n('user','basic_user',1); 
+    if A_ is NULL then    
+        set out_state = 0;        
+        set out_msg = 'wrong guid';        
+        leave pro_main;
+    end if;  
+    
+    if id_creater_ = 1 then            
+        #是超级管理员 admin 导入的数据        
+        set id_creater_group_ = 1;        
+        set code_creater_group_ = '10';
+    else   
+        select group_id,group_code into id_creater_group_,code_creater_group_ from basic_user where id =  id_creater_;
+    end if;       
+    
+    set out_state = 0;    
+    set out_msg = "";    
+    set out_ids = "";          
+
+    set @sql_keys = '';        
+    set @sql_keys_excel = '';    
+    set @sql_values = '';
+    insert into array_user values 
+        ('A', basic_memory__il8n( A_,'basic_user', 2) ,A_ ),        
+        ('B', basic_memory__il8n( B_,'basic_user', 2) ,B_ ),        
+        ('C', basic_memory__il8n( C_,'basic_user', 2) ,C_ ),        
+        ('D', basic_memory__il8n( D_,'basic_user', 2) ,D_ ),        
+        ('E', basic_memory__il8n( E_,'basic_user', 2) ,E_ ),        
+        ('F', basic_memory__il8n( F_,'basic_user', 2) ,F_ ),        
+        ('G', basic_memory__il8n( G_,'basic_user', 2) ,G_ )
+    ;
+    #select * from array_user;
+    
+    set @sufficient = "username,password,money,group_code,type";
+    set @keys = "";
+    set @columns = "";
+        
+    set fig = 0;    
+    open cur_array;        
+    fetch cur_array into code_,row1_,row2_;        
+    set @columnIndex = 1;
+    while( fig = 0 ) do      
+    
+        if row1_ is null then        
+            set out_msg = concat(row2_," ",code_,"1"," ","wrong column");                             
+        elseif FIND_IN_SET(row1_,@sufficient) = 0 then             
+            set out_msg = concat(row2_," ",code_,"1"," ","wrong column");                   
+            set out_state = 0;    
+            
+            leave pro_main;                
+        else            
+            set @keys = concat(@keys,row1_,",");       
+            set @columns = concat(@columns,code_,",");         
+        end if;  
+
+    fetch cur_array into code_,row1_,row2_;     
+    end while;
+    close cur_array;      
+        
+    set @keys = concat(",",@keys);  
+    set @sql_insert = concat("insert into basic_user (
+        id
+        ,person_id
+        ,person_name
+        ,person_cellphone        
+        ,person_email      
+        ,group_id
+        ,group_name              
+        ,id_creater        
+        ,id_creater_group        
+        ,code_creater_group
+        ",@keys,"status ) values ");      
+    set @user2group_sql_insert = "insert into basic_group_2_user ( id_user,id_group,username,code_group,type ) values ";    
+    set @person_insert = "insert into basic_person (name,id) values ";    
+    set @student_insert = "insert into education_student ( code,class_code,id,id_person,id_user ) values ";    
+    set @teacher_insert = "insert into education_teacher ( code,department_code,id,id_person,id_user ) values ";    
+    set @count_student = 0;
+    set @count_teacher = 0;
+    set @columns = concat(",",@columns);        
+    set @columncount = basic_stringcount(@keys,",");   
+    select max(rowindex) into @maxrow from basic_excel where guid = in_guid and sheetname = basic_memory__il8n('user','basic_user',1);                
+
+    set fig = 0;    
+    open cur; 
+    fetch cur into A_,B_,C_,D_,E_,F_,G_,rowindex_;
+    cur_while: while (fig = 0) do      
+
+        set @sql_values = '';  
+        set @p = 0;         
+        set @spotpos = 1;   
+        set @spotpos2 = 1;         
+        set @spotpos_ = 1;   
+        set @spotpos2_ = 1;             
+        set @tempvalue = ''; 
+                
+        set @id_person = basic_memory__index('basic_person');               
+        set @id_user = basic_memory__index('basic_user');          
+                       
+        inerLoop: LOOP
+            SET @p = @p + 1;  
+            set @spotpos = LOCATE(',', @columns,@spotpos2);
+            set @spotpos2 = LOCATE(',', @columns,@spotpos+1);
+            set @alphaindex = SUBSTRING(@columns,@spotpos+1,@spotpos2-@spotpos-1);  
+            
+            set @spotpos_ = LOCATE(',', @keys,@spotpos2_);
+            set @spotpos2_ = LOCATE(',', @keys,@spotpos_+1);
+            set @keyindex = SUBSTRING(@keys,@spotpos_+1,@spotpos2_-@spotpos_-1);    
+                                          
+            if @alphaindex = 'A' then set @tempvalue = A_; end if; 
+            if @alphaindex = 'B' then set @tempvalue = B_; end if; 
+            if @alphaindex = 'C' then set @tempvalue = C_; end if; 
+            if @alphaindex = 'D' then set @tempvalue = D_; end if; 
+            if @alphaindex = 'E' then set @tempvalue = E_; end if; 
+            if @alphaindex = 'F' then set @tempvalue = F_; end if; 
+            if @alphaindex = 'G' then set @tempvalue = G_; end if;           
+
+            if @keyindex = 'username' then           
+                set @temp = null;
+                select count(username) into @temp from basic_user where username = @tempvalue;       
+                #select @temp;
+                if @temp > 0 then 
+                    set out_state = 2;
+                    set out_msg = @tempvalue;                    
+                    
+                    leave pro_main;
+                end if;    
+                set @username = @tempvalue;
+            end if;                    
+            if @keyindex = 'password' then           
+                set @tempvalue = md5(@tempvalue);                    
+            end if;    
+            if @keyindex = 'group_code' then           
+                set @id_user_group = null;                              
+                select id,code,name into @id_user_group,@code_user_group,@name_user_group from basic_group where code = @tempvalue ;                    
+                if @id_user_group is null then                                        
+                    set out_state = 3;                        
+                    set out_msg = concat('wrong ',@tempvalue);  
+                                                       
+                    leave pro_main;
+                end if;                                         
+            end if;  
+            if @keyindex = 'type' then           
+                set @temp = null;
+                select code into @temp from basic_memory where extend5 = 'basic_user__type' and extend4 = @tempvalue;            
+                #select @temp;
+                if @temp is null then 
+                    set out_state = 0;
+                    set out_msg = @tempvalue;                    
+
+                    leave pro_main;
+                end if;          
+                set @tempvalue = @temp;  
+                
+                if @temp = 2 then                
+                    set @count_student = @count_student + 1;                    
+                    set @student_insert = concat(@student_insert," ('",@username,"','"
+                                                                    ,@code_user_group,"','"
+                                                                    ,basic_memory__index('education_student'),"','"
+                                                                    ,@id_person,"','"
+                                                                    ,@id_user,"') ,");                                                                    
+                    #select @student_insert;
+                elseif @temp = 3 then                
+                    set @count_teacher = @count_teacher + 1;                    
+                    set @teacher_insert = concat(@teacher_insert," ('",@username,"','"
+                                                                    ,@code_user_group,"','"
+                                                                    ,basic_memory__index('education_teacher'),"','"
+                                                                    ,@id_person,"','"
+                                                                    ,@id_user,"') ,");
+                end if;                         
+            end if;                                            
+
+            set @sql_values =  concat(@sql_values,",'",@tempvalue,"'");              
+
+            IF @p < @columncount - 1 THEN
+               ITERATE inerLoop;
+            END IF;
+            LEAVE inerLoop;
+        END LOOP inerLoop;                
+        
+        set @sql_values = concat( 
+        @id_user 
+        ,",",@id_person        
+        ,",'",@username        
+        ,"','13456111111'"
+        ,",'wei1224hf@gmail.com'"              
+        ,",'",@id_user_group,"'"        
+        ,",'",@name_user_group,"'"        
+        ,",'",id_creater_,"'"        
+        ,",'",id_creater_group_,"'"        
+        ,",'",code_creater_group_,"'"
+        ,@sql_values);                
+        #select @sql_values;leave pro_main;
+        set out_ids = concat(out_ids,",",@id_user);
+
+        if rowindex_ = @maxrow then                 
+            set @sql_insert = concat(@sql_insert,"(",@sql_values,",1) ;");  
+            set @user2group_sql_insert = concat(@user2group_sql_insert,"('",@id_user,"','",@id_user_group,"','",@username,"','",@code_user_group,"',1) ;");  
+            set @person_insert = concat(@person_insert,"('",@username,"','",@id_person ,"') ;");  
+        else        
+            set @sql_insert = concat(@sql_insert,"(",@sql_values,",1) ,");  
+            set @user2group_sql_insert = concat(@user2group_sql_insert,"('",@id_user,"','",@id_user_group,"','",@username,"','",@code_user_group,"',1) ,");            
+            set @person_insert = concat(@person_insert,"('",@username,"','",@id_person ,"') ,");  
+        end if;
+            
+    fetch cur into A_,B_,C_,D_,E_,F_,G_,rowindex_;
+    end while cur_while;
+    close cur;        
+        
+    #执行批量插入
+    #select @sql_insert;leave pro_main;
+    PREPARE stmt FROM @sql_insert;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;  
+           
+    PREPARE stmt FROM @user2group_sql_insert;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;     
+    set out_msg = @user2group_sql_insert;
+    
+    #select @person_insert;leave pro_main;           
+    PREPARE stmt FROM @person_insert;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;    
+    
+    if @count_student > 0 then    
+        set @student_insert = SUBSTRING( @student_insert , 1 , LENGTH(@student_insert)-1 ) ;       
+        #select @student_insert;leave pro_main;
+        PREPARE stmt FROM @student_insert;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;  
+    end if;         
+    if @count_teacher > 0 then    
+        set @teacher_insert = SUBSTRING( @teacher_insert , 1 , LENGTH(@teacher_insert)-1 ) ;      
+        #select @teacher_insert;  
+        PREPARE stmt FROM @teacher_insert;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;  
+    end if;         
+
+    update basic_group set count_users = 
+           (select count(*) from basic_user where basic_user.group_code = basic_group.code  ) ;
+
+    set out_state = 1;    
+    #set out_msg = 'ok';    
+    delete from basic_excel where guid = in_guid; 
+end;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_user__insert
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_user__insert`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_user__insert`(
+in in_username varchar(200),
+in in_password varchar(200),
+in in_type int,
+in in_cellphone char(11),
+in in_email varchar(200),
+out out_state int,
+out out_msg varchar(200)
+)
+pro_main:BEGIN
+/*
+对于 用户 表,核心业务属性字段就只有 用户名,密码,用户组,类型,状态 这几个
+
+
+而 用户组,状态 这两个字段,是由系统或管理员设置的
+
+
+所以,在新注册一个用户的时候,只要提供 用户名 密码 类型 即可
+在 注册 过程中,无需提供 个人档案 跟 业务身份信息 
+
+@author wei1224hf@gmail.com
+@version 201301
+*/  
+
+declare _user_id,
+        _person_id,
+        _teacher_id,
+        _student_id int;
+
+   #判断必要项是否为空    
+    if((in_username is NULL) ||    
+       (in_password is NULL) ||       
+       (in_type is NULL) ||       
+       (in_cellphone is NULL) ||       
+       (in_email is NULL)) then
+        set out_state = 0;
+        set out_msg = 'NULL input';           
+        leave pro_main;
+    end if;
+    #判断用户名 手机号 邮箱 是否已存在        
+    select id into _user_id from basic_user where (username = in_username) or 
+                                 (person_cellphone = in_cellphone) or                                 
+                                 (person_email = in_email);                                 
+    if _user_id is not NULL then    
+        set out_state = 2;        
+        set out_msg = concat('username or cellphone or email , already exist',_user_id);        
+        leave pro_main;        
+    end if;    
+   
+    set _person_id = basic_memory__index('basic_person');        
+    insert into basic_person (        
+        id            
+        ,cellphone            
+        ,email
+    ) values (        
+        _person_id            
+        ,in_cellphone            
+        ,in_email
+    );        
+
+    set _user_id = basic_memory__index('basic_user');        
+    insert into basic_user (
+        id            
+        ,username            
+        ,password    
+        ,person_cellphone
+        ,person_email  
+        ,person_id      
+        ,status            
+        ,type
+    ) values (
+        _user_id            
+        ,in_username            
+        ,MD5(in_password)             
+        ,in_cellphone        
+        ,in_email        
+        ,_person_id
+        ,4       
+        ,in_type
+    );    
+
+    if in_type = 2 then  
+        select basic_department.code,name,(select id from basic_group where basic_group.code = basic_department.code ) into @g_code,@g_name,@g_id from basic_department where type = '2' limit 1; 
+        set _student_id = basic_memory__index('education_student');
+        insert into education_student (
+        id_user,id_person,code,id
+        ) values (
+        _user_id,_person_id,in_username,_student_id
+        ) ; 
+    elseif in_type = 3 then            
+        select basic_department.code,name,(select id from basic_group where basic_group.code = basic_department.code ) into @g_code,@g_name,@g_id from basic_department where type = '2' limit 1; 
+        set _teacher_id = basic_memory__index('education_teacher');
+        insert into education_teacher (
+        id_user,id_person,code,id
+        ) values (
+        _user_id,_person_id,in_username,_teacher_id
+        ) ;         
+    end if;
+    update basic_user set group_code = @g_code, group_name = @g_name, group_id = @g_id where id = _user_id;       
+    insert into basic_group_2_user (id_user,id_group,username,code_group) values (_user_id,@g_id,in_username,@g_code);
+    set out_state = 1;    
+    set out_msg = concat(_user_id,';',_person_id);
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_user__login
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_user__login`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_user__login`(
+IN in_username varchar(200), 
+IN in_password varchar(200), 
+IN in_ip varchar(200), 
+OUT out_msg varchar(200), 
+OUT out_state int )
+pro_main:BEGIN
+/**
+ 登录操作后产生的用户 session 信息将被保存在数据库内存表中 
+ 取消对服务端 session 的依赖 
+ 便于对系统单点登录的判断,以及多服务器负载均衡的实现 
+
+ 数据库session表是一张内存表,里面记录每一个用户的系统操作次数 ,登录IP, 当天登录次数,当天正常退出次数 
+ 这些 统计次数 数据,会在系统自检过程中,累加到磁盘数据表中 
+
+ 用户的登录操作,采用的是简单的 MD5+时间戳 加密,时间戳为当前系统小时,有效验证时间为2小时 
+ 在系统前端,这个 session 会每隔15分钟更新一次,以保证前端保持更新
+
+
+
+ version: 201210 
+ author: wei1224hf@gmail.com  
+ prerequisites: basic_memory__init,basic_memory.il8n()
+ server used: basic_user.login() 
+ involve: basic_user,basic_group,basic_permission,basic_group_2_user,basic_group_2_permission 
+          basic_randstring,basic_memory__il8n,basic_user__group,basic_user__permission
+ */
+    declare username_ varchar(200);        
+    declare id_user_ int;    
+    declare password_ varchar(200);
+    declare session_ varchar(200);        
+    declare return_session_ varchar(32);    
+    declare permissions_ varchar(1000);    
+    declare mymoney_ int;    
+    declare cost_ int;    
+    declare credits_ int;
+
+    select username,password,id,group_code,money into username_,password_,id_user_,@id_group,mymoney_ from basic_user where username = in_username;        
+    if TRIM( username_ ) is NULL then    
+        #用户不存在     
+        set out_state = 0;
+        set out_msg = 'no such user';   
+        
+        #记录这一次异常的登录事件,这有可能是嗅探工具
+
+
+        insert into basic_log (msg,username,type) values ( concat('no such user; unm:' ,in_username, '; pwd: ', in_password,'; ip:',in_ip),'system',2);            
+    else     
+        #用户存在,判断密码 , 有2个小时的延时允许                  
+        if  (
+             ( in_password = md5( concat(TRIM(password_  ), ( hour(now()) - 0 ) ) ) ) or             
+             ( in_password = md5( concat(TRIM(password_  ), ( hour(now()) - 1 ) ) ) ) or             
+             ( in_password = md5( concat(TRIM(password_  ), ( hour(now()) - 2 ) ) ) )             
+            )then              
+                       
+              
+            #登陆操作,先判断内存表中是否有这个人的记录了        
+            select session into session_ from basic_user_session where username = in_username; 
+       
+            if session_ is NULL then                        
+                #如果内存表中没有记录,就要新插入一条数据   
+                set return_session_ = basic_randstring(32,5);                
+                set permissions_ = basic_user__permission(in_username);                    
+                #select permissions_;leave pro_main;
+                insert into basic_user_session(id_user,id_group,username,ip,session,permissions,lastactiontime,lastaction,groups,status) 
+                    values (id_user_,@id_group,username_,in_ip,return_session_,permissions_,now(),'login',basic_user__group(in_username),1);    
+                    
+                update basic_user set lastlogintime = now() where username = in_username;            
+                set out_msg = return_session_;                               
+                set out_state = 1;                
+
+            else                
+                if in_username = 'guest' then    
+                    select session into return_session_ from basic_user_session where username = in_username;                                        
+                else                    
+                    #后续登陆的人,会将前面登陆的人T掉,会更新 session  
+                    set return_session_ = basic_randstring(32,5);                     
+                    update basic_user_session set session = return_session_,lastaction='login',lastactiontime=now(),status=1,count_login = count_login + 1, count_actions = count_actions + 1 where username = in_username;
+                 end if;            
+                 set out_msg = return_session_;                             
+                 set out_state = 1;  
+            end if;            
+
+            #往日志表中插入一条记录,非正常登录
+
+
+            insert into basic_log (msg,username,type) values ('unusual login',in_username,1); 
+            set out_state = 1;                         
+            #set out_msg = concat('money cost ',cost_,'; now I have ', mymoney_ - cost_ );                                      
+            set out_msg = return_session_;
+         
+            
+        else
+            set out_msg = 'wrong password';                    
+            set out_state = 0;            
+        end if;        
+    end if;
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_user__logout
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_user__logout`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_user__logout`(
+IN `in_username` varchar(200),
+IN `in_session` varchar(200), 
+OUT out_msg varchar(200) , 
+out out_state int)
+pro_main:BEGIN
+/*
+用户退出系统时的业务:
+删除 basic_user_session 表中的对应数据
+
+
+
+@version 201209
+@author wei1224hf@gmail.com
+*/
+declare fig,
+        id_user_ int;
+declare username_, 
+        password_,
+        session_,
+        return_session_ varchar(200);
+declare permissions_ varchar(1000);
+
+    select username,session into username_,session_ from basic_user_session where username = in_username;
+    if TRIM( username_ ) is NULL then         
+        set out_msg = 'no user';        
+        set out_state = 0;        
+    elseif ( in_session  = md5( concat(session_, hour(now())-0 )))or       
+           ( in_session  = md5( concat(session_, hour(now())-1 )))or   
+           ( in_session  = md5( concat(session_, hour(now())-2 ))) then                            
+        delete from basic_user_session where username = in_username;    
+        update basic_user set lastlogouttime = now();    
+        set out_msg = 'done';        
+        set out_state = 1;   
+    else    
+        set out_msg = 'session wrong';        
+        set out_state = 0;    
+    end if;
+END;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for basic_workflow__check
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `basic_workflow__check`;
+DELIMITER ;;
+CREATE PROCEDURE `basic_workflow__check`(
+IN `in_username` varchar(200),
+IN `in_session` varchar(200),
+OUT `out_msg` varchar(200),
+OUT `out_state` varchar(200),
+OUT `out_session` varchar(200),
+OUT `out_app` varchar(200))
+pro_main:BEGIN  
+/*
+工作流检查
+
+
+同时更新 session 表中的session值,防止用户过期
+然后将用户的未办事务列表拉出来TODO
+
+@version 201210
+@author wei1224hf@gmail.com
+*/
+
+declare username_,
+        password_,
+        session_ varchar(200);  
+
+    select username,session into username_,session_ from basic_user_session where username = in_username;
+    if TRIM( username_ ) is NULL then         
+        set out_msg = 'no user';        
+        set out_state = 0;        
+    elseif ( in_session  = md5( concat(session_, hour(now())-0))) or    
+           ( in_session  = md5( concat(session_, hour(now())-1))) or
+           ( in_session  = md5( concat(session_, hour(now())-2))) then                                         
+        set out_session = basic_randstring(32,5) ;
+        update basic_user_session set session = out_session ,lastlogintime = now(),lastaction='workflow_check'  where username = in_username;
+        set out_msg = 'done';        
+        set out_state = 1;           
+        set out_app = '';
+    else    
+        set out_msg = 'session wrong';        
+        set out_state = 0;    
+    end if;
+END;;
+DELIMITER ;

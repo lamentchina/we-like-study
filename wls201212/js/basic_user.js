@@ -381,11 +381,31 @@ var basic_user = {
 			items.push({line:true});
 			var config = {text:permission[i].name,img:permission[i].icon};
 			if(permission[i].code == "1199"){
+				//当前登录用户自己退出系统
 				config.click = function(){
 					top.basic_user.logout();
 				}
 			}else if(permission[i].code == "1101"){
-				
+				//当前登录用户修改自己信息
+				config.click = function(){
+	                top.$.ligerDialog.open({
+	                    isHidden:false,
+	                    id : "win_user_updateMyself" , height:  400, width: 600,
+	                    url: "basic_user__updateMyself.html",
+	                    showMax: true, showToggle: true, showMin: true, isResize: true,
+	                    modal: true
+	                    , slide: false    
+	                });
+	                
+	                top.$.ligerui.get("win_user_updateMyself").close = function(){
+	                    var g = this, p = this.options;
+	                    top.$.ligerui.win.removeTask(this);
+	                    g.unmask();
+	                    g._removeDialog();
+	                    top.$.ligerui.remove(top.$.ligerui.get("win_user_updateMyself"));
+	                    top.$('body').unbind('keydown.dialog');
+	                }				
+				}
 			}else if(permission[i].code == "1102"){
 				
 			}else if(permission[i].code == "1103"){
@@ -554,7 +574,7 @@ var basic_user = {
 		var config = {
 			id: 'basic_user__addForm',
 			fields: [
-				{ display: top.il8n.basic_user.username, name: "basic_user__username", type: "text",  validate: { required:true, minlength:3, maxlength:10} }
+				 { display: top.il8n.basic_user.username, name: "basic_user__username", type: "text",  validate: { required:true, minlength:3, maxlength:10} }
 				,{ display: top.il8n.basic_user.password, name: "basic_user__password", type: "password", validate: { required:true } }
 				,{ display: top.il8n.basic_user.cellphone, name: "basic_user__cellphone", type: "text", validate: { required:true } }
 				,{ display: top.il8n.basic_user.email, name: "basic_user__email", type: "text", validate: { required:true } }
@@ -743,6 +763,108 @@ var basic_user = {
 			}
 		});
 	}	
+	
+	/**
+	 * 当前登录用户修改自己的个人信息
+	 * */
+	,updateMyself: function(){
+		var config = {
+			 id: 'basic_user__addForm'
+			,fields: [
+				 { display: top.il8n.basic_user.username, name: "basic_user__username", type: "text", options:{ disabled: true } }
+				,{ display: top.il8n.basic_user.password_old, name: "basic_user__password_old", type: "password", validate: { required:true } }
+				,{ display: top.il8n.basic_user.password, name: "basic_user__password", type: "password", validate: { required:true } }
+				,{ display: top.il8n.basic_user.cellphone, name: "basic_user__cellphone", type: "text", validate: { required:true } }
+				,{ display: top.il8n.basic_user.email, name: "basic_user__email", type: "text", validate: { required:true } }
+			]
+		};
+		
+		$(document.body).append("<form id='form'></form>");
+		$('#form').ligerForm(config);			
+		$('#form').append('<br/><br/><br/><br/><table style="width:80%"><tr><td style="width:25%"><input type="submit" value="'+top.il8n.submit+'" id="basic_user__submit" class="l-button l-button-submit" /></td></tr></table>' );
+		
+		var v = $('#form').validate({
+			debug: true,
+			//JS前端验证错误
+			errorPlacement: function (lable, element) {
+				if (element.hasClass("l-text-field")) {
+					element.parent().addClass("l-text-invalid");
+				} 
+			},
+			//JS前端验证通过
+			success: function (lable) {
+				var element = $("[ligeruiid="+$(lable).attr('for')+"]",$("form"));
+				if (element.hasClass("l-text-field")) {
+					element.parent().removeClass("l-text-invalid");
+				}
+			},
+			//提交表单,在表单内 submit 元素提交之后,要与后台通信
+			submitHandler: function () {
+				if(basic_user.ajaxState)return;
+				basic_user.ajaxState = true;
+				$("#basic_user__submit").attr("value",top.il8n.waitting);
+				$.ajax({
+					url: myAppServer() + "&class=basic_user&function=updateMyself",
+					data: {						
+		                username: top.basic_user.username
+		                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+		                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+		                ,user_id: top.basic_user.loginData.id
+		                ,user_type: top.basic_user.loginData.type    
+		                ,group_id: top.basic_user.loginData.group_id
+		                ,group_code: top.basic_user.loginData.group_code
+		                
+						,data:$.ligerui.toJSON({
+							 password_old: $.ligerui.get('basic_user__password_old').getValue()
+							,password: $.ligerui.get('basic_user__password').getValue()
+							,person_cellphone: $.ligerui.get('basic_user__cellphone').getValue()
+							,person_email: $.ligerui.get('basic_user__email').getValue()							
+						})                
+					},
+					type: "POST",
+					dataType: 'json',						
+					success: function(response) {		
+						basic_user.ajaxState = false;
+						//服务端添加成功,修改 AJAX 通信状态,修改按钮的文字信息,读取反馈信息
+						if(response.state==1){
+							alert(top.il8n.done);
+							$("#basic_user__submit").remove();
+						//服务端添加失败
+						}else{
+							$("#basic_user__submit").attr("value",top.il8n.submit);
+							alert(top.il8n.faild);
+						}
+					},
+					error : function(){
+						alert(top.il8n.disConnect);
+					}
+				});	
+			}
+		});
+		
+		$.ajax({
+			url: myAppServer() + "&class=basic_user&function=view"
+			,data: {
+                 username: top.basic_user.username
+                ,session: MD5( top.basic_user.session +((new Date()).getHours()))
+                ,search: $.ligerui.toJSON( basic_user.searchOptions )
+                ,user_id: top.basic_user.loginData.id
+                ,user_type: top.basic_user.loginData.type    
+                ,group_id: top.basic_user.loginData.group_id
+                ,group_code: top.basic_user.loginData.group_code
+                
+                ,id: top.basic_user.loginData.id
+			}
+			,type: "POST"
+			,dataType: 'json'						
+			,success: function(response) {	
+			    basic_user.ajaxData = response;
+				$.ligerui.get('basic_user__username').setValue(response.username);
+				$.ligerui.get('basic_user__cellphone').setValue(response.person_cellphone);
+				$.ligerui.get('basic_user__email').setValue(response.person_email);
+			}
+		});		
+	}
 	
 	//页面列表ligerUI控件	
 	,searchOptions: {}	

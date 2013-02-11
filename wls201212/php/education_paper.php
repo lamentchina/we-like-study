@@ -455,22 +455,32 @@ class education_paper {
                 'count_wrong' => $arr[3],
                 'count_giveup' => $arr[4],
                 'count_byTeacher' => $arr[5]
-            );
-        
+            );    
+            //输出试卷的正确答案跟解题思路
+            $sql = "
+            select        
+            education_question.id,        
+            education_question.answer,   
+            education_question.description     
+    
+            from education_question_log left join education_question 
+                on education_question_log.id_question = education_question.id             
+                where education_question_log.id_paper_log = '".$id_paperlog."' ";
+        }else{
+            $sql = "
+            SELECT
+            education_paper_2_question.id_paper,
+            education_question.id,
+            education_question.answer,
+            education_question.description
+            FROM
+            education_paper_2_question
+            Left Join education_question ON education_paper_2_question.id = education_question.id
+            where education_paper_2_question.id_paper = '".$_REQUEST['id']."'
+            ";
         }
-        //输出试卷的正确答案跟解题思路
-        $sql = "
-        select        
-        education_question.id,        
-        education_question.answer,   
-        education_question.description     
-
-        from education_question_log left join education_question 
-            on education_question_log.id_question = education_question.id             
-            where education_question_log.id_paper_log = '".$id_paperlog."' ";
                   
-        $res = mysql_query($sql,$CONN);
-        
+        $res = mysql_query($sql,$CONN);        
         $data = array();
         while($temp = mysql_fetch_assoc($res)){
             $data[] = $temp;

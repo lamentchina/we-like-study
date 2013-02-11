@@ -145,7 +145,7 @@ var desktop = {
 	
 	initDom : function(){
 		$(document.body).attr('style','overflow: hidden; ');
-		$(document.body).append('<img width="100%" height="100%" src="../file/lansemeilibeijingshejibizhi_459706_m.jpg"/>');
+		$(document.body).append('<img width="100%" height="100%" src="../file/background_big.jpg"/>');
 		$(document.body).append('<div id="winlinks"><ul></ul></div>');
 		var username = getCookie("myApp_username");
 		var password = getCookie("myApp_password");
@@ -160,7 +160,7 @@ var desktop = {
 		this.isWindow = true;
 		var id = getParameter( "id" , window.location.toString() );
 		$(document.body).attr('style','overflow: hidden; ');
-		$(document.body).attr('style','overflow: hidden; background: url(../file/aaice_1.gif) ');
+		$(document.body).attr('style','overflow: hidden; background: url(../file/background_small.gif) ');
 		$(document.body).append('<div id="winlinks"><ul></ul></div>');
 		
 		var permission = top.basic_user.permission;

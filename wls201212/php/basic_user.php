@@ -537,7 +537,7 @@ class basic_user {
     
     public function update($data=NULL,$retur='json') {
         tools::checkPermission("120101");//TODO
-        if ($data==NULL) {
+        if ($data!=NULL) {
             $data = json_decode($_REQUEST['json'],true);
         }
         $id = $data['id'];
@@ -559,5 +559,17 @@ class basic_user {
         mysql_query($sql,$CONN);
         
         echo json_encode(array('sql'=>$sql,'state'=>1));
-    }    
+    }  
+
+    public function updateMyself(){
+        //TODO
+        $CONN = tools::conn();    
+        $data = json_decode($_REQUEST['data'],true);
+        $sql = "update basic_user set password = '".md5($data['password'])."', person_email = '".$data['person_email']."', person_cellphone = '".$data['person_cellphone']."'
+        where id = '".$_REQUEST['user_id']."' and password = '".md5($data['password_old'])."' ;";
+        mysql_query($sql,$CONN);
+        $num = mysql_affected_rows($CONN);
+        sleep(1);
+        echo json_encode(array('sql'=>$sql,'state'=>$num));
+    }
 }
