@@ -17,6 +17,7 @@ class tools{
 	public static $systemType = NULL;
 	public static $dzxConfig = NULL;
 	public static $joomlaConfig = NULL;
+	public static $configfilename = "config.xml.php";
     
     /**
      * 得到某一个文件夹内的所有文件,甚至其子文件夹内的所有文件
@@ -100,7 +101,7 @@ class tools{
 			if(!self::$conn)exit("connenct wrong");
 			mysql_select_db($dbname,self::$conn);
 			mysql_query("set time_zone='+8:00';");
-			
+			mysql_query("SET NAMES UTF8;");
 		}
 		
 		return self::$conn;
@@ -114,7 +115,7 @@ class tools{
 	 * 获取数据库表中新的一个主键编号
 	 * 大多数业务表的 id 都不是自动递增的
 	 * */
-	public static function getTableId($tablename){
+	public static function getTableId($tablename,$update=TRUE){
 
 		$sql = tools::getConfigItem("basic_memory__id");
 		$sql = str_replace("__code__", "'".$tablename."'", $sql);
@@ -122,9 +123,11 @@ class tools{
 		$temp = mysql_fetch_assoc($res);
 		$id = $temp['id'];
 		
-		$sql = tools::getConfigItem("basic_memory__id_add");
-		$sql = str_replace("__code__", "'".$tablename."'", $sql);
-		mysql_query($sql,tools::getConn());
+		if($update){
+			$sql = tools::getConfigItem("basic_memory__id_add");
+			$sql = str_replace("__code__", "'".$tablename."'", $sql);
+			mysql_query($sql,tools::getConn());
+		}
 		
 		return $id+1;
 	}
@@ -133,28 +136,13 @@ class tools{
 	public static function getConfigItem($id){
 		if(tools::$xml==null){
     		tools::$xml = new DOMDocument();
-            tools::$xml->load('../config.xml.lock'); //读取xml文件
+            tools::$xml->load('../config.xml.php'); //读取xml文件
     
-    		$sqls = tools::$xml->getElementsByTagName('SQL');
+    		$sqls = tools::$xml->getElementsByTagName('ITEM');
             for($i=0; $i<$sqls->length;$i++){                
                 $item = $sqls->item($i);
                 $item->setIdAttribute('ID', true);
             }
-            
-            $dbs = tools::$xml->getElementsByTagName('DATABASE');
-            for($i=0; $i<$dbs->length;$i++){                
-                $item = $dbs->item($i);
-                $item->setIdAttribute('ID', true);
-            }   
-            
-            $dbs = tools::$xml->getElementsByTagName('MODE');
-            for($i=0; $i<$dbs->length;$i++){                
-                $item = $dbs->item($i);
-                $item->setIdAttribute('ID', true);
-            }        
-
-            $dom = tools::$xml->getElementsByTagName('IL8N')->item(0);
-            $dom->setIdAttribute('ID', true);
 		}
 		
 		return tools::$xml->getElementById($id)->nodeValue;

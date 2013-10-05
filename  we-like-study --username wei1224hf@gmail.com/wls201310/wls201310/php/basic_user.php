@@ -1,52 +1,150 @@
 <?php
-/**
- * 系统用户相关操作的服务端
- * 
- * 关于新建用户
- *   新建一个用户的时候,往往是在系统前端 注册 而来的.
- *   注册时,所必填的内容只有 
- *     用户名
- *     密码
- *     手机电话号
- *     邮箱
- *     类型
- *   其中的 手机电话号 跟 邮箱,是要勇于系统验证的.并且,手机号 跟 邮箱,必须唯一性
- *   当然,管理员在登录系统后直接添加也可以
- * 既然新建一个用户时,所必须的信息输入项这么少,那么,就可以教给存储过程来实现了
- * 
- * 关于修改用户信息
- *   管理员可以直接修改一个用户的 密码 邮箱 手机号 ,
- *   但是,登录用户,就只能修改密码
- * 
- * 那么,如果用户要修改业务身份呢？
- * 因为用户信息是跟业务身份联系在一起的,一个会计想修改自己的会计身份信息,那么,
- * 他就必须到 会计列表 那里,找到自己的那一条会计记录,然后修改
- * 
- * 至于修改个人档案,在用户信息修改界面上,是可以直接修改的,包括
- *   照片
- *   出生日期
- *   国籍
- *   籍贯
- *   民族
- *   学历
- *   身高
- *   
- * 等等.
- * 这些个人信息档案,是跟 用户信息修改 直接联系在一起的,应该在修改的时候直接可以操作
- * 由于字段很多,修改操作不应该教给数据库的存储过程,因为这样要提供一大串的参数,编程比较麻烦
- * 直接在服务端代码实现好了
- * 
- * 或者,提供一个 修改个人档案 按钮,额外的修改个人信息,在 basic_person 模块中操作   
- * 
- * 注册 跟 添加,是否可以引用同一个后台?
- *   添加,后台是需要判断权限的
- *   注册,后台不需要判断权限
- * 
- * @version 201210
- * @author wei1224hf@gmail.com
- * @prerequisites basic_memory__init,basic_memory.il8n()
- * */
 class basic_user {
+	
+	public static function callFunction(){
+		$function = $_REQUEST['function'];
+		$executor = $_REQUEST['executor'];
+		$session = $_REQUEST['session'];
+		
+		$t_return = array(
+				"status"=>"2"
+				,"msg"=>"access denied"
+				,"executor"=>$executor
+				,"session"=>$session
+		);
+		
+		if($function == "grid"){
+			$action = "120201";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$sortname = "id";
+				$sortorder = "asc";
+				if(isset($_REQUEST['sortname'])){
+					$sortname = $_REQUEST['sortname'];
+				}
+				if(isset($_REQUEST['sortorder'])){
+					$sortname = $_REQUEST['sortorder'];
+				}
+
+				$t_return = basic_user::grid(
+					 $_REQUEST['search']
+					,$_REQUEST['pagesize']
+					,$_REQUEST['page']
+					,$executor
+					,$sortname
+					,$sortorder
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="add"){
+			$action = "120221";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = add(
+					 $_REQUEST['data']
+					,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="modify"){
+			$action = "120221";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = modify(
+					 $_REQUEST['data']
+					,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="modify_myself"){
+			$action = "1123";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = modify_myself(
+					$_REQUEST['data']
+					,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="remove"){
+			$action = "1123";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = remove(
+					$_REQUEST['usernames']
+					,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="view"){
+			$action = "120202";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = remove(
+						$_REQUEST['id']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="login"){
+			$gis_lat = 0;
+			$gis_lot = 0;
+			if(isset($_REQUEST['gis_lat']))$gis_lat = $_REQUEST['gis_lat'];
+			if(isset($_REQUEST['gis_lat']))$gis_lot = $_REQUEST['gis_lot'];
+			$t_return = basic_user::login(
+				 $_REQUEST['username']
+				,$_REQUEST['password']
+				,$_SERVER["REMOTE_ADDR"]
+				,$_SERVER['HTTP_USER_AGENT']
+				,$gis_lat
+				,$gis_lot
+			);	
+		}
+		if($function =="logout"){
+			$t_return = basic_user::logout(
+				$_REQUEST['username']
+				,$_REQUEST['session']
+			);
+		}
+		if($function =="loadConfig"){
+			$t_return = basic_user::loadConfig();
+		}
+		if($function =="updateSession"){
+			$t_return = updateSession(
+				 $executor
+				,$session
+			);
+		}
+		if($function =="group_get"){
+			$action = "120241";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = basic_user::group_get(
+					 $_REQUEST['username']
+					,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		if($function =="group_set"){
+			$action = "120241";
+			if(basic_user::checkPermission($executor, $action, session)){
+				$t_return = basic_user::group_set(
+					 $_REQUEST['username']
+					,$_REQUEST['group_codes']
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		return $t_return;
+	}
     
     public static $userType = NULL;
     
