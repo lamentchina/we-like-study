@@ -15,7 +15,7 @@ class basic_user {
 		
 		if($function == "grid"){
 			$action = "120201";
-			if(basic_user::checkPermission($executor, $action, session)){
+			if(basic_user::checkPermission($executor, $action, $session)){
 				$sortname = "id";
 				$sortorder = "asc";
 				if(isset($_REQUEST['sortname'])){
@@ -37,10 +37,10 @@ class basic_user {
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="add"){
+		else if($function =="add"){
 			$action = "120221";
-			if(basic_user::checkPermission($executor, $action, session)){
-				$t_return = add(
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = basic_user::add(
 					 $_REQUEST['data']
 					,$executor
 				);
@@ -48,10 +48,10 @@ class basic_user {
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="modify"){
+		else if($function =="modify"){
 			$action = "120221";
-			if(basic_user::checkPermission($executor, $action, session)){
-				$t_return = modify(
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = basic_user::modify(
 					 $_REQUEST['data']
 					,$executor
 				);
@@ -59,10 +59,10 @@ class basic_user {
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="modify_myself"){
+		else if($function =="modify_myself"){
 			$action = "1123";
-			if(basic_user::checkPermission($executor, $action, session)){
-				$t_return = modify_myself(
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = basic_user::modify_myself(
 					$_REQUEST['data']
 					,$executor
 				);
@@ -70,10 +70,10 @@ class basic_user {
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="remove"){
-			$action = "1123";
-			if(basic_user::checkPermission($executor, $action, session)){
-				$t_return = remove(
+		else if($function =="remove"){
+			$action = "120223";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = basic_user::remove(
 					$_REQUEST['usernames']
 					,$executor
 				);
@@ -81,18 +81,18 @@ class basic_user {
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="view"){
+		else if($function =="view"){
 			$action = "120202";
-			if(basic_user::checkPermission($executor, $action, session)){
-				$t_return = remove(
-						$_REQUEST['id']
-						,$executor
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = basic_user::view(
+					$_REQUEST['id']
+					,$executor
 				);
 			}else{
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="login"){
+		else if($function =="login"){
 			$gis_lat = 0;
 			$gis_lot = 0;
 			if(isset($_REQUEST['gis_lat']))$gis_lat = $_REQUEST['gis_lat'];
@@ -106,24 +106,24 @@ class basic_user {
 				,$gis_lot
 			);	
 		}
-		if($function =="logout"){
+		else if($function =="logout"){
 			$t_return = basic_user::logout(
 				$_REQUEST['username']
 				,$_REQUEST['session']
 			);
 		}
-		if($function =="loadConfig"){
+		else if($function =="loadConfig"){
 			$t_return = basic_user::loadConfig();
 		}
-		if($function =="updateSession"){
-			$t_return = updateSession(
+		else if($function =="updateSession"){
+			$t_return = basic_user::updateSession(
 				 $executor
 				,$session
 			);
 		}
-		if($function =="group_get"){
+		else if($function =="group_get"){
 			$action = "120241";
-			if(basic_user::checkPermission($executor, $action, session)){
+			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = basic_user::group_get(
 					 $_REQUEST['username']
 					,$executor
@@ -132,9 +132,9 @@ class basic_user {
 				$t_return['action'] = $action;
 			}
 		}
-		if($function =="group_set"){
+		else if($function =="group_set"){
 			$action = "120241";
-			if(basic_user::checkPermission($executor, $action, session)){
+			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = basic_user::group_set(
 					 $_REQUEST['username']
 					,$_REQUEST['group_codes']
@@ -145,84 +145,33 @@ class basic_user {
 		}
 		return $t_return;
 	}
-    
-    public static $userType = NULL;
-    
-    public static $userGroup = NULL;
-    
-    public static $permissions = NULL;
         
-	/**
-     * 系统大多数的业务逻辑,都转移到数据库用存储过程来实现
-     * 但是,列表功能,将使用服务端代码实现,因为列表功能,一般而言就是查询访问功能
-     * 是不会对系统的数据做 增删改 这种 写 的操作的,都是 读取 的操作,无需转移到存储过程
-     * 
-     * return 默认是JSON,是作为 WEB前端,手机终端,接口通信 的主要模式,也有可能是XML,如果是 array 的话,就返回一个数组
-     * 输出的数据,其格式为: {Rows:[{key1:'value1',key2:'value2']},Total:12,page:1,pagesize:3,status:1,msg:'处理结果'}
-     * search 默认是NULL,将依赖 $_REQUEST['serach'] 来获取,获取到的应该是一个JSON,内有各种查询参数
-     */
-    public static function grid($search=NULL,$page=NULL,$pagesize=NULL){
-        if (!basic_user::checkPermission("120201")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	        
-        if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) ){
-            return array(
-    		    'status'=>'1'
-    		    ,'msg'=>'ok'
-    		);
-        }
-        $search=$_REQUEST['search'];
-        $page=$_REQUEST['page'];
-        $pagesize=$_REQUEST['pagesize'];
+    public static function grid(					 
+    				 $search
+					,$pagesize
+					,$page
+					,$executor
+					,$sortname
+					,$sortorder){
         
         //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
-        $conn = tools::getConn();
-        
-        //列表查询下,查询条件必定是SQL拼凑的
-        $sql_where = " where 1=1 ";
-        
-        $search=json_decode2($search,true);
-        $search_keys = array_keys($search);
-        for($i=0;$i<count($search);$i++){
-            if($search_keys[$i]=='username' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and basic_user.username like '%".$search[$search_keys[$i]]."%' ";
-            }
-            if($search_keys[$i]=='group_code' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and basic_user.group_code = '".$search[$search_keys[$i]]."' ";
-            }	
-            if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and basic_user.status = '".$search[$search_keys[$i]]."' ";
-            }  
-            if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and basic_user.type = '".$search[$search_keys[$i]]."' ";
-            }                      	
-        }
-        $sql_order = ' order by basic_user.id desc ';
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-			$sql_order = " order by basic_user.".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}          
-    
-        //根据不同的用户角色,会有不同的列输出
-        if(basic_user::$userType=='10'){ 
-            //管理员角色          
-            $sql = tools::getConfigItem("basic_user__grid");            
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+        $conn = tools::getConn();       
 
-            $res = mysql_query($sql,$conn);
-            $data = array();
-            while($temp = mysql_fetch_assoc($res)){
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM basic_user ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        }   
+        $sql_where = basic_user::search($search, $executor);
+		$sql_order = " order by basic_user.".$sortname." ".$sortorder." ";
+		  
+		$sql = tools::getConfigItem("basic_user__grid");
+		$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+		
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		
+		$sql_total = "select count(*) as total FROM basic_user ".$sql_where;		
+		$res = mysql_query($sql_total,$conn);
+		$total = mysql_fetch_assoc($res);
         
         $returnData = array(
             'Rows'=>$data,
@@ -231,16 +180,32 @@ class basic_user {
 
         return $returnData;
     }
+    
+    private static function search($search,$executor){
+    	$sql_where = " where 1=1 ";
+    	
+    	$search=json_decode2($search,true);
+    	$search_keys = array_keys($search);
+    	for($i=0;$i<count($search);$i++){
+    		if($search_keys[$i]=='username' && trim($search[$search_keys[$i]])!='' ){
+    			$sql_where .= " and basic_user.username like '%".$search[$search_keys[$i]]."%' ";
+    		}
+    		if($search_keys[$i]=='group_code' && trim($search[$search_keys[$i]])!='' ){
+    			$sql_where .= " and basic_user.group_code = '".$search[$search_keys[$i]]."' ";
+    		}
+    		if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
+    			$sql_where .= " and basic_user.status = '".$search[$search_keys[$i]]."' ";
+    		}
+    		if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
+    			$sql_where .= " and basic_user.type = '".$search[$search_keys[$i]]."' ";
+    		}
+    	}
+    	
+    	return $sql_where;
+    }
+    
         
 	public static function remove($usernames=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("120223")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	 	    
-	    if($usernames==NULL)$usernames = $_REQUEST['usernames'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 		$conn = tools::getConn();
 		$usernames = explode(",", $usernames);
 		for($i=0;$i<count($usernames);$i++){
@@ -297,53 +262,44 @@ class basic_user {
         }
 		return false;
 	}
+	
+	public static $userType = NULL;	
+	public static $userGroup = NULL;	
+	public static $permissions = NULL;
     
-	public static function getSession($username){
+	public static function getSession($executor, $session){
         $conn = tools::getConn();
 		$sql = tools::getConfigItem("basic_user__getSession");
-		$sql = str_replace("__user_code__", "'".$_REQUEST['executor']."'",$sql);
-		$sql = str_replace("__session__", "'".$_REQUEST['session']."'",$sql);
+		$sql = str_replace("__user_code__", "'".$executor."'",$sql);
+		$sql = str_replace("__session__", "'".$session."'",$sql);
 		$sql = str_replace("\n", " ",$sql);
 
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
-		if($temp){		
-		    
+		if($temp){		    
     		basic_user::$userGroup = $temp['group_code'];
     		basic_user::$userType = $temp['user_type'];
     		basic_user::$permissions = $temp['permissions'];
 		}else{            
-		    basic_user::$permissions = $sql;
+		    //basic_user::$permissions = $sql;
+		    exit("error");
 		}
+		
+		return array(
+			 "status"=>"1"
+			,"data"=>$temp
+		);
 	}    
 	
-	public static function checkPermission($code){
+	public static function checkPermission($executor, $action, $session){
+		if(basic_user::$permissions==NULL)basic_user::getSession($executor, $session);
 	    $arr = explode(",", basic_user::$permissions);
 	    for($i=0;$i<count($arr);$i++){
-	        if($code == $arr[$i]){
+	        if($action == $arr[$i]){
 	            return true; 
 	        }
 	    }
 	    return false;
-	}
-    
-	public static function login($username=NULL,$md5PasswordTime=NULL,$ip=NULL,$client=NULL){
-		$t_return = array('status'=>'2','msg'=>'wrong');
-	    if(tools::$systemType=='DZX'){
-	        $t_return = basic_user::login_dzx();
-	    }elseif(tools::$systemType=='JOOMLA'){
-	        $t_return = basic_user::login_joomla();
-	    }elseif(tools::$systemType=='DEDE'){
-	        $t_return = basic_user::login_dede();
-	    }else{
-    	    if($username==NULL)$username = $_REQUEST['username'];
-    	    if($md5PasswordTime==NULL)$md5PasswordTime = $_REQUEST['password'];
-    	    if($ip==NULL)$ip = $_SERVER["REMOTE_ADDR"] ;
-    	    if($client==NULL)$client = $_SERVER['HTTP_USER_AGENT'] ;
-	        $t_return = basic_user::login_mobile($username,$md5PasswordTime,$ip,$client,"0","0");
-	    }
-		
-		return $t_return;
 	}
 	
 	public static function login_joomla(){
@@ -577,19 +533,18 @@ class basic_user {
 	    //TODO
 	}
 
-	public static function login_mobile($username=NULL,$md5PasswordTime=NULL,$ip=NULL,$client=NULL,$gis_lat=NULL,$gis_lot=NULL){
-	    if($username==NULL)$username = $_REQUEST['username'];
-	    if($md5PasswordTime==NULL)$md5PasswordTime = $_REQUEST['password'];
-	    if($username!='guest' && tools::$systemType== 'WLS')$md5PasswordTime = "'".$md5PasswordTime."'";
-	    if($ip==NULL)$ip = $_SERVER["REMOTE_ADDR"] ;
-	    if($client==NULL)$client = $_SERVER['HTTP_USER_AGENT'] ;	    
-	    if($gis_lat==NULL)$gis_lat = $_REQUEST['gis_lat'] ;
-	    if($gis_lot==NULL)$gis_lot = $_REQUEST['gis_lot'] ;
-		$t_return = array();
+	public static function login(
+			 $username=NULL
+			,$md5PasswordTime=NULL
+			,$ip=NULL
+			,$client=NULL
+			,$gis_lat=NULL
+			,$gis_lot=NULL){
+		
+		$t_return = array("status"=>"2");
 		$conn = tools::getConn();
 		$sql = "";
 		
-		//判断系统内存表状态,如果为空,则说明需要初始化内存数据
 		$sql = "select count(*) as total from basic_memory ";
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
@@ -597,13 +552,12 @@ class basic_user {
 		    tools::initMemory();
 		}	
 		
-		//如果是访客登录,就不验证密码
 		if($username=="guest"){
 		    $md5PasswordTime = "md5(concat(password, hour(now()) ))";
-		}
+		}else{
+			$md5PasswordTime = "'".$md5PasswordTime."'";
+		}		
 		
-		//验证用户的密码,如果服务器的时钟跟用户的前端时钟不一致,需要修改
-		mysql_query("set time_zone = '+8:00'; ");
 		$sql = tools::getConfigItem("basic_user__login_check");
 		$sql = str_replace("__username__", "'".$username."'",$sql);
 		$sql = str_replace("__password__",$md5PasswordTime,$sql);
@@ -621,7 +575,7 @@ class basic_user {
 		    $temp['session'] = md5($session.date("G"));
 		    
 		    $t_return = array(
-				'foo'=>'bar'
+				 'foo'=>'bar'
 		        ,'logindata'=>$temp
 		        ,'status'=>"1"
 		        ,'msg'=>'OK'
@@ -666,15 +620,7 @@ class basic_user {
 		);
 	}
 	
-	public static function modify($data=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("120222")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	    
-	    if($data==NULL)$data = $_REQUEST['data'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];	    
+	public static function modify($data=NULL,$executor=NULL){   
 	    $conn = tools::getConn();
 	    
 	    $t_data = json_decode2($data,true);
@@ -716,16 +662,7 @@ class basic_user {
         );
 	}		
 	
-	public static function modify_myself($data=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("1101")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	    	    
-	    if($data==NULL)$data = $_REQUEST['data'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
-	    
+	public static function modify_myself($data=NULL,$executor=NULL){	    
 	    $conn = tools::getConn();
 	    
 	    $t_data = json_decode2($data,true);
@@ -767,13 +704,13 @@ class basic_user {
         $conn = tools::getConn();
         $config = array();
         
-        $sql = "select code,value from basic_parameter where reference = 'basic_user__type' and code not in ('1','9')  order by code";
+        $sql = "select code,value from basic_parameter where reference = 'basic_user__type'  order by code";
         $res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
-		$config['type'] = $data;
+		$config['basic_user__type'] = $data;
 		
 		$sql = "select code,value from basic_parameter where reference = 'basic_user__status' order by code";
         $res = mysql_query($sql,$conn);
@@ -781,12 +718,16 @@ class basic_user {
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
-		$config['status'] = $data;
+		$config['basic_user__status'] = $data;
 		
 		$sql = "select code,name as value from basic_group order by code";
         $res = mysql_query($sql,$conn);
 		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
+		while($temp = mysql_fetch_assoc($res)){			
+			$len = strlen($temp['code']);
+			for($i=2;$i<$len;$i+=2){
+				$temp['value'] = "-".$temp['value'];
+			}
 			$data[] = $temp;
 		}
 		$config['group'] = $data;
@@ -795,14 +736,6 @@ class basic_user {
 	}  
     
 	public static function add($data=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("120221")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	   	    
-	    if($data==NULL)$data=$_REQUEST['data'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 	    
 	    $t_data = json_decode2($data,true);
 		$conn = tools::getConn();
@@ -897,15 +830,8 @@ class basic_user {
         );
 	}
     
-    public static function view(){
-        if (!basic_user::checkPermission("120202")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	        
+    public static function view($id){  
         $conn = tools::getConn();    
-        $id = $_REQUEST['id'];
         
         $sql = tools::getConfigItem("basic_user__view");
         $sql = str_replace("__id__", $id, $sql);
@@ -939,13 +865,6 @@ class basic_user {
 	}
 	
 	public static function group_get($username=NULL){
-        if (!basic_user::checkPermission("120290")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($username==NULL)$username = $_REQUEST['username'];
 		$conn = tools::getConn();
 		
 		$sql = tools::getConfigItem("basic_user__group_get");
@@ -957,22 +876,16 @@ class basic_user {
             if ($temp['user_code']!=NULL) {
                 $temp['ischecked'] = 1;
             }
+            $temp['code_'] =  $temp['code'];
+            $temp['code'] =  str_replace("-", "", $temp['code']);
             $data[] = $temp;
         }
         $data = tools::list2Tree($data);
 
-        return $data;
+        return array("status"=>"1","groups"=>$data);
 	}	
 	
 	public static function group_set($username=NULL,$group_codes=NULL){
-        if (!basic_user::checkPermission("120290")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($username==NULL)$username = $_REQUEST['username'];
-	    if($group_codes==NULL)$group_codes = $_REQUEST['group_codes'];
 		$conn = tools::getConn();
 		
 		$sql = "delete from basic_group_2_user where user_code = '".$username."' ";
@@ -984,12 +897,19 @@ class basic_user {
 		    mysql_query($sql,$conn);
 		}
 		
-		$sql = "update basic_user set group_all = '".implode($group_codes,",")."', group_code = (select group_code from basic_group_2_user where user_code = '".$username."' order by group_code limit 1) where username = '".$username."'";
-		mysql_query($sql,$conn);
-		
-        return array(
-            'status'=>"1"
-            ,'msg'=>'ok'
-        );
+		$sql = "update basic_user set group_all = '".implode($group_codes,",")."' where username = '".$username."'";
+		$res = mysql_query($sql,$conn);
+		if($res){
+			return array(
+					'status'=>"1"
+					,'msg'=>'ok'
+			);
+		}else{
+			return array(
+					'status'=>"2"
+					,'msg'=>mysql_error($conn)
+			);
+		}
+
 	}		
 }

@@ -36,7 +36,8 @@ include_once 'exam_subject_2_user_log.php';
 
 $data = array();
 if($class=='basic_user')$data = basic_user::callFunction();  
-
+if($class=='basic_group')$data = basic_group::callFunction();
+echo json_encode($data);
 /*
 //判断系统类型,是 独立安装,集成到DZX,还是集成到 JOOMLA
 tools::getSystemType();
@@ -70,7 +71,7 @@ if($function!='loadConfig' && $function!='login' && $function!='login_mobile' &&
 $eval_ = '$data ='.$class.'::'.$function.'();';
 eval($eval_);
 if($function!='upload' && $function!='upload_img')header('Content-Type:text/json;charset=utf-8');
-echo json_encode($data);
+
 */
 
 //如果使用了数据库连接,就关闭掉.一次访问,数据库必定只打开一次
