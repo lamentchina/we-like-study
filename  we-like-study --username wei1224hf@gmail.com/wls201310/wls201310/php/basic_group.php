@@ -63,7 +63,7 @@ class basic_group {
 			$action = "120123";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = basic_group::remove(
-						$_REQUEST['usernames']
+						$_REQUEST['codes']
 						,$executor
 				);
 			}else{
@@ -161,14 +161,6 @@ class basic_group {
     }
         
 	public static function remove($codes=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("120122")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	    
-	    if($codes==NULL)$codes = $_REQUEST['codes'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 		$conn = tools::getConn();
 		$codes = explode(",", $codes);
 		for($i=0;$i<count($codes);$i++){
@@ -252,15 +244,6 @@ class basic_group {
 	}  
     
 	public static function add($data=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("120121")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($data==NULL)$data=$_REQUEST['data'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
-	    
 	    $t_data = json_decode2($data,true);
 	    
 	    //编码长度必须为偶数
@@ -369,5 +352,56 @@ class basic_group {
 			"permissions"=>$data
 			,"status"=>"1"				
 		);
+	}
+	
+	public static function data4test($total){
+		$t_return = array("status"=>"1","msg"=>"");
+		$conn = tools::getConn();
+		
+		$sql = "delete from basic_group where type = '40'";
+		mysql_query($sql,$conn);
+		$sql = "select code from basic_group where type = '30' and code like '%-%-__' limit 1";
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		$code = $temp['code'];
+		
+		$total_ = 0;
+		mysql_query("START TRANSACTION;",$conn);
+		//一个高中,三个年级 2013届,2014届,2015届
+		//每个年纪 4 到6个班级
+		for($i=13;$i<=15;$i++){
+			$code_ = $code."-".$i;
+			$sql = "insert into basic_group(name,code,type,status) values ('年级".$i."','".$code_."','30','10')";
+			mysql_query($sql,$conn);
+			$total_++;
+			if($total_>=$total)return $t_return;
+			
+			$r = rand(3, 6);
+			for($i2=1;$i2<=$r;$i2++){
+				$code__ = $code_."-0".$i2;
+				$sql = "insert into basic_group(name,code,type,status) values ('班级".$i.$i2."','".$code__."','40','10')"; 
+				mysql_query($sql,$conn);
+				$total_++;
+				if($total_>=$total)return $t_return;
+			}
+		}
+		$sql = "insert into basic_group(name,code,type,status) values ('教师','".$code."-X1"."','40','10')";
+		mysql_query($sql,$conn);
+		$sql = "insert into basic_group_2_permission (permission_code,group_code)
+SELECT
+basic_permission.`code` as permission_code
+,basic_group.`code` as group_code
+FROM
+basic_permission ,
+basic_group
+WHERE
+basic_permission.`code` >= '60' AND
+basic_group.`code` like '%-%-%-%-%' AND basic_permission.`code` not like '%1_' and basic_permission.`code` not like '%2_'
+
+and basic_permission.`code` < '6005'";
+		mysql_query($sql,$conn);
+		mysql_query("COMMIT;",$conn);
+		$t_return['msg']="Total ".$total_;
+		return $t_return;
 	}
 }

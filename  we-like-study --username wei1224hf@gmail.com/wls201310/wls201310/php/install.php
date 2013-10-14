@@ -1,5 +1,7 @@
 <?php 
 include_once "tools.php";
+include_once 'basic_group.php';
+include_once 'basic_user.php';
 include_once '../libs/phpexcel/Classes/PHPExcel.php';
 include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -277,7 +279,20 @@ if($functionName=="init_tables_dosql"){
 if($functionName=="basic_data"){
 	$data = install::basic_data();
 }
-
+if($functionName=="data4test__basic_group"){
+	$data = basic_group::data4test(100);
+}
+if($functionName=="data4test__basic_user"){
+	$data = basic_user::data4test(2000);
+}
+if($functionName=="data4test__exam_subject"){
+	include_once 'exam_subject.php';
+	$data = exam_subject::data4test(2000);
+}
+if($functionName=="data4test__exam_paper"){
+	include_once 'exam_paper.php';
+	$data = exam_paper::data4test(2000);
+}
 
 echo json_encode($data);
 if(tools::$conn!=null)mysql_close(tools::$conn);

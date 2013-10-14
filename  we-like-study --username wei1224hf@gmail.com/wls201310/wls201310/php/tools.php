@@ -153,7 +153,31 @@ class tools{
         
         for($i=0;$i<count($list);$i++){
             $temp = $list[$i];
-            $len = strlen($list[$i]['code']);
+            $len = strlen($temp['code']);
+           	if($len==2){
+           		$data[] = $temp;
+           		continue;
+           	}
+           	
+            $aa = array();
+            $aa[] = $data;             
+            for($i2=2;$i2<$len;$i2+=2){
+            	
+            	$a = $aa[count($aa)-1];
+            	$p = count($a)-1;
+            	if(!isset($a[$p]['children']))$a[$p]['children'] = array();
+            	$aa[] = $a[$p]['children'];
+            }
+            $aa[count($aa)-1][] = $temp;
+            print_r($aa);
+            for($i3=count($aa)-1;$i3>=0;$i3--){
+            	$aa[$i3-1][] = $aa[$i3];
+            }
+            
+            $data = $aa[0];
+            
+            /*
+           
             
             if($len==2){
                 $data[] = $temp;
@@ -165,14 +189,34 @@ class tools{
                 $pos_2 = count($data[$pos_1]['children'])-1;
                 $data[$pos_1]['children'][$pos_2]['children'][] = $temp;
             }else if($len==8){
-                $pos_1 = count($data)-1;
-                $pos_2 = count($data[$pos_1]['children'])-1;
-                $pos_3 = count($data[$pos_1]['children'][$pos_2]['children'])-1;
-                $data[$pos_1]['children'][$pos_2]['children'][$pos_3]['children'][] = $temp;
-            }            
+            	$a = $data;
+                $pos_1 = count($a)-1;
+                $a2 = $a[$pos_1]['children'];
+                $pos_2 = count($a2)-1;
+                $a3 = $a2[$pos_2]['children'];
+                $pos_3 = count($a3)-1;
+                $a4 = $a3[$pos_3]['children'];
+                
+                $a4[] = $temp;
+            } else if($len==10){
+
+            }     
+            */      
         }
         
         return $data;	
+	}
+	
+	private static function list2Tree_($item,$place,$len_){
+		$code = $item['code'];
+		$len = strlen($code);
+		
+		if($len==2){
+			tools::$tree[] = $item;
+		}
+		
+		$thecode = substr($code, 0,$len_+2);
+		
 	}
 	
 	public static function importIl8n2DB() {

@@ -1,87 +1,162 @@
 <?php
 class exam_subject {
 
-    public static function grid($search=NULL,$page=NULL,$pagesize=NULL){
-	    if (!basic_user::checkPermission("45")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	        
-        if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) ){
-            return array(
-    		    'status'=>'1'
-    		    ,'msg'=>'ok'
-    		);
-        }
-        $search=$_REQUEST['search'];
-        $page=$_REQUEST['page'];
-        $pagesize=$_REQUEST['pagesize'];
-        
-        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
-        $conn = tools::getConn();
-        
-        //列表查询下,查询条件必定是SQL拼凑的
-        $sql_where = " where 1=1 ";
-        
-        $search=json_decode2($search,true);
-        $search_keys = array_keys($search);
-        for($i=0;$i<count($search);$i++){
-            if($search_keys[$i]=='name' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and name like '%".$search[$search_keys[$i]]."%' ";
-            }                               	
-        }
-        $sql_order = ' order by code ';
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-			$sql_order = " order by ".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}          
-    
-        //根据不同的用户角色,会有不同的列输出
-        if(basic_user::$userType=='10'){ 
-            //管理员角色          
-            $sql = "select name,code,weight,type,(select value from basic_parameter where reference = 'exam_subject__type' and basic_parameter.code = exam_subject.type) as type_,id from exam_subject  ";   
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+	public static function callFunction(){
+		$function = $_REQUEST['function'];
+		$executor = $_REQUEST['executor'];
+		$session = $_REQUEST['session'];
+	
+		$t_return = array(
+				"status"=>"2"
+				,"msg"=>"access denied"
+				,"executor"=>$executor
+				,"session"=>$session
+		);
+	
+		if($function == "grid"){
+			$action = "600501";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$sortname = "code";
+				$sortorder = "asc";
+				if(isset($_REQUEST['sortname'])){
+					$sortname = $_REQUEST['sortname'];
+				}
+				if(isset($_REQUEST['sortorder'])){
+					$sortname = $_REQUEST['sortorder'];
+				}
+	
+				$t_return = exam_subject::grid(
+						$_REQUEST['search']
+						,$_REQUEST['pagesize']
+						,$_REQUEST['page']
+						,$executor
+						,$sortname
+						,$sortorder
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="add"){
+			$action = "600521";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_subject::add(
+						$_REQUEST['data']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="modify"){
+			$action = "600521";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_subject::modify(
+						$_REQUEST['data']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="remove"){
+			$action = "600523";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_subject::remove(
+						$_REQUEST['codes']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="view"){
+			$action = "600502";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_subject::view(
+						$_REQUEST['id']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="group_get"){
+			$action = "600591";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_subject::group_get(
+						$_REQUEST['code']
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}		
+	
+		else if($function =="loadConfig"){
+			$t_return = exam_subject::loadConfig();
+		}
+	
+		return $t_return;
+	}
+	
 
-            $res = mysql_query($sql,$conn);
-            $data = array();
-            $padder = array(
-                 'X0'=>''
-                ,'X2'=>'--'
-                ,'X4'=>'----'
-                ,'X6'=>'------'
-                ,'X8'=>'--------'
-            ); 
-            while($temp = mysql_fetch_assoc($res)){
-                $len = strlen($temp['code']) - 2;
-                $temp['name_'] = $padder['X'.$len].$temp['name'];
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM exam_subject ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        }   
-        
-        $returnData = array(
-            'Rows'=>$data,
-            'Total'=>$total['total'],
-            'sql'=>$sql
-        );
-
-        return $returnData;
-    }
+	private static function search($search,$executor){
+		$sql_where = " where 1=1 ";
+	
+		$search=json_decode2($search,true);
+		$search_keys = array_keys($search);
+		for($i=0;$i<count($search);$i++){
+			if($search_keys[$i]=='name' && trim($search[$search_keys[$i]])!='' ){
+				$sql_where .= " and name like '%".$search[$search_keys[$i]]."%' ";
+			}
+			if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
+				$sql_where .= " and type = '".$search[$search_keys[$i]]."' ";
+			}
+			if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
+				$sql_where .= " and status = '".$search[$search_keys[$i]]."' ";
+			}
+		}	
+	
+		return $sql_where;
+	}
+	
+	public static function grid(
+			$search
+			,$pagesize
+			,$page
+			,$executor
+			,$sortname
+			,$sortorder){
+		 
+		//数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+		$conn = tools::getConn();
+		 
+		$sql_where = exam_subject::search($search, $executor);
+		$sql_order = " order by exam_subject.".$sortname." ".$sortorder." ";
+		 
+		$sql = tools::getConfigItem("exam_subject__grid");
+		$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+		 
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		 
+		$sql_total = "select count(*) as total FROM exam_subject ".$sql_where;
+		$res = mysql_query($sql_total,$conn);
+		$total = mysql_fetch_assoc($res);
+		 
+		$returnData = array(
+				'Rows'=>$data
+				,'Total'=>$total['total']
+				//,'sql'=>$sql
+		);
+		 
+		return $returnData;
+	}
         
 	public static function remove($codes=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4522")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($codes==NULL)$codes = $_REQUEST['codes'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 		$conn = tools::getConn();
 		$codes = explode(",", $codes);
 		for($i=0;$i<count($codes);$i++){
@@ -113,18 +188,8 @@ class exam_subject {
 	}  
     
 	public static function add($data=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4521")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	    
-	    if($data==NULL)$data=$_REQUEST['data'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
-	    
-	    $t_data = json_decode2($data,true);
 		$conn = tools::getConn();			
-		
+		$t_data = json_decode2($data,true);
 		$keys = array_keys($t_data);
 		for($i=0;$i<count($keys);$i++){
 		    $t_data[$keys[$i]] = "'".$t_data[$keys[$i]]."'";
@@ -150,15 +215,6 @@ class exam_subject {
 	}
     
     public static function group_set($codes=NULL,$code=NULL){
-	    if (!basic_user::checkPermission("4590")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	        
-	    if($code==NULL)$code=$_REQUEST['code'];
-	    if($codes==NULL)$codes = $_REQUEST['codes'];        
-     	    
 		$conn = tools::getConn();
 
 		$sql = "delete from exam_subject_2_group where subject_code = '".$code."' ";
@@ -178,13 +234,6 @@ class exam_subject {
 	}	
 	
 	public static function group_get($code=NULL){
-	    if (!basic_user::checkPermission("4590")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($code==NULL)$code=$_REQUEST['code'];
 		$conn = tools::getConn();
 		
 		$sql = tools::getConfigItem("exam_subject__group_get");
@@ -196,10 +245,67 @@ class exam_subject {
             if ($temp['subject_code']!=NULL) {
                 $temp['ischecked'] = 1;
             }
+            $temp['code_'] = $temp['code'];
+            $temp['code'] = str_replace("-", "", $temp['code']);
             $data[] = $temp;
         }
+
 		$data = tools::list2Tree($data);
 		
 		return $data;
+	}
+	
+
+	public static function data4test($total){
+		$t_return = array("status"=>"1","msg"=>"");
+		$conn = tools::getConn();
+		$total_ = 0;
+		
+		$sql = "delete from exam_subject";
+		mysql_query($sql,$conn);
+		
+		mysql_query("START TRANSACTION;",$conn);
+		//节点 科目 知识点
+		//节点要参考 国名经济编码 8432 表示高中教育
+		$sql = "insert into exam_subject(name,code,type,status) values ('教育','84','10','10')";
+		mysql_query($sql,$conn);
+		$total_++;
+		$sql = "insert into exam_subject(name,code,type,status) values ('高中教育','8432','10','10')";
+		mysql_query($sql,$conn);
+		$total_++;
+		
+		for($i=1;$i<=3;$i++){
+			$sql = "insert into exam_subject(name,code,type,status) values ('年级".$i."','8432-0".$i."','10','10')";
+			mysql_query($sql,$conn);
+			$total_++;
+			for($i2=1;$i2<=5;$i2++){
+				$sql = "insert into exam_subject(name,code,type,status) values ('科目".$i.$i2."','8432-0".$i."0".$i2."','20','10')";
+				mysql_query($sql,$conn);
+				$total_++;
+				
+				$r = rand(5, 8);
+				$w = 100/$r ;
+				for($i3=1;$i3<=$r;$i3++){
+					$sql = "insert into exam_subject(name,code,type,status,weight) values ('知识点".$i.$i2.$i3."','8432-0".$i."0".$i2."-".(($i3>=10)?$i3:"0".$i3)."','30','10','".$w."')";
+					mysql_query($sql,$conn);
+					
+					$r2 = rand(5, 8);
+					$w2 = 100/$r2 ;
+					for($i4=1;$i4<=$r2;$i4++){
+						$sql = "insert into exam_subject(name,code,type,status,weight) values ('知识点".$i.$i2.$i3.$i4."','8432-0".$i."0".$i2."-".(($i3>=10)?$i3:"0".$i3).(($i4>=10)?$i4:"0".$i4)."','30','10','".$w2."')";
+						mysql_query($sql,$conn);
+						$total_++;
+						if($total_>=$total){
+							mysql_query("COMMIT;",$conn);
+							$t_return['msg']="Total ".$total_;
+							return $t_return;
+						}
+					}
+				}
+			}
+		}
+		mysql_query("COMMIT;",$conn);
+		$t_return['msg']="Total ".$total_;
+		return $t_return;
 	}
 }

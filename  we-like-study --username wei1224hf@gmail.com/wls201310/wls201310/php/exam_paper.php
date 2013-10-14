@@ -1,32 +1,100 @@
 <?php
 class exam_paper {
         
-    public static function grid($search=NULL,$page=NULL,$pagesize=NULL){
-	    if (!basic_user::checkPermission("40")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		        
-        if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) ){
-            return array(
-    		    'status'=>'1'
-    		    ,'msg'=>'ok'
-    		);
-        }
-        $search=$_REQUEST['search'];
-        $page=$_REQUEST['page'];
-        $pagesize=$_REQUEST['pagesize'];
-        
-        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
-        $conn = tools::getConn();
-        
-        //列表查询下,查询条件必定是SQL拼凑的
-        $sql_where = " where exam_paper.type = '20' ";
-        
-        $search=json_decode2($search,true);
-        $search_keys = array_keys($search);
-        for($i=0;$i<count($search);$i++){
+	public static function callFunction(){
+		$function = $_REQUEST['function'];
+		$executor = $_REQUEST['executor'];
+		$session = $_REQUEST['session'];
+	
+		$t_return = array(
+				"status"=>"2"
+				,"msg"=>"access denied"
+				,"executor"=>$executor
+				,"session"=>$session
+		);
+	
+		if($function == "grid"){
+			$action = "600101";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$sortname = "id";
+				$sortorder = "asc";
+				if(isset($_REQUEST['sortname'])){
+					$sortname = $_REQUEST['sortname'];
+				}
+				if(isset($_REQUEST['sortorder'])){
+					$sortname = $_REQUEST['sortorder'];
+				}
+	
+				$t_return = exam_paper::grid(
+						$_REQUEST['search']
+						,$_REQUEST['pagesize']
+						,$_REQUEST['page']
+						,$executor
+						,$sortname
+						,$sortorder
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="add"){
+			$action = "120221";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper::add(
+						$_REQUEST['data']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="modify"){
+			$action = "120221";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper::modify(
+						$_REQUEST['data']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="remove"){
+			$action = "120223";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper::remove(
+						$_REQUEST['usernames']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="view"){
+			$action = "120202";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper::view(
+						$_REQUEST['id']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+
+		else if($function =="loadConfig"){
+			$t_return = exam_paper::loadConfig();
+		}
+
+		return $t_return;
+	}
+
+	private static function search($search,$executor){
+		$sql_where = " where exam_paper.type = '20' ";
+	
+		$search=json_decode2($search,true);
+		$search_keys = array_keys($search);
+		for($i=0;$i<count($search);$i++){
             if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and title like '%".$search[$search_keys[$i]]."%' ";
             }
@@ -38,73 +106,62 @@ class exam_paper {
             }    
             if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and status = '".$search[$search_keys[$i]]."' ";
-            }                                   	
-        }
-        $sql_order = ' order by time_created desc ';
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-			$sql_order = " order by ".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}          
-        $data = array();
-        
-        //根据不同的用户角色,会有不同的列输出
-        if(basic_user::$userType=='10'){ 
-            //系统角色
-            //如果不是管理员,那肯定是访客,只能看到 免费试卷,金币为0 的          
-            if(basic_user::$userGroup!='10'){
-                $sql_where .= " and exam_paper.cost = 0 ";
-            }
-            $sql = tools::getConfigItem("exam_paper__grid");            
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
-            
-            $res = mysql_query($sql,$conn);            
-            while($temp = mysql_fetch_assoc($res)){
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM exam_paper ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        }if(basic_user::$userType=='20'){ 
-            //学生角色
-            $sql_where .= " and subject_code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."' )";          
-            $sql = tools::getConfigItem("exam_paper__grid");            
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
-            
-            $res = mysql_query($sql,$conn);            
-            while($temp = mysql_fetch_assoc($res)){
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM exam_paper ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        }    
-        if(basic_user::$userType=='30'){ 
-            //教师角色
-            $sql_where .= " and exam_paper.creater_code = '".$_REQUEST['executor']."'";          
-            $sql = tools::getConfigItem("exam_paper__grid");            
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
-            
-            $res = mysql_query($sql,$conn);            
-            while($temp = mysql_fetch_assoc($res)){
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM exam_paper ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        } 
-        $returnData = array(
-            'Rows'=>$data,
-            'Total'=>$total['total'],
-        	'sql'=>$sql
-        );
-
-        return $returnData;
+            } 
+		}
+		//根据不同的用户角色,会有不同的列输出
+		if(basic_user::$userType=='10'){
+			//系统角色
+			//如果不是管理员,那肯定是访客,只能看到 免费试卷,金币为0 的
+			if(basic_user::$userGroup!='10'){
+				$sql_where .= " and exam_paper.cost = 0 ";
+			}
+		}if(basic_user::$userType=='20'){
+			//学生角色
+			$sql_where .= " and subject_code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."' )";
+		}
+		if(basic_user::$userType=='30'){
+			//教师角色
+			$sql_where .= " and exam_paper.creater_code = '".$_REQUEST['executor']."'";
+		}
+		
+	
+		return $sql_where;
+	}	
+	
+    public static function grid(
+    	 $search
+    	,$pagesize
+    	,$page
+    	,$executor
+    	,$sortname
+    	,$sortorder){
+    	
+    	//数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+    	$conn = tools::getConn();
+    	
+    	$sql_where = exam_paper::search($search, $executor);
+    	$sql_order = " order by exam_paper.".$sortname." ".$sortorder." ";
+    	
+    	$sql = tools::getConfigItem("exam_paper__grid");
+    	$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+    	
+    	$res = mysql_query($sql,$conn);
+    	$data = array();
+    	while($temp = mysql_fetch_assoc($res)){
+    		$data[] = $temp;
+    	}
+    	
+    	$sql_total = "select count(*) as total FROM exam_paper ".$sql_where;
+    	$res = mysql_query($sql_total,$conn);
+    	$total = mysql_fetch_assoc($res);
+    	
+    	$returnData = array(
+    			'Rows'=>$data
+    			,'Total'=>$total['total']
+    			//,'sql'=>$sql
+    	);
+    	
+    	return $returnData;
     }
         
 	public static function remove($ids=NULL,$executor=NULL){
@@ -626,13 +683,7 @@ class exam_paper {
 	}
 	
 	public static function download($id=NULL){
-	    if (!basic_user::checkPermission("4012")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($id==NULL)$id = $_REQUEST['id'];
+
         include_once '../libs/phpexcel/Classes/PHPExcel.php';
         include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
         include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -715,5 +766,22 @@ class exam_paper {
 		    'status'=>'1'
 		    ,'file'=>$file
 		);
+	}
+	
+	public static function data4test($total){
+		$t_return = array("status"=>"1","msg"=>"");
+		$conn = tools::getConn();
+		$total_ = 0;
+		
+		$sql = "delete from exam_paper";
+		mysql_query($sql,$conn);
+		
+		mysql_query("START TRANSACTION;",$conn);
+		
+		
+		mysql_query("COMMIT;",$conn);
+		$t_return['msg']="Total ".$total_;
+		return $t_return;
+		
 	}
 }
