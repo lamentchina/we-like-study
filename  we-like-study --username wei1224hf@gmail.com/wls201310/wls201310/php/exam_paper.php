@@ -779,7 +779,7 @@ class exam_paper {
 		while($temp = mysql_fetch_assoc($res)){
 			$a_teachers[] = array(
 				 'username'=>$temp['username']
-				,'group'=>$temp['group_code']
+				,'group_code'=>$temp['group_code']
 			);
 		}
 
@@ -788,17 +788,19 @@ class exam_paper {
 		
 		$sql = "delete from exam_paper";
 		mysql_query($sql,$conn);
+		$sql = "delete from exam_question";
+		mysql_query($sql,$conn);
 		
 		mysql_query("START TRANSACTION;",$conn);
 		
 		$year = substr($a_times[0], 0,4);
 		$sql_where_subject = "";
 		if($year=="2011"){
-			$sql_where_subject = " where type = '30' and ( (code like '8432-01%') or (code like '8432-02%') or (code like '8432-03%'))";
+			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') or (code like '8432-02__') or (code like '8432-03__'))";
 		}elseif($year=="2012"){
-			$sql_where_subject = " where type = '30' and ( (code like '8432-01%') or (code like '8432-02%'))";
+			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') or (code like '8432-02__'))";
 		}elseif($year=="2013"){
-			$sql_where_subject = " where type = '30' and ( (code like '8432-01%') ))";
+			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') ))";
 		}
 		$sql = "select * from exam_subject ".$sql_where_subject;
 		$res = mysql_query($sql,$conn);
@@ -813,12 +815,14 @@ class exam_paper {
 		
 		
 		for($i2=0;$i2<count($a_subject);$i2++){
-			$sql_knowledge = "select * from exam_subject where type = '30' and code like '".$a_subject[$i2]."%'";
+			$sql_knowledge = "select * from exam_subject where type = '30' and code like '".$a_subject[$i2]['code']."-____'";
+			//echo $sql_knowledge;
 			$res_knowledge = mysql_query($sql_knowledge,$conn);
 			$a_knowledge = array();
 			while($temp = mysql_fetch_assoc($res_knowledge)){
 				$a_knowledge[] = $temp['code'];
 			}
+			//echo json_encode($a_knowledge);
 			for($i=0;$i<count($a_times);$i++){
 				$exam_paper__id++;
 				$teacher = $a_teachers[rand(0,(count($a_teachers)-1))];
@@ -840,8 +844,8 @@ class exam_paper {
 						,status
 						,remark
 					) values (
-						'".$a_subject[$i2]."'
-						,'模拟试卷".$a_times[$i].$a_subject[$i2]."'
+						'".$a_subject[$i2]['code']."'
+						,'模拟试卷".$a_times[$i]."--".$a_subject[$i2]['code']."'
 						,'".rand(0, 10)."'
 						,'100'
 						,'100'
@@ -857,9 +861,9 @@ class exam_paper {
 						,'10'
 						,'描述啊'
 					)";
-				mysql_query($sql,$conn);
-				
-				for($i3=1;$i3<=20;$i3++){
+				mysql_query($sql_paper,$conn);
+								
+				for($i3=0;$i3<50;$i3++){
 					$exam_question__id++;
 					$knowledge = "";
 					$question_title = "题目标题";
@@ -878,7 +882,8 @@ class exam_paper {
 						$question_description.= "很长";
 					}
 					$question_knowledge = "";
-					$question_knowledge_start = rand(3,count($a_knowledge)-3);
+					$question_knowledge_start = rand(0,count($a_knowledge)-3);
+					//echo json_encode($a_knowledge).$a_times[$i].$a_subject[$i2]['code']."<br/>";
 					for($i7=0;$i7<3;$i7++){
 						$question_knowledge.= $a_knowledge[$question_knowledge_start+$i7].",";
 					}
@@ -907,7 +912,7 @@ class exam_paper {
 							,status
 							,remark	
 					) values (
-							 '".$a_subject[$i2]."'
+							 '".$a_subject[$i2]['code']."'
 							,'2'
 							,'".$question_title."'
 							,'4'
@@ -925,7 +930,7 @@ class exam_paper {
 							,'".$exam_question__id."'
 							,'".$teacher['username']."'
 							,'".$teacher['group_code']."'
-							,'1'
+							,'".rand(1,3)."'
 							,'10'
 							,'描述啊'
 						)";
