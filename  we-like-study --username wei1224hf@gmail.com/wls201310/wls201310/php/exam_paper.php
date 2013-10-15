@@ -12,8 +12,14 @@ class exam_paper {
 				,"executor"=>$executor
 				,"session"=>$session
 		);
-	
-		if($function == "grid"){
+		
+		if(trim($function) ==""){
+			//
+		}		
+		else if($function =="loadConfig"){
+			$t_return = exam_paper::loadConfig();
+		}	
+		else if($function == "grid"){
 			$action = "600101";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$sortname = "id";
@@ -81,12 +87,70 @@ class exam_paper {
 				$t_return['action'] = $action;
 			}
 		}
-
-		else if($function =="loadConfig"){
-			$t_return = exam_paper::loadConfig();
+		
+		else if($function =="questions"){
+			$action = "600190";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper::questions(
+						$_REQUEST['paper_id']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
 		}
 
 		return $t_return;
+	}
+	
+	public static function loadConfig() {
+		$conn = tools::getConn();
+		$config = array();
+	
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper__type' and code not in ('1','9')  order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['type'] = $data;
+	
+		basic_user::getSession($_REQUEST['executor'],$_REQUEST['session']);
+		if(basic_user::$userType=='10'||basic_user::$userType=='30'){
+			$sql = "select code,extend4 as value from basic_memory where type = '4' and extend5 = 'exam_subject__code' order by code";
+		}
+		if(basic_user::$userType=='20'){
+			$sql = "select code,name as value from exam_subject where code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."'); ";
+		}
+	
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$len = strlen($temp['code']);
+			for($i=1;$i<$len/2;$i++){
+				$temp['value'] = "--".$temp['value'];
+			}
+			$data[] = $temp;
+		}
+		$config['exam_subject__code'] = $data;
+	
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper__status' order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['status'] = $data;
+	
+		$sql = "select code,value from basic_parameter where reference = 'exam_question__type' and code not in ('1','9')  order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['exam_question__type'] = $data;
+	
+		return $config;
 	}
 
 	private static function search($search,$executor){
@@ -188,65 +252,7 @@ class exam_paper {
 		);
 	}
 	
-    public static function loadConfig() {
-        $conn = tools::getConn();
-        $config = array();
-        
-        $sql = "select code,value from basic_parameter where reference = 'exam_paper__type' and code not in ('1','9')  order by code";
-        $res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['type'] = $data;
-		
-		basic_user::getSession($_REQUEST['executor'],$_REQUEST['session']);
-		if(basic_user::$userType=='10'||basic_user::$userType=='30'){
-            $sql = "select code,extend4 as value from basic_memory where type = '4' and extend5 = 'exam_subject__code' order by code";
-		}
-		if(basic_user::$userType=='20'){
-            $sql = "select code,name as value from exam_subject where code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."'); ";
-		}		
-
-        $res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-		    $len = strlen($temp['code']);
-		    for($i=1;$i<$len/2;$i++){
-		        $temp['value'] = "--".$temp['value'];
-		    }
-			$data[] = $temp;
-		}
-		$config['exam_subject__code'] = $data;
-		
-		$sql = "select code,value from basic_parameter where reference = 'exam_paper__status' order by code";
-        $res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['status'] = $data;
-		
-        $sql = "select code,value from basic_parameter where reference = 'exam_question__type' and code not in ('1','9')  order by code";
-        $res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['exam_question__type'] = $data;		
-
-	    return $config;		
-	}  
-	
 	public static function questions($paper_id=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4090")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($paper_id==NULL) $paper_id = $_REQUEST['paper_id'];
-	    if($executor==NULL) $executor = $_REQUEST['executor'];
         $conn = tools::getConn();
 	    
 	    $data = exam_paper::view($paper_id);
@@ -290,7 +296,6 @@ class exam_paper {
 	}
 	
 	public static function view($id=NULL){
-	    if($id==NULL) $id = $_REQUEST['id'];
 	    $conn = tools::getConn();
         $sql = tools::getSQL("exam_paper__view");            
         $sql = str_replace("__id__", $id, $sql);
@@ -307,14 +312,6 @@ class exam_paper {
 	}
 	
 	public static function modify($data=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4123")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	
-	    if($data==NULL)$data = $_REQUEST['data'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 	    $t_data = json_decode2($data,true);	    
 
 	    $conn = tools::getConn();
@@ -335,15 +332,6 @@ class exam_paper {
 	}
 	
 	public static function submit($paper_id=NULL,$json=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4090")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($paper_id==NULL) $paper_id = $_REQUEST['paper_id'];
-	    if($json==NULL) $json = $_REQUEST['json'];
-	    if($executor==NULL) $executor = $_REQUEST['executor'];
 	    $conn = tools::getConn();
 	    
 	    $sql = "update exam_paper set count_updated = count_updated + 1 where id = ".$paper_id;
@@ -474,12 +462,6 @@ class exam_paper {
 	}
 	
 	public static function upload_img(){
-	    if (!basic_user::checkPermission("4090")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }			    
 	    if (($_FILES["file"]["size"] > 2000000)){
 	        exit();
 	    }
@@ -507,13 +489,7 @@ class exam_paper {
 	
 	public static function upload(){
 		$file = "";
-		if(!isset($_REQUEST['dfile'])){
-			if (!basic_user::checkPermission("4011")){
-				return array(
-					 'msg'=>'access denied'
-					,'status'=>'2'
-				);
-			}			        
+		if(!isset($_REQUEST['dfile'])){		        
 			if (($_FILES["file"]["size"] > 2000000)){
 				exit();
 			}
@@ -888,7 +864,7 @@ class exam_paper {
 						$question_knowledge.= $a_knowledge[$question_knowledge_start+$i7].",";
 					}
 					$question_knowledge = substr($question_knowledge, 0,strlen($question_knowledge)-1);
-					$question_path_img = (rand(0,100)>50)?"0":"https://ssl.gstatic.com/codesite/ph/images/code_small.png";
+					$question_path_img = (rand(0,100)>50)?"0":"../file/test/a".rand(1,10).".jpg";
 					$sql = "insert into exam_question(
 							 subject_code
 							,cent

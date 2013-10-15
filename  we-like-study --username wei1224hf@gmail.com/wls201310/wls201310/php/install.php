@@ -205,7 +205,7 @@ class install{
 		$conn = tools::getConn();
 		
 		mysql_query("delete from basic_user;");
-		mysql_query("insert into basic_user(username,password,group_code,group_all,id,type,status) values ('admin',md5('admin'),'10','10',1,'10','10');");
+		mysql_query("insert into basic_user(username,password,group_code,group_all,id,type,status,money,credits) values ('admin',md5('admin'),'10','10',1,'10','10','10000','10000');");
 		mysql_query("insert into basic_user(username,password,group_code,group_all,id,type,status) values ('guest',md5('guest'),'99','99',2,'10','10');");
 		mysql_query("delete from basic_group_2_user;");
 		mysql_query("insert into basic_group_2_user(user_code,group_code) values ('admin','10');");
@@ -292,6 +292,31 @@ if($functionName=="data4test__exam_subject"){
 if($functionName=="data4test__exam_paper"){
 	include_once 'exam_paper.php';
 	$data = exam_paper::data4test(2000,array('2011-01-01','2011-01-02'));
+}
+if($functionName=="test"){
+	$list = array(
+		array(
+			'code'=>'10'
+		),		array(
+			'code'=>'20'
+		),		array(
+			'code'=>'2010'
+		),		array(
+			'code'=>'2011'
+		),		array(
+			'code'=>'2012'
+		),array(
+			'code'=>'201201'
+		),array(
+			'code'=>'201202'
+		),array(
+			'code'=>'201203'
+		),array(
+			'code'=>'30'
+		),
+			
+	);
+	$data = tools::list2Tree($list);
 }
 
 echo json_encode($data);

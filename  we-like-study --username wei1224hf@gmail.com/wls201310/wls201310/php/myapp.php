@@ -14,9 +14,6 @@
 if(!isset($_GET['class']))die('class missed!');
 if(!isset($_GET['function']))die('function missed!');
 $class = htmlspecialchars($_REQUEST['class'],ENT_QUOTES);
-$function = htmlspecialchars($_REQUEST['function'],ENT_QUOTES);
-//设置时区
-date_default_timezone_set('Asia/Shanghai');
 
 //引入一个 static 的PHP类,里面定义了一些常用的小函数,这些函数与各个业务模块无关
 include_once 'tools.php';
