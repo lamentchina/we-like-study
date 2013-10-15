@@ -28,7 +28,7 @@ var exam_subject = {
 		var config = {
 			columns: [
 			     { display: getIl8n("exam_subject","id"), name: 'id', isSort: true, hide:true }
-			    ,{ display: getIl8n("exam_subject","name"), name: 'name_', width:130 ,align: 'left' }	
+			    ,{ display: getIl8n("exam_subject","name"), name: 'name', width:130 ,align: 'left' }	
 			    ,{ display: getIl8n("exam_subject","code"), name: 'code' ,align: 'left' }
 			    ,{ display: getIl8n("exam_subject","weight"), name: 'weight' }
 			    ,{ display: getIl8n("exam_subject","type"), name: 'type', isSort: false, hide:true  }
@@ -52,16 +52,21 @@ var exam_subject = {
 			,toolbar: { items: [] }
 		};		
 
-		var permission = top.basic_user.permission;
-		for(var i=0;i<permission.length;i++){
-			if(permission[i].code=='45'){
-				permission = permission[i].children;				
+		var permission = [];
+		for(var i=0;i<top.basic_user.permission.length;i++){
+			if(top.basic_user.permission[i].code=='60'){
+				permission = top.basic_user.permission[i].children;
+				for(var j=0;j<permission.length;j++){
+					if(permission[j].code=='6005'){
+						permission = permission[j].children;
+					}
+				}				
 			}
 		}
 
 		for(var i=0;i<permission.length;i++){	
 			var theFunction = function(){alert(1)};
-			if(permission[i].code=='4521'){
+			if(permission[i].code=='600521'){
 				theFunction = function(){
 					top.$.ligerDialog.open({ 
 						url: 'exam_subject__add.html?random='+Math.random()
@@ -71,9 +76,9 @@ var exam_subject = {
 						,isHidden: false
 					});					
 				}
-			}else if(permission[i].code=='4522'){
+			}else if(permission[i].code=='600523'){
 				theFunction = exam_subject.remove;				
-			}else if(permission[i].code=='4590'){
+			}else if(permission[i].code=='600591'){
 				theFunction = function(){
 					var selected = exam_subject.grid_getSelectOne();
 					if(selected==null)return null;
@@ -321,4 +326,5 @@ var exam_subject = {
 			}
 		});
 	}	
+
 };

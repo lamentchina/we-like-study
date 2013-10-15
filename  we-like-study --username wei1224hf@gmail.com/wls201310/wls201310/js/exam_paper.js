@@ -56,24 +56,30 @@ var exam_paper = {
 		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [];
 		for(var i=0;i<top.basic_user.permission.length;i++){
-			if(top.basic_user.permission[i].code=='40'){
-				permission = top.basic_user.permission[i].children;							
+			if(top.basic_user.permission[i].code=='60'){
+				permission = top.basic_user.permission[i].children;
+				for(var j=0;j<permission.length;j++){
+					if(permission[j].code=='6001'){
+						permission = permission[j].children;
+					}
+				}				
 			}
 		}
+		
 		for(var i=0;i<permission.length;i++){
 			var theFunction = function(){alert(1)};
-			if(permission[i].code=='4001'){
+			if(permission[i].code=='600101'){
 				theFunction = exam_paper.search;
-			}else if(permission[i].code=='4002'){
+			}else if(permission[i].code=='600102'){
 				theFunction = exam_paper.view;				
-			}else if(permission[i].code=='4011'){
+			}else if(permission[i].code=='600111'){
 				theFunction = exam_paper.upload;			
-			}else if(permission[i].code=='4012'){
+			}else if(permission[i].code=='600112'){
 				theFunction = exam_paper.download;		
-			}else if(permission[i].code=='4022'){
+			}else if(permission[i].code=='600123'){
 				config.checkbox = true;
 				theFunction = exam_paper.remove;		
-			}else if(permission[i].code=='4023'){
+			}else if(permission[i].code=='600122'){
 				theFunction = function(){
 					
 					var selected = exam_paper.grid_getSelectOne();
@@ -95,7 +101,7 @@ var exam_paper = {
 			        };
 					
 				}
-			}else if(permission[i].code=='4090'){
+			}else if(permission[i].code=='600190'){
 				theFunction = function(){
 					var selected = exam_paper.grid_getSelectOne();
 					if(selected==null)return;	

@@ -15,7 +15,7 @@ var question_multichoice = function(){
 	 */
 	this.initDom = function() {
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id + "'></div>");
-		if( !(this.path_img==null||this.path_img=='') ){
+		if( !(this.path_img==null||this.path_img==''||this.path_img=='0') ){
 			this.title = "<img src='"+this.path_img+"' /><br/>" + this.title;
 		}
 		if(this.layout == '1'){

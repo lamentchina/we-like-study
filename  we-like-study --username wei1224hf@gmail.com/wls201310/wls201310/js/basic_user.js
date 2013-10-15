@@ -44,8 +44,8 @@ var basic_user = {
 		$("#form").ligerForm({
 			inputWidth: 170, labelWidth: 90, space: 40,
 			fields: [
-			{ display: top.il8n.basic_user.username, name: "username",  type: "text",  validate : {required:true,minlength:3,maxlength:20} },
-			{ display: top.il8n.basic_user.password, name: "password",  type: "password", validate : {required:true,minlength:3,maxlength:20} }
+			{ display: top.il8n.basic_user.username, name: "username",  type: "text",  validate : {required:true,minlength:3,maxlength:40} },
+			{ display: top.il8n.basic_user.password, name: "password",  type: "password", validate : {required:true,minlength:3,maxlength:40} }
 			]
 		});
 		$("#form").append('<br/><br/><br/><table style="width:280px"><tr><td style="width:50%"><!--input type="button" value="'+top.il8n.basic_user.register+'" name="reg" onclick="basic_user.add_register_win()" class="l-button l-button-submit" /--></td>'

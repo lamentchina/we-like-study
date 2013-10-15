@@ -41,20 +41,15 @@ var basic_parameter = {
 			if(permission[i].code=='1203'){
 				permission = permission[i].children;				
 			}
-		}		
+		}	
+
 		for(var i=0;i<permission.length;i++){	
+			var theFunction = function(){};
+			
 			if(permission[i].code=='120301'){
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_parameter.search();
-					}
-				});
+				theFunction = basic_parameter.search;
 			}else if(permission[i].code=='120321'){
-				//添加
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
+				theFunction = function(){
 						top.$.ligerDialog.open({ 
 							url: 'basic_parameter__add.html?random='+Math.random()
 							,height: 400
@@ -62,27 +57,17 @@ var basic_parameter = {
 							,title: top.getIl8n('add')
 							,isHidden: false
 						});
-					}
-				});
+					};
 			}else if(permission[i].code=='120323'){
-				//删除
-				config.checkbox = true;
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_parameter.remove();
-					}
-				});
+				theFunction = basic_parameter.remove;
 			}else if(permission[i].code=='120342'){
-				//清空内存
-				config.checkbox = true;
-				config.toolbar.items.push({line: true });
-				config.toolbar.items.push({
-					text: permission[i].name , img:permission[i].icon , click : function(){
-						basic_parameter.resetMemory();
-					}
-				});
+				theFunction = basic_parameter.resetMemory;
 			}
+			
+			config.toolbar.items.push({line: true });
+			config.toolbar.items.push({
+				text: permission[i].name , img:permission[i].icon , click : theFunction , id: permission[i].code
+			});	
 		}				
 		
 		$(document.body).ligerGrid(config);
@@ -199,17 +184,17 @@ var basic_parameter = {
 		//如果一行都没有选中,就报错并退出函数
 		if(selected.length==0){alert(top.getIl8n("noSelect"));return;}
 		//弹框让用户最后确认一下,是否真的需要删除.一旦删除,数据将不可恢复
-		var codes = "";
+		var ids = "";
 		//遍历每一行元素,获得 id 
 		for(var i=0; i<selected.length; i++){
-			codes += selected[i].code+",";
+			ids += selected[i].id+",";
 		}
-		codes = codes.substring(0,codes.length-1);		
+		ids = ids.substring(0,ids.length-1);		
 		if(confirm(top.getIl8n("sureToDelete"))){			
 			$.ajax({
 				url: config_path__basic_parameter__remove
 				,data: {
-					codes: codes 
+					ids: ids 
 					
 					//服务端权限验证所需
 					,executor: top.basic_user.loginData.username
