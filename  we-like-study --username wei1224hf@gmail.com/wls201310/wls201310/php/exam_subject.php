@@ -134,7 +134,7 @@ class exam_subject {
 		$sql_where = exam_subject::search($search, $executor);
 		$sql_order = " order by exam_subject.".$sortname." ".$sortorder." ";
 		 
-		$sql = tools::getConfigItem("exam_subject__grid");
+		$sql = tools::getSQL("exam_subject__grid");
 		$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
 		 
 		$res = mysql_query($sql,$conn);
@@ -236,7 +236,7 @@ class exam_subject {
 	public static function group_get($code=NULL){
 		$conn = tools::getConn();
 		
-		$sql = tools::getConfigItem("exam_subject__group_get");
+		$sql = tools::getSQL("exam_subject__group_get");
 		$sql = str_replace("__code__", "'".$code."'", $sql);
 
         $res = mysql_query($sql,$conn);

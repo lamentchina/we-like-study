@@ -142,7 +142,7 @@ class exam_paper {
     	$sql_where = exam_paper::search($search, $executor);
     	$sql_order = " order by exam_paper.".$sortname." ".$sortorder." ";
     	
-    	$sql = tools::getConfigItem("exam_paper__grid");
+    	$sql = tools::getSQL("exam_paper__grid");
     	$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
     	
     	$res = mysql_query($sql,$conn);
@@ -273,7 +273,7 @@ class exam_paper {
             }
 	    }
         
-        $sql = tools::getConfigItem("exam_paper__questions");            
+        $sql = tools::getSQL("exam_paper__questions");            
         $sql = str_replace("__paper_id__", $paper_id, $sql);
         
         $res = mysql_query($sql,$conn);
@@ -292,7 +292,7 @@ class exam_paper {
 	public static function view($id=NULL){
 	    if($id==NULL) $id = $_REQUEST['id'];
 	    $conn = tools::getConn();
-        $sql = tools::getConfigItem("exam_paper__view");            
+        $sql = tools::getSQL("exam_paper__view");            
         $sql = str_replace("__id__", $id, $sql);
 
         $res = mysql_query($sql,$conn);
@@ -374,7 +374,7 @@ class exam_paper {
         
         //前端提交过来的AJAX答案数据,必定是按照 id 排序的,所以服务端可以直接匹配
         $questions_user = json_decode2($json,true);        
-        $sql = tools::getConfigItem("exam_paper__submit_check"); 
+        $sql = tools::getSQL("exam_paper__submit_check"); 
   
         $sql = str_replace("__id__", $paper_id, $sql);
 	    $questions_check = array();
@@ -768,20 +768,182 @@ class exam_paper {
 		);
 	}
 	
-	public static function data4test($total){
+	public static function data4test($total,$a_times){
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
 		$total_ = 0;
+		
+		$sql = "select * from basic_user where type = '30'";
+		$res = mysql_query($sql,$conn);
+		$a_teachers = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$a_teachers[] = array(
+				 'username'=>$temp['username']
+				,'group'=>$temp['group_code']
+			);
+		}
+
+		$exam_paper__id = tools::getTableId("exam_paper",false);
+		$exam_question__id = tools::getTableId("exam_question",false);		
 		
 		$sql = "delete from exam_paper";
 		mysql_query($sql,$conn);
 		
 		mysql_query("START TRANSACTION;",$conn);
 		
+		$year = substr($a_times[0], 0,4);
+		$sql_where_subject = "";
+		if($year=="2011"){
+			$sql_where_subject = " where type = '30' and ( (code like '8432-01%') or (code like '8432-02%') or (code like '8432-03%'))";
+		}elseif($year=="2012"){
+			$sql_where_subject = " where type = '30' and ( (code like '8432-01%') or (code like '8432-02%'))";
+		}elseif($year=="2013"){
+			$sql_where_subject = " where type = '30' and ( (code like '8432-01%') ))";
+		}
+		$sql = "select * from exam_subject ".$sql_where_subject;
+		$res = mysql_query($sql,$conn);
+		$a_subject = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$a_subject[] = array(
+					'code'=>$temp['code']
+					,'id'=>$temp['id']
+					,'name'=>$temp['name']
+			);
+		}
+		
+		
+		for($i2=0;$i2<count($a_subject);$i2++){
+			$sql_knowledge = "select * from exam_subject where type = '30' and code like '".$a_subject[$i2]."%'";
+			$res_knowledge = mysql_query($sql_knowledge,$conn);
+			$a_knowledge = array();
+			while($temp = mysql_fetch_assoc($res_knowledge)){
+				$a_knowledge[] = $temp['code'];
+			}
+			for($i=0;$i<count($a_times);$i++){
+				$exam_paper__id++;
+				$teacher = $a_teachers[rand(0,(count($a_teachers)-1))];
+				$sql_paper = "	insert into exam_paper (
+						subject_code
+						,title
+						,cost
+						,cent
+						,cent_subjective
+						,cent_objective
+						,count_question
+						,count_subjective
+						,count_objective	
+						,directions
+						,id
+						,creater_code
+						,creater_group_code
+						,type
+						,status
+						,remark
+					) values (
+						'".$a_subject[$i2]."'
+						,'模拟试卷".$a_times[$i].$a_subject[$i2]."'
+						,'".rand(0, 10)."'
+						,'100'
+						,'100'
+						,'0'
+						,'50'
+						,'50'
+						,'0'
+						,'试卷说明'
+						,'".$exam_paper__id."'
+						,'".$teacher['username']."'
+						,'".$teacher['group_code']."'
+						,'20'
+						,'10'
+						,'描述啊'
+					)";
+				mysql_query($sql,$conn);
+				
+				for($i3=1;$i3<=20;$i3++){
+					$exam_question__id++;
+					$knowledge = "";
+					$question_title = "题目标题";
+					$question_title_length = rand(5, 40);
+					for($i4=0;$i4<$question_title_length;$i4++){
+						$question_title.="很长";
+					}
+					$question_option = "选项";
+					$question_option_length = rand(3,6);
+					for($i5=0;$i5<$question_option_length;$i5++){
+						$question_option.= "很长";
+					}
+					$question_description = "解题思路";
+					$question_description_length = rand(5,40);
+					for($i6=0;$i6<$question_description_length;$i6++){
+						$question_description.= "很长";
+					}
+					$question_knowledge = "";
+					$question_knowledge_start = rand(3,count($a_knowledge)-3);
+					for($i7=0;$i7<3;$i7++){
+						$question_knowledge.= $a_knowledge[$question_knowledge_start+$i7].",";
+					}
+					$question_knowledge = substr($question_knowledge, 0,strlen($question_knowledge)-1);
+					$question_path_img = (rand(0,100)>50)?"0":"https://ssl.gstatic.com/codesite/ph/images/code_small.png";
+					$sql = "insert into exam_question(
+							 subject_code
+							,cent
+							,title
+							,option_length
+							,option_1
+							,option_2
+							,option_3
+							,option_4
+							,answer
+							,description
+							,knowledge
+							,difficulty
+							,path_img
+							,layout
+							,paper_id
+							,id
+							,creater_code
+							,creater_group_code
+							,type
+							,status
+							,remark	
+					) values (
+							 '".$a_subject[$i2]."'
+							,'2'
+							,'".$question_title."'
+							,'4'
+							,'".$question_option."A'
+							,'".$question_option."B'
+							,'".$question_option."C'
+							,'".$question_option."D'
+							,'A'
+							,'".$question_description."'
+							,'".$question_knowledge."'
+							,'".rand(0, 4)."'
+							,'".$question_path_img."'
+							,'2'
+							,'".$exam_paper__id."'
+							,'".$exam_question__id."'
+							,'".$teacher['username']."'
+							,'".$teacher['group_code']."'
+							,'1'
+							,'10'
+							,'描述啊'
+						)";
+					mysql_query($sql,$conn);
+					
+					$total_++;
+					if($total_>=$total){
+						mysql_query("COMMIT;",$conn);
+						$t_return['msg']="Total ".$total_;
+						return $t_return;
+					}				
+				}
+				
+			}			
+		}
 		
 		mysql_query("COMMIT;",$conn);
 		$t_return['msg']="Total ".$total_;
 		return $t_return;
-		
 	}
 }

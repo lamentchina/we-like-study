@@ -125,7 +125,7 @@ class basic_group {
     	$sql_where = basic_group::search($search, $executor);
     	$sql_order = " order by basic_group.".$sortname." ".$sortorder." ";
     
-    	$sql = tools::getConfigItem("basic_group__grid");
+    	$sql = tools::getSQL("basic_group__grid");
     	$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
     
     	$res = mysql_query($sql,$conn);
@@ -335,7 +335,7 @@ class basic_group {
 	public static function permission_get($code=NULL){
 		$conn = tools::getConn();
 		
-		$sql = tools::getConfigItem("basic_group__permission_get");
+		$sql = tools::getSQL("basic_group__permission_get");
 		$sql = str_replace("__group_code__", "'".$code."'", $sql);
 
         $res = mysql_query($sql,$conn);

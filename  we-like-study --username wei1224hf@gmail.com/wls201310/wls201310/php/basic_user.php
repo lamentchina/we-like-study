@@ -160,7 +160,7 @@ class basic_user {
         $sql_where = basic_user::search($search, $executor);
 		$sql_order = " order by basic_user.".$sortname." ".$sortorder." ";
 		  
-		$sql = tools::getConfigItem("basic_user__grid");
+		$sql = tools::getSQL("basic_user__grid");
 		$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
 		
 		$res = mysql_query($sql,$conn);
@@ -223,7 +223,7 @@ class basic_user {
     
 	public static function getPermission($username){
 		$s_return = "";
-		$sql = tools::getConfigItem("basic_user__getPermission");
+		$sql = tools::getSQL("basic_user__getPermission");
 		$sql = str_replace( "__username__", "'".$username."'",$sql);
 		
 		$conn = tools::getConn();
@@ -240,7 +240,7 @@ class basic_user {
     public static function getPermissionTree($username){
 		$a_return = array();
 		
-		$sql = tools::getConfigItem("basic_user__getPermission");
+		$sql = tools::getSQL("basic_user__getPermission");
 		$sql = str_replace( "__username__", "'".$username."'",$sql);
 		
 		$conn = tools::getConn();
@@ -269,7 +269,7 @@ class basic_user {
     
 	public static function getSession($executor, $session){
         $conn = tools::getConn();
-		$sql = tools::getConfigItem("basic_user__getSession");
+		$sql = tools::getSQL("basic_user__getSession");
 		$sql = str_replace("__user_code__", "'".$executor."'",$sql);
 		$sql = str_replace("__session__", "'".$session."'",$sql);
 		$sql = str_replace("\n", " ",$sql);
@@ -558,7 +558,7 @@ class basic_user {
 			$md5PasswordTime = "'".$md5PasswordTime."'";
 		}		
 		
-		$sql = tools::getConfigItem("basic_user__login_check");
+		$sql = tools::getSQL("basic_user__login_check");
 		$sql = str_replace("__username__", "'".$username."'",$sql);
 		$sql = str_replace("__password__",$md5PasswordTime,$sql);
 		$sql = str_replace("\n"," ",$sql);
@@ -584,13 +584,13 @@ class basic_user {
 		        ,'H'=>date("G")	       
 		    );
 		    
-            $sql_logout = tools::getConfigItem("basic_user__login_logout");
+            $sql_logout = tools::getSQL("basic_user__login_logout");
             $sql_logout = str_replace( '__user_code__', "'".$username."'",$sql_logout);
 			mysql_query($sql_logout,$conn);
 						
 			//更新SESSION表
 			$permissions = basic_user::getPermission($username);
-			$sql = tools::getConfigItem("basic_user__login_session");
+			$sql = tools::getSQL("basic_user__login_session");
 			$sql = str_replace( '__username__', "'".$username."'" ,$sql);
 			$sql = str_replace( '__permissions__', "'".$permissions."'",$sql);
 			$sql = str_replace( '__session__', "'".$session."'",$sql);
@@ -609,7 +609,7 @@ class basic_user {
 	    if($session==NULL)$session = $_REQUEST['session'];
 	    
 		$conn = tools::getConn();
-		$sql = tools::getConfigItem("basic_user__logout");
+		$sql = tools::getSQL("basic_user__logout");
 		$sql = str_replace("__user_code__", "'".$username."'", $sql) ;
 		$sql = str_replace("__session__", "'".$session."'", $sql) ;
 		mysql_query($sql,$conn);
@@ -833,7 +833,7 @@ class basic_user {
     public static function view($id){  
         $conn = tools::getConn();    
         
-        $sql = tools::getConfigItem("basic_user__view");
+        $sql = tools::getSQL("basic_user__view");
         $sql = str_replace("__id__", $id, $sql);
         $res = mysql_query($sql, $conn );
         $data= mysql_fetch_assoc($res);
@@ -850,7 +850,7 @@ class basic_user {
 	    if($session==NULL)$session = $_REQUEST['session'];
 	    
 		$r_session = md5(rand(1000, 9999));
-		$sql = tools::getConfigItem("basic_user__session_update");
+		$sql = tools::getSQL("basic_user__session_update");
 		$sql = str_replace("__user_code__", "'".$user_code."'", $sql);
 		$sql = str_replace("__r_session__", "'".$r_session."'", $sql);
 		$sql = str_replace("__session__", "'".$session."'", $sql);
@@ -867,7 +867,7 @@ class basic_user {
 	public static function group_get($username=NULL){
 		$conn = tools::getConn();
 		
-		$sql = tools::getConfigItem("basic_user__group_get");
+		$sql = tools::getSQL("basic_user__group_get");
 		$sql = str_replace("__username__", "'".$username."'", $sql);
 		
         $res = mysql_query($sql,$conn);
@@ -916,10 +916,10 @@ class basic_user {
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
 		
-		$host = tools::getConfigItem("DB_HOST");
-		$unm = tools::getConfigItem("DB_UNM");
-		$pwd = tools::getConfigItem("DB_PWD");
-		$dbname = tools::getConfigItem("DB_NAME");
+		$host = tools::getSQL("DB_HOST");
+		$unm = tools::getSQL("DB_UNM");
+		$pwd = tools::getSQL("DB_PWD");
+		$dbname = tools::getSQL("DB_NAME");
 		$conn2 = mysql_connect($host,$unm,$pwd);
 		mysql_select_db($dbname,$conn2);
 		mysql_query("set time_zone='+8:00';",$conn2);
@@ -936,7 +936,7 @@ class basic_user {
 			//每个组,或者说每个班级,分配 10 到 30个人
 			$r = rand(10, 30);
 			for($i=0;$i<$r;$i++){
-				$code = $temp['code']."-".$i;
+				$code = $temp['code']."--".$i;
 				$sql = "insert into basic_user(username,password,group_code,id,type,status) values ('".$code."',md5('".$code."'),'". $temp['code']."','".(1000+$total_)."','20','10');";
 				mysql_query($sql,$conn);
 				$sql = "insert into basic_group_2_user(user_code,group_code) values ('".$code."','". $temp['code']."');";

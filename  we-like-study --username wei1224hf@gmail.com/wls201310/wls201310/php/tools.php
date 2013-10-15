@@ -117,7 +117,7 @@ class tools{
 	 * */
 	public static function getTableId($tablename,$update=TRUE){
 
-		$sql = tools::getConfigItem("basic_memory__id");
+		$sql = tools::getSQL("basic_memory__id");
 		$sql = str_replace("__code__", "'".$tablename."'", $sql);
 		$res = mysql_query($sql,tools::getConn());
 		$temp = mysql_fetch_assoc($res);
@@ -146,6 +146,22 @@ class tools{
 		}
 		
 		return tools::$xml->getElementById($id)->nodeValue;
+	}
+	
+	public static $xmlSQL = null;
+	public static function getSQL($id){
+		if(tools::$xmlSQL==null){
+			tools::$xmlSQL = new DOMDocument();
+			tools::$xmlSQL->load('../sql.xml');
+	
+			$sqls = tools::$xmlSQL->getElementsByTagName('ITEM');
+			for($i=0; $i<$sqls->length;$i++){
+				$item = $sqls->item($i);
+				$item->setIdAttribute('ID', true);
+			}
+		}
+	
+		return tools::$xmlSQL->getElementById($id)->nodeValue;
 	}
 	
 	public static function list2Tree($list){

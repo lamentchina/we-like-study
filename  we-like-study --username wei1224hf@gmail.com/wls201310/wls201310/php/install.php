@@ -291,7 +291,7 @@ if($functionName=="data4test__exam_subject"){
 }
 if($functionName=="data4test__exam_paper"){
 	include_once 'exam_paper.php';
-	$data = exam_paper::data4test(2000);
+	$data = exam_paper::data4test(2000,array('2011-01-01','2011-01-02'));
 }
 
 echo json_encode($data);
