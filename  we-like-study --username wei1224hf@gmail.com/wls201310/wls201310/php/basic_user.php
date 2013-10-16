@@ -916,10 +916,10 @@ class basic_user {
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
 		
-		$host = tools::getSQL("DB_HOST");
-		$unm = tools::getSQL("DB_UNM");
-		$pwd = tools::getSQL("DB_PWD");
-		$dbname = tools::getSQL("DB_NAME");
+		$host = tools::getConfigItem("DB_HOST");
+		$unm = tools::getConfigItem("DB_UNM");
+		$pwd = tools::getConfigItem("DB_PWD");
+		$dbname = tools::getConfigItem("DB_NAME");
 		$conn2 = mysql_connect($host,$unm,$pwd);
 		mysql_select_db($dbname,$conn2);
 		mysql_query("set time_zone='+8:00';",$conn2);
@@ -937,7 +937,7 @@ class basic_user {
 			$r = rand(10, 30);
 			for($i=0;$i<$r;$i++){
 				$code = $temp['code']."--".$i;
-				$sql = "insert into basic_user(username,password,group_code,id,type,status) values ('".$code."',md5('".$code."'),'". $temp['code']."','".(1000+$total_)."','20','10');";
+				$sql = "insert into basic_user(username,password,group_code,id,type,status,money) values ('".$code."',md5('".$code."'),'". $temp['code']."','".(1000+$total_)."','20','10','1000');";
 				mysql_query($sql,$conn);
 				$sql = "insert into basic_group_2_user(user_code,group_code) values ('".$code."','". $temp['code']."');";
 				mysql_query($sql,$conn);

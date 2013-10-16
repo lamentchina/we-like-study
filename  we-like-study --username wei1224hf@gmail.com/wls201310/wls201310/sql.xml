@@ -18,11 +18,7 @@
 		</item>
 		<item ID="basic_user__getSession">
 			select user_type,group_code,permissions from basic_user_session where
-			user_code = __user_code__ and
-			(
-			md5( concat( session, hour(now()) ) ) = __session__ or
-			md5( concat( session, hour(now())-1 ) ) = __session__
-			)
+			user_code = __user_code__ 
 		</item>
 		<item ID="basic_user__logout">
 			delete from basic_user_session where user_code = __user_code__ and

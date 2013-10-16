@@ -263,6 +263,8 @@ class exam_subject {
 		
 		$sql = "delete from exam_subject";
 		mysql_query($sql,$conn);
+		$sql = "delete from exam_subject_2_group";
+		mysql_query($sql,$conn);
 		
 		mysql_query("START TRANSACTION;",$conn);
 		//节点 科目 知识点
@@ -274,12 +276,16 @@ class exam_subject {
 		mysql_query($sql,$conn);
 		$total_++;
 		
+		$subjectname = array("语文","数学","外语","物理","化学","生物","历史","地理","政治");
 		for($i=1;$i<=3;$i++){
 			$sql = "insert into exam_subject(name,code,type,status) values ('年级".$i."','8432-0".$i."','10','10')";
 			mysql_query($sql,$conn);
 			$total_++;
-			for($i2=1;$i2<=5;$i2++){
-				$sql = "insert into exam_subject(name,code,type,status) values ('科目".$i.$i2."','8432-0".$i."0".$i2."','20','10')";
+			for($i2=1;$i2<=9;$i2++){
+				$sql = "insert into exam_subject(name,code,type,status) values ('".$subjectname[$i2-1].$i."','8432-0".$i."0".$i2."','20','10')";
+				mysql_query($sql,$conn);
+				$sql = "insert into exam_subject_2_group(group_code,subject_code) 
+						select code as group_code,'8432-0".$i."0".$i2."' as subject_code from basic_group where code like '330281-8432-04-".(14-$i)."-__'";
 				mysql_query($sql,$conn);
 				$total_++;
 				

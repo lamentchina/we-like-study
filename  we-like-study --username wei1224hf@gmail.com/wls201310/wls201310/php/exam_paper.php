@@ -77,7 +77,7 @@ class exam_paper {
 			}
 		}
 		else if($function =="view"){
-			$action = "120202";
+			$action = "600102";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = exam_paper::view(
 						$_REQUEST['id']
@@ -93,6 +93,18 @@ class exam_paper {
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = exam_paper::questions(
 						$_REQUEST['paper_id']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="submit"){
+			$action = "600190";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper::submit(
+						 $_REQUEST['paper_id']
+						,$_REQUEST['json']
 						,$executor
 				);
 			}else{
@@ -222,7 +234,7 @@ class exam_paper {
     	$returnData = array(
     			'Rows'=>$data
     			,'Total'=>$total['total']
-    			//,'sql'=>$sql
+    			,'sql'=>str_replace("\t", " ",str_replace("\n", " ", $sql))
     	);
     	
     	return $returnData;
@@ -332,6 +344,12 @@ class exam_paper {
 	}
 	
 	public static function submit($paper_id=NULL,$json=NULL,$executor=NULL){
+		$t_return = array();
+		
+		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
+		$session = basic_user::getSession($executor);
+		if($session[]
+		/*
 	    $conn = tools::getConn();
 	    
 	    $sql = "update exam_paper set count_updated = count_updated + 1 where id = ".$paper_id;
@@ -403,14 +421,14 @@ class exam_paper {
 
 			        			
         }
-        /*
+
         if( ($paper_log['count_right'] + $paper_log['count_wrong'])*3 < $paper_log['count_giveup'] ){
             return array(
                  'msg'=>'give up too much'
                 ,'status'=>'2'
             ); 
         }
-        */
+        
         
         if(($paper_log['count_right'] + $paper_log['count_wrong'])!=0){
             $paper_log['proportion'] =  floor (( $paper_log['count_right'] * 100 ) / ($paper_log['count_right'] + $paper_log['count_wrong']));
@@ -458,7 +476,76 @@ class exam_paper {
             ,'hash_subjects'=>$hash_subjects
             ,'msg'=>'ok'
             ,'status'=>'1'
-        );         
+        );
+        */     
+		$t_return['status']=1;
+		return $t_return;    
+	}
+	
+	public static function checkMyAnswers($myAnswers,$paper_id){
+		$t_return = array(
+			'result'=>array(
+				 'right'=>0
+				,'wrong'=>0
+				,'total'=>0					
+				
+				,'cent'=>0
+				,'mycent'=>0
+				,'mycent_objective'=>0
+			)
+			,'answers'=>array()
+			,'myAnswers'=>$myAnswers
+		);
+		$conn = tools::getConn();
+		$sql_answers = tools::getSQL("exam_paper__submit_check");
+        $sql_answers = str_replace("__id__", $paper_id, $sql_answers);
+        $res = mysql_query($sql_answers,$conn);
+        $answers = array();
+        $index_myanswers = 0;
+        while($temp = mysql_fetch_assoc($res)){
+        	
+        	if($temp['type']=="1"||$temp['type']=="2"||$temp['type']=="3"){
+        		$t_return['result']['cent'] += $temp['cent'];
+        		if($temp['answer']==$myAnswers[$index_myanswers]['myanswer']){
+        			$temp['result']=1;
+        			$t_return['result']['right']++;
+        			$t_return['result']['mycent'] += $temp['cent'];
+        		}else{
+        			$t_return['result']['wrong']++;
+        			$temp['result']=0;
+        		}
+        		$t_return['result']['total']++;
+        	}
+        	else if($temp['type']=="4"||$temp['type']=="6"){
+        		$t_return['result']['mycent_objective'] +=$temp['cent'];
+        	}
+        	
+        	$index_myanswers++;
+        	$answers[] = $temp;
+        }
+        $t_return['answers'] = $answers;
+        
+		return $t_return;
+	}
+	
+	public static function calculateKnowledge(){
+		$t_return = array();
+		return $t_return;
+	}
+	
+	public static function addWrongs(){
+		$t_return = array();
+		return $t_return;
+	}
+	
+	public static function addQuestionLog(){
+		$t_return = array();
+		return $t_return;
+	}	
+	
+	public static function addPaperLog(){
+		$t_return = array();
+		return $t_return;
 	}
 	
 	public static function upload_img(){

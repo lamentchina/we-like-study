@@ -369,7 +369,7 @@ class basic_group {
 		mysql_query("START TRANSACTION;",$conn);
 		//一个高中,三个年级 2013届,2014届,2015届
 		//每个年纪 4 到6个班级
-		for($i=13;$i<=15;$i++){
+		for($i=11;$i<=13;$i++){
 			$code_ = $code."-".$i;
 			$sql = "insert into basic_group(name,code,type,status) values ('年级".$i."','".$code_."','30','10')";
 			mysql_query($sql,$conn);
@@ -387,6 +387,9 @@ class basic_group {
 		}
 		$sql = "insert into basic_group(name,code,type,status) values ('教师','".$code."-X1"."','40','10')";
 		mysql_query($sql,$conn);
+		mysql_query("COMMIT;",$conn);
+		$sql = "delete from basic_group_2_permission where group_code like '%-%-%-%-%'";
+		mysql_query($sql,$conn);
 		$sql = "insert into basic_group_2_permission (permission_code,group_code)
 SELECT
 basic_permission.`code` as permission_code
@@ -400,7 +403,7 @@ basic_group.`code` like '%-%-%-%-%' AND basic_permission.`code` not like '%1_' a
 
 and basic_permission.`code` < '6005'";
 		mysql_query($sql,$conn);
-		mysql_query("COMMIT;",$conn);
+		
 		$t_return['msg']="Total ".$total_;
 		return $t_return;
 	}

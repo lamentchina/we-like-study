@@ -658,7 +658,7 @@ var paper = {
             url : config_path__exam_paper__submit,
             type : 'POST',
             data : {
-                 json: $.ligerui.toJSON(toSend)
+                  json: $.ligerui.toJSON(toSend)
             	 ,paper_id: getParameter("id", window.location.toString() )
             	 
                  ,executor: top.basic_user.loginData.username
@@ -671,7 +671,7 @@ var paper = {
             		alert(response.msg);
             		return;
             	}
-                var questions = response.questions;
+                var questions = response.answers;
                 for(var i=0;i < questions.length;i++){
                 	paperObj.questions[i].answer = questions[i].answer;
                 	paperObj.questions[i].description = questions[i].description;
@@ -679,15 +679,12 @@ var paper = {
                 }                
                 paperObj.showDescription();
                 
-                var data = response.paper_log;
                 paperObj.brief = {
-	        		 mycent: data.mycent
-	        		,cent: data.cent
-	        		,mycent_objective: data.mycent_objective
-	        		,count_right: data.count_right
-	        		,count_wrong: data.count_wrong
-	        		,count_giveup: data.count_giveup
-	        		,proportion: data.proportion
+	        		 mycent: response.result.mycent
+	        		,cent: response.result.cent
+	        		,mycent_objective: response.mycent_objective
+	        		,count_right: response.result.right
+	        		,count_wrong: response.result.wrong
                 };
                 paperObj.objName = "paper_log";
                 paperObj.initBrief();

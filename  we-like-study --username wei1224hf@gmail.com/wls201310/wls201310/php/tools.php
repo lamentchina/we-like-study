@@ -124,7 +124,7 @@ class tools{
 		$id = $temp['id'];
 		
 		if($update){
-			$sql = tools::getConfigItem("basic_memory__id_add");
+			$sql = tools::getSQL("basic_memory__id_add");
 			$sql = str_replace("__code__", "'".$tablename."'", $sql);
 			mysql_query($sql,tools::getConn());
 		}
