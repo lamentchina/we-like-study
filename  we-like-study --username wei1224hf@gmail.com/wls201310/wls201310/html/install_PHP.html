@@ -253,42 +253,42 @@ var step = 0;
 var dates = [];
 var date_start,date_stop;
 
-date_start = new Date('2011','08','27');
-date_stop = new Date('2012','01','11');
+date_start = new Date('2011','07','27');
+date_stop = new Date('2012','00','11');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
 }
 
-date_start = new Date('2012','08','27');
-date_stop = new Date('2013','01','11');
+date_start = new Date('2012','07','27');
+date_stop = new Date('2013','00','11');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
 }
 
-date_start = new Date('2013','08','27');
-date_stop = new Date('2013','12','30');
+date_start = new Date('2013','07','27');
+date_stop = new Date('2013','11','30');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
 }
 
-date_start = new Date('2011','03','04');
-date_stop = new Date('2011','07','12');
+date_start = new Date('2011','02','04');
+date_stop = new Date('2011','06','12');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
 }
-date_start = new Date('2012','03','04');
-date_stop = new Date('2012','07','12');
+date_start = new Date('2012','02','04');
+date_stop = new Date('2012','06','12');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
 }
 
-ddate_start = new Date('2013','03','04');
-date_stop = new Date('2013','07','12');
+ddate_start = new Date('2013','02','04');
+date_stop = new Date('2013','06','12');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
@@ -337,7 +337,7 @@ var simulate = function(){
 				$('#btn_simulate').attr("disabled",true);
 				$('#log_simulate').attr("class","log_done");
 				$('#simulate_step').html(step+1);
-				if(step>=urls.length)return;
+				if(step>=urls.length-1)return;
 				step++;				
 				simulate();
 			}else{
@@ -391,7 +391,7 @@ Language:<select id='il8n'><option value='zh-cn'>简体中文</option><!-- optio
 <div id='log_basic_data' class='log'></div>
 </fieldset>
 
-<fieldset id='step5' style="display: none">
+<fieldset id='step5' style="display: block">
 <legend><button onclick="simulate()" id='btn_simulate' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_simulate' class='log'></div>
