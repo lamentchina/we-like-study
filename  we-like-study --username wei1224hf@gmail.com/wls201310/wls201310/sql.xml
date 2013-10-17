@@ -16,9 +16,17 @@
 			md5( concat( session, hour(now())-1 ) ) = __session__
 			)
 		</item>
+		<item ID="basic_user__getMySession">
+			select user_type,group_code,permissions,groups from basic_user_session where
+			user_code = __user_code__ and 
+			(
+			md5( concat( session, hour(now()) ) ) = __session__ or
+			md5( concat( session, hour(now())-1 ) ) = __session__
+			)
+		</item>
 		<item ID="basic_user__getSession">
-			select user_type,group_code,permissions from basic_user_session where
-			user_code = __user_code__ 
+			select user_type,group_code,permissions,groups from basic_user_session where
+			user_code = __user_code__
 		</item>
 		<item ID="basic_user__logout">
 			delete from basic_user_session where user_code = __user_code__ and
@@ -277,6 +285,12 @@
 		<item ID="basic_memory__id_add">
 			update basic_memory set extend1 = (extend1 + 1) where type = 2 and code =
 			__code__
+		</item>
+		<item ID="basic_memory__id_update">
+			update basic_memory set extend1 = ((select max(id) from
+			__code__)) where type
+			= 2 and code =
+			'__code__'
 		</item>
 	</item>
 	<item ID="exam_paper">
