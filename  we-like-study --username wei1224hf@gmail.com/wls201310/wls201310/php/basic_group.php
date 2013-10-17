@@ -390,18 +390,18 @@ class basic_group {
 		mysql_query("COMMIT;",$conn);
 		$sql = "delete from basic_group_2_permission where group_code like '%-%-%-%-%'";
 		mysql_query($sql,$conn);
-		$sql = "insert into basic_group_2_permission (permission_code,group_code)
+		$sql = "
+insert into basic_group_2_permission (permission_code,group_code)
 SELECT
 basic_permission.`code` as permission_code
 ,basic_group.`code` as group_code
 FROM
 basic_permission ,
-basic_group
-WHERE
-basic_permission.`code` >= '60' AND
-basic_group.`code` like '%-%-%-%-%' AND basic_permission.`code` not like '%1_' and basic_permission.`code` not like '%2_'
-
-and basic_permission.`code` < '6005'";
+basic_group 
+WHERE 
+((basic_permission.`code` >= '60'  AND basic_permission.`code` not like '%1_' and basic_permission.`code` not like '%2_' and basic_permission.`code` < '6005' ) or  basic_permission.code like '11%' )
+AND basic_group.`code` like '%-%-%-%-%' 				
+				";
 		mysql_query($sql,$conn);
 		
 		$t_return['msg']="Table basic_group added row in total : ".$total_;

@@ -303,7 +303,11 @@ class basic_user {
 	}	
 	
 	public static function checkPermission($executor, $action, $session){
-		$s = basic_user::getMySession($executor, $session);
+		if($executor=='guest'){
+			$s = basic_user::getSession($executor);
+		}else{
+			$s = basic_user::getMySession($executor, $session);
+		}		
 		$p = $s['data']['permissions'];
 	    $arr = explode(",", $p );
 	    for($i=0;$i<count($arr);$i++){

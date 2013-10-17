@@ -188,15 +188,13 @@ class exam_paper {
 		$session = basic_user::getSession($executor);
 		$session = $session['data'];
 		if($session['user_type']=='10'){
-			if($session['user_type']!='10'){
+			if($session['group_code']!='10'){
 				$sql_where .= " and exam_paper.cost = 0 ";
 			}
 		}if($session['user_type']=='20'){
-			//学生角色
 			$sql_where .= " and subject_code in (select subject_code from exam_subject_2_group where group_code = '".$session['group_code']."' )";
 		}
 		if($session['user_type']=='30'){
-			//教师角色
 			$sql_where .= " and exam_paper.creater_code = '".$_REQUEST['executor']."'";
 		}
 		
@@ -271,7 +269,6 @@ class exam_paper {
 	    $cost = $data['data']['cost'];
 	    
 	    if($cost>0){
-    	    //扣除金币
 			$sql = "";
     	    if(tools::$systemType=='DZX'){
     	        $pfx = tools::$dzxConfig['db']['1']['tablepre'];
@@ -347,137 +344,14 @@ class exam_paper {
 		$t_return = array();
 		
 		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
-		$usertype = basic_user::$userType;
-		
-		/*
-	    $conn = tools::getConn();
-	    
-	    $sql = "update exam_paper set count_updated = count_updated + 1 where id = ".$paper_id;
-	    mysql_query($sql,$conn);
-	    
-	    $paperData = exam_paper::view($paper_id);
-	    $paper_log['id'] = tools::getTableId("exam_paper_log");
-	    $paper_log['paper_id'] = $paper_id;
-	    $paper_log['mycent'] = 0;
-	    $paper_log['mycent_objective'] = 0;
-	    $paper_log['count_right'] = 0;
-	    $paper_log['count_wrong'] = 0;
-	    $paper_log['count_giveup'] = 0;
-	    $paper_log['status'] = '10';
-	    $paper_log['creater_code'] = $executor;
-	    $paper_log['creater_group_code'] = basic_user::$userGroup;
-	    $cent = 0;
-	    
-	    //得到知识点列表,按 code 排序,准备插入
-	    $subject_code = $paperData['data']['subject_code'];
-	    $sql = "select code from exam_subject where code like '".$subject_code."__' order by code ;";
-	    $hash_subjects = array();
-        $res = mysql_query($sql,$conn);
-        while($temp = mysql_fetch_assoc($res)){
-            $exam_subject_2_user_log__id = tools::getTableId("exam_subject_2_user_log");
-            $hash_subjects[$temp['code']] = array('right'=>0,'wrong'=>0);
-        }
-        
-        //前端提交过来的AJAX答案数据,必定是按照 id 排序的,所以服务端可以直接匹配
-        $questions_user = json_decode2($json,true);        
-        $sql = tools::getSQL("exam_paper__submit_check"); 
-  
-        $sql = str_replace("__id__", $paper_id, $sql);
-	    $questions_check = array();
-        $res2 = mysql_query($sql,$conn);
-
-        $index = 0;
-        while($temp = mysql_fetch_assoc($res2)){
-            $questions_check[] = $temp; 
-            $cent += $temp['cent'];
-            $question_user = $questions_user[$index];            
-            $index ++;
-            $knowledge = $temp['knowledge'];
-            $knowledge_subject = explode(",", $knowledge);
-            
-            if( $temp['type']!='3' && $temp['type']!='2' && $temp['type']!='1' ){
-                continue;
-            }else if($question_user['myanswer']=='I_DONT_KNOW'){
-                $paper_log['count_giveup'] ++;
-                continue;
-            }else if($question_user['myanswer']==$temp['answer']){
-
-                $paper_log['mycent'] += $temp['cent'];
-                $paper_log['mycent_objective'] += $temp['cent'];
-                $paper_log['count_right'] ++;
-                for($i=0;$i<count($knowledge_subject);$i++){
-                    $hash_subjects[$knowledge_subject[$i]]['right'] += (5 - $temp['difficulty']) ;
-                }
-            }else{
-                $paper_log['count_wrong'] ++;
-                for($i=0;$i<count($knowledge_subject);$i++){
-                    $hash_subjects[$knowledge_subject[$i]]['wrong'] += (5 - $temp['difficulty']) ;
-                }
-                
-                //错题本
-                $sql = "insert into exam_question_log_wrongs (question_id,creater_code) values ('".$temp['id']."','".$executor."');";
-                $res3 = mysql_query($sql,$conn);
-            }  
-
-			        			
-        }
-
-        if( ($paper_log['count_right'] + $paper_log['count_wrong'])*3 < $paper_log['count_giveup'] ){
-            return array(
-                 'msg'=>'give up too much'
-                ,'status'=>'2'
-            ); 
-        }
-        
-        
-        if(($paper_log['count_right'] + $paper_log['count_wrong'])!=0){
-            $paper_log['proportion'] =  floor (( $paper_log['count_right'] * 100 ) / ($paper_log['count_right'] + $paper_log['count_wrong']));
-        }
-        
-        $keys = array_keys($paper_log);
-        $keys = implode(",",$keys);
-        $values = array_values($paper_log);
-        $values = implode("','",$values);    
-        $sql = "insert into exam_paper_log (".$keys.") values ('".$values."')";
-        $res4 = mysql_query($sql,$conn);
-        if($res4==false){
-            return array(
-                 'msg'=>mysql_error($conn)
-                ,'status'=>'2'
-                ,'sql'=>$sql
-            ); 
-        }
-        
-        $paper_log['cent'] = $cent;
-        $hash_subjects[$paperData['data']['subject_code']] = array('right'=>$paper_log['count_right'],'wrong'=>$paper_log['count_wrong']);
-        $keys = array_keys($hash_subjects);
-        for($i=0;$i<count($keys);$i++){
-            if($hash_subjects[$keys[$i]]['right']==0 && $hash_subjects[$keys[$i]]['wrong']==0){
-                unset($hash_subjects[$keys[$i]]);
-                continue;
-            }
-            $proportion = floor(($hash_subjects[$keys[$i]]['right'] * 100) / ($hash_subjects[$keys[$i]]['right'] + $hash_subjects[$keys[$i]]['wrong']));
-            $sql = "insert into exam_subject_2_user_log 
-            (subject_code,count_positive,count_negative,proportion,paper_id,paper_log_id,creater_code,creater_group_code) values 
-            ('".$keys[$i]."','".$hash_subjects[$keys[$i]]['right']."','".$hash_subjects[$keys[$i]]['wrong']."','".$proportion."','".$paper_id."','".$paper_log['id']."','".$executor."','".basic_user::$userGroup."'); ";
-            $res5 = mysql_query($sql,$conn);
-            if($res5==false){
-                return array(
-                     'msg'=>mysql_error($conn)
-                    ,'status'=>'2'
-                    ,'sql'=>$sql
-                ); 
-            }
-        }
-        
-        return array(
-             'questions'=>$questions_check
-            ,'paper_log'=>$paper_log
-            ,'hash_subjects'=>$hash_subjects
-            ,'msg'=>'ok'
-            ,'status'=>'1'
-        );
-        */     
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		if($session['user_type']=='20'){
+			$paperlog = exam_paper::addPaperLog($paper_id,$t_return['result'],$executor);
+			exam_paper::calculateKnowledge($t_return['answers'],$paperlog['id'],$paper_id,$executor);
+			exam_paper::addWrongs($t_return['answers'], $executor);
+		}
+    
 		$t_return['status']=1;
 		return $t_return;    
 	}
@@ -487,6 +361,7 @@ class exam_paper {
 			'result'=>array(
 				 'right'=>0
 				,'wrong'=>0
+				,'giveup'=>0
 				,'total'=>0					
 				
 				,'cent'=>0
@@ -506,18 +381,26 @@ class exam_paper {
         	
         	if($temp['type']=="1"||$temp['type']=="2"||$temp['type']=="3"){
         		$t_return['result']['cent'] += $temp['cent'];
-        		if($temp['answer']==$myAnswers[$index_myanswers]['myanswer']){
+        		if($myAnswers[$index_myanswers]['myanswer']=='I_DONT_KNOW'){
+        			$temp['result']=4;
+        			$t_return['result']['giveup']++;
+        		}
+        		else if($temp['answer']==$myAnswers[$index_myanswers]['myanswer']){
         			$temp['result']=1;
         			$t_return['result']['right']++;
         			$t_return['result']['mycent'] += $temp['cent'];
-        		}else{
+        		}
+        		else{
         			$t_return['result']['wrong']++;
         			$temp['result']=0;
         		}
         		$t_return['result']['total']++;
         	}
         	else if($temp['type']=="4"||$temp['type']=="6"){
-        		$t_return['result']['mycent_objective'] +=$temp['cent'];
+        		$temp['result']=2;
+        		$t_return['result']['mycent_objective'] +=$temp['cent'];        		
+        	}else{
+        		$temp['result']=3;
         	}
         	
         	$index_myanswers++;
@@ -528,13 +411,88 @@ class exam_paper {
 		return $t_return;
 	}
 	
-	public static function calculateKnowledge(){
+	public static function calculateKnowledge($answers,$paper_log__id,$paper__id,$executor){
 		$t_return = array();
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		$conn = tools::getConn();
+		$result_knowledge = array();
+		for($i=0;$i<count($answers);$i++){
+			if($answers[$i]['result']==1){
+				$knowledge = $answers[$i]['knowledge'];
+				$a_knowledge = explode(",", $knowledge);
+				for($i2=0;$i2<count($a_knowledge);$i2++){
+					if(isset($result_knowledge[$a_knowledge[$i2]])){
+						$result_knowledge[$a_knowledge[$i2]]['right']++;
+					}else{
+						$result_knowledge[$a_knowledge[$i2]] = array(
+							'right'=>1
+							,'wrong'=>0
+						);
+					}
+				}
+			}
+			if($answers[$i]['result']==0){
+				$knowledge = $answers[$i]['knowledge'];
+				$a_knowledge = explode(",", $knowledge);
+				for($i2=0;$i2<count($a_knowledge);$i2++){
+					if(isset($result_knowledge[$a_knowledge[$i2]])){
+						$result_knowledge[$a_knowledge[$i2]]['wrong']++;
+					}else{
+						$result_knowledge[$a_knowledge[$i2]] = array(
+							'right'=>0
+							,'wrong'=>1
+						);
+					}
+				}
+			}
+		}
+
+		$id = tools::getTableId("exam_subject_2_user_log",FALSE);
+		
+		$kyes = array_keys($result_knowledge);
+		mysql_query("START TRANSACTION;",$conn);
+		for($i=0;$i<count($result_knowledge);$i++){
+			$id++;
+			$proportion = 0;
+
+			$data__exam_subject_2_user_log = array(
+				'subject_code'=>$kyes[$i]
+				,'count_positive'=>$result_knowledge[$kyes[$i]]['right']
+				,'count_negative'=>$result_knowledge[$kyes[$i]]['wrong']
+				,'id'=>$id
+				,'creater_code'=>$executor
+				,'creater_group_code'=>$session['group_code']
+				,'paper_id'=>$paper__id
+				,'paper_log_id'=>$paper_log__id
+				,'proportion'=>($result_knowledge[$kyes[$i]]['right']/($result_knowledge[$kyes[$i]]['right']+$result_knowledge[$kyes[$i]]['wrong']))*100
+				,'type'=>'10'
+				,'status'=>'10'
+			);
+			
+			$keys = array_keys($data__exam_subject_2_user_log);
+			$keys = implode(",",$keys);
+			$values = array_values($data__exam_subject_2_user_log);
+			$values = implode("','",$values);
+			$sql = "insert into exam_subject_2_user_log (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+		}
+		mysql_query("COMMIT;",$conn);
+		tools::updateTableId("exam_subject_2_user_log");
+		
 		return $t_return;
 	}
 	
-	public static function addWrongs(){
+	public static function addWrongs($answers,$executor){
 		$t_return = array();
+		$conn = tools::getConn();
+		mysql_query("START TRANSACTION;",$conn);
+		for($i=0;$i<count($answers);$i++){
+			if($answers[$i]['result']==0){
+				mysql_query("insert into exam_question_log_wrongs(question_id,creater_code) values ('".$answers[$i]['id']."','".$executor."')");
+			}
+		}
+		mysql_query("COMMIT;",$conn);
 		return $t_return;
 	}
 	
@@ -543,9 +501,37 @@ class exam_paper {
 		return $t_return;
 	}	
 	
-	public static function addPaperLog(){
+	public static function addPaperLog($paper_id,$result,$executor){
 		$t_return = array();
-		return $t_return;
+		$conn = tools::getConn();
+	    $sql = "update exam_paper set count_used = count_used + 1 where id = ".$paper_id;
+	    mysql_query($sql,$conn);
+	    
+	    $paper_log['id'] = tools::getTableId("exam_paper_log",TRUE);
+	    $paper_log['paper_id'] = $paper_id;
+	    $paper_log['mycent'] = $result['mycent'];
+	    $paper_log['mycent_objective'] = $result['mycent_objective'];
+	    $paper_log['count_right'] = $result['right'];
+	    $paper_log['count_wrong'] = $result['wrong'];
+	    $paper_log['status'] = '10';
+	    $paper_log['creater_code'] = $executor;
+	    $session = basic_user::getSession($executor);
+	    $session = $session['data'];
+	    $paper_log['creater_group_code'] = $session['group_code'];
+	    $paper_log['type'] = '10';
+	    
+	    if(($paper_log['count_right'] + $paper_log['count_wrong'])!=0){
+	    	$paper_log['proportion'] =  floor (( $paper_log['count_right'] * 100 ) / ($paper_log['count_right'] + $paper_log['count_wrong']));
+	    }
+	    
+	    $keys = array_keys($paper_log);
+	    $keys = implode(",",$keys);
+	    $values = array_values($paper_log);
+	    $values = implode("','",$values);
+	    $sql = "insert into exam_paper_log (".$keys.") values ('".$values."')";
+	    $res4 = mysql_query($sql,$conn);
+	    
+		return $paper_log;
 	}
 	
 	public static function upload_img(){
@@ -844,17 +830,18 @@ class exam_paper {
 				 'username'=>$temp['username']
 				,'group_code'=>$temp['group_code']
 			);
-		}
-
-		$exam_paper__id = tools::getTableId("exam_paper",false);
-		$exam_question__id = tools::getTableId("exam_question",false);		
+		}	
 		
 		if($delete){		
 			$sql = "delete from exam_paper";
 			mysql_query($sql,$conn);
 			$sql = "delete from exam_question";
 			mysql_query($sql,$conn);
+			tools::initMemory();
 		}
+		
+		$exam_paper__id = tools::getTableId("exam_paper",false);
+		$exam_question__id = tools::getTableId("exam_question",false);
 		mysql_query("START TRANSACTION;",$conn);
 		
 		$year = substr($a_times[0], 0,4);

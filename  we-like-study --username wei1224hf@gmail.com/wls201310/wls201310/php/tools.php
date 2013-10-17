@@ -318,4 +318,4 @@ function json_decode2($json_string,$what){
 }
 
 date_default_timezone_set('Asia/Shanghai');
-header("Content-Type: text/html; charset=utf8");
+//header("Content-Type: text/html; charset=utf8");
