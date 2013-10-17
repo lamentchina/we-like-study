@@ -262,14 +262,10 @@ class basic_user {
         }
 		return false;
 	}
-	
-	public static $userType = NULL;	
-	public static $userGroup = NULL;	
-	public static $permissions = NULL;
     
-	public static function getSession($executor, $session){
+	public static function getMySession($executor, $session){
         $conn = tools::getConn();
-		$sql = tools::getSQL("basic_user__getSession");
+		$sql = tools::getSQL("basic_user__getMySession");
 		$sql = str_replace("__user_code__", "'".$executor."'",$sql);
 		$sql = str_replace("__session__", "'".$session."'",$sql);
 		$sql = str_replace("\n", " ",$sql);
@@ -277,23 +273,39 @@ class basic_user {
 		$res = mysql_query($sql,$conn);
 		$temp = mysql_fetch_assoc($res);
 		if($temp){		    
-    		basic_user::$userGroup = $temp['group_code'];
-    		basic_user::$userType = $temp['user_type'];
-    		basic_user::$permissions = $temp['permissions'];
+			return array(
+				 "status"=>"1"
+				,"data"=>$temp
+			);
 		}else{            
 		    //basic_user::$permissions = $sql;
 		    exit("error");
 		}
-		
-		return array(
-			 "status"=>"1"
-			,"data"=>$temp
-		);
-	}    
+	}
+	
+	public static function getSession($executor){
+		$conn = tools::getConn();
+		$sql = tools::getSQL("basic_user__getSession");
+		$sql = str_replace("__user_code__", "'".$executor."'",$sql);
+		$sql = str_replace("\n", " ",$sql);
+	
+		$res = mysql_query($sql,$conn);
+		$temp = mysql_fetch_assoc($res);
+		if($temp){
+			return array(
+					"status"=>"1"
+					,"data"=>$temp
+			);
+		}else{
+			//basic_user::$permissions = $sql;
+			exit("error");
+		}
+	}	
 	
 	public static function checkPermission($executor, $action, $session){
-		if(basic_user::$permissions==NULL)basic_user::getSession($executor, $session);
-	    $arr = explode(",", basic_user::$permissions);
+		$s = basic_user::getMySession($executor, $session);
+		$p = $s['data']['permissions'];
+	    $arr = explode(",", $p );
 	    for($i=0;$i<count($arr);$i++){
 	        if($action == $arr[$i]){
 	            return true; 
@@ -955,7 +967,7 @@ class basic_user {
 		
 		$sql = "update basic_user set type = '30' where group_code like '%X%'";
 		mysql_query($sql,$conn2);
-		$t_return['msg']="Total ".$total_;
+		$t_return['msg']="Table basic_user added row in total : ".$total_;
 		return $t_return;
 	}
 }

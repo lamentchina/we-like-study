@@ -132,6 +132,13 @@ class tools{
 		return $id+1;
 	}
 	
+	public static function updateTableId($tablename){
+		$sql = tools::getSQL("basic_memory__id_update");
+		$sql = str_replace("__code__", $tablename, $sql);
+
+		mysql_query($sql,tools::getConn());
+	}
+	
 	public static $xml = null;
 	public static function getConfigItem($id){
 		if(tools::$xml==null){

@@ -17,7 +17,7 @@ class exam_paper {
 			//
 		}		
 		else if($function =="loadConfig"){
-			$t_return = exam_paper::loadConfig();
+			$t_return = exam_paper::loadConfig($executor);
 		}	
 		else if($function == "grid"){
 			$action = "600101";
@@ -115,7 +115,7 @@ class exam_paper {
 		return $t_return;
 	}
 	
-	public static function loadConfig() {
+	public static function loadConfig($executor) {
 		$conn = tools::getConn();
 		$config = array();
 	
@@ -127,12 +127,13 @@ class exam_paper {
 		}
 		$config['type'] = $data;
 	
-		basic_user::getSession($_REQUEST['executor'],$_REQUEST['session']);
-		if(basic_user::$userType=='10'||basic_user::$userType=='30'){
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		if($session['user_type']=='10'||$session['user_type']=='30'){
 			$sql = "select code,extend4 as value from basic_memory where type = '4' and extend5 = 'exam_subject__code' order by code";
 		}
-		if(basic_user::$userType=='20'){
-			$sql = "select code,name as value from exam_subject where code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."'); ";
+		if($session['user_type']=='20'){
+			$sql = "select code,name as value from exam_subject where code in (select subject_code from exam_subject_2_group where group_code = '".$session['group_code']."'); ";
 		}
 	
 		$res = mysql_query($sql,$conn);
@@ -184,18 +185,17 @@ class exam_paper {
                 $sql_where .= " and status = '".$search[$search_keys[$i]]."' ";
             } 
 		}
-		//根据不同的用户角色,会有不同的列输出
-		if(basic_user::$userType=='10'){
-			//系统角色
-			//如果不是管理员,那肯定是访客,只能看到 免费试卷,金币为0 的
-			if(basic_user::$userGroup!='10'){
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		if($session['user_type']=='10'){
+			if($session['user_type']!='10'){
 				$sql_where .= " and exam_paper.cost = 0 ";
 			}
-		}if(basic_user::$userType=='20'){
+		}if($session['user_type']=='20'){
 			//学生角色
-			$sql_where .= " and subject_code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."' )";
+			$sql_where .= " and subject_code in (select subject_code from exam_subject_2_group where group_code = '".$session['group_code']."' )";
 		}
-		if(basic_user::$userType=='30'){
+		if($session['user_type']=='30'){
 			//教师角色
 			$sql_where .= " and exam_paper.creater_code = '".$_REQUEST['executor']."'";
 		}
@@ -347,8 +347,8 @@ class exam_paper {
 		$t_return = array();
 		
 		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
-		$session = basic_user::getSession($executor);
-		if($session[]
+		$usertype = basic_user::$userType;
+		
 		/*
 	    $conn = tools::getConn();
 	    
@@ -831,7 +831,7 @@ class exam_paper {
 		);
 	}
 	
-	public static function data4test($total,$a_times){
+	public static function data4test($total,$a_times,$delete=FALSE){
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
 		$total_ = 0;
@@ -849,11 +849,12 @@ class exam_paper {
 		$exam_paper__id = tools::getTableId("exam_paper",false);
 		$exam_question__id = tools::getTableId("exam_question",false);		
 		
-		$sql = "delete from exam_paper";
-		mysql_query($sql,$conn);
-		$sql = "delete from exam_question";
-		mysql_query($sql,$conn);
-		
+		if($delete){		
+			$sql = "delete from exam_paper";
+			mysql_query($sql,$conn);
+			$sql = "delete from exam_question";
+			mysql_query($sql,$conn);
+		}
 		mysql_query("START TRANSACTION;",$conn);
 		
 		$year = substr($a_times[0], 0,4);
@@ -863,10 +864,11 @@ class exam_paper {
 		}elseif($year=="2012"){
 			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') or (code like '8432-02__'))";
 		}elseif($year=="2013"){
-			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') ))";
+			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') )";
 		}
 		$sql = "select * from exam_subject ".$sql_where_subject;
 		$res = mysql_query($sql,$conn);
+
 		$a_subject = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$a_subject[] = array(
@@ -906,6 +908,7 @@ class exam_paper {
 						,type
 						,status
 						,remark
+						,time_created
 					) values (
 						'".$a_subject[$i2]['code']."'
 						,'模拟试卷".$a_times[$i]."--".$a_subject[$i2]['code']."'
@@ -923,6 +926,7 @@ class exam_paper {
 						,'20'
 						,'10'
 						,'描述啊'
+						,'".$a_times[$i]."'
 					)";
 				mysql_query($sql_paper,$conn);
 								
@@ -1011,7 +1015,10 @@ class exam_paper {
 		}
 		
 		mysql_query("COMMIT;",$conn);
-		$t_return['msg']="Total ".$total_;
+		
+		tools::updateTableId("exam_paper");
+		tools::updateTableId("exam_question");
+		$t_return['msg']="Table exam_paper and exam_question added row in total ".$total_.". Now the id in exam_paper is ".$exam_paper__id." and id in exam_question is ".$exam_question__id.". Date from ".$a_times[0]." to ".end($a_times);
 		return $t_return;
 	}
 }

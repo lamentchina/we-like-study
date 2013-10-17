@@ -404,7 +404,7 @@ basic_group.`code` like '%-%-%-%-%' AND basic_permission.`code` not like '%1_' a
 and basic_permission.`code` < '6005'";
 		mysql_query($sql,$conn);
 		
-		$t_return['msg']="Total ".$total_;
+		$t_return['msg']="Table basic_group added row in total : ".$total_;
 		return $t_return;
 	}
 }

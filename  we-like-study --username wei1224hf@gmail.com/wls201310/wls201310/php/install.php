@@ -291,7 +291,10 @@ if($functionName=="data4test__exam_subject"){
 }
 if($functionName=="data4test__exam_paper"){
 	include_once 'exam_paper.php';
-	$data = exam_paper::data4test(2000,array('2011-01-01','2011-01-02'));
+	$a = json_decode2($_REQUEST['dates'], true);
+	$delete = false;
+	if(isset($_REQUEST['delete']))$delete = true;
+	$data = exam_paper::data4test(20000,$a,$delete);
 }
 if($functionName=="test"){
 	$list = array(

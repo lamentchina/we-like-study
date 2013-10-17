@@ -284,8 +284,18 @@ class exam_subject {
 			for($i2=1;$i2<=9;$i2++){
 				$sql = "insert into exam_subject(name,code,type,status) values ('".$subjectname[$i2-1].$i."','8432-0".$i."0".$i2."','20','10')";
 				mysql_query($sql,$conn);
-				$sql = "insert into exam_subject_2_group(group_code,subject_code) 
+				if($i2==1||$i2==2||$i2==3){
+					$sql = "insert into exam_subject_2_group(group_code,subject_code)
 						select code as group_code,'8432-0".$i."0".$i2."' as subject_code from basic_group where code like '330281-8432-04-".(14-$i)."-__'";
+				}
+				else if($i2==4||$i2==5||$i2==6){
+					$sql = "insert into exam_subject_2_group(group_code,subject_code)
+						select code as group_code,'8432-0".$i."0".$i2."' as subject_code from basic_group where code like '330281-8432-04-".(14-$i)."-__' and code not like '%1' and code not like '%2'";
+				}
+				else if($i2==7||$i2==8||$i2==9){
+					$sql = "insert into exam_subject_2_group(group_code,subject_code)
+						select code as group_code,'8432-0".$i."0".$i2."' as subject_code from basic_group where code like '330281-8432-04-".(14-$i)."-__' and (code like '%1' or code  like '%2')";
+				}
 				mysql_query($sql,$conn);
 				$total_++;
 				
@@ -311,7 +321,7 @@ class exam_subject {
 			}
 		}
 		mysql_query("COMMIT;",$conn);
-		$t_return['msg']="Total ".$total_;
+		$t_return['msg']="Table exam_subject added row in total : ".$total_;
 		return $t_return;
 	}
 }
