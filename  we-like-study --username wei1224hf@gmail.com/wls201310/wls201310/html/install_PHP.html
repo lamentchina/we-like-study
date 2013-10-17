@@ -233,7 +233,7 @@ var basic_data = function(){
 			,session: ""
         }         
 		,success : function(response) {
-			$('#log_insert').append(response.msg+"<br/>");
+			$('#log_basic_data').append(response.msg+"<br/>");
 			if(response.status=="1"){
 				$('#btn_basic_data').attr("disabled",true);
 				$('#log_basic_data').attr("class","log_done");
@@ -250,21 +250,79 @@ var basic_data = function(){
 }
 
 var step = 0;
+var dates = [];
+var date_start,date_stop;
+
+date_start = new Date('2011','08','27');
+date_stop = new Date('2012','01','11');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+
+date_start = new Date('2012','08','27');
+date_stop = new Date('2013','01','11');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+
+date_start = new Date('2013','08','27');
+date_stop = new Date('2013','12','30');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+
+date_start = new Date('2011','03','04');
+date_stop = new Date('2011','07','12');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+date_start = new Date('2012','03','04');
+date_stop = new Date('2012','07','12');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+
+ddate_start = new Date('2013','03','04');
+date_stop = new Date('2013','07','12');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+
+var ddd = [];
+var len = 10;
+for(var i=0;i<dates.length;i+=len){
+	var dd = [];
+	for(var ii=i;ii<i+len;ii++){
+		if(ii>=dates.length)break;
+		dd.push(dates[ii])
+	}
+	ddd.push(dd);
+}
+
 var urls = [
- "../php/install.php?class=install&function=basic_group"
-,"../php/install.php?class=install&function=basic_user"
-,"../php/install.php?class=install&function=oa_plan"
-,"../php/install.php?class=install&function=oa_work"
-
-,"../php/install.php?class=install&function=government_building"
-,"../php/install.php?class=install&function=government_company"
-,"../php/install.php?class=install&function=government_family"
-,"../php/install.php?class=install&function=government_resident"
+ "../php/install.php?class=install&function=data4test__basic_group"
+,"../php/install.php?class=install&function=data4test__basic_user"
+,"../php/install.php?class=install&function=data4test__exam_subject"
 ];
-
-
+//urls = [];
+for(var i=0;i<ddd.length;i++){
+	var theurl = "../php/install.php?class=install&function=data4test__exam_paper&dates="+$.ligerui.toJSON(ddd[i]);
+	if(i==0)theurl+="&delete=1";
+	urls.push(theurl);
+}
+var step = 0;
 var simulate = function(){
 	$('#btn_simulate').attr("disabled",true);
+	if(step==0){
+		$('#log_simulate').append("<br/> AJAX operation: <span id='simulate_step'>0</span>/"+urls.length+", this may take a long long time <br/><br/>");
+	}
+	
 	$.ajax({
 		url: urls[step]
 		,dataType: 'json'
@@ -272,15 +330,14 @@ var simulate = function(){
         ,data: {
 			 executor: ""
 			,session: ""
-			,zone: $('#zone').val()
         }         
 		,success : function(response) {
 			$('#log_simulate').append(response.msg+"<br/>");
 			if(response.status=="1"){
 				$('#btn_simulate').attr("disabled",true);
 				$('#log_simulate').attr("class","log_done");
-
-				if(step==7)return;
+				$('#simulate_step').html(step+1);
+				if(step>=urls.length)return;
 				step++;				
 				simulate();
 			}else{
