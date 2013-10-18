@@ -284,7 +284,7 @@ var exam_subject = {
 		var codes = "";
 		if(arr.length != 0){
 			for(var i=0;i<arr.length;i++){
-				codes += arr[i].data.code+",";
+				codes += arr[i].data.code_+",";
 			}
 			codes = codes.substring(0,codes.length-1);
 		

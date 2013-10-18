@@ -78,6 +78,7 @@ var basic_user = {
 	,login : function(username,password,afterAjax){
 		if(this.ajaxState==true)return;
 		this.ajaxState = true;
+
 		$.ajax({
 			url : config_path__basic_user__login,
 			data : {
@@ -89,6 +90,7 @@ var basic_user = {
 			type : "POST",
 			dataType: 'json',
 			success : function(data) {	
+				
 				basic_user.ajaxState = false;
 				if(data.status!='2'){
 					if(data.status=='3')alert(data.msg);

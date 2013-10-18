@@ -64,15 +64,20 @@ var exam_paper_log = {
 		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [];
 		for(var i=0;i<top.basic_user.permission.length;i++){
-			if(top.basic_user.permission[i].code=='42'){
-				permission = top.basic_user.permission[i].children;							
+			if(top.basic_user.permission[i].code=='60'){
+				permission = top.basic_user.permission[i].children;
+				for(var j=0;j<permission.length;j++){
+					if(permission[j].code=='6003'){
+						permission = permission[j].children;
+					}
+				}				
 			}
 		}
 		for(var i=0;i<permission.length;i++){
 			var theFunction = function(){};
-			if(permission[i].code=='4201'){
+			if(permission[i].code=='600301'){
 				theFunction = exam_paper_log.search;
-			}else if(permission[i].code=='4290'){
+			}else if(permission[i].code=='600391'){
 				theFunction = function(){
 					var selected = exam_paper_log.grid_getSelectOne();
 					if(selected==null)return;	
@@ -146,7 +151,7 @@ var exam_paper_log = {
 				,space: 40
 				,fields: [
 					 { display: top.getIl8n('exam_paper_log','title'), name: "examp_paper__search_title", newline: false, type: "text" }
-					,{ display: top.getIl8n('exam_paper_log','status'), name: "examp_paper__search_status", newline: true, type: "select", options :{data : exam_paper_log.config.status, valueField : "code" , textField: "value" } }
+					,{ display: top.getIl8n('exam_paper_log','status'), name: "examp_paper__search_status", newline: true, type: "select", options :{data : exam_paper_log.config.exam_paper_log__status, valueField : "code" , textField: "value" } }
 					,{ display: top.getIl8n('exam_paper','subject'), name: "examp_paper__search_subject", newline: true, type: "select", options :{data : exam_paper_log.config.exam_subject__code, valueField : "code" , textField: "value" } }
 				]
 			}); 
