@@ -24,6 +24,150 @@ var exam_subject_2_user_log = {
 			}
 		});	
 	}	
+
+	,search: function(){
+		var formD;
+		if($.ligerui.get("formD")){
+			formD = $.ligerui.get("formD");
+			formD.show();
+		}else{
+			var form = $("<form id='form'></form>");
+			var config = {
+					inputWidth: 170
+					,labelWidth: 90
+					,space: 40
+					,fields: [
+			          	 { display: top.getIl8n('time_start'), name: "examp_paper__search_time_created__start", type: "date" }
+			          	,{ display: top.getIl8n('time_stop'), name: "examp_paper__search_time_created__stop", type: "date" }
+						,{ display: top.getIl8n('exam_paper','subject'), name: "examp_paper__search_subject", newline: true, type: "select", options :{data : exam_subject_2_user_log.config.subject, valueField : "code" , textField: "value" } }
+						,{ display: top.getIl8n('time_dimension'), name: "time_dimension", newline: true, type: "select", options :{data : [{"code":"day","value":top.getIl8n('day')},{"code":"month","value":top.getIl8n('month')}], valueField : "code" , textField: "value" } }
+					]
+				};
+			if(top.basic_user.loginData.type=='10'||top.basic_user.loginData.type=='30'){
+				config.fields.push({ display: top.getIl8n("exam_subject_2_user_log","student"), name: "student",  type: "text"  });
+				config.fields.push({ display: top.getIl8n("exam_subject_2_user_log","group"), name: "group",  type: "text"  });
+			}
+			$(form).ligerForm(config); 
+			$.ligerDialog.open({
+				 id: "formD"
+				,width: 350
+				,height: 250
+				,content: form
+				,title: top.getIl8n('exam_paper','search')
+				,buttons : [
+				    //清空查询条件
+					{text: top.getIl8n('exam_paper','clear'), onclick:function(){
+						$.ligerui.get("exam_subject_2_user_log__grid").options.parms.search = "{}";
+						$.ligerui.get("exam_subject_2_user_log__grid").loadData();
+						
+						$.ligerui.get("examp_paper__search_time_created__start").setValue('');
+						$.ligerui.get("examp_paper__search_time_created__stop").setValue('');
+						$.ligerui.get("time_dimension").setValue('');
+						$.ligerui.get("examp_paper__search_subject").setValue('');
+					}},
+					//提交查询条件
+				    {text: top.getIl8n('exam_paper','search'), onclick:function(){
+						var data = {};
+						var  time_created__start =		$('#time_created__start').val()
+						 	,time_created__stop = 		$('#time_created__stop').val()
+						 	,time_dimension = 		$.ligerui.get("time_dimension").getValue()
+						 	,subject_code =	$.ligerui.get("examp_paper__search_subject").getValue();
+						
+						if(time_created__start!="")data.time_created__start = time_created__start;
+						if(time_created__stop!="")data.time_created__stop = time_created__stop;
+						if(time_dimension!="")data.time_dimension = time_dimension;
+						if(subject_code!="")data.subject_code = subject_code;
+						
+						$.ligerui.get("exam_subject_2_user_log__grid").options.parms.search= $.ligerui.toJSON(data);
+						$.ligerui.get("exam_subject_2_user_log__grid").loadData();
+				}}]
+			});
+		}
+	}
+
+	,grid: function(){
+		var config = {
+				id: 'exam_subject_2_user_log__grid'
+				,height:'100%'
+				,columns: [
+				   
+				     { display: top.getIl8n("exam_paper","subject_code"), name: 'subject_code', hide:true }
+				    ,{ display: top.getIl8n("exam_paper","subject_name"), name: 'subject_name', width: 100 }
+
+				    ,{ display: top.getIl8n("exam_subject_2_user_log","proportion"), name: 'proportion', isSort: true}
+				    ,{ display: top.getIl8n("exam_subject_2_user_log","count_negative"), name: 'negative', isSort: true}
+				    ,{ display: top.getIl8n("exam_subject_2_user_log","count_positive"), name: 'postive', isSort: true}
+				    ,{ display: top.getIl8n("exam_subject_2_user_log","count_log"), name: 'count_log', isSort: true}
+				    ,{ display: top.getIl8n("exam_subject_2_user_log","time_created"), name: 'time', width: 100 }
+			    
+				],  pageSize:20 ,rownumbers:true
+				,parms : {
+	                executor: top.basic_user.loginData.username
+	                ,session: top.basic_user.loginData.session     
+	                ,search: "{}"
+				},
+				url: config_path__exam_subject_2_user_log__grid,
+				method: "POST",				
+				toolbar: { items: []}
+		};
+		
+		//配置列表表头的按钮,根据当前用户的权限来初始化
+		var permission = [];
+		for(var i=0;i<top.basic_user.permission.length;i++){
+			if(top.basic_user.permission[i].code=='60'){
+				permission = top.basic_user.permission[i].children;
+				for(var j=0;j<permission.length;j++){
+					if(permission[j].code=='6006'){
+						permission = permission[j].children;
+					}
+				}				
+			}
+		}
+		for(var i=0;i<permission.length;i++){
+			var theFunction = function(){};
+			if(permission[i].code=='600601'){
+				theFunction = exam_subject_2_user_log.search;
+			}else if(permission[i].code=='600692'){
+				theFunction = function(){
+					var selected = exam_subject_2_user_log.grid_getSelectOne();
+					if(selected==null)return;	
+					if(selected.status=='10'){
+						alert(top.getIl8n('exam_subject_2_user_log','markedAlready'));
+						return;
+					}
+					
+					var id = selected.id;
+					top.$.ligerDialog.open({ 
+						url: 'exam_subject_2_user_log__do.html?id='+id+'&random='+Math.random()
+						,height: 350
+						,width: 400
+						,title: selected.title
+	                    ,showMax: true
+	                    ,showToggle: true
+	                    ,showMin: true
+	                    ,isResize: true
+	                    ,modal: false
+	                    ,slide: false  
+	                    ,isHidden:false
+						,id: 'exam_subject_2_user_log__do_'+id
+					}).max();	
+					
+			        top.$.ligerui.get("exam_subject_2_user_log__do_"+id).close = function(){
+			            var g = this;
+			            top.$.ligerui.win.removeTask(this);
+			            g.unmask();
+			            g._removeDialog();
+			            top.$.ligerui.remove(top.$.ligerui.get("exam_subject_2_user_log__do_"+id));
+			        };
+				}
+			}
+			
+			config.toolbar.items.push({line: true });
+			config.toolbar.items.push({text: permission[i].name , img: permission[i].icon , click: theFunction });
+		}
+		
+		$(document.body).ligerGrid(config);
+	}
 	
 	,initDom: function(){
 		$('body').append("<form id='form'></form>");

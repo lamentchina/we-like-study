@@ -22,7 +22,9 @@ var init_dom = function(){
 			 ,"配置安装模式,数据库连接参数,系统语言"
 			 ,"初始化数据库表"
 			 ,"初始化 权限,用户组,管理员帐号 等基础数据"
-			 ,"模拟业务数据.你也可以跳过这一步,直接登录系统首页: <a href='../html/desktop.html' target='_blank'>首页</a> 帐号密码都是 admin "]
+			 ,"模拟基础的业务数据:用户,用户组,科目,简单的练习卷.你也可以跳过这一步,直接登录系统首页: <a href='../html/desktop.html' target='_blank'>首页</a> 帐号密码都是 admin "
+			 ,"模拟学生练习记录"
+			 ]
 	};
 	
 	var buttons = $(".btn_step");
@@ -217,11 +219,6 @@ var init_tables_dosql = function(){
 	});	
 };
 
-/**
- * 初始化基础业务数据,包括:
- * 标准体系的数据字典,比如 行政区划编码 行业分类编码 会计分类编码 学科分类编码 高等院校编码  等等
- * 基础业务数据,比如 权限 用户组 用户组-权限 系统用户 等等
- * */
 var basic_data = function(){
 	$('#btn_basic_data').attr("disabled",true);
 	$.ajax({
@@ -253,6 +250,7 @@ var step = 0;
 var dates = [];
 var date_start,date_stop;
 
+/*
 date_start = new Date('2011','07','27');
 date_stop = new Date('2012','00','11');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
@@ -286,8 +284,9 @@ for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
 	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
 }
+*/
 
-ddate_start = new Date('2013','02','04');
+date_start = new Date('2013','02','04');
 date_stop = new Date('2013','06','12');
 for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
 	var d = new Date(i);
@@ -316,15 +315,17 @@ for(var i=0;i<ddd.length;i++){
 	if(i==0)theurl+="&delete=1";
 	urls.push(theurl);
 }
-var step = 0;
+var urls_1 = urls;
+
+var step_1 = 0;
 var simulate = function(){
 	$('#btn_simulate').attr("disabled",true);
-	if(step==0){
-		$('#log_simulate').append("<br/> AJAX operation: <span id='simulate_step'>0</span>/"+urls.length+", this may take a long long time <br/><br/>");
+	if(step_1==0){
+		$('#log_simulate').append("<br/> AJAX operation: <span id='simulate_step'>0</span>/"+urls_1.length+", this may take a long long time <br/><br/>");
 	}
 	
 	$.ajax({
-		url: urls[step]
+		url: urls_1[step_1]
 		,dataType: 'json'
         ,type: "POST"		
         ,data: {
@@ -336,9 +337,9 @@ var simulate = function(){
 			if(response.status=="1"){
 				$('#btn_simulate').attr("disabled",true);
 				$('#log_simulate').attr("class","log_done");
-				$('#simulate_step').html(step+1);
-				if(step>=urls.length-1)return;
-				step++;				
+				$('#simulate_step').html(step_1+1);
+				if(step_1>=urls_1.length-1)return;
+				step_1++;				
 				simulate();
 			}else{
 				$('#btn_simulate').attr("disabled",false);
@@ -347,6 +348,103 @@ var simulate = function(){
 		,error : function(response){				
 			alert("net error");
 			$('#btn_simulate').attr("disabled",false);
+		}
+	});	
+}
+
+var step_2 = 0;
+var students = null;
+var urls = [];
+var dates = [];
+var date_start,date_stop;
+date_start = new Date('2013','02','04');
+date_stop = new Date('2013','06','12');
+for(var i=date_start.getTime();i<date_stop.getTime();i+=86400000){
+	var d = new Date(i);
+	dates.push(1900+d.getYear()+"-"+(d.getMonth()+1)+"-"+d.getDate());
+}
+
+var ddd = [];
+var len = 20;
+for(var i=0;i<dates.length;i+=len){
+	var dd = [];
+	for(var ii=i;ii<i+len;ii++){
+		if(ii>=dates.length)break;
+		dd.push(dates[ii])
+	}
+	ddd.push(dd);
+}
+
+for(var i=0;i<ddd.length;i++){
+	var theurl = "../php/install.php?class=install&function=simulate__exam_paper_log&dates="+$.ligerui.toJSON(ddd[i]);
+	urls.push(theurl);
+}
+var urls_2 = urls;
+var student_step = 0;
+var simulate__exam_paper_log = function(){
+	$('#btn_simulate__exam_paper_log').attr("disabled",true);
+
+	if(students==null){
+		$.ajax({
+			 url: "../php/install.php?class=install&function=simulate__get_students"
+			,dataType: 'json'
+	        ,type: "POST"		
+	        ,data: {
+				 executor: ""
+				,session: ""
+	        }         
+			,success : function(response) {
+				students = response.data;
+				simulate__exam_paper_log();
+			}
+			,error : function(response){				
+
+			}
+		});	
+		return;
+	}
+	
+	if(step_2==0){
+		$('#log_simulate__exam_paper_log').append("<br/> AJAX operation: <span id='simulate__exam_paper_log___step'>0</span>/"+(urls_2.length * students.length)+", this may take a long long time <br/><br/>");
+	}
+	
+	var url_ = urls_2[step_2];
+	if(step_2==0&&student_step==0){
+		url_+="&delete=1";
+	}
+	$.ajax({
+		url: url_
+		,dataType: 'json'
+        ,type: "POST"		
+        ,data: {
+			 executor: ""
+			,session: ""
+			,student: students[student_step]
+        }         
+		,success : function(response) {
+			$('#log_simulate__exam_paper_log').append(response.msg+"<br/>");
+			if(response.status=="1"){
+				$('#btn_simulate__exam_paper_log').attr("disabled",true);
+				$('#log_simulate__exam_paper_log').attr("class","log_done");
+				$('#simulate__exam_paper_log___step').html(step_2+1+student_step*urls_2.length);
+				if(step_2>=urls_2.length-1){
+					step_2 = 0;
+					student_step ++;
+				}
+				if(student_step>=students.length-1){
+					return;
+				}
+				//if(step>3)return;
+				step_2++;				
+				simulate__exam_paper_log();
+				
+			}else{
+				$('#btn_simulate__exam_paper_log').attr("disabled",false);
+			}
+		}
+		,error : function(response){				
+			alert("net error");
+			$('#btn_simulate__exam_paper_log').attr("disabled",false);
 		}
 	});	
 }
@@ -397,5 +495,10 @@ Language:<select id='il8n'><option value='zh-cn'>简体中文</option><!-- optio
 <div id='log_simulate' class='log'></div>
 </fieldset>
 
+<fieldset id='step6' style="display: block">
+<legend><button onclick="simulate__exam_paper_log()" id='btn_simulate__exam_paper_log' class='btn_step'></button></legend>
+<div class="directions_step"></div>
+<div id='log_simulate__exam_paper_log' class='log'></div>
+</fieldset>
 </body>
 </html>

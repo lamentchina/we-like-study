@@ -24,6 +24,61 @@ var exam_paper_log = {
 		});	
 	}	
 
+	,search: function(){
+		var formD;
+		if($.ligerui.get("formD")){
+			formD = $.ligerui.get("formD");
+			formD.show();
+		}else{
+			var form = $("<form id='form'></form>");
+			$(form).ligerForm({
+				inputWidth: 170
+				,labelWidth: 90
+				,space: 40
+				,fields: [
+					 { display: top.getIl8n('exam_paper_log','title'), name: "examp_paper__search_title", newline: false, type: "text" }
+					,{ display: top.getIl8n('status'), name: "examp_paper__search_status", newline: true, type: "select", options :{data : exam_paper_log.config.exam_paper_log__status, valueField : "code" , textField: "value" } }
+					,{ display: top.getIl8n('type'), name: "examp_paper__search_type", newline: true, type: "select", options :{data : exam_paper_log.config.exam_paper_log__type, valueField : "code" , textField: "value" } }
+					,{ display: top.getIl8n('exam_paper','subject'), name: "examp_paper__search_subject", newline: true, type: "select", options :{data : exam_paper_log.config.exam_subject__code, valueField : "code" , textField: "value" } }
+				]
+			}); 
+			$.ligerDialog.open({
+				 id: "formD"
+				,width: 350
+				,height: 200
+				,content: form
+				,title: top.getIl8n('exam_paper_log','search')
+				,buttons : [
+				    //清空查询条件
+					{text: top.getIl8n('exam_paper_log','clear'), onclick:function(){
+						$.ligerui.get("exam_paper_log__grid").options.parms.search = "{}";
+						$.ligerui.get("exam_paper_log__grid").loadData();
+						
+						$.ligerui.get("examp_paper__search_title").setValue('');
+						$.ligerui.get("examp_paper__search_status").setValue('');
+						$.ligerui.get("examp_paper__search_type").setValue('');
+						$.ligerui.get("examp_paper__search_subject").setValue('');
+					}},
+					//提交查询条件
+				    {text: top.getIl8n('exam_paper_log','search'), onclick:function(){
+						var data = {};
+						var  title =		$.ligerui.get("examp_paper__search_title").getValue()
+						 	,status = 		$.ligerui.get("examp_paper__search_status").getValue()
+						 	,type = 		$.ligerui.get("examp_paper__search_type").getValue()
+						 	,subject_code =	$.ligerui.get("examp_paper__search_subject").getValue();
+						
+						if(title!="")data.title = title;
+						if(status!="")data.status = status;
+						if(type!="")data.type = type;
+						if(subject_code!="")data.subject_code = subject_code;
+						
+						$.ligerui.get("exam_paper_log__grid").options.parms.search= $.ligerui.toJSON(data);
+						$.ligerui.get("exam_paper_log__grid").loadData();
+				}}]
+			});
+		}
+	}
+
 	,grid: function(){
 		var config = {
 				id: 'exam_paper_log__grid'
@@ -36,9 +91,7 @@ var exam_paper_log = {
 				    ,{ display: top.getIl8n("exam_paper_log","mycent"), name: 'mycent', width: 50 }
 				    ,{ display: top.getIl8n("exam_paper_log","count_right"), name: 'count_right', width: 50 }
 				    ,{ display: top.getIl8n("exam_paper_log","count_wrong"), name: 'count_wrong', width: 50 }
-				    ,{ display: top.getIl8n("exam_paper_log","count_giveup"), name: 'count_giveup', width: 50 }
-				    ,{ display: top.getIl8n("exam_paper_log","proportion"), name: 'proportion', width: 100, hide:true }
-				    
+				    ,{ display: top.getIl8n("exam_paper_log","proportion"), name: 'proportion', width: 100, hide:true }				    
 				    ,{ display: top.getIl8n("exam_paper_log","cent"), name: 'cent', width: 50 }
 				    
 				    ,{ display: top.getIl8n("exam_paper_log","id"), name: 'id', isSort: true, hide:true }
@@ -48,6 +101,7 @@ var exam_paper_log = {
 				    ,{ display: top.getIl8n("exam_paper_log","type"), name: 'type_', isSort: false, width: 100 }
 				    ,{ display: top.getIl8n("exam_paper_log","status"), name: 'status_', isSort: false, width: 100 }		
 				    ,{ display: top.getIl8n("exam_paper_log","creater_code"), name: 'creater_code', hide:true }
+				    ,{ display: top.getIl8n("exam_paper_log","teacher_code"), name: 'teacher_code', hide:true }
 				    ,{ display: top.getIl8n("exam_paper_log","creater_group_code"), name: 'creater_group_code', hide:true }
 			    
 				],  pageSize:20 ,rownumbers:true
@@ -138,56 +192,7 @@ var exam_paper_log = {
 		return selected;
 	}
 	
-	,search: function(){
-		var formD;
-		if($.ligerui.get("formD")){
-			formD = $.ligerui.get("formD");
-			formD.show();
-		}else{
-			var form = $("<form id='form'></form>");
-			$(form).ligerForm({
-				inputWidth: 170
-				,labelWidth: 90
-				,space: 40
-				,fields: [
-					 { display: top.getIl8n('exam_paper_log','title'), name: "examp_paper__search_title", newline: false, type: "text" }
-					,{ display: top.getIl8n('exam_paper_log','status'), name: "examp_paper__search_status", newline: true, type: "select", options :{data : exam_paper_log.config.exam_paper_log__status, valueField : "code" , textField: "value" } }
-					,{ display: top.getIl8n('exam_paper','subject'), name: "examp_paper__search_subject", newline: true, type: "select", options :{data : exam_paper_log.config.exam_subject__code, valueField : "code" , textField: "value" } }
-				]
-			}); 
-			$.ligerDialog.open({
-				 id: "formD"
-				,width: 350
-				,height: 200
-				,content: form
-				,title: top.getIl8n('exam_paper_log','search')
-				,buttons : [
-				    //清空查询条件
-					{text: top.getIl8n('exam_paper_log','clear'), onclick:function(){
-						$.ligerui.get("exam_paper_log__grid").options.parms.search = "{}";
-						$.ligerui.get("exam_paper_log__grid").loadData();
-						
-						$.ligerui.get("examp_paper__search_title").setValue('');
-						$.ligerui.get("examp_paper__search_status").setValue('');
-						$.ligerui.get("examp_paper__search_subject").setValue('');
-					}},
-					//提交查询条件
-				    {text: top.getIl8n('exam_paper_log','search'), onclick:function(){
-						var data = {};
-						var  title =		$.ligerui.get("examp_paper__search_title").getValue()
-						 	,status = 		$.ligerui.get("examp_paper__search_status").getValue()
-						 	,subject_code =	$.ligerui.get("examp_paper__search_subject").getValue();
-						
-						if(title!="")data.title = title;
-						if(status!="")data.status = status;
-						if(subject_code!="")data.subject_code = subject_code;
-						
-						$.ligerui.get("exam_paper_log__grid").options.parms.search= $.ligerui.toJSON(data);
-						$.ligerui.get("exam_paper_log__grid").loadData();
-				}}]
-			});
-		}
-	}	
+	
 };
 
 paper.readQuestions = function(afterAjax){
