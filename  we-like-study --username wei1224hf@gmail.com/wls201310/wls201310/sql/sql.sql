@@ -183,11 +183,14 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,count_question int not null default '0' comment '题目总数'
  ,count_subjective int not null default '0' comment '主观题数量'
  ,count_objective int not null default '0' comment '客观题数量'
+ ,cent_top DECIMAL(6,2) not null default '0' comment '最高分'
+ ,cent_avg DECIMAL(6,2) not null default '0' comment '平均分'
+ 
  ,directions text  comment '说明'
  ,id int primary key comment '编号'
- ,creater_code varchar(20) not null comment '创建者'
- ,updater_code varchar(20) not null comment '当前修改者'
- ,creater_group_code varchar(20) not null comment '创建者组'
+ ,creater_code varchar(200) not null comment '创建者'
+ ,updater_code varchar(200) not null comment '当前修改者'
+ ,creater_group_code varchar(200) not null comment '创建者组'
  ,time_created timestamp default CURRENT_TIMESTAMP comment '创建时间'
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'
@@ -211,9 +214,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,proportion int not null default '0' comment '做对比例'
  ,paper_id int  comment '试卷编号'
  ,id int primary key comment '编号'
- ,creater_code varchar(20) not null comment '创建者'
- ,updater_code varchar(20) not null comment '当前修改者'
- ,creater_group_code varchar(20) not null comment '创建者组'
+ ,creater_code varchar(200) not null comment '创建者'
+ ,updater_code varchar(200) not null comment '当前修改者'
+ ,creater_group_code varchar(200) not null comment '创建者组'
  ,time_created timestamp default CURRENT_TIMESTAMP comment '创建时间'
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'
@@ -222,6 +225,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,remark varchar(200)  comment '备注'
  ) comment '做题记录' ENGINE=InnoDB CHARSET=utf8 ;
  delete from basic_parameter where reference like 'exam_paper_log__%';
+ insert into basic_parameter (code,value,reference,extend4) values ('10','练习册','exam_paper_log__type','10');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','多人考试','exam_paper_log__type','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('30','统考','exam_paper_log__type','30');
  insert into basic_parameter (code,value,reference,extend4) values ('10','正常','exam_paper_log__status','10');
  insert into basic_parameter (code,value,reference,extend4) values ('20','统考待批改','exam_paper_log__status','20');
  insert into basic_parameter (code,value,reference,extend4) values ('30','统考未开始','exam_paper_log__status','30');
@@ -249,9 +255,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,layout int  comment '布局'
  ,paper_id int not null comment '试卷编号'
  ,id int primary key comment '编号'
- ,creater_code varchar(20) not null comment '创建者'
- ,updater_code varchar(20) not null comment '当前修改者'
- ,creater_group_code varchar(20) not null comment '创建者组'
+ ,creater_code varchar(200) not null comment '创建者'
+ ,updater_code varchar(200) not null comment '当前修改者'
+ ,creater_group_code varchar(200) not null comment '创建者组'
  ,time_created timestamp default CURRENT_TIMESTAMP comment '创建时间'
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'
@@ -297,9 +303,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,count_failed int  comment '不及格数'
  ,proportion int  comment '通过率'
  ,id int primary key comment '编号'
- ,creater_code varchar(20) not null comment '创建者'
- ,updater_code varchar(20) not null comment '当前修改者'
- ,creater_group_code varchar(20) not null comment '创建者组'
+ ,creater_code varchar(200) not null comment '创建者'
+ ,updater_code varchar(200) not null comment '当前修改者'
+ ,creater_group_code varchar(200) not null comment '创建者组'
  ,time_created timestamp default CURRENT_TIMESTAMP comment '创建时间'
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'

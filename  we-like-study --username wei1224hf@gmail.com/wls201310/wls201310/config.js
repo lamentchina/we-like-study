@@ -67,7 +67,8 @@ var  config_path = "../php/myapp.php?"
 	,config_path__exam_question_log_wrongs__remove =	 		config_path+"class=exam_question_log_wrongs&function=remove"		
 	,config_path__exam_question_log_wrongs__questions =			config_path+"class=exam_question_log_wrongs&function=questions"
 		
-	,config_path__exam_subject_2_user_log__loadConfig =			config_path+"class=exam_subject_2_user_log&function=loadConfig"		
+	,config_path__exam_subject_2_user_log__loadConfig =			config_path+"class=exam_subject_2_user_log&function=loadConfig"	
+	,config_path__exam_subject_2_user_log__grid =				config_path+"class=exam_subject_2_user_log&function=grid"		
 	,config_path__exam_subject_2_user_log__statistics_time =	config_path+"class=exam_subject_2_user_log&function=statistics_time"		
 	,config_path__exam_subject_2_user_log__statistics_subject =	config_path+"class=exam_subject_2_user_log&function=statistics_subject"		
 	;
