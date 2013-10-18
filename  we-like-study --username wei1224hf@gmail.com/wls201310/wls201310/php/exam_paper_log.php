@@ -173,10 +173,10 @@ class exam_paper_log {
 		$search_keys = array_keys($search);
 		for($i=0;$i<count($search);$i++){
             if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and title like '%".$search[$search_keys[$i]]."%' ";
+                $sql_where .= " and exam_paper.title like '%".$search[$search_keys[$i]]."%' ";
             }
             if($search_keys[$i]=='subject_code' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and subject_code = '".$search[$search_keys[$i]]."' ";
+                $sql_where .= " and exam_paper.subject_code = '".$search[$search_keys[$i]]."' ";
             }    
             if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and exam_paper_log.type = '".$search[$search_keys[$i]]."' ";
@@ -301,7 +301,7 @@ class exam_paper_log {
 	public static function simulate__get_students(){
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
-		$sql = "select username from basic_user where type = '20'";
+		$sql = "select username from basic_user where type = '20' limit 50";//TODO
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp=mysql_fetch_assoc($res)){
@@ -311,12 +311,13 @@ class exam_paper_log {
 		return $t_return;
 	}
 	
-	public static function simulate($total,$a_time,$rate,$student,$delete=FALSE){
+	public static function simulate($total,$a_time,$student,$delete=FALSE){
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
 		$conn2 = tools::getConn(true);
 		$total_ = 0;
-		
+		$firstTime = "2013-02-01";
+
 		if($delete){
 			$sql = "delete from exam_paper_log";
 			mysql_query($sql,$conn);
@@ -328,19 +329,26 @@ class exam_paper_log {
 		$exam_subject_2_user_log__id = tools::getTableId("exam_subject_2_user_log",false);
 		$exam_paper_log__id = tools::getTableId("exam_paper_log",false);
 		
-		$sql_papers = "select id,subject_code,title,creater_code,count_question,time_created,cent from exam_paper where time_created > '".$a_time[0]."' and time_created < '".$a_time[1]."' and subject_code in (select subject_code from exam_subject_2_group where group_code = '".substr($student, 0,20)."' )";
+		$sql_papers = "select id,subject_code,title,creater_code,count_question,time_created,cent from exam_paper where time_created > '".$a_time[0]."' and time_created < '".$a_time[1]."' and subject_code in (select subject_code from exam_subject_2_group where group_code = '".substr($student, 0 , 20)."' )";
 		$res = mysql_query($sql_papers,$conn2);
 		mysql_query("START TRANSACTION;",$conn);
 		while($temp=mysql_fetch_assoc($res)){
 			$exam_paper_log__id ++;
+			$lastTime = "2013-06-12";
+			$timeDiff=strtotime($temp['time_created'])-strtotime($firstTime);
+			
+			$rate = ($timeDiff/11318400);
+			if($rate>=1)$rate = rand(90,100)/100;
+			if($rate<=0.8)$rate+=rand(10,20)/100;
+
 			$data__exam_paper_log = array(
 				 'id'=>$exam_paper_log__id
 				,'mycent'=>intval($temp['cent'])*$rate
 				,'mycent_objective'=>intval($temp['cent'])*$rate
 				,'count_right'=>$rate*$temp['count_question']
+				,'count_wrong'=>(1-$rate)*$temp['count_question']
+				,'proportion'=>$rate*100
 				,'paper_id'=>$temp['id']
-				,'teacher_code'=>$temp['creater_code']
-				,'title'=>$temp['title']
 				,'creater_code'=>$student
 				,'creater_group_code'=>substr($student, 0,20)
 				,'type'=>'10'
@@ -352,7 +360,6 @@ class exam_paper_log {
 			$values = array_values($data__exam_paper_log);
 			$values = implode("','",$values);
 			$sql = "insert into exam_paper_log (".$keys.") values ('".$values."')";
-			
 			mysql_query($sql,$conn);
 			$total_++;
 			

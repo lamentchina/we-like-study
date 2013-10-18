@@ -305,7 +305,7 @@ else if($functionName=="simulate__exam_paper_log"){
 	$a = json_decode2($_REQUEST['dates'], true);
 	$delete = false;
 	if(isset($_REQUEST['delete']))$delete = true;	
-	$data = exam_paper_log::simulate(20000,array($a[0],end($a)),0.5,$_REQUEST['student'],$delete);
+	$data = exam_paper_log::simulate(20000,array($a[0],end($a)),$_REQUEST['student'],$delete);
 }
 else if($functionName=="test"){
 	$list = array(

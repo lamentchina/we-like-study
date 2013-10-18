@@ -399,7 +399,7 @@ FROM
 basic_permission ,
 basic_group 
 WHERE 
-((basic_permission.`code` >= '60'  AND basic_permission.`code` not like '%1_' and basic_permission.`code` not like '%2_' and basic_permission.`code` < '6005' ) or  basic_permission.code like '11%' )
+((basic_permission.`code` >= '60'  AND basic_permission.`code` not like '%1_' and basic_permission.`code` not like '%2_' and basic_permission.`code` not like '6005%' ) or  basic_permission.code like '11%' )
 AND basic_group.`code` like '%-%-%-%-%' 				
 				";
 		mysql_query($sql,$conn);
