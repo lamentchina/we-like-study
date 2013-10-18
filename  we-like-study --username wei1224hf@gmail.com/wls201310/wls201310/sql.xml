@@ -374,10 +374,8 @@
 			exam_paper.count_updated,
 			exam_paper.`type`,
 			exam_paper.`status`,
-			(select extend4 from basic_memory where code = exam_paper.type and extend5 =
-			'exam_paper__type') as type_,
-			(select extend4 from basic_memory where code = exam_paper.status and extend5
-			= 'exam_paper__status') as status_,
+			(select extend4 from basic_memory where code = exam_paper.type and extend5 = 'exam_paper__type') as type_,
+			(select extend4 from basic_memory where code = exam_paper.status and extend5 = 'exam_paper__status') as status_,
 			exam_paper.remark
 			FROM
 			exam_paper
@@ -419,31 +417,32 @@
 		<item ID="exam_paper_log__grid">
 			SELECT
 			exam_paper_log.mycent,
-			exam_paper_log.mycent_subjective,
-			exam_paper_log.mycent_objective,
 			exam_paper_log.count_right,
-			exam_paper_log.count_wrong,
-			exam_paper_log.count_giveup,
-			exam_paper_log.proportion,
+			exam_paper_log.paper_id,
 			exam_paper_log.id,
 			exam_paper_log.creater_code,
 			exam_paper_log.creater_group_code,
+			exam_paper_log.type,
 			exam_paper_log.`status`,
-			(select extend4 from basic_memory where code = exam_paper_log.`status` and
-			extend5 = 'exam_paper_log__status') as status_,
-			left(exam_paper_log.time_created,10) as time_created,
-			exam_paper_log.paper_id,
 			exam_paper.subject_code,
-			(select extend4 from basic_memory where basic_memory.code =
-			exam_paper.subject_code and basic_memory.type = '4') as subject_name,
 			exam_paper.title,
 			exam_paper.cent,
-			(select extend4 from basic_memory where code = exam_paper.type and extend5 =
-			'exam_paper__type') as type_,
-			exam_paper.`type`
+			exam_paper.cent_top,
+			exam_paper.creater_code as teacher_code,
+			exam_paper_log.count_wrong,
+			exam_paper_log.time_created,
+			exam_paper.count_question,
+			
+			(select extend4 from basic_memory where code = exam_paper_log.type and extend5 = 'exam_paper_log__type') as type_,
+			(select extend4 from basic_memory where code = exam_paper_log.status and extend5 = 'exam_paper_log__status') as status_,
+			(select extend4 from basic_memory where basic_memory.code = exam_paper.subject_code and basic_memory.type = '4') as subject_name,
+			
+			'x'
 			FROM
 			exam_paper_log
-			left Join exam_paper ON exam_paper_log.paper_id = exam_paper.id
+			LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id
+
+
 		</item>
 		<item ID="exam_paper_log__questions">
 			SELECT
