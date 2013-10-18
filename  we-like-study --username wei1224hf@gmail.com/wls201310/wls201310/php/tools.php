@@ -90,21 +90,32 @@ class tools{
 	/**
 	 * 数据库链接
 	 * */
-	public static function getConn(){
-
-		if(self::$conn==null){
-		    $host = tools::getConfigItem("DB_HOST");
-		    $unm = tools::getConfigItem("DB_UNM");
-		    $pwd = tools::getConfigItem("DB_PWD");
-		    $dbname = tools::getConfigItem("DB_NAME");
-			self::$conn = mysql_connect($host,$unm,$pwd);
+	public static function getConn($another=FALSE){
+		if($another==FALSE){
+			if(self::$conn==null){
+			    $host = tools::getConfigItem("DB_HOST");
+			    $unm = tools::getConfigItem("DB_UNM");
+			    $pwd = tools::getConfigItem("DB_PWD");
+			    $dbname = tools::getConfigItem("DB_NAME");
+				self::$conn = mysql_connect($host,$unm,$pwd);
+				if(!self::$conn)exit("connenct wrong");
+				mysql_select_db($dbname,self::$conn);
+				mysql_query("set time_zone='+8:00';");
+				mysql_query("SET NAMES UTF8;");
+			}			
+			return self::$conn;
+		}else{
+			$host = tools::getConfigItem("DB_HOST");
+			$unm = tools::getConfigItem("DB_UNM");
+			$pwd = tools::getConfigItem("DB_PWD");
+			$dbname = tools::getConfigItem("DB_NAME");
+			$conn = mysql_connect($host,$unm,$pwd);
 			if(!self::$conn)exit("connenct wrong");
 			mysql_select_db($dbname,self::$conn);
 			mysql_query("set time_zone='+8:00';");
 			mysql_query("SET NAMES UTF8;");
+			return $conn;
 		}
-		
-		return self::$conn;
 	}
 	
 	public static function closeConn(){

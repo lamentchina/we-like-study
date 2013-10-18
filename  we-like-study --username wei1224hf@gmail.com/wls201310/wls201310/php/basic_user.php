@@ -22,7 +22,7 @@ class basic_user {
 					$sortname = $_REQUEST['sortname'];
 				}
 				if(isset($_REQUEST['sortorder'])){
-					$sortname = $_REQUEST['sortorder'];
+					$sortorder = $_REQUEST['sortorder'];
 				}
 
 				$t_return = basic_user::grid(
@@ -931,15 +931,7 @@ class basic_user {
 	public static function data4test($total){
 		$t_return = array("status"=>"1","msg"=>"");
 		$conn = tools::getConn();
-		
-		$host = tools::getConfigItem("DB_HOST");
-		$unm = tools::getConfigItem("DB_UNM");
-		$pwd = tools::getConfigItem("DB_PWD");
-		$dbname = tools::getConfigItem("DB_NAME");
-		$conn2 = mysql_connect($host,$unm,$pwd);
-		mysql_select_db($dbname,$conn2);
-		mysql_query("set time_zone='+8:00';",$conn2);
-		mysql_query("SET NAMES UTF8;",$conn2);
+		$conn2 = tools::getConn(true);
 		
 		$sql = "delete from basic_user where type in ('20','30')";
 		$sql = "delete from basic_group_2_user where user_code not in ('admin','guest')";
@@ -949,8 +941,7 @@ class basic_user {
 		$res = mysql_query($sql,$conn);
 		$total_ = 0;
 		while($temp = mysql_fetch_assoc($res)){
-			//每个组,或者说每个班级,分配 10 到 30个人
-			$r = rand(10, 30);
+			$r = rand(10, 20);
 			for($i=0;$i<$r;$i++){
 				$code = $temp['code']."--".$i;
 				$sql = "insert into basic_user(username,password,group_code,id,type,status,money) values ('".$code."',md5('".$code."'),'". $temp['code']."','".(1000+$total_)."','20','10','1000');";

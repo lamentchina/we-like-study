@@ -267,36 +267,47 @@ $data = array();
 if($functionName=="check_environment"){
 	$data = install::check_environment();
 }
-if($functionName=="check_db"){
+else if($functionName=="check_db"){
 	$data = install::check_db();
 }
-if($functionName=="init_tables_readxls"){
+else if($functionName=="init_tables_readxls"){
 	$data = install::init_tables_readxls();
 }	
-if($functionName=="init_tables_dosql"){
+else if($functionName=="init_tables_dosql"){
 	$data = install::init_tables_dosql();
 }
-if($functionName=="basic_data"){
+else if($functionName=="basic_data"){
 	$data = install::basic_data();
 }
-if($functionName=="data4test__basic_group"){
+else if($functionName=="data4test__basic_group"){
 	$data = basic_group::data4test(100);
 }
-if($functionName=="data4test__basic_user"){
+else if($functionName=="data4test__basic_user"){
 	$data = basic_user::data4test(2000);
 }
-if($functionName=="data4test__exam_subject"){
+else if($functionName=="data4test__exam_subject"){
 	include_once 'exam_subject.php';
 	$data = exam_subject::data4test(2000);
 }
-if($functionName=="data4test__exam_paper"){
+else if($functionName=="data4test__exam_paper"){
 	include_once 'exam_paper.php';
 	$a = json_decode2($_REQUEST['dates'], true);
 	$delete = false;
 	if(isset($_REQUEST['delete']))$delete = true;
 	$data = exam_paper::data4test(20000,$a,$delete);
 }
-if($functionName=="test"){
+else if($functionName=="simulate__get_students"){
+	include_once 'exam_paper_log.php';
+	$data = exam_paper_log::simulate__get_students();
+}
+else if($functionName=="simulate__exam_paper_log"){
+	include_once 'exam_paper_log.php';
+	$a = json_decode2($_REQUEST['dates'], true);
+	$delete = false;
+	if(isset($_REQUEST['delete']))$delete = true;	
+	$data = exam_paper_log::simulate(20000,array($a[0],end($a)),0.5,$_REQUEST['student'],$delete);
+}
+else if($functionName=="test"){
 	$list = array(
 		array(
 			'code'=>'10'

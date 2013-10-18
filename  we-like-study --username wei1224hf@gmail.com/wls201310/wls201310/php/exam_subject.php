@@ -22,7 +22,7 @@ class exam_subject {
 					$sortname = $_REQUEST['sortname'];
 				}
 				if(isset($_REQUEST['sortorder'])){
-					$sortname = $_REQUEST['sortorder'];
+					$sortorder = $_REQUEST['sortorder'];
 				}
 	
 				$t_return = exam_subject::grid(
@@ -90,7 +90,18 @@ class exam_subject {
 			}else{
 				$t_return['action'] = $action;
 			}
-		}		
+		}	
+		else if($function =="group_set"){
+			$action = "600591";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_subject::group_set(
+						 $_REQUEST['codes']
+						,$_REQUEST['code']
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}	
 	
 		else if($function =="loadConfig"){
 			$t_return = exam_subject::loadConfig();
@@ -216,21 +227,18 @@ class exam_subject {
     
     public static function group_set($codes=NULL,$code=NULL){
 		$conn = tools::getConn();
-
 		$sql = "delete from exam_subject_2_group where subject_code = '".$code."' ";
 		mysql_query($sql,$conn);
-
 		$codes = explode(",", $codes) ;
-
 		for($i=0;$i<count($codes);$i++){
 			$sql = "insert into exam_subject_2_group (group_code,subject_code) values ( '".$codes[$i]."','".$code."' ); ";
 			mysql_query($sql,$conn);
 		}	
-        return array(
-            'status'=>"1"
-            ,'msg'=>'ok'
-        );
-		return t_return;
+		$t_return =  array(
+			 'status'=>"1"
+			,'msg'=>'ok'
+		);
+		return $t_return;
 	}	
 	
 	public static function group_get($code=NULL){
@@ -299,13 +307,13 @@ class exam_subject {
 				mysql_query($sql,$conn);
 				$total_++;
 				
-				$r = rand(5, 8);
+				$r = rand(3, 5);
 				$w = 100/$r ;
 				for($i3=1;$i3<=$r;$i3++){
 					$sql = "insert into exam_subject(name,code,type,status,weight) values ('知识点".$i.$i2.$i3."','8432-0".$i."0".$i2."-".(($i3>=10)?$i3:"0".$i3)."','30','10','".$w."')";
 					mysql_query($sql,$conn);
 					
-					$r2 = rand(5, 8);
+					$r2 = rand(3, 5);
 					$w2 = 100/$r2 ;
 					for($i4=1;$i4<=$r2;$i4++){
 						$sql = "insert into exam_subject(name,code,type,status,weight) values ('知识点".$i.$i2.$i3.$i4."','8432-0".$i."0".$i2."-".(($i3>=10)?$i3:"0".$i3).(($i4>=10)?$i4:"0".$i4)."','30','10','".$w2."')";

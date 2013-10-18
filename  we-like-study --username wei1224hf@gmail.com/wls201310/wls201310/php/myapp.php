@@ -38,6 +38,7 @@ if($class=='basic_parameter')	$data = basic_parameter::callFunction();
 
 if($class=='exam_paper')		$data = exam_paper::callFunction();
 if($class=='exam_subject')		$data = exam_subject::callFunction();
+if($class=='exam_paper_log')	$data = exam_paper_log::callFunction();
 echo json_encode($data);
 /*
 //判断系统类型,是 独立安装,集成到DZX,还是集成到 JOOMLA

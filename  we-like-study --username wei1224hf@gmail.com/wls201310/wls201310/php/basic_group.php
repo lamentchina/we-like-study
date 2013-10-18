@@ -22,7 +22,7 @@ class basic_group {
 					$sortname = $_REQUEST['sortname'];
 				}
 				if(isset($_REQUEST['sortorder'])){
-					$sortname = $_REQUEST['sortorder'];
+					$sortorder = $_REQUEST['sortorder'];
 				}
 	
 				$t_return = basic_group::grid(
@@ -376,7 +376,7 @@ class basic_group {
 			$total_++;
 			if($total_>=$total)return $t_return;
 			
-			$r = rand(3, 6);
+			$r = rand(3, 5);
 			for($i2=1;$i2<=$r;$i2++){
 				$code__ = $code_."-0".$i2;
 				$sql = "insert into basic_group(name,code,type,status) values ('班级".$i.$i2."','".$code__."','40','10')"; 

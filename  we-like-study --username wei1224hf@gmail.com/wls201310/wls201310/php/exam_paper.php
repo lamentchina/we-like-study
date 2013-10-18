@@ -28,7 +28,7 @@ class exam_paper {
 					$sortname = $_REQUEST['sortname'];
 				}
 				if(isset($_REQUEST['sortorder'])){
-					$sortname = $_REQUEST['sortorder'];
+					$sortorder = $_REQUEST['sortorder'];
 				}
 	
 				$t_return = exam_paper::grid(
@@ -846,12 +846,12 @@ class exam_paper {
 		
 		$year = substr($a_times[0], 0,4);
 		$sql_where_subject = "";
-		if($year=="2011"){
-			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') or (code like '8432-02__') or (code like '8432-03__'))";
+		if($year=="2013"){
+			$sql_where_subject = " where type = '20' and ( (code like '8432-03__') or (code like '8432-02__') or (code like '8432-01__'))";
 		}elseif($year=="2012"){
-			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') or (code like '8432-02__'))";
-		}elseif($year=="2013"){
-			$sql_where_subject = " where type = '20' and ( (code like '8432-01__') )";
+			$sql_where_subject = " where type = '20' and ( (code like '8432-03__') or (code like '8432-02__'))";
+		}elseif($year=="2011"){
+			$sql_where_subject = " where type = '20' and ( (code like '8432-03__') )";
 		}
 		$sql = "select * from exam_subject ".$sql_where_subject;
 		$res = mysql_query($sql,$conn);
