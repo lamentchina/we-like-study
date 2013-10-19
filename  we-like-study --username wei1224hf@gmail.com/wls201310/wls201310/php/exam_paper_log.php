@@ -331,6 +331,7 @@ class exam_paper_log {
 		
 		$sql_papers = "select id,subject_code,title,creater_code,count_question,time_created,cent from exam_paper where time_created > '".$a_time[0]."' and time_created < '".$a_time[1]."' and subject_code in (select subject_code from exam_subject_2_group where group_code = '".substr($student, 0 , 20)."' )";
 		$res = mysql_query($sql_papers,$conn2);
+		if($res==FALSE)echo $sql_papers;
 		mysql_query("START TRANSACTION;",$conn);
 		while($temp=mysql_fetch_assoc($res)){
 			$exam_paper_log__id ++;
@@ -402,7 +403,6 @@ class exam_paper_log {
 		tools::updateTableId("exam_paper_log");
 		tools::updateTableId("exam_subject_2_user_log");
 		$t_return['msg']="Table exam_subject_2_user_log and exam_paper_log added row in total ".$total_.". Now the id in exam_subject_2_user_log is ".$exam_subject_2_user_log__id." and id in exam_paper_log is ".$exam_paper_log__id.". Date from ".$a_time[0]." to ".end($a_time)." student ".$student;
-		return $t_return;
-		
+		return $t_return;		
 	}
 }

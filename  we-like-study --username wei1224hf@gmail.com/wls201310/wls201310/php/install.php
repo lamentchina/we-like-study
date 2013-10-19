@@ -2,6 +2,11 @@
 include_once "tools.php";
 include_once 'basic_group.php';
 include_once 'basic_user.php';
+
+include_once 'exam_paper.php';
+include_once 'exam_paper_log.php';
+include_once 'exam_paper_multionline.php';
+
 include_once '../libs/phpexcel/Classes/PHPExcel.php';
 include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
 include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -107,9 +112,9 @@ class install{
 
 		if($port!="")$host = $host.":".$port;
 		$conn = mysql_connect($host,$unm,$pwd);
-		if($conn){
+		if($conn!=FALSE){
 			$db_ = mysql_select_db($db,$conn);
-			if(!$db) $t_return["msg"] .= "<br/>". " Database name wrong";
+			if(!$db_) $t_return["msg"] .= "<br/>". " Database name wrong";
 		}else{
 			$t_return["msg"] .= "<br/>". " Can not connect the database";
 		}
@@ -140,7 +145,7 @@ class install{
 				$line = "<item ID=\"DB_PWD\">".$pwd."</item>";
 			}
 			if($num == 8){
-				$line = "<item ID=\"DB_HOST\">".$host.":".$port."</item>";
+				$line = "<item ID=\"DB_HOST\">".$host."</item>";
 			}
 			if($num == 9){
 				$line = "<item ID=\"MODE\">".$MODE."</item>";
@@ -290,22 +295,41 @@ else if($functionName=="data4test__exam_subject"){
 	$data = exam_subject::data4test(2000);
 }
 else if($functionName=="data4test__exam_paper"){
-	include_once 'exam_paper.php';
 	$a = json_decode2($_REQUEST['dates'], true);
 	$delete = false;
 	if(isset($_REQUEST['delete']))$delete = true;
 	$data = exam_paper::data4test(20000,$a,$delete);
 }
 else if($functionName=="simulate__get_students"){
-	include_once 'exam_paper_log.php';
 	$data = exam_paper_log::simulate__get_students();
 }
+else if($functionName=="simulate__get_subjects"){
+	$data = exam_paper_multionline::simulate__get_subjects();
+}
 else if($functionName=="simulate__exam_paper_log"){
-	include_once 'exam_paper_log.php';
 	$a = json_decode2($_REQUEST['dates'], true);
 	$delete = false;
 	if(isset($_REQUEST['delete']))$delete = true;	
 	$data = exam_paper_log::simulate(20000,array($a[0],end($a)),$_REQUEST['student'],$delete);
+}
+else if($functionName=="simulate__exam_paper_multionline"){
+	$delete = false;
+	if(isset($_REQUEST['delete']))$delete = true;
+	$dates = json_decode2($_REQUEST['dates'], true);
+	$students = json_decode2($_REQUEST['students'], true);
+	$subjects = json_decode2($_REQUEST['subjects'], true);
+	$data = exam_paper_multionline::simulate__exam_paper_multionline(20000
+			,$dates
+			,$subjects[0]
+			,$students
+			,$delete);
+}
+
+else if($functionName=="phpinfo"){
+	phpinfo();
+}
+else if($functionName=="test2"){
+	echo date('Y-m-d',strtotime("2011-01-01")+86400);
 }
 else if($functionName=="test"){
 	$list = array(
@@ -332,6 +356,7 @@ else if($functionName=="test"){
 	);
 	$data = tools::list2Tree($list);
 }
+
 
 echo json_encode($data);
 if(tools::$conn!=null)mysql_close(tools::$conn);

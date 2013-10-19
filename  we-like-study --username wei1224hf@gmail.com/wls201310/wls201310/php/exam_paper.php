@@ -910,9 +910,9 @@ class exam_paper {
 						,'".$exam_paper__id."'
 						,'".$teacher['username']."'
 						,'".$teacher['group_code']."'
-						,'20'
 						,'10'
-						,'描述啊'
+						,'10'
+						,'exam_paper'
 						,'".$a_times[$i]."'
 					)";
 				mysql_query($sql_paper,$conn);
@@ -1006,6 +1006,7 @@ class exam_paper {
 		tools::updateTableId("exam_paper");
 		tools::updateTableId("exam_question");
 		$t_return['msg']="Table exam_paper and exam_question added row in total ".$total_.". Now the id in exam_paper is ".$exam_paper__id." and id in exam_question is ".$exam_question__id.". Date from ".$a_times[0]." to ".end($a_times);
+		
 		return $t_return;
 	}
 }

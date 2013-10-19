@@ -231,13 +231,14 @@ class tools{
 	}
 	
 	public static function initMemory(){
-		tools::importIl8n2DB();
 		$conn = tools::getConn();
-		$sql = "delete from basic_memory where type = '1' ;";
+		$sql = "delete from basic_memory  ;";
 		mysql_query($sql,$conn);
 		$sql = "insert into basic_memory (code,type,extend4,extend5) (select code,'1' as type,value,reference from basic_parameter where reference like '%\\_%\\_\\_%' );";
 		mysql_query($sql,$conn);
 
+		tools::importIl8n2DB();
+		
 		$sqls = tools::getSQL("basic_memory__init");
 		$sqls_arr = explode(";", $sqls);
 		for($i=0;$i<count($sqls_arr);$i++){
