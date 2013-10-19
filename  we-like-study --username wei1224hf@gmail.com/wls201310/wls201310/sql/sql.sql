@@ -98,8 +98,8 @@ drop table if exists basic_parameter; create table basic_parameter (
  insert into basic_parameter (code,value,reference,extend4) values ('20','关闭','basic_group__status','20');
  
  drop table if exists basic_group_2_user; create table basic_group_2_user (
-  user_code varchar(200)  comment '用户名'
- ,group_code varchar(200)  comment '用户组编码'
+  user_code varchar(40)  comment '用户名'
+ ,group_code varchar(40)  comment '用户组编码'
  ,UNIQUE KEY basic_g2u_u ( user_code,group_code ) 
  ,id int auto_increment primary key   comment '主键'
  ) comment '用户组-用户' ENGINE=InnoDB CHARSET=utf8 ;
@@ -146,8 +146,8 @@ drop table if exists basic_parameter; create table basic_parameter (
  
  
  drop table if exists exam_subject_2_group; create table exam_subject_2_group (
-  subject_code varchar(200) not null comment '编号'
- ,group_code varchar(200) not null comment '名称'
+  subject_code varchar(40) not null comment '编号'
+ ,group_code varchar(40) not null comment '名称'
  ,UNIQUE KEY basic_g2u_u ( subject_code,group_code )  
  ,id int primary key auto_increment comment '编号'
  ) comment '科目跟用户组' ENGINE=InnoDB CHARSET=utf8 ;
@@ -160,9 +160,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,paper_id int not null comment '试卷编号'
  ,paper_log_id int not null comment '做题记录编号'
  ,id int primary key comment '编号'
- ,creater_code varchar(20) not null comment '创建者'
- ,updater_code varchar(20) not null comment '当前修改者'
- ,creater_group_code varchar(20) not null comment '创建者组'
+ ,creater_code varchar(200) not null comment '创建者'
+ ,updater_code varchar(200) not null comment '当前修改者'
+ ,creater_group_code varchar(200) not null comment '创建者组'
  ,time_created timestamp default CURRENT_TIMESTAMP comment '创建时间'
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'
@@ -170,6 +170,11 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,status int not null comment '状态'
  ,remark varchar(200)  comment '备注'
  ) comment '学生做题科目统计' ENGINE=InnoDB CHARSET=utf8 ;
+ delete from basic_parameter where reference like 'exam_subject_2_user_log__%';
+ insert into basic_parameter (code,value,reference,extend4) values ('10','练习册','exam_subject_2_user_log__type','10');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','考卷','exam_subject_2_user_log__type','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('10','正常','exam_subject_2_user_log__status','10');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','关闭','exam_subject_2_user_log__status','20');
  
  drop table if exists exam_paper; create table exam_paper (
   subject_code varchar(200) not null comment '科目'
@@ -199,8 +204,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,remark varchar(200)  comment '备注'
  ) comment '试卷' ENGINE=InnoDB CHARSET=utf8 ;
  delete from basic_parameter where reference like 'exam_paper__%';
- insert into basic_parameter (code,value,reference,extend4) values ('10','多人统一考卷','exam_paper__type','10');
- insert into basic_parameter (code,value,reference,extend4) values ('20','练习册','exam_paper__type','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('10','练习册','exam_paper__type','10');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','多人考卷','exam_paper__type','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('30','统考','exam_paper__type','30');
  insert into basic_parameter (code,value,reference,extend4) values ('10','正常','exam_paper__status','10');
  insert into basic_parameter (code,value,reference,extend4) values ('20','关闭','exam_paper__status','20');
  
@@ -226,11 +232,11 @@ drop table if exists basic_parameter; create table basic_parameter (
  ) comment '做题记录' ENGINE=InnoDB CHARSET=utf8 ;
  delete from basic_parameter where reference like 'exam_paper_log__%';
  insert into basic_parameter (code,value,reference,extend4) values ('10','练习册','exam_paper_log__type','10');
- insert into basic_parameter (code,value,reference,extend4) values ('20','多人考试','exam_paper_log__type','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','多人考卷','exam_paper_log__type','20');
  insert into basic_parameter (code,value,reference,extend4) values ('30','统考','exam_paper_log__type','30');
  insert into basic_parameter (code,value,reference,extend4) values ('10','正常','exam_paper_log__status','10');
- insert into basic_parameter (code,value,reference,extend4) values ('20','统考待批改','exam_paper_log__status','20');
- insert into basic_parameter (code,value,reference,extend4) values ('30','统考未开始','exam_paper_log__status','30');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','考卷待批改','exam_paper_log__status','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('30','考卷未开始','exam_paper_log__status','30');
  insert into basic_parameter (code,value,reference,extend4) values ('99','作废','exam_paper_log__status','99');
  
  drop table if exists exam_question; create table exam_question (
@@ -282,7 +288,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,myanswer varchar(500)  comment '答题'
  ,mycent DECIMAL(4,2)  comment '得分'
  ,path_img varchar(200)  comment '上传的图片'
- ,id int primary key auto_increment comment '编号'
+ ,id int primary key comment '编号'
  ) comment '答题记录' ENGINE=InnoDB CHARSET=utf8 ;
  
  drop table if exists exam_question_log_wrongs; create table exam_question_log_wrongs (

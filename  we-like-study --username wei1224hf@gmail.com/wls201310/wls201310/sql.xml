@@ -235,48 +235,22 @@
 			insert into basic_memory (code,type,extend4,extend5) ( select code,'4' as type,name,'exam_subject__code' as extend5 from exam_subject where type = '20' );
 			delete from basic_memory where type = 2;
 			insert into basic_memory (code,type,extend1) values ('basic_user','2',0);
-			update basic_memory set extend1 = (select max(id) from basic_user)
-			where code = 'basic_user' and type = 2;
+			update basic_memory set extend1 = (select max(id) from basic_user) where code = 'basic_user' and type = 2;
 			insert into basic_memory (code,type,extend1) values ('exam_paper','2',0);
-			update basic_memory set extend1 = (select max(id) from exam_paper)
-			where code = 'exam_paper' and type = 2 and (select max(id) from
-			exam_paper) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_paper_log','2',0);
-			update basic_memory set extend1 = (select max(id) from exam_paper_log)
-			where code = 'exam_paper_log' and type = 2 and (select count(id) from
-			exam_paper_log) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_paper_multionline','2',0);
-			update basic_memory set extend1 = (select max(id) from
-			exam_paper_multionline) where code = 'exam_paper_multionline' and
+			update basic_memory set extend1 = (select max(id) from exam_paper) where code = 'exam_paper' and type = 2 and (select max(id) from exam_paper) > 0;
+			insert into basic_memory (code,type,extend1) values ('exam_paper_log','2',0);
+			update basic_memory set extend1 = (select max(id) from exam_paper_log) where code = 'exam_paper_log' and type = 2 and (select count(id) from exam_paper_log) > 0;
+			insert into basic_memory (code,type,extend1) values ('exam_paper_multionline','2',0);
+			update basic_memory set extend1 = (select max(id) from exam_paper_multionline) where code = 'exam_paper_multionline' and
 			type = 2 and (select count(id) from exam_paper_multionline) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_question','2',0);
-			update basic_memory set extend1 = (select max(id) from exam_question) where
-			code = 'exam_question' and type = 2 and (select count(id) from
-			exam_question) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_question_log','2',0);
-			update basic_memory set extend1 = (select max(id) from exam_question_log)
-			where code = 'exam_question_log' and type = 2 and (elect count(id)
-			from exam_question_log) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_question_log_wrongs','2',0);
-			update basic_memory set extend1 = (select max(id) from
-			exam_question_log_wrongs) where code = 'exam_question_log_wrongs' and
-			type = 2 and (select count(id) from exam_question_log_wrongs) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_subject_2_user_log','2',0);
-			update basic_memory set extend1 = (select max(id) from
-			exam_subject_2_user_log) where code = 'exam_subject_2_user_log' and
-			type = 2 and (select count(id) from exam_subject_2_user_log) > 0;
-			insert into basic_memory (code,type,extend1) values
-			('exam_subject_2_user_log_statistics_time','2',0);
-			update basic_memory set extend1 = (select max(id) from
-			exam_subject_2_user_log_statistics_time) where code =
-			'exam_subject_2_user_log_statistics_time' and type = 2 and (select
-			count(id) from exam_subject_2_user_log_statistics_time) > 0;
+			insert into basic_memory (code,type,extend1) values ('exam_question','2',0);
+			update basic_memory set extend1 = (select max(id) from exam_question) where code = 'exam_question' and type = 2 and (select count(id) from exam_question) > 0;
+			insert into basic_memory (code,type,extend1) values ('exam_question_log','2',0);
+			update basic_memory set extend1 = (select max(id) from exam_question_log) where code = 'exam_question_log' and type = 2 and (elect count(id) from exam_question_log) > 0;
+			insert into basic_memory (code,type,extend1) values ('exam_question_log_wrongs','2',0);
+			update basic_memory set extend1 = (select max(id) from exam_question_log_wrongs) where code = 'exam_question_log_wrongs' and type = 2 and (select count(id) from exam_question_log_wrongs) > 0;
+			insert into basic_memory (code,type,extend1) values ('exam_subject_2_user_log','2',0);
+			update basic_memory set extend1 = (select max(id) from exam_subject_2_user_log) where code = 'exam_subject_2_user_log' and type = 2 and (select count(id) from exam_subject_2_user_log) > 0;
 			select 1
 		</item>
 		<item ID="basic_memory__id">

@@ -55,7 +55,7 @@ insert into basic_group(name,code,type,status) values ('管理员','10','10','10
  insert into basic_permission(name,code,type,icon,path) values ('添加','600221','30','../file/icon16X16/21_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('修改','600222','30','../file/icon16X16/22_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('删除','600223','30','../file/icon16X16/23_16X16.gif','');
- insert into basic_permission(name,code,type,icon,path) values ('审批','600290','30','../file/icon16X16/90_16X16.gif','');
+ insert into basic_permission(name,code,type,icon,path) values ('截止','600290','30','../file/icon16X16/90_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('考试','600291','30','../file/icon16X16/91_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('统计','600292','30','../file/icon16X16/92_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('做题记录','6003','20','../file/icon48X48/6003_48X48.png','exam_paper_log__grid.html');
