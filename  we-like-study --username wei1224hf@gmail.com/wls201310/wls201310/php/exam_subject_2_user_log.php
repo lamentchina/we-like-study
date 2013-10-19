@@ -81,6 +81,8 @@ class exam_subject_2_user_log {
 		$search_keys = array_keys($search);
 		$subject = "LEFT(subject_code,9)";
 		$time = "LEFT(time_created,10)";
+		$time_start= date("Y-m-01");
+		$time_stop = date("Y-m-29");
 		for($i=0;$i<count($search);$i++){
             if($search_keys[$i]=='subject_code' && trim($search[$search_keys[$i]])!='' ){
             	$len = strlen( trim($search[$search_keys[$i]]) );
@@ -98,16 +100,18 @@ class exam_subject_2_user_log {
             	}
             }    
             if($search_keys[$i]=='time_created__start' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and time_created >= '".$search[$search_keys[$i]]."' ";
+            	$time_start = $search[$search_keys[$i]];
             } 
             if($search_keys[$i]=='time_created__stop' && trim($search[$search_keys[$i]])!='' ){
-            	$sql_where .= " and time_created <= '".$search[$search_keys[$i]]."' ";
+            	$time_stop = $search[$search_keys[$i]];
             }            
 		}
+		$sql_where .= " and time_created >= '".$time_start."' ";
+		$sql_where .= " and time_created <= '".$time_stop."' ";
 		$session = basic_user::getSession($executor);
 		$session = $session['data'];
 		if($session['user_type']=='20'){
-			$sql_where .= " and exam_subject_2_user_log.creater_code = '".$executor."' ";
+			$sql_where .= " and exam_subject_2_user_log.creater_code = '".$executor."' limit 0,200000 ";
 		}
 		else if($session['user_type']=='30'){
 			//$sql_where .= " and exam_paper.creater_code = '".$executor."'";

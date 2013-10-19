@@ -68,8 +68,8 @@ var exam_subject_2_user_log = {
 					//提交查询条件
 				    {text: top.getIl8n('exam_paper','search'), onclick:function(){
 						var data = {};
-						var  time_created__start =		$('#time_created__start').val()
-						 	,time_created__stop = 		$('#time_created__stop').val()
+						var  time_created__start =		$('#examp_paper__search_time_created__start').val()
+						 	,time_created__stop = 		$('#examp_paper__search_time_created__stop').val()
 						 	,time_dimension = 		$.ligerui.get("time_dimension").getValue()
 						 	,subject_code =	$.ligerui.get("examp_paper__search_subject").getValue();
 						
