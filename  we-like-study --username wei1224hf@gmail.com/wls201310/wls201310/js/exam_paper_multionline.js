@@ -47,7 +47,11 @@ var exam_paper_multionline = {
 					    	var time_now = getFormattedDate(new Date());
 					    	if(a.status=='30' && time_now>time_stop){				    		
 					    		return top.getIl8n("exam_paper_multionline","status_giveup");
-					    	}else{
+					    	}
+					    	else if(a.status=='30' && a.time_start < time_now && time_now < time_stop ){
+					    		return top.getIl8n("exam_paper_multionline","open");
+					    	}
+					    	else{
 					    		return c;
 					    	}
 				    	}}
@@ -149,10 +153,22 @@ var exam_paper_multionline = {
 				theFunction = function(){
 					var selected = exam_paper_multionline.grid_getSelectOne();
 					if(selected==null)return;	
-					
-					var id = selected.id;
+					if(selected.status=='20'){
+						alert( top.getIl8n("exam_paper_multionline","doneAlready").replace("__time_submitted__",selected.time_lastupdated) );
+						return;
+					}
+					if(selected.time_stop < getFormattedDate(new Date())){
+						alert( top.getIl8n("exam_paper_multionline","youMissedThis")  );
+						return;
+					}
+					if(selected.time_start > getFormattedDate(new Date())){
+						alert( top.getIl8n("exam_paper_multionline","notOpenYet")  );
+						return;
+					}					
+				
+
 					top.$.ligerDialog.open({ 
-						url: 'exam_paper_multionline__do.html?exam_id='+id+'&id='+selected.paper_id+'&random='+Math.random()
+						url: 'exam_paper_multionline__do.html?exam_id='+selected.lid+'&id='+selected.pid+'&random='+Math.random()
 						,height: 350
 						,width: 400
 						,title: selected.title
@@ -163,15 +179,15 @@ var exam_paper_multionline = {
                         ,modal: false
                         ,slide: false  
                         ,isHidden:false
-						,id: 'exam_paper_multionline__do_'+id
+						,id: 'exam_paper_multionline__do_'+selected.lid
 					}).max();	
 					
-			        top.$.ligerui.get("exam_paper_multionline__do_"+id).close = function(){
+			        top.$.ligerui.get("exam_paper_multionline__do_"+selected.lid).close = function(){
 			            var g = this;
 			            top.$.ligerui.win.removeTask(this);
 			            g.unmask();
 			            g._removeDialog();
-			            top.$.ligerui.remove(top.$.ligerui.get("exam_paper_multionline__do_"+id));
+			            top.$.ligerui.remove(top.$.ligerui.get("exam_paper_multionline__do_"+selected.lid));
 			        };
 				}
 			}
@@ -215,8 +231,7 @@ var exam_paper_multionline = {
 				,space: 40
 				,fields: [
 					 { display: top.getIl8n('title'), name: "examp_paper__search_title", newline: false, type: "text" }
-					,{ display: top.getIl8n('status'), name: "examp_paper__search_status", newline: true, type: "select", options :{data : exam_paper_multionline.config.status, valueField : "code" , textField: "value" } }
-					,{ display: top.getIl8n('exam_subject','exam_subject'), name: "examp_paper__search_subject", newline: true, type: "select", options :{data : exam_paper_multionline.config.exam_subject__code, valueField : "code" , textField: "value" } }
+
 				]
 			}); 
 			$.ligerDialog.open({
@@ -232,19 +247,13 @@ var exam_paper_multionline = {
 						$.ligerui.get("exam_paper_multionline__grid").loadData();
 						
 						$.ligerui.get("examp_paper__search_title").setValue('');
-						$.ligerui.get("examp_paper__search_status").setValue('');
-						$.ligerui.get("examp_paper__search_subject").setValue('');
 					}},
 					//提交查询条件
 				    {text: top.getIl8n('exam_paper_multionline','search'), onclick:function(){
 						var data = {};
-						var  title =		$.ligerui.get("examp_paper__search_title").getValue()
-						 	,status = 		$.ligerui.get("examp_paper__search_status").getValue()
-						 	,subject_code =	$.ligerui.get("examp_paper__search_subject").getValue();
+						var  title =		$.ligerui.get("examp_paper__search_title").getValue();
 						
 						if(title!="")data.title = title;
-						if(status!="")data.status = status;
-						if(subject_code!="")data.subject_code = subject_code;
 						
 						$.ligerui.get("exam_paper_multionline__grid").options.parms.search= $.ligerui.toJSON(data);
 						$.ligerui.get("exam_paper_multionline__grid").loadData();

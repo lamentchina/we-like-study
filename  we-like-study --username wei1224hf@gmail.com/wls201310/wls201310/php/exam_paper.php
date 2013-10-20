@@ -498,6 +498,7 @@ class exam_paper {
 	
 	public static function addQuestionLog(){
 		$t_return = array();
+		//TODO
 		return $t_return;
 	}	
 	

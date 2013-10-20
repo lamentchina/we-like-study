@@ -538,6 +538,7 @@
 				else '-' 
 				end) as mycent,
 			exam_paper_log.proportion,
+			exam_paper_log.time_lastupdated,
 			
 			exam_paper_log.creater_code,
 			exam_paper_log.id as lid,
@@ -602,8 +603,6 @@
 			exam_paper_multionline.count_passed,
 			exam_paper_multionline.count_failed,
 			exam_paper_multionline.proportion,
-
-			exam_paper_multionline.students,
 
 			exam_paper.remark
 

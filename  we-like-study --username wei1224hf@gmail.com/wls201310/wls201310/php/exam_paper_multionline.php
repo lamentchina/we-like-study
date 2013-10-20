@@ -22,7 +22,7 @@ public static function callFunction(){
 		else if($function == "grid"){
 			$action = "600201";
 			if(basic_user::checkPermission($executor, $action, $session)){
-				$sortname = "exam_paper.id";
+				$sortname = "exam_paper_multionline.time_start";
 				$sortorder = "asc";
 				if(isset($_REQUEST['sortname'])){
 					$sortname = $_REQUEST['sortname'];
@@ -100,7 +100,7 @@ public static function callFunction(){
 			}
 		}
 		else if($function =="submit"){
-			$action = "600190";
+			$action = "600291";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = exam_paper_multionline::submit(
 						 $_REQUEST['paper_id']
@@ -175,15 +175,6 @@ public static function callFunction(){
             if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and exam_paper.title like '%".$search[$search_keys[$i]]."%' ";
             }
-            if($search_keys[$i]=='subject_code' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and exam_paper.subject_code = '".$search[$search_keys[$i]]."' ";
-            }    
-            if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and exam_paper_log.type = '".$search[$search_keys[$i]]."' ";
-            }    
-            if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and exam_paper_log.status = '".$search[$search_keys[$i]]."' ";
-            } 
 		}
 	
 		return $sql_where;
@@ -311,15 +302,9 @@ public static function callFunction(){
 	}
 	
 	public static function view($id=NULL){
-	    if (!basic_user::checkPermission("4102") && !basic_user::checkPermission("4190") && !basic_user::checkPermission("4123")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($id==NULL) $id = $_REQUEST['id'];
+
 	    $conn = tools::getConn();
-        $sql = tools::getConfigItem("exam_paper_multionline__view");            
+        $sql = tools::getSQL("exam_paper_multionline__view");            
         $sql = str_replace("__paper_id__", $id, $sql);
        
         $res = mysql_query($sql,$conn);
@@ -334,16 +319,8 @@ public static function callFunction(){
 	}
 	
 	public static function submit($paper_id=NULL,$json=NULL,$executor=NULL){	
-	    if (!basic_user::checkPermission("4190")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		        
-	    if($paper_id==NULL) $paper_id = $_REQUEST['paper_id'];
-	    if($json==NULL) $json = $_REQUEST['json'];
-	    if($executor==NULL) $executor = $_REQUEST['executor'];
 	    $conn = tools::getConn();
+	    $t_return = array();
 	    
 	    $data_m = exam_paper_multionline::view($paper_id);
         $data_m = $data_m['data'];
@@ -353,10 +330,11 @@ public static function callFunction(){
                 ,'status'=>'2'
             ); 
 	    }
-	    $sql = "select time_created from exam_paper_log where paper_id = '".$paper_id."' and creater_code = '".$_REQUEST['executor']."';";
+	    $sql = "select status,id from exam_paper_log where paper_id = '".$paper_id."' and creater_code = '".$executor."';";
         $res = mysql_query($sql,$conn);
         $data = mysql_fetch_assoc($res);
-        if($data!=false){
+        $logid = $data['id'];
+        if($data['status']!='30'){
     	    $msg = tools::readIl8n('exam_paper_multionline','doneAlready');
     	    $msg = str_replace("__time_submitted__", $data['time_created'], $msg);
             return array(
@@ -365,25 +343,29 @@ public static function callFunction(){
             ); 
         }
         
-	    $data_paper = exam_paper::submit();	    
+		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
+		exam_paper::calculateKnowledge($t_return['answers'],$logid,$paper_id,$executor);
+		exam_paper::addWrongs($t_return['answers'], $executor);    
+	    exam_paper::addQuestionLog();
 	    
-	    $json_array = json_decode2($json,true);
-	    for($i=0;$i<count($json_array);$i++){
-	        $item = $json_array[$i];
-	        $item['paper_log_id'] = $data_paper['paper_log']['id'];	        
-	        
-            $keys = array_keys($item);
-            $keys = implode(",",$keys);
-            $values = array_values($item);
-            $values = implode("','",$values);    
-            $sql = "insert into exam_question_log (".$keys.") values ('".$values."')";
-            mysql_query($sql,$conn);
-	        
+	    $data__exam_paper_log = array(
+	    	 'mycent'=>$t_return['result']['mycent']
+	    	,'mycent_objective'=>$t_return['result']['mycent_objective']
+    		,'count_right'=>$t_return['result']['right']
+    		,'count_wrong'=>$t_return['result']['wrong']
+    		,'count_giveup'=>$t_return['result']['giveup']
+	    	,'proportion'=> '0'//TODO
+	    	,'time_lastupdated'=>date('Y-m-d H:i:s')
+	    	,'status'=>'20'
+	    );
+	    $keys = array_keys($data__exam_paper_log);
+	    $values = array_values($data__exam_paper_log);
+	    $sql = "update exam_paper_log set ";
+	    for($i=0;$i<count($keys);$i++){
+	    	$sql .= " ".$keys[$i]." = '".$values[$i]."' ,";
 	    }
-	    unset($data_paper['questions']);
-	    $data_paper['item'] = $item;
-	    
-	    $sql = "update exam_paper_log set status = '20' where id =".$data_paper['paper_log']['id'];
+	    $sql = substr($sql, 0,strlen($sql)-1);
+	    $sql .= " where id = ".$logid;
 	    mysql_query($sql,$conn);
 	    
 	    $msg = tools::readIl8n('exam_paper_multionline','submitted');
@@ -757,7 +739,8 @@ public static function callFunction(){
 					,'type'=>'20'
 					,'status'=>$status
 					,'remark'=>'exam_paper_multionline'
-					,'time_created'=>$a_times[$i]						
+					,'time_created'=>$a_times[$i]	
+					,'time_lastupdated'=>$a_times[$i]		
 				);
 				
 				$keys = array_keys($data__exam_paper_log);
