@@ -346,7 +346,7 @@ public static function callFunction(){
 		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
 		exam_paper::calculateKnowledge($t_return['answers'],$logid,$paper_id,$executor);
 		exam_paper::addWrongs($t_return['answers'], $executor);    
-	    exam_paper::addQuestionLog();
+	    exam_paper::addQuestionLog($t_return['answers'],$logid,$executor);
 	    
 	    $data__exam_paper_log = array(
 	    	 'mycent'=>$t_return['result']['mycent']
@@ -374,6 +374,15 @@ public static function callFunction(){
 	        'status'=>'1'
 	        ,'msg'=>$msg
 	    );	   
+	}
+	
+	public static function close($id){
+		$conn = tools::getConn();
+		$t_return = array();
+		
+		$sql = "select ";
+		
+		return $t_return;
 	}
 	
 	public static function modify($data=NULL,$executor=NULL){

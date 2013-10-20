@@ -561,6 +561,9 @@
 			(select extend4 from basic_memory where code = exam_paper_log.status and extend5 = 'exam_paper_log__status') as status_,
 			(select extend4 from basic_memory where basic_memory.code = exam_paper.subject_code and basic_memory.type = '4') as subject_name
 			
+			exam_paper_multionline.status as ststus2,
+			(select extend4 from basic_memory where code = exam_paper_multionline.status and extend5 = 'exam_paper_multionline__status') as status2_,
+			
 			FROM
 			exam_paper_log
 			LEFT JOIN exam_paper_multionline ON exam_paper_log.paper_id = exam_paper_multionline.paper_id

@@ -378,7 +378,7 @@ class exam_paper {
         $answers = array();
         $index_myanswers = 0;
         while($temp = mysql_fetch_assoc($res)){
-        	
+        	$temp['mycent'] = 0;
         	if($temp['type']=="1"||$temp['type']=="2"||$temp['type']=="3"){
         		$t_return['result']['cent'] += $temp['cent'];
         		if($myAnswers[$index_myanswers]['myanswer']=='I_DONT_KNOW'){
@@ -389,6 +389,7 @@ class exam_paper {
         			$temp['result']=1;
         			$t_return['result']['right']++;
         			$t_return['result']['mycent'] += $temp['cent'];
+        			$temp['mycent'] = $temp['cent'];
         		}
         		else{
         			$t_return['result']['wrong']++;
@@ -402,7 +403,7 @@ class exam_paper {
         	}else{
         		$temp['result']=3;
         	}
-        	
+        	$temp['myanswer'] = $myAnswers[$index_myanswers]['myanswer'];
         	$index_myanswers++;
         	$answers[] = $temp;
         }
@@ -411,7 +412,7 @@ class exam_paper {
 		return $t_return;
 	}
 	
-	public static function calculateKnowledge($answers,$paper_log__id,$paper__id,$executor){
+	public static function calculateKnowledge($answers,$paper_log__id,$paper__id,$executor,$type='10'){
 		$t_return = array();
 		$session = basic_user::getSession($executor);
 		$session = $session['data'];
@@ -449,9 +450,10 @@ class exam_paper {
 		}
 
 		$id = tools::getTableId("exam_subject_2_user_log",FALSE);
-		
+		$status = ($type=='10')?'10':'20';
 		$kyes = array_keys($result_knowledge);
 		mysql_query("START TRANSACTION;",$conn);
+		
 		for($i=0;$i<count($result_knowledge);$i++){
 			$id++;
 			$proportion = 0;
@@ -466,8 +468,8 @@ class exam_paper {
 				,'paper_id'=>$paper__id
 				,'paper_log_id'=>$paper_log__id
 				,'proportion'=>($result_knowledge[$kyes[$i]]['right']/($result_knowledge[$kyes[$i]]['right']+$result_knowledge[$kyes[$i]]['wrong']))*100
-				,'type'=>'10'
-				,'status'=>'10'
+				,'type'=>$type
+				,'status'=>$status
 			);
 			
 			$keys = array_keys($data__exam_subject_2_user_log);
@@ -483,22 +485,43 @@ class exam_paper {
 		return $t_return;
 	}
 	
-	public static function addWrongs($answers,$executor){
+	public static function addWrongs($answers,$executor,$type='10'){
 		$t_return = array();
 		$conn = tools::getConn();
 		mysql_query("START TRANSACTION;",$conn);
+		$status = ($type=='10')?'10':'20';
 		for($i=0;$i<count($answers);$i++){
 			if($answers[$i]['result']==0){
-				mysql_query("insert into exam_question_log_wrongs(question_id,creater_code) values ('".$answers[$i]['id']."','".$executor."')");
+				mysql_query("insert into exam_question_log_wrongs(question_id,creater_code,type,status) values ('".$answers[$i]['id']."','".$executor."','".$type."','".$status."')");
 			}
 		}
 		mysql_query("COMMIT;",$conn);
 		return $t_return;
 	}
 	
-	public static function addQuestionLog(){
+	public static function addQuestionLog($answers,$paper_log_id,$executor){
 		$t_return = array();
-		//TODO
+		$conn = tools::getConn();
+		mysql_query("START TRANSACTION;",$conn);
+		$exam_question_log__id = tools::getTableId("exam_paper_log",FALSE);
+		for($i=0;$i<count($answers);$i++){
+			$exam_question_log__id++;
+			$data___exam_question_log = array(
+				'id'=>$exam_question_log__id
+				,'paper_log_id'=>$paper_log_id
+				,'question_id'=>$answers[$i]['id']
+				,'myanswer'=>$answers[$i]['myanswer']
+				,'mycent'=>$answers[$i]['mycent']
+			);
+			
+			$keys = array_keys($data___exam_question_log);
+			$keys = implode(",",$keys);
+			$values = array_values($data___exam_question_log);
+			$values = implode("','",$values);
+			$sql = "insert into exam_question_log (".$keys.") values ('".$values."')";
+			mysql_query($sql,$conn);
+		}
+		mysql_query("COMMIT;",$conn);
 		return $t_return;
 	}	
 	
