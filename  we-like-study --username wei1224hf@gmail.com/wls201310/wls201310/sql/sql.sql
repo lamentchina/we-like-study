@@ -219,6 +219,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,count_giveup int not null default '0' comment '放弃题数'
  ,proportion int not null default '0' comment '做对比例'
  ,paper_id int  comment '试卷编号'
+ ,rank int  comment '排名'
  ,id int primary key comment '编号'
  ,creater_code varchar(200) not null comment '创建者'
  ,updater_code varchar(200) not null comment '当前修改者'
@@ -319,3 +320,8 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,status int not null comment '状态'
  ,remark varchar(200)  comment '备注'
  ) comment '多人考试' ENGINE=InnoDB CHARSET=utf8 ;
+ delete from basic_parameter where reference like 'exam_paper_multionline__%';
+ insert into basic_parameter (code,value,reference,extend4) values ('20','多人考卷','exam_paper_multionline__type','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('30','统考','exam_paper_multionline__type','30');
+ insert into basic_parameter (code,value,reference,extend4) values ('10','正常','exam_paper_multionline__status','10');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','结束','exam_paper_multionline__status','20');

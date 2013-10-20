@@ -22,7 +22,7 @@ public static function callFunction(){
 		else if($function == "grid"){
 			$action = "600201";
 			if(basic_user::checkPermission($executor, $action, $session)){
-				$sortname = "id";
+				$sortname = "exam_paper.id";
 				$sortorder = "asc";
 				if(isset($_REQUEST['sortname'])){
 					$sortname = $_REQUEST['sortname'];
@@ -185,15 +185,6 @@ public static function callFunction(){
                 $sql_where .= " and exam_paper_log.status = '".$search[$search_keys[$i]]."' ";
             } 
 		}
-		$session = basic_user::getSession($executor);
-		$session = $session['data'];
-		if($session['user_type']=='20'){
-			$sql_where .= " and exam_paper_log.creater_code = '".$executor."' ";
-		}
-		if($session['user_type']=='30'){
-			$sql_where .= " and exam_paper.creater_code = '".$executor."'";
-		}
-		
 	
 		return $sql_where;
 	}	
@@ -210,18 +201,35 @@ public static function callFunction(){
     	$conn = tools::getConn();
     	
     	$sql_where = exam_paper_multionline::search($search, $executor);
-    	$sql_order = " order by exam_paper_log.".$sortname." ".$sortorder." ";
+    	$session = basic_user::getSession($executor);
+    	$session = $session['data'];
     	
-    	$sql = tools::getSQL("exam_paper_log__grid");
-    	$sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
+    	
+    	$sql = tools::getSQL("exam_paper_multionline__grid");
+    	$sql_total = "select count(*) as total FROM exam_paper_log LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id ".$sql_where;
+    	
+    	if($session['user_type']=='20'){
+    		$sql = tools::getSQL("exam_paper_multionline__grid_student");
+    		$sql_where .= " and exam_paper_log.creater_code = '".$executor."' ";
+    		$sql_total = "select count(*) as total FROM
+			exam_paper_log
+			LEFT JOIN exam_paper_multionline ON exam_paper_log.paper_id = exam_paper_multionline.paper_id
+			LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id ".$sql_where;
+    	}
+    	else if($session['user_type']=='30'){
+    		$sql_where .= " and exam_paper.creater_code = '".$executor."' ";
+    	}    	
+    	$sql = str_replace("__WHERE__", $sql_where, $sql);
+    	$sql = str_replace("__ORDER__", $sortname." ".$sortorder , $sql);
+    	$sql = str_replace("__PAGESIZE__",$pagesize, $sql);
+    	$sql = str_replace("__OFFSET__", $pagesize*($page-1), $sql);
     	
     	$res = mysql_query($sql,$conn);
     	$data = array();
     	while($temp = mysql_fetch_assoc($res)){
     		$data[] = $temp;
-    	}
+    	}    	
     	
-    	$sql_total = "select count(*) as total FROM exam_paper_log LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id ".$sql_where;
     	$res = mysql_query($sql_total,$conn);
     	$total = mysql_fetch_assoc($res);
     	
@@ -686,8 +694,8 @@ public static function callFunction(){
 			}
 			else{
 				//已结束
-				$time_stop = date('Y-m-d',strtotime($time_start)+86400);
 				$time_start = $a_times[$i];
+				$time_stop = date('Y-m-d',strtotime($time_start)+86400);				
 			}
 					
 			$data__exam_paper_multionline = array(
@@ -722,12 +730,24 @@ public static function callFunction(){
 				$student = $students[$i2];
 				$rate = rand(20,99);
 				$exam_paper_log__id++;
+				$count_right = $rate/2;
+				$count_wrong = (100-$rate)/2;
+				$proportion = $rate;
+				$mycent = $rate;
+				$mycent_subjective = $rate;
+				if($status=='30'){
+					$count_right = 0;
+					$count_wrong = 0;
+					$proportion = 0;
+					$mycent = 0;
+					$mycent_subjective = 0;
+				}
 				$data__exam_paper_log = array(
-					'mycent'=>$rate
-					,'mycent_subjective'=>$rate
+					'mycent'=>$mycent
+					,'mycent_subjective'=>$mycent_subjective
 					,'mycent_objective'=>'0'
-					,'count_right'=>$rate/2
-					,'count_wrong'=>(100-$rate)/2
+					,'count_right'=>$count_right
+					,'count_wrong'=>$count_wrong
 					,'count_giveup'=>'0'
 					,'proportion'=>$rate
 					,'paper_id'=>$exam_paper__id

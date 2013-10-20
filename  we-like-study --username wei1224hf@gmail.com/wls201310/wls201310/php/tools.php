@@ -170,6 +170,8 @@ class tools{
 	public static function getSQL($id){
 		if(tools::$xmlSQL==null){
 			tools::$xmlSQL = new DOMDocument();
+			libxml_clear_errors();
+			libxml_use_internal_errors(FALSE);
 			tools::$xmlSQL->load('../sql.xml');
 	
 			$sqls = tools::$xmlSQL->getElementsByTagName('ITEM');

@@ -149,9 +149,7 @@ class exam_subject_2_user_log {
     	$sql = str_replace("__WHERE__", $sql_where, $sql);
     	$sql = str_replace("__G1-TIME__", $sql_time, $sql);
     	$sql = str_replace("__G2-SUBJECT__", $sql_subject, $sql);
-    	 
-
-    	
+    	    	
     	$res = mysql_query($sql,$conn);
     	$data = array();
     	while($temp = mysql_fetch_assoc($res)){
