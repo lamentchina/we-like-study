@@ -206,9 +206,7 @@ class exam_paper_multionline {
     	$session = $session['data'];
     	
     	
-    	$sql = tools::getSQL("exam_paper_multionline__grid");
-    	$sql_total = "select count(*) as total FROM exam_paper_log LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id ".$sql_where;
-    	
+    	$sql = tools::getSQL("exam_paper_multionline__grid");    	
     	if($session['user_type']=='20'){
     		$sql = tools::getSQL("exam_paper_multionline__grid_student");
     		$sql_where .= " and exam_paper_log.creater_code = '".$executor."' ";
@@ -219,6 +217,9 @@ class exam_paper_multionline {
     	}
     	else if($session['user_type']=='30'){
     		$sql_where .= " and exam_paper.creater_code = '".$executor."' ";
+    		$sql_total = "select count(*) as total FROM
+			exam_paper_multionline
+			Left Join exam_paper ON exam_paper_multionline.paper_id = exam_paper.id ".$sql_where;
     	}    	
     	$sql = str_replace("__WHERE__", $sql_where, $sql);
     	$sql = str_replace("__ORDER__", $sortname." ".$sortorder , $sql);

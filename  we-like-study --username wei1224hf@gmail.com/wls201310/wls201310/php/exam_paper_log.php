@@ -189,6 +189,7 @@ class exam_paper_log {
 		$session = $session['data'];
 		if($session['user_type']=='20'){
 			$sql_where .= " and exam_paper_log.creater_code = '".$executor."' ";
+			$sql_where .= " and (exam_paper_log.status like '9_' or exam_paper_log.status='10' ) ";
 		}
 		if($session['user_type']=='30'){
 			$sql_where .= " and exam_paper.creater_code = '".$executor."'";
