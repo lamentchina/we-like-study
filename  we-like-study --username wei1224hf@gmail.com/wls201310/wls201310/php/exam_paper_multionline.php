@@ -111,6 +111,16 @@ public static function callFunction(){
 				$t_return['action'] = $action;
 			}
 		}
+		else if($function =="close"){
+			$action = "600290";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper_multionline::close(
+						$_REQUEST['pid']
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
 
 		return $t_return;
 	}
@@ -344,8 +354,8 @@ public static function callFunction(){
         }
         
 		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
-		exam_paper::calculateKnowledge($t_return['answers'],$logid,$paper_id,$executor);
-		exam_paper::addWrongs($t_return['answers'], $executor);    
+		exam_paper::calculateKnowledge($t_return['answers'],$logid,$paper_id,$executor,'20');
+		exam_paper::addWrongs($t_return['answers'], $executor,'20');    
 	    exam_paper::addQuestionLog($t_return['answers'],$logid,$executor);
 	    
 	    $data__exam_paper_log = array(
@@ -376,12 +386,59 @@ public static function callFunction(){
 	    );	   
 	}
 	
-	public static function close($id){
+	public static function close($exam_paper__id){
 		$conn = tools::getConn();
+		$conn2 = tools::getConn(true);
 		$t_return = array();
-		
-		$sql = "select ";
-		
+		mysql_query("START TRANSACTION;",$conn);
+		$sql = "select passline from exam_paper_multionline where paper_id = ".$exam_paper__id;
+		$res = mysql_query($sql,$conn2);
+		$d = mysql_fetch_assoc($res);
+		$passline = $d['passline'];
+		$sql = "select * from exam_paper_log where paper_id = '".$exam_paper__id."' order by mycent desc ";
+		$res = mysql_query($sql,$conn2);
+		$rank = 0;
+		$rank2 = 0;
+		$mycent = 0;
+		$count_passed = 0;
+		$count_giveup = 0;
+		$count_failed = 0;
+		while ($temp=mysql_fetch_assoc($res)){
+			$rank2 ++;
+			$rank3 = $rank2;
+			if($mycent==$temp['mycent']){
+				$rank3 = $rank;
+			}else{
+				$rank = $rank2;
+			}
+			$mycent = $temp['mycent'];
+
+			$status = "40";
+			if($mycent==0){
+				$status = '90';
+				$count_giveup++;
+			}
+			else if($mycent>=$passline){
+				$status = '91';
+				$count_passed++;
+			}
+			else{
+				$status = '92';
+				$count_failed ++;
+			}
+			$sql = "update exam_paper_log set rank = '".$rank3."', status = '".$status."' where id = ".$temp['id'];
+			mysql_query($sql,$conn);
+		}
+		$sql = "update exam_paper_multionline set 
+				status = '20'
+				,count_giveup='".$count_giveup."'
+				,count_passed='".$count_passed."'
+				,count_failed='".$count_failed."'
+				,proportion='".($count_passed/$rank2)."'
+				 where paper_id =".$exam_paper__id;
+		mysql_query($sql,$conn);
+		mysql_query("COMMIT;",$conn);
+		$t_return['status']=1;
 		return $t_return;
 	}
 	
@@ -797,6 +854,18 @@ public static function callFunction(){
 		$t_return['msg']="SQL in total ".$total_.", exam_paper id: ".$exam_paper__id.", exam_paper_multionline id: ".$exam_paper_multionline__id.", exam_question id: ".$exam_question__id.", exam_paper_log id: ".$exam_paper_log__id.", exam_question_log id: ".$exam_question_log__id;
 				
 		return $t_return;
+	}
+	
+	public static function simulate__get_ids(){
+		$t_return = array();
+		$conn = tools::getConn();
+		$sql = "select paper_id from exam_paper_multionline where time_stop < now()";
+		$res = mysql_query($sql,$conn);
+		while ($temp=mysql_fetch_assoc($res)){
+			$arr[] = $temp['paper_id'];
+		}
+		$t_return['data'] = $arr;
+		return $t_return;;
 	}
 	
 	public static function simulate__get_subjects(){

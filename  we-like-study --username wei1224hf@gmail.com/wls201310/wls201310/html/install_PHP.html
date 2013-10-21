@@ -25,7 +25,7 @@ var init_dom = function(){
 			 ,"模拟基础的业务数据:用户,用户组,科目,简单的练习卷.你也可以跳过这一步,直接登录系统首页: <a href='../html/desktop.html' target='_blank'>首页</a> 帐号密码都是 admin "
 			 ,"模拟学生练习记录"
 			 ,"模拟多人考卷"
-			 ,"模拟考卷答题记录,并执行批改"
+			 ,"多人考卷执行批改"
 			 ]
 	};
 	
@@ -588,6 +588,70 @@ var simulate__exam_paper_multionline = function(){
 	});	
 	
 }
+
+var urls_8 = [];
+var step_8 = 0;
+var exam_paper_multionline__close_ids = null;
+var len_8 = 10;
+var simulate__exam_paper_multionline__close = function(){
+	if(exam_paper_multionline__close_ids==null){
+		$.ajax({
+			 url: "../php/install.php?class=install&function=exam_paper_multionline__close_ids"
+			,dataType: 'json'
+	        ,type: "POST"		
+	        ,data: {
+				 executor: ""
+				,session: ""
+	        }         
+			,success : function(response) {
+				exam_paper_multionline__close_ids = response.data;
+				for(var i=0;i<exam_paper_multionline__close_ids.length;i+=len_8){
+					var ids = [];
+					for(var i2=i;i2<i+len_8;i2++){
+						if(i2>=exam_paper_multionline__close_ids.length)break;
+						ids.push(exam_paper_multionline__close_ids[i2]);
+					}
+					
+					urls_8.push("../php/install.php?class=install&function=exam_paper_multionline__close&ids="+$.ligerui.toJSON(ids));
+				}
+				
+				$('#log_simulate__exam_paper_multionline_close').append("<br/> AJAX operation: <span id='simulate__exam_paper_multionline_close___step'>0</span>/"+(urls_8.length)+", this may take a long long time <br/><br/>");
+				simulate__exam_paper_multionline__close();
+			}
+		});
+		return;
+	}
+	
+	var url_ = urls_8[step_8];
+	$.ajax({
+		url: url_
+		,dataType: 'json'
+        ,type: "POST"		
+        ,data: {
+			 executor: ""
+			,session: ""
+        }         
+		,success : function(response) {
+			$('#log_simulate__exam_paper_multionline_close').append(response.msg+"<br/>");
+			if(response.status=="1"){
+				$('#btn_simulate__exam_paper_multionline_close').attr("disabled",true);
+				$('#log_simulate__exam_paper_multionline_close').attr("class","log_done");
+				step_8++;
+				$('#simulate__exam_paper_multionline_close___step').html(step_8);
+				if(step_8>=urls_8.length)return;
+				simulate__exam_paper_multionline__close();
+				
+			}else{
+				$('#btn_simulate__exam_paper_multionline_close').attr("disabled",false);
+			}
+		}
+		,error : function(response){				
+			alert("net error");
+			$('#btn_simulate__exam_paper_multionline_close').attr("disabled",false);
+		}
+	});	
+	
+}
 </script> 
 </head>
 <body onload="init_dom()">
@@ -648,9 +712,9 @@ Language:<select id='il8n'><option value='zh-cn'>简体中文</option><!-- optio
 </fieldset>
 
 <fieldset id='step8' style="display: block">
-<legend><button onclick="simulate__exam_paper_multionline_log()" id='btn_simulate__exam_paper_multionline_log' class='btn_step'></button></legend>
+<legend><button onclick="simulate__exam_paper_multionline__close()" id='btn_simulate__exam_paper_multionline_close' class='btn_step'></button></legend>
 <div class="directions_step"></div>
-<div id='log_simulate__exam_paper_multionline_log' class='log'></div>
+<div id='log_simulate__exam_paper_multionline_close' class='log'></div>
 </fieldset>
 
 </body>

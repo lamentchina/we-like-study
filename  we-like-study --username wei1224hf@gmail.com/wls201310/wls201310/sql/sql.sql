@@ -238,8 +238,10 @@ drop table if exists basic_parameter; create table basic_parameter (
  insert into basic_parameter (code,value,reference,extend4) values ('10','练习卷模式','exam_paper_log__status','10');
  insert into basic_parameter (code,value,reference,extend4) values ('20','考卷待批改','exam_paper_log__status','20');
  insert into basic_parameter (code,value,reference,extend4) values ('30','考卷未开始','exam_paper_log__status','30');
- 
- 
+ insert into basic_parameter (code,value,reference,extend4) values ('40','考卷已批改','exam_paper_log__status','40');
+ insert into basic_parameter (code,value,reference,extend4) values ('90','旷考','exam_paper_log__status','90');
+ insert into basic_parameter (code,value,reference,extend4) values ('91','及格','exam_paper_log__status','91');
+ insert into basic_parameter (code,value,reference,extend4) values ('92','不及格','exam_paper_log__status','92');
  insert into basic_parameter (code,value,reference,extend4) values ('99','作废','exam_paper_log__status','99');
  
  drop table if exists exam_question; create table exam_question (

@@ -324,7 +324,19 @@ else if($functionName=="simulate__exam_paper_multionline"){
 			,$students
 			,$delete);
 }
-
+else if($functionName=="exam_paper_multionline__close"){
+	$ids = json_decode($_REQUEST['ids'],true);
+	for($i=0;$i<count($ids);$i++){
+		exam_paper_multionline::close($ids[$i]);
+	}
+	$data = array(
+		'msg'=>'ok'
+		,'status'=>'1'
+	);
+}
+else if($functionName=="exam_paper_multionline__close_ids"){
+	$data = exam_paper_multionline::simulate__get_ids();
+}
 else if($functionName=="phpinfo"){
 	phpinfo();
 }

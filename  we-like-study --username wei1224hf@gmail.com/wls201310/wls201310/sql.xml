@@ -513,6 +513,10 @@
 			exam_paper_multionline.count_failed,
 			exam_paper_multionline.proportion,
 			exam_paper_multionline.id as mid,
+			exam_paper_multionline.type,
+			exam_paper_multionline.status,
+			(select extend4 from basic_memory where code = exam_paper_multionline.type and extend5 = 'exam_paper_multionline__type') as type_,
+			(select extend4 from basic_memory where code = exam_paper_multionline.status and extend5 = 'exam_paper_multionline__status') as status_,
 			exam_paper.id as pid,
 			exam_paper.subject_code,
 			(select extend4 from basic_memory where basic_memory.code = exam_paper.subject_code and basic_memory.type = '4') as subject_name,
@@ -533,13 +537,12 @@
 		<![CDATA[
 			SELECT
 			
-			(case (exam_paper_multionline.status='30')
+			(case (exam_paper_multionline.status='20')
 				when true then exam_paper_log.mycent
 				else '-' 
 				end) as mycent,
-			exam_paper_log.proportion,
 			exam_paper_log.time_lastupdated,
-			
+			exam_paper_log.rank,
 			exam_paper_log.creater_code,
 			exam_paper_log.id as lid,
 			exam_paper.id as pid,
@@ -559,10 +562,11 @@
 			
 			(select extend4 from basic_memory where code = exam_paper_log.type and extend5 = 'exam_paper_log__type') as type_,
 			(select extend4 from basic_memory where code = exam_paper_log.status and extend5 = 'exam_paper_log__status') as status_,
-			(select extend4 from basic_memory where basic_memory.code = exam_paper.subject_code and basic_memory.type = '4') as subject_name
-			
+			(select extend4 from basic_memory where basic_memory.code = exam_paper.subject_code and basic_memory.type = '4') as subject_name,			
 			exam_paper_multionline.status as ststus2,
 			(select extend4 from basic_memory where code = exam_paper_multionline.status and extend5 = 'exam_paper_multionline__status') as status2_,
+			
+			'what'
 			
 			FROM
 			exam_paper_log

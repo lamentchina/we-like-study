@@ -33,32 +33,9 @@ var exam_paper_multionline = {
 				    ,{ display: top.getIl8n("exam_paper","subject_code"), name: 'subject_code', hide:true }
 				    ,{ display: top.getIl8n("exam_paper","subject_name"), name: 'subject_name', width: 100 }				    
 				    ,{ display: top.getIl8n("exam_paper_multionline","count_total"), name: 'count_total', width: 50 }
-				    ,{ display: top.getIl8n("exam_paper_multionline","count_giveup"), name: 'count_giveup', width: 50, hide:true }
-				    ,{ display: top.getIl8n("exam_paper_multionline","count_passed"), name: 'count_passed', width: 50, hide:true }
-				    ,{ display: top.getIl8n("exam_paper_multionline","count_failed"), name: 'count_failed', width: 50, hide:true }
-				    ,{ display: top.getIl8n("exam_paper_multionline","proportion"), name: 'proportion', width: 50 }
 				    ,{ display: top.getIl8n("exam_paper_multionline","time_start"), name: 'time_start', width: 100 }
 				    ,{ display: top.getIl8n("exam_paper_multionline","time_stop"), name: 'time_stop', width: 100 }
-
-				    ,{ display: top.getIl8n("status"), name: 'status', isSort: false, hide:true  }
-				    ,{ display: top.getIl8n("status"), name: 'status_', isSort: false, width: 100 
-				    	,render: function(a,b,c){
-					    	var time_stop = a.time_stop;
-					    	var time_now = getFormattedDate(new Date());
-					    	if(a.status=='30' && time_now>time_stop){				    		
-					    		return top.getIl8n("exam_paper_multionline","status_giveup");
-					    	}
-					    	else if(a.status=='30' && a.time_start < time_now && time_now < time_stop ){
-					    		return top.getIl8n("exam_paper_multionline","open");
-					    	}
-					    	else{
-					    		return c;
-					    	}
-				    	}}
-				    ,{ display: top.getIl8n("type"), name: 'type', isSort: false, hide:true  }
-				    ,{ display: top.getIl8n("type"), name: 'type_', isSort: false, width: 100}
-
-			    
+				    
 				],  pageSize:20 ,rownumbers:true
 				,parms : {
 	                executor: top.basic_user.loginData.username
@@ -71,7 +48,27 @@ var exam_paper_multionline = {
 		};
 		
 		if(top.basic_user.loginData.type=='20'){
-			config.columns.push( { display: top.getIl8n("exam_paper_log","mycent"), name: 'mycent', width: 100 } );
+			var otherColumns = [
+				 { display: top.getIl8n("exam_paper_log","mycent"), name: 'mycent', width: 100 }        
+				,{ display: top.getIl8n("exam_paper_log","rank"), name: 'rank', width: 100 } 
+			    ,{ display: top.getIl8n("status"), name: 'status2_', isSort: false, width: 100 }
+			    ,{ display: top.getIl8n("type"), name: 'type_', isSort: false, width: 100}
+			    ,{ display: top.getIl8n("status"), name: 'status_', isSort: false, width: 100 }
+			                   ];
+			for(var i=0;i<otherColumns.length;i++){
+				config.columns.push( otherColumns[i] );
+			}
+		}else{
+			var otherColumns = [
+				 { display: top.getIl8n("exam_paper_multionline","count_giveup"), name: 'count_giveup', width: 100, hide: true }
+				,{ display: top.getIl8n("exam_paper_multionline","count_failed"), name: 'count_failed', width: 100, hide: true }
+			    ,{ display: top.getIl8n("status"), name: 'status_', isSort: false, width: 100 }
+			    ,{ display: top.getIl8n("type"), name: 'type_', isSort: false, width: 100}
+			    ,{ display: top.getIl8n("exam_paper_multionline","proportion"), name: 'proportion', width: 50, hide: true }
+			                   ];
+			for(var i=0;i<otherColumns.length;i++){
+				config.columns.push( otherColumns[i] );
+			}			
 		}
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
@@ -92,7 +89,7 @@ var exam_paper_multionline = {
 			var theFunction = function(){alert(1)};
 			if(permission[i].code=='600201'){
 				theFunction = exam_paper_multionline.search;
-			}else if(permission[i].code=='4102'){
+			}else if(permission[i].code=='600202'){
 				theFunction = function(){
 					
 					var selected = exam_paper_multionline.grid_getSelectOne();
@@ -149,7 +146,12 @@ var exam_paper_multionline = {
 			        };
 					
 				}
-			}else if(permission[i].code=='600291'){
+			}
+			else if(permission[i].code=='600290'){
+				config.checkbox = true;
+				theFunction = exam_paper_multionline.close;		
+			}
+			else if(permission[i].code=='600291'){
 				theFunction = function(){
 					var selected = exam_paper_multionline.grid_getSelectOne();
 					if(selected==null)return;	
@@ -559,7 +561,39 @@ var exam_paper_multionline = {
 		};
 		
 		$(document.body).ligerGrid(config);
-	}   	
+	}
+    
+    ,close: function(){
+		var select = exam_paper_multionline.grid_getSelectOne();
+		if(select==null){
+			alert( top.getIl8n('selectOne') );
+			return;
+		}
+		
+		$.ajax({
+			url: config_path__exam_paper_multionline__close,
+			data: {
+				pid: select.pid 
+				
+                ,executor: top.basic_user.loginData.username
+                ,session: top.basic_user.loginData.session
+			}
+			,type: "POST"
+			,dataType: 'json'
+			,success: function(response) {
+				if(response.status=="1"){
+					alert("OK");
+					$.ligerui.get("exam_paper_multionline__grid").loadData();
+				}else{
+					alert(response.msg);
+				}
+			},
+			error : function(){
+				//net error,则删除按钮再也不能点了
+				alert(top.getIl8n('disConnect'));
+			}
+		});	
+    }
 };
 
 paper.submit = function(){    
