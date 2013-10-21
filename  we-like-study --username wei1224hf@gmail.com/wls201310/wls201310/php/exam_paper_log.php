@@ -167,7 +167,7 @@ class exam_paper_log {
 	}
 
 	private static function search($search,$executor){
-		$sql_where = " where 1=1 ";
+		$sql_where = " where exam_paper_log.status <> '30' ";
 	
 		$search=json_decode2($search,true);
 		$search_keys = array_keys($search);

@@ -453,29 +453,29 @@
 	</item>
 	<item ID="exam_question_log_wrongs">
 		<item ID="exam_question_log_wrongs__grid">
-			SELECT
+			SELECT 
 			exam_question_log_wrongs.id,
 			exam_question_log_wrongs.question_id,
 			exam_question_log_wrongs.creater_code,
 			exam_question_log_wrongs.time_created,
 			exam_question.subject_code,
-			(select extend4 from basic_memory where basic_memory.code =
-			exam_question.subject_code and basic_memory.type = '4') as
-			subject_name,
+			(select extend4 from basic_memory where basic_memory.code = exam_question.subject_code and basic_memory.type = '4') as subject_name,
 			exam_question.title,
 			exam_question.difficulty,
-			(select extend4 from basic_memory where code = exam_question.`type` and
-			extend5 = 'exam_question__type') as type_,
-			exam_question.`type`
-			FROM
-			exam_question_log_wrongs
-			Left Join exam_question ON exam_question_log_wrongs.question_id =
-			exam_question.id
-
+			(select extend4 from basic_memory where code = exam_question.type and extend5 = 'exam_question__type') as type_,
+			exam_question.`type`,
+			'what' 
+			FROM 
+			exam_question_log_wrongs 
+			Left Join exam_question ON exam_question_log_wrongs.question_id = exam_question.id 
+			__WHERE__			
+			order by __ORDER__ 
+			limit __OFFSET__ , __PAGESIZE__
 		</item>
 		<item ID="exam_question_log_wrongs__questions">
-			SELECT
-			exam_question.id,
+			<![CDATA[
+			SELECT 
+			exam_question.id, 
 			exam_question.`type`,
 			exam_question.id_parent,
 			exam_question.title,
@@ -492,13 +492,13 @@
 			exam_question.layout,
 			exam_question.path_img,
 			exam_question.path_listen
-			FROM
-			exam_question_log_wrongs
-			Left Join exam_question ON exam_question_log_wrongs.question_id =
-			exam_question.id
-			WHERE
-			exam_question_log_wrongs.creater_code = __creater_code__
-			order by exam_question.id limit 50
+			FROM 
+			exam_question_log_wrongs 
+			Left Join exam_question ON exam_question_log_wrongs.question_id = exam_question.id
+			WHERE 
+			exam_question_log_wrongs.creater_code = __creater_code__ 
+			order by exam_question.id limit 50 
+			]]>
 		</item>
 	</item>
 	<item ID="exam_paper_multionline">
@@ -570,7 +570,7 @@
 			
 			FROM
 			exam_paper_log
-			LEFT JOIN exam_paper_multionline ON exam_paper_log.paper_id = exam_paper_multionline.paper_id
+			INNER JOIN exam_paper_multionline ON exam_paper_log.paper_id = exam_paper_multionline.paper_id
 			LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id			
 			__WHERE__			
 			order by __ORDER__

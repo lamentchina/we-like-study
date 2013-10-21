@@ -73,7 +73,6 @@ var exam_paper_multionline = {
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [];
-		var permission = [];
 		for(var i=0;i<top.basic_user.permission.length;i++){
 			if(top.basic_user.permission[i].code=='60'){
 				permission = top.basic_user.permission[i].children;
@@ -124,7 +123,7 @@ var exam_paper_multionline = {
 			}else if(permission[i].code=='4122'){
 				config.checkbox = true;
 				theFunction = exam_paper_multionline.remove;		
-			}else if(permission[i].code=='4123'){
+			}else if(permission[i].code=='600222'){
 				theFunction = function(){
 					
 					var selected = exam_paper_multionline.grid_getSelectOne();

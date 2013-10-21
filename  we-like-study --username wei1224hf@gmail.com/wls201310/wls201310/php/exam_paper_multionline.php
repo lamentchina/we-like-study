@@ -1,7 +1,7 @@
 <?php
 class exam_paper_multionline {
         
-public static function callFunction(){
+	public static function callFunction(){
 		$function = $_REQUEST['function'];
 		$executor = $_REQUEST['executor'];
 		$session = $_REQUEST['session'];
@@ -214,7 +214,7 @@ public static function callFunction(){
     		$sql_where .= " and exam_paper_log.creater_code = '".$executor."' ";
     		$sql_total = "select count(*) as total FROM
 			exam_paper_log
-			LEFT JOIN exam_paper_multionline ON exam_paper_log.paper_id = exam_paper_multionline.paper_id
+			INNER JOIN exam_paper_multionline ON exam_paper_log.paper_id = exam_paper_multionline.paper_id
 			LEFT JOIN exam_paper ON exam_paper_log.paper_id = exam_paper.id ".$sql_where;
     	}
     	else if($session['user_type']=='30'){
@@ -355,7 +355,7 @@ public static function callFunction(){
         
 		$t_return = exam_paper::checkMyAnswers(json_decode2($json,true), $paper_id);
 		exam_paper::calculateKnowledge($t_return['answers'],$logid,$paper_id,$executor,'20');
-		exam_paper::addWrongs($t_return['answers'], $executor,'20');    
+		exam_paper::addWrongs($t_return['answers'],$logid,$executor,'20');    
 	    exam_paper::addQuestionLog($t_return['answers'],$logid,$executor);
 	    
 	    $data__exam_paper_log = array(
@@ -428,7 +428,12 @@ public static function callFunction(){
 			}
 			$sql = "update exam_paper_log set rank = '".$rank3."', status = '".$status."' where id = ".$temp['id'];
 			mysql_query($sql,$conn);
+			$sql = "update exam_question_log_wrongs set status = '40',  where paper_log_id = ".$temp['id'];
+			mysql_query($sql,$conn);
+			$sql = "update exam_subject_2_user_log set status = '40',  where paper_log_id = ".$temp['id'];
+			mysql_query($sql,$conn);			
 		}
+		
 		$sql = "update exam_paper_multionline set 
 				status = '20'
 				,count_giveup='".$count_giveup."'
@@ -715,7 +720,7 @@ public static function callFunction(){
 					,'creater_code'=>'330281-8432-04-X1--'.rand(1,9)
 					,'creater_group_code'=>'330281-8432-04-X1'
 					,'type'=>rand(1,3)
-					,'status'=>'2'
+					,'status'=>'1'
 					,'remark'=>'exam_paper_multionline'
 				);
 				$keys = array_keys($data__exam_question);

@@ -237,7 +237,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  insert into basic_parameter (code,value,reference,extend4) values ('30','统考','exam_paper_log__type','30');
  insert into basic_parameter (code,value,reference,extend4) values ('10','练习卷模式','exam_paper_log__status','10');
  insert into basic_parameter (code,value,reference,extend4) values ('20','考卷待批改','exam_paper_log__status','20');
- insert into basic_parameter (code,value,reference,extend4) values ('30','考卷未开始','exam_paper_log__status','30');
+ insert into basic_parameter (code,value,reference,extend4) values ('30','考卷未做','exam_paper_log__status','30');
  insert into basic_parameter (code,value,reference,extend4) values ('40','考卷已批改','exam_paper_log__status','40');
  insert into basic_parameter (code,value,reference,extend4) values ('90','旷考','exam_paper_log__status','90');
  insert into basic_parameter (code,value,reference,extend4) values ('91','及格','exam_paper_log__status','91');
@@ -297,7 +297,9 @@ drop table if exists basic_parameter; create table basic_parameter (
  ) comment '答题记录' ENGINE=InnoDB CHARSET=utf8 ;
  
  drop table if exists exam_question_log_wrongs; create table exam_question_log_wrongs (
-  question_id int  comment '题目编号'
+  id int primary key comment '编号'
+ ,question_id int not null comment '题目编号'
+ ,paper_log_id int not null comment '做卷日志'
  ,creater_code varchar(200)  comment '用户名'
  ,time_created timestamp default CURRENT_TIMESTAMP comment '创建时间'
  ,type int not null comment '类型'

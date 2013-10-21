@@ -167,7 +167,7 @@ class exam_paper {
 	}
 
 	private static function search($search,$executor){
-		$sql_where = " where exam_paper.type = '20' ";
+		$sql_where = " where exam_paper.type = '10' ";
 	
 		$search=json_decode2($search,true);
 		$search_keys = array_keys($search);
@@ -349,7 +349,7 @@ class exam_paper {
 		if($session['user_type']=='20'){
 			$paperlog = exam_paper::addPaperLog($paper_id,$t_return['result'],$executor);
 			exam_paper::calculateKnowledge($t_return['answers'],$paperlog['id'],$paper_id,$executor);
-			exam_paper::addWrongs($t_return['answers'], $executor);
+			exam_paper::addWrongs($t_return['answers'],$paperlog['id'], $executor);
 		}
     
 		$t_return['status']=1;
@@ -485,16 +485,20 @@ class exam_paper {
 		return $t_return;
 	}
 	
-	public static function addWrongs($answers,$executor,$type='10'){
+	public static function addWrongs($answers,$paper_log__id,$executor,$type='10'){
 		$t_return = array();
 		$conn = tools::getConn();
 		mysql_query("START TRANSACTION;",$conn);
+		$id = tools::getTableId("exam_question_log_wrongs",FALSE);
 		$status = ($type=='10')?'10':'20';
 		for($i=0;$i<count($answers);$i++){
-			if($answers[$i]['result']==0){
-				mysql_query("insert into exam_question_log_wrongs(question_id,creater_code,type,status) values ('".$answers[$i]['id']."','".$executor."','".$type."','".$status."')");
+			if($answers[$i]['result']==0){				
+				$id++;
+				$sql = "insert into exam_question_log_wrongs(id,question_id,paper_log_id,creater_code,type,status) values ('".$id."','".$answers[$i]['id']."','".$paper_log__id."','".$executor."','".$type."','".$status."')";
+				mysql_query($sql,$conn);
 			}
 		}
+		tools::updateTableId("exam_question_log_wrongs");
 		mysql_query("COMMIT;",$conn);
 		return $t_return;
 	}
@@ -887,8 +891,7 @@ class exam_paper {
 					,'id'=>$temp['id']
 					,'name'=>$temp['name']
 			);
-		}
-		
+		}		
 		
 		for($i2=0;$i2<count($a_subject);$i2++){
 			$sql_knowledge = "select * from exam_subject where type = '30' and code like '".$a_subject[$i2]['code']."-____'";
@@ -936,7 +939,7 @@ class exam_paper {
 						,'".$teacher['group_code']."'
 						,'10'
 						,'10'
-						,'exam_paper'
+						,'exam_paper__data4test'
 						,'".$a_times[$i]."'
 					)";
 				mysql_query($sql_paper,$conn);
@@ -1009,8 +1012,8 @@ class exam_paper {
 							,'".$teacher['username']."'
 							,'".$teacher['group_code']."'
 							,'".rand(1,3)."'
-							,'10'
-							,'描述啊'
+							,'1'
+							,'exam_paper__data4test'
 						)";
 					mysql_query($sql,$conn);
 					

@@ -1,104 +1,195 @@
 <?php
 class exam_question_log_wrongs {
-        
-    public static function grid($search=NULL,$page=NULL,$pagesize=NULL){
-	    if (!basic_user::checkPermission("43")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	        
-        if( (!isset($_REQUEST['search'])) || (!isset($_REQUEST['page'])) || (!isset($_REQUEST['pagesize'])) ){
-            return array(
-    		    'status'=>'1'
-    		    ,'msg'=>'ok'
-    		);
-        }
-        $search=$_REQUEST['search'];
-        $page=$_REQUEST['page'];
-        $pagesize=$_REQUEST['pagesize'];
-        
-        //数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
-        $conn = tools::getConn();
-        
-        //列表查询下,查询条件必定是SQL拼凑的
-        $sql_where = " where 1=1 ";
-        
-        $search=json_decode2($search,true);
-        $search_keys = array_keys($search);
-        for($i=0;$i<count($search);$i++){
-            if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and exam_question.title like '%".$search[$search_keys[$i]]."%' ";
-            }
-            if($search_keys[$i]=='subject_code' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and exam_question.subject_code = '".$search[$search_keys[$i]]."' ";
-            }    
-            if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and exam_question.type = '".$search[$search_keys[$i]]."' ";
-            }                               	
-        }
-        $sql_order = ' order by exam_question_log_wrongs.id desc ';
-		//有排序条件
-		if(isset($_REQUEST['sortname'])){
-			$sql_order = " order by ".$_REQUEST['sortname']." ".$_REQUEST['sortorder']." ";
-		}          
-        $data = array();
-        
-        //根据不同的用户角色,会有不同的列输出
-        if(basic_user::$userType=='10'){ 
-            //管理员角色          
-            $sql = tools::getConfigItem("exam_question_log_wrongs__grid");            
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
-            
-            $res = mysql_query($sql,$conn);            
-            while($temp = mysql_fetch_assoc($res)){
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM
-			exam_question_log_wrongs
+	
+	public static function callFunction(){
+		$function = $_REQUEST['function'];
+		$executor = $_REQUEST['executor'];
+		$session = $_REQUEST['session'];
+	
+		$t_return = array(
+				"status"=>"2"
+				,"msg"=>"access denied"
+				,"executor"=>$executor
+				,"session"=>$session
+		);
+	
+		if(trim($function) ==""){
+			//
+		}
+		else if($function =="loadConfig"){
+			$t_return = exam_question_log_wrongs::loadConfig($executor);
+		}
+		else if($function == "grid"){
+			$action = "600201";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$sortname = "exam_question_log_wrongs.time_created";
+				$sortorder = "asc";
+				if(isset($_REQUEST['sortname'])){
+					$sortname = $_REQUEST['sortname'];
+				}
+				if(isset($_REQUEST['sortorder'])){
+					$sortorder = $_REQUEST['sortorder'];
+				}
+	
+				$t_return = exam_question_log_wrongs::grid(
+						$_REQUEST['search']
+						,$_REQUEST['pagesize']
+						,$_REQUEST['page']
+						,$executor
+						,$sortname
+						,$sortorder
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="remove"){
+			$action = "600423";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_question_log_wrongs::remove(
+						$_REQUEST['ids']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}	
+		else if($function =="questions"){
+			$action = "600491";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_question_log_wrongs::questions(
+						$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="submit"){
+			$action = "600491";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_question_log_wrongs::submit(
+						$_REQUEST['paper_id']
+						,$_REQUEST['json']
+						,$executor
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+	
+		return $t_return;
+	}
+	
+	public static function loadConfig($executor) {
+		$conn = tools::getConn();
+		$config = array();
+	
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper__type' and code not in ('1','9')  order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['type'] = $data;
+	
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		if($session['user_type']=='10'||$session['user_type']=='30'){
+			$sql = "select code,extend4 as value from basic_memory where type = '4' and extend5 = 'exam_subject__code' order by code";
+		}
+		if($session['user_type']=='20'){
+			$sql = "select code,name as value from exam_subject where code in (select subject_code from exam_subject_2_group where group_code = '".$session['group_code']."'); ";
+		}
+	
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$len = strlen($temp['code']);
+			for($i=1;$i<$len/2;$i++){
+				$temp['value'] = "--".$temp['value'];
+			}
+			$data[] = $temp;
+		}
+		$config['exam_subject__code'] = $data;
+	
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper_log__type' order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['exam_paper_log__type'] = $data;
+	
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper_log__status' and code not in ('1','9')  order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['exam_paper_log__status'] = $data;
+	
+		return $config;
+	}
+	
+	private static function search($search,$executor){
+		$sql_where = " where 1=1 ";
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		$search=json_decode2($search,true);
+		$search_keys = array_keys($search);
+		for($i=0;$i<count($search);$i++){
+			if($search_keys[$i]=='title' && trim($search[$search_keys[$i]])!='' ){
+				$sql_where .= " and exam_question.title like '%".$search[$search_keys[$i]]."%' ";
+			}
+		}
+		if($session['user_type']=='20'){
+			$sql_where .= " and exam_question_log_wrongs.creater_code = '".$executor."' ";
+			$sql_where .= " and exam_question_log_wrongs.status <>'20' ";
+		}
+	
+		return $sql_where;
+	}
+	
+	public static function grid(
+			$search
+			,$pagesize
+			,$page
+			,$executor
+			,$sortname
+			,$sortorder){
+		 
+		//数据库连接口,在一次服务端访问中,数据库必定只连接一次,而且不会断开
+		$conn = tools::getConn();		 
+		$sql_where = exam_question_log_wrongs::search($search, $executor);		 
+		$sql = tools::getSQL("exam_question_log_wrongs__grid");
+		$sql_total = "select count(*) as total FROM exam_question_log_wrongs
 			Left Join exam_question ON exam_question_log_wrongs.question_id = exam_question.id ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        }
-        if(basic_user::$userType=='20'){ 
-            //学生角色
-            $sql_where .= " and exam_question_log_wrongs.creater_code = '".$_REQUEST['executor']."'";          
-            $sql = tools::getConfigItem("exam_question_log_wrongs__grid");            
-            $sql .= $sql_where." ".$sql_order." limit ".(($page-1)*$pagesize).", ".$pagesize;
-            
-            $res = mysql_query($sql,$conn);            
-            while($temp = mysql_fetch_assoc($res)){
-                $data[] = $temp;
-            }
-            
-            $sql_total = "select count(*) as total FROM 
-            exam_question_log_wrongs
-			Left Join exam_question ON exam_question_log_wrongs.question_id = exam_question.id ".$sql_where;
-            
-            $res = mysql_query($sql_total,$conn);
-            $total = mysql_fetch_assoc($res);
-        }    
-        
-        $returnData = array(
-            'Rows'=>$data,
-            'Total'=>$total['total']
-            ,'sql'=>$sql
-        );
-
-        return $returnData;
-    }
+		
+		$sql = str_replace("__WHERE__", $sql_where, $sql);
+		$sql = str_replace("__ORDER__", $sortname." ".$sortorder , $sql);
+		$sql = str_replace("__PAGESIZE__",$pagesize, $sql);
+		$sql = str_replace("__OFFSET__", $pagesize*($page-1), $sql);
+		 
+		$res = mysql_query($sql,$conn);
+		if($res==FALSE)die($sql." ".mysql_errno($conn));
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		 
+		$res = mysql_query($sql_total,$conn);
+		$total = mysql_fetch_assoc($res);
+		 
+		$returnData = array(
+				'Rows'=>$data
+				,'Total'=>$total['total']
+				,'sql'=>str_replace("\t", " ",str_replace("\n", " ", $sql))
+		);
+		 
+		return $returnData;
+	}	
         
 	public static function remove($ids=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4322")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	  	    
-	    if($ids==NULL)$ids = $_REQUEST['ids'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 		$conn = tools::getConn();
 		$ids = explode(",", $ids);
 		for($i=0;$i<count($ids);$i++){
@@ -112,35 +203,11 @@ class exam_question_log_wrongs {
 		);
 	}
 	
-    public static function loadConfig() {
-        $conn = tools::getConn();
-        $config = array();	
-        
-        $sql = "select code,extend4 as value from basic_memory where type = '4' and extend5 = 'exam_subject__code'  order by code";
-        if(basic_user::$userGroup=='20'){
-           $sql = "select code,extend4 as value from basic_memory where type = '4' and extend5 = 'exam_subject__code' and code in (select subject_code from exam_subject_2_group where group_code = '".basic_user::$userGroup."' ) order by code"; 
-        }
-        $res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['exam_subject__code'] = $data;        
-
-	    return $config;		
-	}
-	
-	public static function questions() {
-	    if (!basic_user::checkPermission("4390")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
+	public static function questions($executor) {	    
 	    $conn = tools::getConn();
 	    
-	    $sql = tools::getConfigItem("exam_question_log_wrongs__questions");
-	    $sql = str_replace("__creater_code__", "'".$_REQUEST['executor']."'", $sql);
+	    $sql = tools::getSQL("exam_question_log_wrongs__questions");
+	    $sql = str_replace("__creater_code__", "'".$executor."'", $sql);
 	    //echo $sql;
 	    $res = mysql_query($sql,$conn);
 		$data = array();

@@ -51,20 +51,26 @@ var exam_question_log_wrongs = {
 		};
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
-		var permission = [];
-		for(var i=0;i<top.basic_user.permission.length;i++){
-			if(top.basic_user.permission[i].code=='43'){
-				permission = top.basic_user.permission[i].children;							
+		var permission = top.basic_user.permission;
+		for(var i=0;i<permission.length;i++){
+			if(permission[i].code=='60'){
+				permission = permission[i].children;
+				for(var j=0;j<permission.length;j++){
+					if(permission[j].code=='6004'){
+						permission = permission[j].children;
+					}
+				}				
 			}
 		}
+		
 		for(var i=0;i<permission.length;i++){
 			var theFunction = function(){};
-			if(permission[i].code=='4301'){
+			if(permission[i].code=='600401'){
 				theFunction = exam_question_log_wrongs.search;
-			}if(permission[i].code=='4322'){
+			}if(permission[i].code=='600423'){
 				config.checkbox = true;
 				theFunction = exam_question_log_wrongs.remove;
-			}else if(permission[i].code=='4390'){
+			}else if(permission[i].code=='600491'){
 				theFunction = function(){
 
 					top.$.ligerDialog.open({ 

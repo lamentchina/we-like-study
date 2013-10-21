@@ -111,7 +111,7 @@ class exam_subject_2_user_log {
 		$session = basic_user::getSession($executor);
 		$session = $session['data'];
 		if($session['user_type']=='20'){
-			$sql_where .= " and exam_subject_2_user_log.creater_code = '".$executor."' limit 0,200000 ";
+			$sql_where .= " and exam_subject_2_user_log.creater_code = '".$executor."' and exam_subject_2_user_log.status <> '20' limit 0,200000 ";
 		}
 		else if($session['user_type']=='30'){
 			//$sql_where .= " and exam_paper.creater_code = '".$executor."'";
