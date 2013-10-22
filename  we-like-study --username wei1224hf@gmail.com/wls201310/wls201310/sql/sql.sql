@@ -190,7 +190,6 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,count_subjective int not null default '0' comment '主观题数量'
  ,count_objective int not null default '0' comment '客观题数量'
  ,cent_top DECIMAL(6,2) not null default '0' comment '最高分'
- ,cent_avg DECIMAL(6,2) not null default '0' comment '平均分'
  ,directions text  comment '说明'
  ,id int primary key comment '编号'
  ,creater_code varchar(200) not null comment '创建者'
@@ -208,7 +207,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  insert into basic_parameter (code,value,reference,extend4) values ('20','多人考卷','exam_paper__type','20');
  insert into basic_parameter (code,value,reference,extend4) values ('30','统考','exam_paper__type','30');
  insert into basic_parameter (code,value,reference,extend4) values ('10','正常','exam_paper__status','10');
- insert into basic_parameter (code,value,reference,extend4) values ('20','关闭','exam_paper__status','20');
+ insert into basic_parameter (code,value,reference,extend4) values ('20','组卷','exam_paper__status','20');
  
  drop table if exists exam_paper_log; create table exam_paper_log (
   mycent DECIMAL(6,2) not null default '0' comment '我的得分'
@@ -273,6 +272,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'
  ,type int not null comment '类型'
+ ,type2 int not null comment '类型类型'
  ,status int not null comment '状态'
  ,remark varchar(200)  comment '备注'
  ) comment '题目' ENGINE=InnoDB CHARSET=utf8 ;
@@ -286,6 +286,11 @@ drop table if exists basic_parameter; create table basic_parameter (
  insert into basic_parameter (code,value,reference,extend4) values ('7','题纲','exam_question__type','7');
  insert into basic_parameter (code,value,reference,extend4) values ('1','水平','exam_question__layout','1');
  insert into basic_parameter (code,value,reference,extend4) values ('2','垂直','exam_question__layout','2');
+ insert into basic_parameter (code,value,reference,extend4) values ('1','可用','exam_question__status','1');
+ insert into basic_parameter (code,value,reference,extend4) values ('2','不可用','exam_question__status','2');
+ insert into basic_parameter (code,value,reference,extend4) values ('1','完型填空','exam_question__type2','1');
+ insert into basic_parameter (code,value,reference,extend4) values ('2','阅读理解','exam_question__type2','2');
+ insert into basic_parameter (code,value,C164,extend4) values ('3','短文阅读','exam_question__type2','3');
  
  drop table if exists exam_question_log; create table exam_question_log (
   paper_log_id int  comment '试卷日志'
