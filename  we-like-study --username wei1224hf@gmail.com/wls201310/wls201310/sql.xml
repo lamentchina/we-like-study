@@ -257,8 +257,7 @@
 			select extend1 as id from basic_memory where type = 2 and code = __code__
 		</item>
 		<item ID="basic_memory__id_add">
-			update basic_memory set extend1 = (extend1 + 1) where type = 2 and code =
-			__code__
+			update basic_memory set extend1 = (extend1 + 1) where type = 2 and code = __code__
 		</item>
 		<item ID="basic_memory__id_update">
 			update basic_memory set extend1 = ((select max(id) from
@@ -283,6 +282,7 @@
 			exam_paper.count_question,
 			exam_paper.count_subjective,
 			exam_paper.count_objective,
+			exam_paper.cent_top,
 			exam_paper.id,
 			exam_paper.creater_code,
 			exam_paper.creater_group_code,
