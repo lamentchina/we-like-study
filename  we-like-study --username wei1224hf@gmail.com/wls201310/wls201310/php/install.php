@@ -36,7 +36,14 @@ class install{
 		if(!is_writable($file)){
 			$t_return["msg"] .= "<br/>". "File ".$file." is not writable, change it's mode to 777";
 		}
-		
+		$file = "../sql/sql.sql";
+		if(!is_writable($file)){
+			$t_return["msg"] .= "<br/>". "File ".$file." is not writable, change it's mode to 777";
+		}
+		$file = "../sql/data.sql";
+		if(!is_writable($file)){
+			$t_return["msg"] .= "<br/>". "File ".$file." is not writable, change it's mode to 777";
+		}
 		$file = "../file/upload/paper";
 		if(!is_writable($file)){
 			$t_return["msg"] .= "<br/>"."Folder ".$file." is not writable, change it's mode to 777";
@@ -59,8 +66,7 @@ class install{
 		}
 		
 		return $t_return;
-	}
-	
+	}	
 
 	public static function check_db(){
 		$t_return = array("status"=>"2","msg"=>"");
@@ -340,10 +346,11 @@ else if($functionName=="exam_paper_multionline__close_ids"){
 else if($functionName=="phpinfo"){
 	phpinfo();
 }
-else if($functionName=="test2"){
+else if($functionName=="php_test"){
 	echo date('Y-m-d',strtotime("2011-01-01")+86400);
+	print_r(explode("a","bbb"));
 }
-else if($functionName=="test"){
+else if($functionName=="toolsTest"){
 	$list = array(
 		array(
 			'code'=>'10'
@@ -367,6 +374,9 @@ else if($functionName=="test"){
 			
 	);
 	$data = tools::list2Tree($list);
+}
+else if($functionName=='paperImport'){
+	$data = exam_paper::importExcel("../file/upload/photo/highschool/example_choice.xls", "admin");
 }
 
 

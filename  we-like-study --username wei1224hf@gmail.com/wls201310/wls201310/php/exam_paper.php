@@ -66,10 +66,10 @@ class exam_paper {
 			}
 		}
 		else if($function =="remove"){
-			$action = "120223";
+			$action = "600123";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = exam_paper::remove(
-						$_REQUEST['usernames']
+						$_REQUEST['ids']
 						,$executor
 				);
 			}else{
@@ -111,6 +111,16 @@ class exam_paper {
 				$t_return['action'] = $action;
 			}
 		}
+		else if($function =="submit"){
+			$action = "600190";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$file = "../file/upload/paper/".rand(10000, 99999)."_".$_FILES["file"]["name"];
+				move_uploaded_file($_FILES["file"]["tmp_name"],$file);
+				$t_return = exam_paper::importExcel($file,$executor);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}		
 
 		return $t_return;
 	}
@@ -119,13 +129,21 @@ class exam_paper {
 		$conn = tools::getConn();
 		$config = array();
 	
-		$sql = "select code,value from basic_parameter where reference = 'exam_paper__type' and code not in ('1','9')  order by code";
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper__type' order by code";
 		$res = mysql_query($sql,$conn);
 		$data = array();
 		while($temp = mysql_fetch_assoc($res)){
 			$data[] = $temp;
 		}
-		$config['type'] = $data;
+		$config['exam_paper__type'] = $data;
+		
+		$sql = "select code,value from basic_parameter where reference = 'exam_paper__status'  order by code";
+		$res = mysql_query($sql,$conn);
+		$data = array();
+		while($temp = mysql_fetch_assoc($res)){
+			$data[] = $temp;
+		}
+		$config['exam_paper__status'] = $data;		
 	
 		$session = basic_user::getSession($executor);
 		$session = $session['data'];
@@ -145,24 +163,8 @@ class exam_paper {
 			}
 			$data[] = $temp;
 		}
-		$config['exam_subject__code'] = $data;
-	
-		$sql = "select code,value from basic_parameter where reference = 'exam_paper__status' order by code";
-		$res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['status'] = $data;
-	
-		$sql = "select code,value from basic_parameter where reference = 'exam_question__type' and code not in ('1','9')  order by code";
-		$res = mysql_query($sql,$conn);
-		$data = array();
-		while($temp = mysql_fetch_assoc($res)){
-			$data[] = $temp;
-		}
-		$config['exam_question__type'] = $data;
-	
+		$config['subject_code'] = $data;
+		
 		return $config;
 	}
 
@@ -177,10 +179,22 @@ class exam_paper {
             }
             if($search_keys[$i]=='subject_code' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and subject_code = '".$search[$search_keys[$i]]."' ";
-            }    
+            } 
+            if($search_keys[$i]=='time_created__big' && trim($search[$search_keys[$i]])!='' ){
+            	$sql_where .= " and time_created <= '".$search[$search_keys[$i]]."' ";
+            }
+            if($search_keys[$i]=='time_created__small' && trim($search[$search_keys[$i]])!='' ){
+            	$sql_where .= " and time_created >= '".$search[$search_keys[$i]]."' ";
+            }                           
+            if($search_keys[$i]=='creater_code' && trim($search[$search_keys[$i]])!='' ){
+                $sql_where .= " and creater_code = '".$search[$search_keys[$i]]."' ";
+            }  
+            if($search_keys[$i]=='creater_group_code' && trim($search[$search_keys[$i]])!='' ){
+            	$sql_where .= " and creater_group_code = '".$search[$search_keys[$i]]."' ";
+            }            
             if($search_keys[$i]=='type' && trim($search[$search_keys[$i]])!='' ){
-                $sql_where .= " and type = '".$search[$search_keys[$i]]."' ";
-            }    
+            	$sql_where .= " and type = '".$search[$search_keys[$i]]."' ";
+            }              
             if($search_keys[$i]=='status' && trim($search[$search_keys[$i]])!='' ){
                 $sql_where .= " and status = '".$search[$search_keys[$i]]."' ";
             } 
@@ -239,14 +253,6 @@ class exam_paper {
     }
         
 	public static function remove($ids=NULL,$executor=NULL){
-	    if (!basic_user::checkPermission("4022")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	    
-	    if($ids==NULL)$ids = $_REQUEST['ids'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
 		$conn = tools::getConn();
 		$ids = explode(",", $ids);
 		for($i=0;$i<count($ids);$i++){
@@ -586,33 +592,24 @@ class exam_paper {
 		);        
 	} 
 	
-	public static $phpexcel = null;
+	public static function formatStr($str){
+		if($str==NULL)return NULL;
+		$str = str_replace("\n", "<br/>", $str);
+        $str = str_replace("\r", "<br/>", $str);
+        $str = str_replace("'", "&acute;", $str);
+        $str = str_replace("\"", "&quot;", $str);
+        return $str;
+	} 
 	
-	public static function upload(){
-		$file = "";
-		if(!isset($_REQUEST['dfile'])){		        
-			if (($_FILES["file"]["size"] > 2000000)){
-				exit();
-			}
-			if ($_FILES["file"]["error"] > 0){            
-				exit();
-			}	
-			
-			/*
-			if( ('application/vnd.ms-excel'!=$_FILES['file']['type']) && ('application/octet-stream'!=$_FILES['file']['type']) ){
-				return array(
-					'status'=>'2'
-					,'type'=>$_FILES['file']['type']
-				);            
-			}
-			*/
-			
-			$file = "../file/upload/paper/".rand(10000, 99999)."_".$_FILES["file"]["name"];
-			move_uploaded_file($_FILES["file"]["tmp_name"],$file);  
-		}else{
-			$file = "../file/upload/paper/".$_REQUEST['dfile'];
-		}
-        
+	
+	public static $phpexcel = null;	
+	public static function importExcel($file,$executor){  
+		$conn = tools::getConn();
+		$conn2 = tools::getConn(TRUE);
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+		tools::readIl8n();
+		    
         include_once '../libs/phpexcel/Classes/PHPExcel.php';
         include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
         include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
@@ -620,106 +617,239 @@ class exam_paper {
         $PHPReader->setReadDataOnly(true);
         $phpexcel = $PHPReader->load($file);
         exam_paper::$phpexcel = $phpexcel;
-        
-        $conn = tools::getConn();
-        $currentSheet = $phpexcel->getSheetByName('exam_paper');
+
+        $sheetname = "exam_paper";
+        $currentSheet = $phpexcel->getSheetByName($sheetname);
 	    if($currentSheet==null){
 	        return array(
-	             'msg'=>'Missing sheet exam_paper, check your excel'
+	             'msg'=>tools::$LANG['basic_normal']['missingSheet']." ".$sheetname
 	            ,'status'=>'2'
 	        );
 	    }        
-        $paper = array(
-             'id'=>tools::getTableId("exam_paper")
-            ,'subject_code'=>$currentSheet->getCell('A2')->getValue()
+
+	    $subject_code = $currentSheet->getCell('A2')->getValue();
+	    $sql__check_paper_subject = "select code from exam_subject where code like '".$subject_code."%' order by code ";;
+	    $arr__subject = array();
+	    $res = mysql_query($sql__check_paper_subject,$conn2);
+	    while ($temp = mysql_fetch_assoc($res)){
+	    	$arr__subject[] = $temp['code'];
+	    }	    
+	    if(count($arr__subject)==0){
+	    	return array(
+    			'msg'=>tools::$LANG['exam_paper']['no_such_subject']." ".$subject_code
+    			,'status'=>'2'
+	    	);
+	    }
+
+	    $sql__question_type2 = "select code from basic_parameter where reference = 'exam_question__type2'";
+	    $arr__question_type2 = array();
+	    $res = mysql_query($sql__question_type2,$conn2);
+	    while ($temp = mysql_fetch_assoc($res)){
+	    	$arr__question_type2[] = $temp['code'];
+	    }   
+	    
+	    $exam_paper__id = tools::getTableId("exam_paper",TRUE);
+        $data__exam_paper = array(
+             'id'=>$exam_paper__id
+            ,'subject_code'=>$subject_code
             ,'title'=>$currentSheet->getCell('B2')->getValue()
             ,'cost'=>$currentSheet->getCell('C2')->getValue()
-            ,'type'=>'20'
-            ,'status'=>'10'
+            ,'type'=>10
+            ,'status'=>10
             ,'cent'=>0
             ,'cent_subjective'=>0
             ,'cent_objective'=>0
             ,'count_question'=>0
             ,'count_subjective'=>0
             ,'count_objective'=>0
-            ,'creater_code'=>$_REQUEST['executor']
-            ,'creater_group_code'=> basic_user::$userGroup
+            ,'creater_code'=>$executor
+            ,'creater_group_code'=>$session['group_code']
         );
 		
-        $currentSheet = $phpexcel->getSheetByName('exam_question');
+        $sheetname = "exam_question";
+        $currentSheet = $phpexcel->getSheetByName($sheetname);
 	    if($currentSheet==null){
 	        return array(
-	             'msg'=>'Missing sheet exam_question, check your excel'
+	             'msg'=>tools::$LANG['basic_normal']['missingSheet']." ".$sheetname
 	            ,'status'=>'2'
 	        );
-	    }            
-        $row = $currentSheet->getHighestRow();
-        
+	    }
+	    
+        $row = $currentSheet->getHighestRow();        
         $questions = array();
+        $index = 0;
+        $exam_question__id = tools::getTableId("exam_question",FALSE);
         for($i=2;$i<=$row;$i++){
-            $title = $currentSheet->getCell('G'.$i)->getValue();
-            $title = str_replace("\n", "<br/>", $title);
-            $title = str_replace("\r", "<br/>", $title);
-            $title = str_replace("'", "&acute;", $title);
-            $title = str_replace("\"", "&quot;", $title);
+            $index ++;
+            $index_ = $currentSheet->getCell('A'.$i)->getValue();
+            if($index_==NULL || !is_numeric($index_) || ($index_*1)!=$index ){
+            	return array(
+            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",A"
+            			,'status'=>'2'
+            	);
+            }
+            
             $id_parent = $currentSheet->getCell('B'.$i)->getValue();
-            if($id_parent==NULL)$id_parent = '0';
-            if($id_parent!='0'){
+            if($id_parent==NULL){
+            	$id_parent = 0;
+            }else{
+            	if($id_parent*1 > count($questions)){
+            		return array(
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",B"
+            				,'status'=>'2'
+            		);
+            	}
                 $id_parent = $questions[$id_parent-$questions[0]['index']]['id'];
             }
-            $option_length = $currentSheet->getCell('H'.$i)->getValue();
-            if(!is_numeric($option_length))$option_length = '0';
-            $difficulty = $currentSheet->getCell('S'.$i)->getValue();
-            if(!is_numeric($difficulty))$difficulty = '0';     
+                 
             $cent = $currentSheet->getCell('C'.$i)->getValue();
-            if(!is_numeric($cent))$cent = '0';        
-            $layout = $currentSheet->getCell('D'.$i)->getValue();
-            if($layout!='1'&&$layout!='2')$layout = '0';                             
-            $question = array(
-                 'id'=>tools::getTableId("exam_question")
+            if($cent==NULL){
+            	$cent = 0;
+            }else{
+            	if(!is_numeric($cent)){
+            		return array(
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",C"
+            				,'status'=>'2'
+            		);
+            	}
+            }
+            
+            $type2 = $currentSheet->getCell('D'.$i)->getValue();
+            if($type2==NULL){
+            	$type2 = 0;
+            }else{
+            	if(!in_array($type2, $arr__question_type2)){
+            		return array(
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",D"
+            				,'status'=>'2'
+            		);
+            	}
+            }
+            
+            $type = $currentSheet->getCell('E'.$i)->getValue();
+            if( ($type==NULL) || !in_array($type, array('1','2','3','5','6','7')) ){
+            	return array(
+            			'msg'=>tools::$LANG['normal']['cellError'].": ".$row.",E"
+            			,'status'=>'2'
+            	);
+            }           
+            
+            $exam_question__subject = $currentSheet->getCell('F'.$i)->getValue();
+            if($exam_question__subject!=$subject_code){
+            	return array(
+            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",F"
+            			,'status'=>'2'
+            	);
+            }
+            
+            $title = $currentSheet->getCell('G'.$i)->getValue();
+            $title = exam_paper::formatStr($title); 
+            
+            $option_length = $currentSheet->getCell('H'.$i)->getValue();
+            if($option_length==NULL){
+            	$option_length = 0;
+            }else{
+            	if(!is_numeric($option_length)){
+            		return array(
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",H"
+            				,'status'=>'2'
+            		);
+            	}
+            }      
+
+            $option_1 = $currentSheet->getCell('I'.$i)->getValue();
+            $option_1 = exam_paper::formatStr($option_1);
+            $option_2 = $currentSheet->getCell('J'.$i)->getValue();
+            $option_2 = exam_paper::formatStr($option_2);
+            $option_3 = $currentSheet->getCell('K'.$i)->getValue();
+            $option_3 = exam_paper::formatStr($option_3);
+            $option_4 = $currentSheet->getCell('L'.$i)->getValue();
+            $option_4 = exam_paper::formatStr($option_4);
+            $option_5 = $currentSheet->getCell('M'.$i)->getValue();
+            $option_5 = exam_paper::formatStr($option_5);
+            $option_6 = $currentSheet->getCell('N'.$i)->getValue();
+            $option_6 = exam_paper::formatStr($option_6);
+            $option_7 = $currentSheet->getCell('O'.$i)->getValue();
+            $option_7 = exam_paper::formatStr($option_7);
+            
+            $answer = $currentSheet->getCell('P'.$i)->getValue();
+            $answer = exam_paper::formatStr($answer);       
+            $description = $currentSheet->getCell('Q'.$i)->getValue();
+            $description = exam_paper::formatStr($description);                      
+            
+            $knowledge = $currentSheet->getCell('R'.$i)->getValue();
+            if(in_array($type,array('1','2','3'))){
+            	$arr__knowledge = explode(",", $knowledge);
+            	for($i2=0;$i2<count($arr__knowledge);$i2++){
+            		$k = $arr__knowledge[$i2];
+            		if(!in_array($k, $arr__subject)){
+            			return array(
+            					'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",R"
+            					,'status'=>'2'
+            			);
+            		}
+            	}
+            }  
+            
+            $difficulty = $currentSheet->getCell('S'.$i)->getValue();
+            if($difficulty==NULL){
+            	$difficulty = 0;
+            }else{
+            	if(!is_numeric($difficulty)){
+            		return array(
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",S"
+            				,'status'=>'2'
+            		);
+            	}
+            }            
+            
+            $exam_question__id ++;
+            $data__exam_question = array(
+                 'id'=>$exam_question__id
                 ,'id_parent'=>$id_parent
                 ,'cent'=>$cent
-                ,'layout'=>$layout
-                ,'type'=>$currentSheet->getCell('E'.$i)->getValue()
-                ,'subject_code'=>trim($currentSheet->getCell('F'.$i)->getValue())
+            	,'type2'=>$type2
+                ,'type'=>$type
+                ,'subject_code'=>$exam_question__subject
                 ,'title'=>$title
                 ,'option_length'=>$option_length
-                ,'option_1'=>str_replace("'", "&acute;", $currentSheet->getCell('I'.$i)->getValue())
-                ,'option_2'=>str_replace("'", "&acute;", $currentSheet->getCell('J'.$i)->getValue())
-                ,'option_3'=>str_replace("'", "&acute;", $currentSheet->getCell('K'.$i)->getValue())
-                ,'option_4'=>str_replace("'", "&acute;", $currentSheet->getCell('L'.$i)->getValue())
-                ,'option_5'=>str_replace("'", "&acute;", $currentSheet->getCell('M'.$i)->getValue())
-                ,'option_6'=>str_replace("'", "&acute;", $currentSheet->getCell('N'.$i)->getValue())
-                ,'option_7'=>str_replace("'", "&acute;", $currentSheet->getCell('O'.$i)->getValue())
-                ,'answer'=>$currentSheet->getCell('P'.$i)->getValue()
-                ,'description'=>$currentSheet->getCell('Q'.$i)->getValue()
-                ,'knowledge'=>$currentSheet->getCell('R'.$i)->getValue()
+                ,'option_1'=>$option_1
+                ,'option_2'=>$option_2
+                ,'option_3'=>$option_3
+                ,'option_4'=>$option_4
+                ,'option_5'=>$option_5
+                ,'option_6'=>$option_6
+                ,'option_7'=>$option_7
+                ,'answer'=>$answer
+                ,'description'=>$description
+                ,'knowledge'=>$knowledge
                 ,'difficulty'=>$difficulty
                 ,'path_listen'=>$currentSheet->getCell('T'.$i)->getValue()
                 ,'path_img'=>$currentSheet->getCell('U'.$i)->getValue()
-                ,'paper_id'=>$paper['id']
+                ,'paper_id'=>$exam_paper__id
                 ,'index'=>$currentSheet->getCell('A'.$i)->getValue()
             );
             
-            //TODO 内容,格式判断
-            if($question['type']=='1'||$question['type']=='2'||$question['type']=='3'){
-                $paper['count_objective'] ++;
-                $paper['count_question'] ++;
-                $paper['cent'] += $question['cent'];
-                $paper['cent_objective'] += $question['cent'];
-            }else if($question['type']=='4'||$question['type']=='6'){
-                $paper['count_subjective'] ++;
-                $paper['count_question'] ++;
-                $paper['cent'] += $question['cent'];
-                $paper['cent_subjective'] += $question['cent'];
+            if(in_array($type,array('1','2','3'))){
+                $data__exam_paper['count_objective'] ++;
+                $data__exam_paper['count_question'] ++;
+                $data__exam_paper['cent'] += $data__exam_question['cent'];
+                $data__exam_paper['cent_objective'] += $data__exam_question['cent'];
+            }
+            else if(in_array($type,array('4','6'))){
+                $data__exam_paper['count_subjective'] ++;
+                $data__exam_paper['count_question'] ++;
+                $data__exam_paper['cent'] += $data__exam_question['cent'];
+                $data__exam_paper['cent_subjective'] += $data__exam_question['cent'];
             }  
 
-            $questions[] = $question;
+            $questions[] = $data__exam_question;
         }   
         
-        unset($question['index']);
-        $keys = array_keys($question);
+        unset($data__exam_question['index']);
+        $keys = array_keys($data__exam_question);
         $keys = implode(",",$keys);
+        mysql_query("START TRANSACTION;",$conn);
         for($i=0;$i<count($questions);$i++){
             unset($questions[$i]['index']);
             $values = array_values($questions[$i]);
@@ -727,6 +857,7 @@ class exam_paper {
             $sql_q = "insert into exam_question (".$keys.") values ('".$values."')";
             $res = mysql_query($sql_q,$conn);
             if($res==FALSE){
+            	mysql_query("ROLLBACK;",$conn);
         		return array(
         		     'status'=>'2'
         		    ,'msg'=>"question wrong , line ".$i
@@ -736,26 +867,31 @@ class exam_paper {
             }
         }
         
-        $keys = array_keys($paper);
+        $keys = array_keys($data__exam_paper);
         $keys = implode(",",$keys);
-        $values = array_values($paper);
+        $values = array_values($data__exam_paper);
         $values = implode("','",$values);    
         $sql = "insert into exam_paper (".$keys.") values ('".$values."')";
         $res = mysql_query($sql,$conn);
-        if($res==false){
-            $msg = mysql_error($conn);
-            mysql_query("delete from exam_question where paper_id = ".$paper['id'],$conn);
-    		return array(
-    		     'status'=>'2'
-    		    ,'msg'=>$msg
-    		    ,'sql'=>$sql
-    		);
+        if($res==FALSE){
+        	mysql_query("ROLLBACK;",$conn);
+        	return array(
+        			'status'=>'2'
+        			,'msg'=>"question wrong , line ".$i
+        			,'sql_q'=>$sql_q
+        			,'error'=>mysql_error()
+        	);
         }
+
+        mysql_query("COMMIT;",$conn);
+        
+        tools::updateTableId("exam_paper");
+        tools::updateTableId("exam_question");
         
 		return array(
 		     'status'=>'1'
 		    ,'msg'=>"ok"
-		    ,'paper_id'=>$paper['id']
+		    ,'paper_id'=>$data__exam_paper['id']
 		);
 	}
 	
@@ -905,44 +1041,32 @@ class exam_paper {
 			for($i=0;$i<count($a_times);$i++){
 				$exam_paper__id++;
 				$teacher = $a_teachers[rand(0,(count($a_teachers)-1))];
-				$sql_paper = "	insert into exam_paper (
-						subject_code
-						,title
-						,cost
-						,cent
-						,cent_subjective
-						,cent_objective
-						,count_question
-						,count_subjective
-						,count_objective	
-						,directions
-						,id
-						,creater_code
-						,creater_group_code
-						,type
-						,status
-						,remark
-						,time_created
-					) values (
-						'".$a_subject[$i2]['code']."'
-						,'模拟试卷".$a_times[$i]."--".$a_subject[$i2]['code']."'
-						,'".rand(0, 10)."'
-						,'100'
-						,'100'
-						,'0'
-						,'50'
-						,'50'
-						,'0'
-						,'试卷说明'
-						,'".$exam_paper__id."'
-						,'".$teacher['username']."'
-						,'".$teacher['group_code']."'
-						,'10'
-						,'10'
-						,'exam_paper__data4test'
-						,'".$a_times[$i]."'
-					)";
-				mysql_query($sql_paper,$conn);
+				$data__exam_paper = array(
+						'subject_code'=>$a_subject[$i2]['code']
+						,'title'=>"模拟试卷".$a_times[$i]."--".$a_subject[$i2]['code']
+						,'cost'=>rand(0, 10)
+						,'cent'=>100
+						,'cent_subjective'=>100
+						,'cent_objective'=>0
+						,'count_question'=>50
+						,'count_subjective'=>50
+						,'count_objective'=>0	
+						,'directions'=>"试卷说明,说明内容可能很长"
+						,'id'=>$exam_paper__id
+						,'creater_code'=>$teacher['username']
+						,'creater_group_code'=>$teacher['group_code']
+						,'type'=>10
+						,'status'=>10
+						,'remark'=>"exam_paper__data4test"
+						,'time_created'=>$a_times[$i]
+				);
+				$keys = array_keys($data__exam_paper);
+				$keys = implode(",",$keys);
+				$values = array_values($data__exam_paper);
+				$values = implode("','",$values);
+				$sql = "insert into exam_paper (".$keys.") values ('".$values."')";
+				mysql_query($sql,$conn);
+				$total_++;
 								
 				for($i3=0;$i3<50;$i3++){
 					$exam_question__id++;
@@ -970,54 +1094,38 @@ class exam_paper {
 					}
 					$question_knowledge = substr($question_knowledge, 0,strlen($question_knowledge)-1);
 					$question_path_img = (rand(0,100)>50)?"0":"../file/test/a".rand(1,10).".jpg";
-					$sql = "insert into exam_question(
-							 subject_code
-							,cent
-							,title
-							,option_length
-							,option_1
-							,option_2
-							,option_3
-							,option_4
-							,answer
-							,description
-							,knowledge
-							,difficulty
-							,path_img
-							,layout
-							,paper_id
-							,id
-							,creater_code
-							,creater_group_code
-							,type
-							,status
-							,remark	
-					) values (
-							 '".$a_subject[$i2]['code']."'
-							,'2'
-							,'".$question_title."'
-							,'4'
-							,'".$question_option."A'
-							,'".$question_option."B'
-							,'".$question_option."C'
-							,'".$question_option."D'
-							,'A'
-							,'".$question_description."'
-							,'".$question_knowledge."'
-							,'".rand(0, 4)."'
-							,'".$question_path_img."'
-							,'2'
-							,'".$exam_paper__id."'
-							,'".$exam_question__id."'
-							,'".$teacher['username']."'
-							,'".$teacher['group_code']."'
-							,'".rand(1,3)."'
-							,'1'
-							,'exam_paper__data4test'
-						)";
-					mysql_query($sql,$conn);
+					$data__exam_question = array(
+						'subject_code'=>$a_subject[$i2]['code']
+						,'cent'=>2
+						,'title'=>$question_title
+						,'option_length'=>4
+						,'option_1'=>$question_option."A"
+						,'option_2'=>$question_option."B"
+						,'option_3'=>$question_option."C"
+						,'option_4'=>$question_option."D"
+						,'answer'=>'A'
+						,'description'=>$question_description
+						,'knowledge'=>$question_knowledge
+						,'difficulty'=>rand(0, 4)
+						,'path_img'=>$question_path_img
+						,'layout'=>2
+						,'paper_id'=>$exam_paper__id
+						,'id'=>$exam_question__id
+						,'creater_code'=>$teacher['username']
+						,'creater_group_code'=>$teacher['group_code']
+						,'type'=>rand(1,3)
+						,'status'=>1
+						,'remark'=>'exam_paper__data4test'
+					);
 					
-					$total_++;
+					$keys = array_keys($data__exam_question);
+					$keys = implode(",",$keys);
+					$values = array_values($data__exam_question);
+					$values = implode("','",$values);
+					$sql = "insert into exam_question (".$keys.") values ('".$values."')";
+					mysql_query($sql,$conn);
+					$total_++;					
+
 					if($total_>=$total){
 						mysql_query("COMMIT;",$conn);
 						$t_return['msg']="Total ".$total_;
