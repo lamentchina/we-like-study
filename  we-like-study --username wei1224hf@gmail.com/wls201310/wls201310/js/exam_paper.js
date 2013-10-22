@@ -26,32 +26,47 @@ var exam_paper = {
 
 	,grid: function(){
 		var config = {
-				id: 'exam_paper__grid'
-				,height:'100%'
-				,columns: [
-				     { display: getIl8n("exam_paper","title"), name: 'title', width: 150, align: 'left' }
-				    ,{ display: getIl8n("exam_paper","subject_code"), name: 'subject_code', hide:true }
-				    ,{ display: getIl8n("exam_paper","subject_name"), name: 'subject_name', width: 100 }				    
-				    ,{ display: getIl8n("exam_paper","cost"), name: 'cost', width: 50 }
-				    ,{ display: getIl8n("exam_paper","cent"), name: 'cent', width: 50 }
-				    ,{ display: getIl8n("exam_paper","time_created"), name: 'time_created', width: 100 }
-				    ,{ display: getIl8n("exam_paper","count_question"), name: 'count_question', width: 100 }
-
-				    ,{ display: getIl8n("exam_paper","status"), name: 'status', isSort: false, hide:true  }
-				    ,{ display: getIl8n("exam_paper","status"), name: 'statuse_', isSort: false, width: 100, hide:true }
-				    ,{ display: getIl8n("exam_paper","type"), name: 'type', isSort: false, hide:true  }
-				    ,{ display: getIl8n("exam_paper","type"), name: 'type_', isSort: false, width: 100 }
-			    
-				],  pageSize:20 ,rownumbers:true
-				,parms : {
-	                executor: top.basic_user.loginData.username
-	                ,session: top.basic_user.loginData.session     
-	                ,search: "{}"
-				},
-				url: config_path__exam_paper__grid,
-				method: "POST",				
-				toolbar: { items: []}
+			id: 'exam_paper__grid'
+			,height:'100%'
+			,columns: [
+			     { display: getIl8n("exam_paper","title"), name: 'title', width: 150, align: 'left' }
+			    ,{ display: getIl8n("exam_paper","subject_name"), name: 'subject_name', width: 100 }				    
+			    ,{ display: getIl8n("exam_paper","cent"), name: 'cent', width: 50 }
+			    ,{ display: getIl8n("exam_paper","time_created"), name: 'time_created', width: 100 }
+			    ,{ display: getIl8n("exam_paper","count_question"), name: 'count_question', width: 100 }   
+			    ,{ display: getIl8n("exam_paper","cent_top"), name: 'cent_top', isSort: false, width: 100 }
+			    ,{ display: getIl8n("exam_paper","count_used"), name: 'count_used', isSort: false, width: 100 }
+			],  pageSize:20 ,rownumbers:true
+			,parms : {
+                executor: top.basic_user.loginData.username
+                ,session: top.basic_user.loginData.session     
+                ,search: "{}"
+			},
+			url: config_path__exam_paper__grid,
+			method: "POST",				
+			toolbar: { items: []}
 		};
+		
+		if(top.basic_user.loginData.type=='20'){
+			var otherColumns = [
+				 { display: getIl8n("exam_paper","cost"), name: 'cost', width: 50 }      
+			                   ];
+			for(var i=0;i<otherColumns.length;i++){
+				config.columns.push( otherColumns[i] );
+			}
+		}else if(top.basic_user.loginData.type=='30'){
+			var otherColumns = [
+				 { display: getIl8n("status"), name: 'statuse_', isSort: false, width: 100, hide:true }
+				,{ display: getIl8n("creater_code"), name: 'creater_code', isSort: false, width: 100, hide:true }
+				,{ display: getIl8n("creater_group_code"), name: 'creater_group_code', isSort: false, width: 100, hide:true }
+				,{ display: getIl8n("exam_paper","cent_avg"), name: 'cent_avg', isSort: false, width: 100 }
+				,{ display: getIl8n("exam_paper","count_subjective"), name: 'count_subjective', isSort: false, width: 100 }
+				,{ display: getIl8n("exam_paper","cent_subjective"), name: 'cent_subjective', isSort: false, width: 100 }
+			                   ];
+			for(var i=0;i<otherColumns.length;i++){
+				config.columns.push( otherColumns[i] );
+			}			
+		}		
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [];
@@ -165,43 +180,90 @@ var exam_paper = {
 			formD.show();
 		}else{
 			var form = $("<form id='form'></form>");
-			$(form).ligerForm({
-				inputWidth: 170
-				,labelWidth: 90
-				,space: 40
-				,fields: [
-					 { display: top.getIl8n('exam_paper','title'), name: "examp_paper__search_title", newline: false, type: "text" }
-					
-					,{ display: top.getIl8n('exam_paper','status'), name: "examp_paper__search_status", newline: true, type: "select", options :{data : exam_paper.config.status, valueField : "code" , textField: "value" } }
-					,{ display: top.getIl8n('exam_paper','subject'), name: "examp_paper__search_subject", newline: true, type: "select", options :{data : exam_paper.config.exam_subject__code, valueField : "code" , textField: "value" } }
-				]
-			}); 
+			var config = {
+					inputWidth: 170
+					,labelWidth: 90
+					,space: 40
+					,fields: [
+						 { display: top.getIl8n('title'), name: "search__title", newline: false, type: "text" }
+					]
+				};
+			
+			var permission = top.basic_user.permission;
+			for(var i=0;i<permission.length;i++){
+				if(permission[i].code=='60'){
+					permission = permission[i].children;
+					for(var i1=0;i1<permission.length;i1++){
+						if(permission[i1].code=='6001'){
+							permission = permission[i1].children;
+							for(var i2=0;i2<permission.length;i2++){
+								if(permission[i2].code=='600101'){
+									permission = permission[i2].children;
+								}
+							}
+						}
+					}				
+				}
+			}
+			
+			for(var i=0;i<permission.length;i++){
+				if(permission[i].code=='60010104'){
+					config.fields.push({ display: top.getIl8n('creater_group_code'), name: "search__creater_group_code", type: "text" });
+				}
+				else if(permission[i].code=='60010105'){
+					config.fields.push({ display: top.getIl8n('creater_code'), name: "search__creater_code", type: "text" });
+				}
+				else if(permission[i].code=='60010106'){
+					config.fields.push({ display: top.getIl8n('time_created')+"-"+top.getIl8n('big'), name: "search__time_created__big", type: "date" });
+					config.fields.push({ display: top.getIl8n('time_created')+"-"+top.getIl8n('small'), name: "search__time_created__small", type: "date" });
+				}	
+				else if(permission[i].code=='60010108'){
+					config.fields.push({ display: top.getIl8n('status'), name: "search__status", type: "select", options :{data : exam_paper.config.exam_paper__status , valueField : "code" , textField: "value" } });
+				}
+				else if(permission[i].code=='60010150'){
+					config.fields.push({ display: top.getIl8n('exam_paper','cost')+"-"+top.getIl8n('big'), name: "search__cost__big", type: "text" });
+					config.fields.push({ display: top.getIl8n('exam_paper','cost')+"-"+top.getIl8n('small'), name: "search__cost__small", type: "text" });
+				}	
+				else if(permission[i].code=='60010151'){
+					config.fields.push({ display: top.getIl8n('exam_paper','count_used'), name: "search__count_used", type: "text" });
+				}	
+				else if(permission[i].code=='60010152'){
+					config.fields.push({ display: top.getIl8n('exam_paper','subject_code'), name: "search__subject_code", type: "select", options :{data : exam_paper.config.subject_code , valueField : "code" , textField: "value" } });
+				}				
+			}
+			
+			$(form).ligerForm(config); 
 			$.ligerDialog.open({
 				 id: "formD"
 				,width: 350
-				,height: 200
+				,height: config.fields.length * 28 + 50
 				,content: form
 				,title: top.getIl8n('exam_paper','search')
 				,buttons : [
-				    //清空查询条件
 					{text: top.getIl8n('exam_paper','clear'), onclick:function(){
 						$.ligerui.get("exam_paper__grid").options.parms.search = "{}";
 						$.ligerui.get("exam_paper__grid").loadData();
 						
-						$.ligerui.get("examp_paper__search_title").setValue('');
-						$.ligerui.get("examp_paper__search_status").setValue('');
-						$.ligerui.get("examp_paper__search_subject").setValue('');
-					}},
-					//提交查询条件
-				    {text: top.getIl8n('exam_paper','search'), onclick:function(){
+						var doms = $("input[type='text']",$('#form'));
+						for(var i=0;i<doms.length;i++){
+							var theid = $(doms[i]).attr('id');
+							$.ligerui.get(theid).setValue('');
+						}
+					}}
+				    ,{text: top.getIl8n('exam_paper','search'), onclick:function(){
 						var data = {};
-						var  title =		$.ligerui.get("examp_paper__search_title").getValue()
-						 	,status = 		$.ligerui.get("examp_paper__search_status").getValue()
-						 	,subject_code =	$.ligerui.get("examp_paper__search_subject").getValue();
+						var doms = $("input[type='text']",$('#form'));
+						for(var i=0;i<doms.length;i++){
+							var theid = $(doms[i]).attr('id');
+							var thekey = theid.replace("search__","");
+							var thetype = $(doms[i]).attr('ltype');							
 						
-						if(title!="")data.title = title;
-						if(status!="")data.status = status;
-						if(subject_code!="")data.subject_code = subject_code;
+							var thevalue = $.ligerui.get(theid).getValue();
+							if(thetype=='date')thevalue = $('#'+theid).val();
+							if(thevalue!="" && thevalue!=0 && thevalue!="0" && thevalue!=null){
+								eval("data."+thekey+"='"+thevalue+"'");
+							}
+						}
 						
 						$.ligerui.get("exam_paper__grid").options.parms.search= $.ligerui.toJSON(data);
 						$.ligerui.get("exam_paper__grid").loadData();
@@ -645,8 +707,7 @@ var paper = {
                     myanswer: this.questions[i].getMyAnswer()
                 };
         	if(this.questions[i].type=='4' || this.questions[i].type=='6'){
-
-        		data.img = this.questions[i].getImg()
+        		data.img = this.questions[i].getImg();
         	}
             toSend.push(data);
             ids += this.questions[i].id+",";//搜集所有题目的编号
@@ -663,7 +724,6 @@ var paper = {
             	 
                  ,executor: top.basic_user.loginData.username
                  ,session: top.basic_user.loginData.session
-
             }, 
             dataType: 'json',
             success : function(response) {
@@ -674,15 +734,14 @@ var paper = {
                 var questions = response.answers;
                 for(var i=0;i < questions.length;i++){
                 	paperObj.questions[i].answer = questions[i].answer;
-                	paperObj.questions[i].description = questions[i].description;
-                    
+                	paperObj.questions[i].description = questions[i].description;                    
                 }                
                 paperObj.showDescription();
                 
                 paperObj.brief = {
 	        		 mycent: response.result.mycent
 	        		,cent: response.result.cent
-	        		,mycent_objective: response.mycent_objective
+	        		,mycent_objective: response.result.mycent_objective
 	        		,count_right: response.result.right
 	        		,count_wrong: response.result.wrong
                 };
