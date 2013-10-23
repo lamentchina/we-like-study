@@ -272,7 +272,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  ,time_lastupdated datetime default '1900-01-01' comment '最后修改时间'
  ,count_updated int default '0' comment '修改次数'
  ,type int not null comment '类型'
- ,type2 int not null comment '类型类型'
+ ,type2 int not null comment '其他类型'
  ,status int not null comment '状态'
  ,remark varchar(200)  comment '备注'
  ) comment '题目' ENGINE=InnoDB CHARSET=utf8 ;

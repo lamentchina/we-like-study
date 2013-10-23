@@ -71,7 +71,6 @@ insert into basic_group(name,code,type,status) values ('管理员','10','10','10
  insert into basic_permission(name,code,type,icon,path) values ('导出','6002024012','30','../file/icon16x16/12_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('导入','600211','30','../file/icon16x16/11_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('导出','600212','30','../file/icon16x16/12_16X16.gif','');
- insert into basic_permission(name,code,type,icon,path) values ('添加','600221','30','../file/icon16x16/21_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('修改','600222','30','../file/icon16x16/22_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('删除','600223','30','../file/icon16x16/23_16X16.gif','');
  insert into basic_permission(name,code,type,icon,path) values ('截止','600290','30','../file/icon16x16/90_16X16.gif','');
@@ -207,8 +206,6 @@ insert into basic_group(name,code,type,status) values ('管理员','10','10','10
  insert into basic_group_2_permission (permission_code,group_code) values('600211','330281-8432-04-X1');
  insert into basic_group_2_permission (permission_code,group_code) values('600212','10');
  insert into basic_group_2_permission (permission_code,group_code) values('600212','330281-8432-04-X1');
- insert into basic_group_2_permission (permission_code,group_code) values('600221','10');
- insert into basic_group_2_permission (permission_code,group_code) values('600221','330281-8432-04-X1');
  insert into basic_group_2_permission (permission_code,group_code) values('600222','10');
  insert into basic_group_2_permission (permission_code,group_code) values('600222','330281-8432-04-X1');
  insert into basic_group_2_permission (permission_code,group_code) values('600223','10');

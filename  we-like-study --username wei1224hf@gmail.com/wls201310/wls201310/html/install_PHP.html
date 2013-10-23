@@ -340,7 +340,10 @@ var simulate = function(){
 				$('#btn_simulate').attr("disabled",true);
 				$('#log_simulate').attr("class","log_done");
 				$('#simulate_step').html(step_1+1);
-				if(step_1>=urls_1.length-1)return;
+				if(step_1>=urls_1.length-1){
+					$('#step6').css("display","block");
+					return;
+				}
 				step_1++;				
 				simulate();
 			}else{
@@ -434,6 +437,7 @@ var simulate__exam_paper_log = function(){
 					student_step ++;
 				}
 				if(student_step>=students.length-1){
+					$('#step7').css("display","block");
 					return;
 				}
 				//if(step>3)return;
@@ -452,7 +456,7 @@ var simulate__exam_paper_log = function(){
 }
 
 var step_7 = 0;
-var students = null;
+var students_7 = null;
 var dates = [];
 var date_start,date_stop;
 date_start = new Date('2013','02','04');
@@ -473,7 +477,7 @@ var student_step = 0;
 var subjects = null;
 var subject_step = 0;
 var simulate__exam_paper_multionline = function(){
-	if(students==null){
+	if(students_7==null){
 		step_7 = 0;
 		$.ajax({
 			 url: "../php/install.php?class=install&function=simulate__get_students"
@@ -484,7 +488,7 @@ var simulate__exam_paper_multionline = function(){
 				,session: ""
 	        }         
 			,success : function(response) {
-				students = response.data;
+				students_7 = response.data;
 				$.ajax({
 					 url: "../php/install.php?class=install&function=simulate__get_subjects"
 					,dataType: 'json'
@@ -507,11 +511,11 @@ var simulate__exam_paper_multionline = function(){
 						}
 						
 						var sssss = [];
-						for(var i=0;i<students.length;i+=15){
+						for(var i=0;i<students_7.length;i+=15){
 							var ssss = [];
 							for(var i2=i;i2<i+15;i2++){
-								if(i2>=students.length)break;
-								ssss.push(students[i2]);
+								if(i2>=students_7.length)break;
+								ssss.push(students_7[i2]);
 							}
 							sssss.push(ssss);
 						}	
@@ -574,7 +578,10 @@ var simulate__exam_paper_multionline = function(){
 				$('#log_simulate__exam_paper_multionline').attr("class","log_done");
 				step_7++;
 				$('#simulate__exam_paper_multionline___step').html(step_7);
-				if(step_7>=urls_7.length)return;
+				if(step_7>=urls_7.length){
+					$('#step8').css("display","block");
+					return;
+				}
 				simulate__exam_paper_multionline();
 				
 			}else{
@@ -681,37 +688,37 @@ Language:<select id='il8n'><option value='zh-cn'>简体中文</option><!-- optio
 <div id='log_db' class='log'></div>
 </fieldset>
 
-<fieldset id='step3' style="display: block">
+<fieldset id='step3' style="display: none">
 <legend><button onclick="init_tables_readxls()" id='btn_init' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_init' class='log'></div>
 </fieldset>
 
-<fieldset id='step4' style="display: block">
+<fieldset id='step4' style="display: none">
 <legend><button onclick="basic_data()" id='btn_basic_data' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_basic_data' class='log'></div>
 </fieldset>
 
-<fieldset id='step5' style="display: block">
+<fieldset id='step5' style="display: none">
 <legend><button onclick="simulate()" id='btn_simulate' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_simulate' class='log'></div>
 </fieldset>
 
-<fieldset id='step6' style="display: block">
+<fieldset id='step6' style="display: none">
 <legend><button onclick="simulate__exam_paper_log()" id='btn_simulate__exam_paper_log' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_simulate__exam_paper_log' class='log'></div>
 </fieldset>
 
-<fieldset id='step7' style="display: block">
+<fieldset id='step7' style="display: none">
 <legend><button onclick="simulate__exam_paper_multionline()" id='btn_simulate__exam_paper_multionline' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_simulate__exam_paper_multionline' class='log'></div>
 </fieldset>
 
-<fieldset id='step8' style="display: block">
+<fieldset id='step8' style="display: none">
 <legend><button onclick="simulate__exam_paper_multionline__close()" id='btn_simulate__exam_paper_multionline_close' class='btn_step'></button></legend>
 <div class="directions_step"></div>
 <div id='log_simulate__exam_paper_multionline_close' class='log'></div>

@@ -26,11 +26,13 @@ class install{
 			$t_return["msg"] .= "<br/>"." Php function json_encode unsupported. ";
 		}
 		
+		/*
 		if(function_exists('get_magic_quotes_gpc')){
 			if(get_magic_quotes_gpc()==1){
 				$t_return["msg"] .= "<br/>"." Turn off the magic please. Locate your php's php.ini , find the 'magic_quotes_gpc = On' and off it ;";
 			}
 		}
+		*/
 		
 		$file = "../".tools::$configfilename;
 		if(!is_writable($file)){
