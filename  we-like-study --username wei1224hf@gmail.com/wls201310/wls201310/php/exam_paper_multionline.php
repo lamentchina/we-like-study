@@ -43,19 +43,8 @@ class exam_paper_multionline {
 				$t_return['action'] = $action;
 			}
 		}
-		else if($function =="add"){
-			$action = "120221";
-			if(basic_user::checkPermission($executor, $action, $session)){
-				$t_return = exam_paper_multionline::add(
-						$_REQUEST['data']
-						,$executor
-				);
-			}else{
-				$t_return['action'] = $action;
-			}
-		}
 		else if($function =="modify"){
-			$action = "120221";
+			$action = "600222";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$t_return = exam_paper_multionline::modify(
 						$_REQUEST['data']
@@ -86,8 +75,7 @@ class exam_paper_multionline {
 			}else{
 				$t_return['action'] = $action;
 			}
-		}
-		
+		}		
 		else if($function =="questions"){
 			$action = "600190";
 			if(basic_user::checkPermission($executor, $action, $session)){
@@ -121,6 +109,35 @@ class exam_paper_multionline {
 				$t_return['action'] = $action;
 			}
 		}
+		else if($function =="order"){
+			$action = "60020240";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$t_return = exam_paper_multionline::order(
+						$_REQUEST['id']
+				);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="upload"){
+			$action = "600211";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$file = "../file/upload/paper/".rand(10000, 99999)."_".$_FILES["file"]["name"];
+				move_uploaded_file($_FILES["file"]["tmp_name"],$file);
+				$t_return = exam_paper_multionline::upload($file,$executor);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}
+		else if($function =="download"){
+			$action = "600212";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$id = $_REQUEST['id'];
+				$t_return = exam_paper_multionline::download($id);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}		
 
 		return $t_return;
 	}
@@ -250,14 +267,7 @@ class exam_paper_multionline {
     }
         
 	public static function remove($ids=NULL,$executor=NULL){
-        if (!basic_user::checkPermission("4122")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }	     	    
-	    if($ids==NULL)$ids = $_REQUEST['ids'];
-	    if($executor==NULL)$executor = $_REQUEST['executor'];
+
 		$conn = tools::getConn();
 		$ids = explode(",", $ids);
 		for($i=0;$i<count($ids);$i++){
@@ -317,13 +327,14 @@ class exam_paper_multionline {
         ); 
 	}
 	
-	public static function view($id=NULL){
+	public static function view($paper_id=NULL){
 
 	    $conn = tools::getConn();
         $sql = tools::getSQL("exam_paper_multionline__view");            
-        $sql = str_replace("__paper_id__", $id, $sql);
+        $sql = str_replace("__paper_id__", $paper_id, $sql);
        
         $res = mysql_query($sql,$conn);
+        if($res==FALSE)die($sql);
         $data = mysql_fetch_assoc($res);
 
         return array(
@@ -504,36 +515,120 @@ class exam_paper_multionline {
 		}
 	}	
 	
-	public static function upload(){	
-	    if (!basic_user::checkPermission("4111")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		        
-	    $data = exam_paper::upload();
-	    if(!isset($data['status']) || $data['status']!='1')return $data;
-	    $conn = tools::getConn();
-	    $phpexcel = exam_paper::$phpexcel;
-	    $currentSheet = $phpexcel->getSheetByName('exam_paper_multionline');
+	public static function upload($file,$executor){
+		$conn = tools::getConn();
+		$conn_read = tools::getConn(TRUE);
+		$session = basic_user::getSession($executor);
+		$session = $session['data'];
+			    
+        if(exam_paper::$phpexcel==NULL){
+        	include_once '../libs/phpexcel/Classes/PHPExcel.php';
+        	include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+        	include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+        	$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+        	$PHPReader->setReadDataOnly(true);
+        	$phpexcel = $PHPReader->load($file);
+        	exam_paper::$phpexcel = $phpexcel;
+        }  
+        $phpexcel = exam_paper::$phpexcel;
+	    
+	    $sheetname = "exam_paper_multionline";
+	    $currentSheet = $phpexcel->getSheetByName($sheetname);
 	    if($currentSheet==null){
-	        return array(
-	             'msg'=>'Missing sheet exam_paper_multionline, check your excel'
-	            ,'status'=>'2'
-	        );
+	    	return array(
+	    			'msg'=>tools::$LANG['basic_normal']['missingSheet']." ".$sheetname
+	    			,'status'=>'2'
+	    	);
+	    }
+
+	    $reg = "/\d{4}-\d{1,2}-\d{1,2}/";
+	    $time_start = $currentSheet->getCell('A2')->getValue();
+	    if(preg_match($reg,$time_start)){
+	    	$arr = explode("-", $time_start);
+	    	if(!checkdate($arr[1],$arr[2],$arr[0])){
+	    		return array(
+	    				'msg'=>tools::$LANG['basic_normal']['cellError'].": A2 "
+	    				,'status'=>'2'
+	    		);
+	    	}
+	    }else{
+	    		return array(
+	    				'msg'=>tools::$LANG['basic_normal']['cellError'].": A2 "
+	    				,'status'=>'2'
+	    		);
 	    }
 	    
+	    $time_stop = $currentSheet->getCell('B2')->getValue();
+	    if(preg_match($reg,$time_stop)){
+	    	$arr = explode("-", $time_stop);
+	    	if(!checkdate($arr[1],$arr[2],$arr[0])){
+	    		return array(
+	    				'msg'=>tools::$LANG['basic_normal']['cellError'].": B2 "
+	    				,'status'=>'2'
+	    		);
+	    	}
+	    }else{
+	    	return array(
+	    			'msg'=>tools::$LANG['basic_normal']['cellError'].": B2 "
+	    			,'status'=>'2'
+	    	);
+	    }
+	    if($time_stop<$time_start){
+	    	return array(
+	    			'msg'=>tools::$LANG['basic_normal']['cellError'].": B2 "
+	    			,'status'=>'2'
+	    	);
+	    }
+	    
+	    $passline = $currentSheet->getCell('C2')->getValue();
+	    if(!is_numeric($passline)){
+	    	return array(
+	    			'msg'=>tools::$LANG['basic_normal']['cellError'].": C2 "
+	    			,'status'=>'2'
+	    	);
+	    }
+	    
+	    $students = $currentSheet->getCell('D2')->getValue();
+	    $arr_students = explode(",", $students);
+	    for($i=0;$i<count($arr_students);$i++){
+	    	$student = $arr_students[$i];
+	    	$sql_check = "select id from basic_user where username = '".$student."' ;";
+	    	$res = mysql_query($sql_check,$conn_read);
+	    	$temp = mysql_fetch_assoc($res);
+	    	if($temp==FALSE){
+	    		return array(
+	    				'msg'=>tools::$LANG['basic_normal']['cellError'].": D2 ".$student
+	    				,'status'=>'2'
+	    		);
+	    	}
+	    }
+	    $exam_paper_log__id = tools::getTableId("exam_paper_log",FALSE);
+	    $exam_paper_multionline__id = tools::getTableId("exam_paper_multionline",FALSE);
+	    $data = exam_paper::upload($file,$executor);
+	    if(!isset($data['status']) || $data['status']!='1'){
+	    	return $data;
+	    }
+	    if($data['data']['cent']<$passline){
+	    	return array(
+	    			'msg'=>tools::$LANG['basic_normal']['cellError'].": C2 "
+	    			,'status'=>'2'
+	    	);
+	    }
+	    mysql_query("START TRANSACTION;",$conn);
         $data2 = array(
-             'id'=>tools::getTableId("exam_paper_multionline")
-            ,'time_start'=>$currentSheet->getCell('A2')->getValue()
-            ,'time_stop'=>$currentSheet->getCell('B2')->getValue()
-            ,'passline'=>$currentSheet->getCell('C2')->getValue()
-            ,'students'=>$currentSheet->getCell('D2')->getValue()
+             'id'=>$exam_paper_multionline__id
+            ,'time_start'=>$time_start
+            ,'time_stop'=>$time_stop
+            ,'passline'=>$passline
             ,'paper_id'=>$data['paper_id']
-            ,'count_total'=>count( explode(",", $currentSheet->getCell('D2')->getValue()) )		
+            ,'count_total'=>count( $arr_students )		
+        	,'type'=>20
+        	,'status'=>10
+        	,'creater_code'=>$executor
+        	,'creater_group_code'=>$session['group_code']
         );
         
-        $sql = "update exam_paper set type = '10' where id =".$data['paper_id'];
+        $sql = "update exam_paper set type = '20' where id =".$data['paper_id'];
         mysql_query($sql,$conn);
         
         $keys = array_keys($data2);
@@ -542,6 +637,43 @@ class exam_paper_multionline {
         $values = implode("','",$values);    
         $sql = "insert into exam_paper_multionline (".$keys.") values ('".$values."')";
         mysql_query($sql,$conn);
+        
+        for($i=0;$i<count($arr_students);$i++){
+        	$exam_paper_log__id ++;
+        	$student = $arr_students[$i];
+        	$sql = "select group_code from basic_user where username = '".$student."' ";
+        	$res = mysql_query($sql,$conn_read);
+        	$temp = mysql_fetch_assoc($res);
+        	$group_code = $temp['group_code'];
+        	
+        	$data__exam_paper_log = array(
+        			 'mycent'=>0
+        			,'mycent_subjective'=>0
+        			,'mycent_objective'=>'0'
+        			,'count_right'=>0
+        			,'count_wrong'=>0
+        			,'count_giveup'=>'0'
+        			,'proportion'=>0
+        			,'paper_id'=>$data['paper_id']
+        			,'id'=>$exam_paper_log__id
+        			,'creater_code'=>$student
+        			,'creater_group_code'=>$group_code
+        			,'type'=>'20'
+        			,'status'=>'30'
+        			,'remark'=>'exam_paper_multionline'
+        			,'time_created'=>date("Y-m-d")
+        	);
+        	
+        	$keys = array_keys($data__exam_paper_log);
+        	$keys = implode(",",$keys);
+        	$values = array_values($data__exam_paper_log);
+        	$values = implode("','",$values);
+        	$sql = "insert into exam_paper_log (".$keys.") values ('".$values."')";
+        	$res = mysql_query($sql,$conn);
+        }
+        mysql_query("COMMIT;",$conn);
+        tools::updateTableId("exam_paper_log");
+        tools::updateTableId("exam_paper_multionline");
         
 		return array(
 		     'status'=>'1'
@@ -552,13 +684,7 @@ class exam_paper_multionline {
 	}
 	
 	public static function download($id=NULL){
-	    if (!basic_user::checkPermission("4112")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    if($id==NULL)$id = $_REQUEST['id'];
+		$conn_read = tools::getConn();
 	    $data = exam_paper::download($id);
 	    $phpexcel = exam_paper::$phpexcel;
 	    
@@ -572,11 +698,16 @@ class exam_paper_multionline {
 		$phpexcel->getActiveSheet()->setCellValue('B1', tools::$LANG['exam_paper_multionline']['time_stop']);
 		$phpexcel->getActiveSheet()->setCellValue('C1', tools::$LANG['exam_paper_multionline']['passline']);
 		$phpexcel->getActiveSheet()->setCellValue('D1', tools::$LANG['exam_paper_multionline']['students']);		
-		
+		$sql = "select creater_code from exam_paper_log where paper_id = ".$data2['id'];
+		$res = mysql_query($sql,$conn_read);
+		$arr = array();
+		while($temp=mysql_fetch_assoc($res)){
+			$arr[] = $temp['creater_code'];
+		}
 		$phpexcel->getActiveSheet()->setCellValue('A2', $data2['time_start']);
 		$phpexcel->getActiveSheet()->setCellValue('B2', $data2['time_stop']);
 		$phpexcel->getActiveSheet()->setCellValue('C2', $data2['passline']);
-		$phpexcel->getActiveSheet()->setCellValue('D2', $data2['students']);
+		$phpexcel->getActiveSheet()->setCellValue('D2', implode(",", $arr) );
 		
 		$objWriter = new PHPExcel_Writer_Excel5($phpexcel);
 		$file =  "../file/download/".date('YmdHis').".xls";
@@ -588,16 +719,9 @@ class exam_paper_multionline {
 		);		
 	}
 	
-	public static function order(){
-	    if (!basic_user::checkPermission("4102")){
-	        return array(
-	             'msg'=>'access denied'
-	            ,'status'=>'2'
-	        );
-	    }		    
-	    $id = $_REQUEST['id'];
+	public static function order($id){
 	    $conn = tools::getConn();
-	    $sql = tools::getConfigItem("exam_paper_multionline__order");
+	    $sql = tools::getSQL("exam_paper_multionline__order");
         $sql = str_replace("__paper_id__", $id, $sql);
         
         $data = array();
@@ -609,6 +733,7 @@ class exam_paper_multionline {
 		return array(
 		    'status'=>'1'
 		    ,'Rows'=>$data
+			,'sql'=>str_replace("\n", " ", $sql)
 		);
 	}
 	

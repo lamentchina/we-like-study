@@ -376,7 +376,10 @@ else if($functionName=="toolsTest"){
 	$data = tools::list2Tree($list);
 }
 else if($functionName=='paperImport'){
-	$data = exam_paper::importExcel("../file/upload/photo/highschool/example_choice.xls", "admin");
+	$data = exam_paper::upload("../file/upload/photo/highschool/example_choice.xls", "admin");
+}
+else if($functionName=='multionlineImport'){
+	$data = exam_paper_multionline::upload("../file/upload/photo/highschool/exam_paper_multionline_high_chinese.xls", "admin");
 }
 
 

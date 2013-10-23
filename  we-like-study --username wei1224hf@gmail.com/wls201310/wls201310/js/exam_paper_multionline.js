@@ -93,7 +93,7 @@ var exam_paper_multionline = {
 					
 					var selected = exam_paper_multionline.grid_getSelectOne();
 					top.$.ligerDialog.open({ 
-						url: 'exam_paper_multionline__view.html?id='+selected.paper_id+'&random='+Math.random()
+						url: 'exam_paper_multionline__view.html?id='+selected.pid+'&random='+Math.random()
 						,height: 560
 						,width: 550
 						,title: top.getIl8n("view")
@@ -104,47 +104,43 @@ var exam_paper_multionline = {
                         ,modal: false
                         ,slide: false  
                         ,isHidden:false
-						,id: 'exam_paper_multionline__view_'+selected.id
+						,id: 'exam_paper_multionline__view_'+selected.pid
 					}).max();
 					
-			        top.$.ligerui.get("exam_paper_multionline__view_"+selected.id).close = function(){
-			            var g = this;
+			        top.$.ligerui.get("exam_paper_multionline__view_"+selected.pid).close = function(){
 			            top.$.ligerui.win.removeTask(this);
-			            g.unmask();
-			            g._removeDialog();
-			            top.$.ligerui.remove(top.$.ligerui.get("exam_paper_multionline__view_"+selected.id));
+			            this.unmask();
+			            this._removeDialog();
+			            top.$.ligerui.remove(this);
 			        };
 					
 				};
-			}else if(permission[i].code=='4111'){
+			}else if(permission[i].code=='600211'){
 				theFunction = exam_paper_multionline.upload;			
-			}else if(permission[i].code=='4112'){
+			}else if(permission[i].code=='600212'){
 				theFunction = exam_paper_multionline.download;		
-			}else if(permission[i].code=='4122'){
+			}else if(permission[i].code=='600223'){
 				config.checkbox = true;
 				theFunction = exam_paper_multionline.remove;		
 			}else if(permission[i].code=='600222'){
-				theFunction = function(){
-					
+				theFunction = function(){					
 					var selected = exam_paper_multionline.grid_getSelectOne();
 					top.$.ligerDialog.open({ 
-						url: 'exam_paper_multionline__modify.html?id='+selected.paper_id+'&random='+Math.random()
+						url: 'exam_paper_multionline__modify.html?id='+selected.pid+'&random='+Math.random()
 						,height: 340
 						,width: 400
 						,isHidden: false
 						,title: top.getIl8n("modify")
-						,id: 'exam_paper_multionline__modify_'+selected.id
+						,id: 'exam_paper_multionline__modify_'+selected.pid
 					});	
 					
-			        top.$.ligerui.get("exam_paper_multionline__modify_"+selected.id).close = function(){
-			            var g = this;
+			        top.$.ligerui.get("exam_paper_multionline__modify_"+selected.pid).close = function(){
 			            top.$.ligerui.win.removeTask(this);
-			            g.unmask();
-			            g._removeDialog();
-			            top.$.ligerui.remove(top.$.ligerui.get("exam_paper_multionline__modify_"+selected.id));
-			        };
-					
-				}
+			            this.unmask();
+			            this._removeDialog();
+			            top.$.ligerui.remove(this);
+			        };					
+				};
 			}
 			else if(permission[i].code=='600290'){
 				config.checkbox = true;
@@ -273,7 +269,7 @@ var exam_paper_multionline = {
 			var ids = "";
 			//遍历每一行元素,获得 id 
 			for(var i=0; i<selected.length; i++){
-				ids += selected[i].paper_id+",";
+				ids += selected[i].pid+",";
 			}
 			ids = ids.substring(0,ids.length-1);				
 			
@@ -330,7 +326,7 @@ var exam_paper_multionline = {
 		$.ajax({
 			url: config_path__exam_paper_multionline__download,
 			data: {
-				id: select.paper_id 
+				id: select.pid 
 				
                 ,executor: top.basic_user.loginData.username
                 ,session: top.basic_user.loginData.session
@@ -376,7 +372,6 @@ var exam_paper_multionline = {
 				$.ligerui.get('time_start').setValue(data.time_start);				
 				$.ligerui.get('time_stop').setValue(data.time_stop);
 				$.ligerui.get('passline').setValue(data.passline);
-				$.ligerui.get('students').setValue(data.students);	
 			}
 		});
 			
@@ -385,8 +380,7 @@ var exam_paper_multionline = {
 				fields: [
 					 { display: top.getIl8n('exam_paper_multionline','time_start'), name: "time_start", type: "date" ,options:{ showTime: true}  }
 					,{ display: top.getIl8n('exam_paper_multionline','time_stop'), name: "time_stop", type: "date" ,options:{ showTime: true}  }
-					,{ display: top.getIl8n('exam_paper_multionline','passline'), name: "passline", type: "text" ,validate: { required:true, number: true} }
-					,{ display: top.getIl8n('exam_paper_multionline','students'), name: "students", type: "text" }				
+					,{ display: top.getIl8n('exam_paper_multionline','passline'), name: "passline", type: "text" ,validate: { required:true, number: true} }			
 				]
 			};
 			
@@ -425,7 +419,6 @@ var exam_paper_multionline = {
 							 time_start: $('#time_start').val()
 							,time_stop: $('#time_stop').val()
 							,passline: $.ligerui.get('passline').getValue()
-							,students: $.ligerui.get('students').getValue()
 							,paper_id: getParameter("id", window.location.toString() )
 						})
 					},

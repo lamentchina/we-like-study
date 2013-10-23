@@ -609,24 +609,26 @@ class exam_paper {
         $str = str_replace("'", "&acute;", $str);
         $str = str_replace("\"", "&quot;", $str);
         return $str;
-	} 
+	} 	
 	
-	
-	public static $phpexcel = null;	
+	public static $phpexcel = NULL;	
 	public static function upload($file,$executor){  
 		$conn = tools::getConn();
 		$conn2 = tools::getConn(TRUE);
 		$session = basic_user::getSession($executor);
 		$session = $session['data'];
-		tools::readIl8n();
-		    
-        include_once '../libs/phpexcel/Classes/PHPExcel.php';
-        include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
-        include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
-        $PHPReader = PHPExcel_IOFactory::createReader('Excel5');
-        $PHPReader->setReadDataOnly(true);
-        $phpexcel = $PHPReader->load($file);
-        exam_paper::$phpexcel = $phpexcel;
+		tools::readIl8n();	    
+
+        if(exam_paper::$phpexcel==NULL){
+        	include_once '../libs/phpexcel/Classes/PHPExcel.php';
+        	include_once '../libs/phpexcel/Classes/PHPExcel/IOFactory.php';
+        	include_once '../libs/phpexcel/Classes/PHPExcel/Writer/Excel5.php';
+        	$PHPReader = PHPExcel_IOFactory::createReader('Excel5');
+        	$PHPReader->setReadDataOnly(true);
+        	$phpexcel = $PHPReader->load($file);
+        	exam_paper::$phpexcel = $phpexcel;
+        }   
+        $phpexcel = exam_paper::$phpexcel;
 
         $sheetname = "exam_paper";
         $currentSheet = $phpexcel->getSheetByName($sheetname);
@@ -694,7 +696,7 @@ class exam_paper {
             $index_ = $currentSheet->getCell('A'.$i)->getValue();
             if($index_==NULL || !is_numeric($index_) || ($index_*1)!=$index ){
             	return array(
-            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",A"
+            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",A"
             			,'status'=>'2'
             	);
             }
@@ -705,7 +707,7 @@ class exam_paper {
             }else{
             	if($id_parent*1 > count($questions)){
             		return array(
-            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",B"
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",B"
             				,'status'=>'2'
             		);
             	}
@@ -718,7 +720,7 @@ class exam_paper {
             }else{
             	if(!is_numeric($cent)){
             		return array(
-            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",C"
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",C"
             				,'status'=>'2'
             		);
             	}
@@ -730,16 +732,16 @@ class exam_paper {
             }else{
             	if(!in_array($type2, $arr__question_type2)){
             		return array(
-            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",D"
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",D"
             				,'status'=>'2'
             		);
             	}
             }
             
             $type = $currentSheet->getCell('E'.$i)->getValue();
-            if( ($type==NULL) || !in_array($type, array('1','2','3','5','6','7')) ){
+            if( ($type==NULL) || !in_array($type, array('1','2','3','4','5','6','7')) ){
             	return array(
-            			'msg'=>tools::$LANG['normal']['cellError'].": ".$row.",E"
+            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",E ".$type
             			,'status'=>'2'
             	);
             }           
@@ -747,7 +749,7 @@ class exam_paper {
             $exam_question__subject = $currentSheet->getCell('F'.$i)->getValue();
             if($exam_question__subject!=$subject_code){
             	return array(
-            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",F"
+            			'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",F"
             			,'status'=>'2'
             	);
             }
@@ -761,7 +763,7 @@ class exam_paper {
             }else{
             	if(!is_numeric($option_length)){
             		return array(
-            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",H"
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",H"
             				,'status'=>'2'
             		);
             	}
@@ -794,7 +796,7 @@ class exam_paper {
             		$k = $arr__knowledge[$i2];
             		if(!in_array($k, $arr__subject)){
             			return array(
-            					'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",R"
+            					'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",R"
             					,'status'=>'2'
             			);
             		}
@@ -807,7 +809,7 @@ class exam_paper {
             }else{
             	if(!is_numeric($difficulty)){
             		return array(
-            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$row.",S"
+            				'msg'=>tools::$LANG['basic_normal']['cellError'].": ".$i.",S"
             				,'status'=>'2'
             		);
             	}
@@ -838,6 +840,8 @@ class exam_paper {
                 ,'path_img'=>$currentSheet->getCell('U'.$i)->getValue()
                 ,'paper_id'=>$exam_paper__id
                 ,'index'=>$currentSheet->getCell('A'.$i)->getValue()
+            	,'creater_code'=>$executor
+            	,'creater_group_code'=>$session['group_code']
             );
             
             if(in_array($type,array('1','2','3'))){
@@ -893,8 +897,7 @@ class exam_paper {
         	);
         }
 
-        mysql_query("COMMIT;",$conn);
-        
+        mysql_query("COMMIT;",$conn);        
         tools::updateTableId("exam_paper");
         tools::updateTableId("exam_question");
         
@@ -902,6 +905,7 @@ class exam_paper {
 		     'status'=>'1'
 		    ,'msg'=>"ok"
 		    ,'paper_id'=>$data__exam_paper['id']
+			,'data'=>$data__exam_paper
 		);
 	}
 	
@@ -933,7 +937,7 @@ class exam_paper {
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', tools::$LANG['basic_normal']['id'] );
 		$objPHPExcel->getActiveSheet()->setCellValue('B1', tools::$LANG['exam_paper']['id_parent'] );
 		$objPHPExcel->getActiveSheet()->setCellValue('C1', tools::$LANG['exam_paper']['cent'] );
-		$objPHPExcel->getActiveSheet()->setCellValue('D1', tools::$LANG['exam_paper']['layout']);
+		$objPHPExcel->getActiveSheet()->setCellValue('D1', tools::$LANG['exam_paper']['type2']);
 		$objPHPExcel->getActiveSheet()->setCellValue('E1', tools::$LANG['basic_normal']['type']);
 		$objPHPExcel->getActiveSheet()->setCellValue('F1', tools::$LANG['exam_subject']['exam_subject'] );
 		$objPHPExcel->getActiveSheet()->setCellValue('G1', tools::$LANG['basic_normal']['title']);
@@ -962,9 +966,9 @@ class exam_paper {
         	$id_parent = $temp['id_parent'];
         	if($id_parent!=0)$id_parent = $id_parent - $question_id_first + 1;
     		$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, ($temp['id']-$question_id_first + 1));
-    		$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['id_parent']);
+    		$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $id_parent);
     		$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $temp['cent']);
-    		$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $temp['layout']);
+    		$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $temp['type2']);
     		$objPHPExcel->getActiveSheet()->setCellValue('E'.$index, $temp['type']);
     		$objPHPExcel->getActiveSheet()->setCellValue('F'.$index, "  ".$temp['subject_code']);
     		$objPHPExcel->getActiveSheet()->setCellValue('G'.$index, $temp['title']);
