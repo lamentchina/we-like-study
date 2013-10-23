@@ -220,7 +220,12 @@ class exam_paper_multionline {
     		$sql_total = "select count(*) as total FROM
 			exam_paper_multionline
 			Left Join exam_paper ON exam_paper_multionline.paper_id = exam_paper.id ".$sql_where;
-    	}    	
+    	}
+    	else{
+    		$sql_total = "select count(*) as total FROM
+			exam_paper_multionline
+			Left Join exam_paper ON exam_paper_multionline.paper_id = exam_paper.id ".$sql_where;
+    	} 	
     	$sql = str_replace("__WHERE__", $sql_where, $sql);
     	$sql = str_replace("__ORDER__", $sortname." ".$sortorder , $sql);
     	$sql = str_replace("__PAGESIZE__",$pagesize, $sql);

@@ -86,7 +86,30 @@ var exam_paper = {
 			if(permission[i].code=='600101'){
 				theFunction = exam_paper.search;
 			}else if(permission[i].code=='600102'){
-				theFunction = exam_paper.view;				
+				theFunction = function(){					
+					var selected = exam_paper.grid_getSelectOne();
+					var win = top.$.ligerDialog.open({ 
+						 url: 'exam_paper__view.html?id='+selected.id+'&random='+Math.random()
+						,height: 560
+						,width: 550
+						,title: top.getIl8n("view")
+                        ,showMax: true
+                        ,showToggle: true
+                        ,showMin: true
+                        ,isResize: true
+                        ,modal: false
+                        ,slide: false  
+                        ,isHidden:false
+						,id: 'exam_paper__view_'+selected.id
+					}).max();
+					
+					top.$.ligerui.get("exam_paper__view_"+selected.id).close = function(){
+			            top.$.ligerui.win.removeTask(this);
+			            this.unmask();
+			            this._removeDialog();
+			            top.$.ligerui.remove(this);
+			        };					
+				};
 			}else if(permission[i].code=='600111'){
 				theFunction = exam_paper.upload;			
 			}else if(permission[i].code=='600112'){
@@ -451,6 +474,94 @@ var exam_paper = {
 			}
 		});
 	}	
+	
+	,view: function(){
+		
+		$(document.body).html("<div id='menu'></div><div id='content' style='width:99%;margin-top:5px;'></div>");
+    	var htmls = "";
+    	$.ajax({
+            url: config_path__exam_paper__view
+            ,data: {
+                id: getParameter("id", window.location.toString() ) 
+                ,executor: top.basic_user.loginData.username
+                ,session: top.basic_user.loginData.session
+            },
+            type: "POST",
+            dataType: 'json',
+            success: function(response) {
+            	if(response.status!="1")return;
+            	var data = response.data;
+            	for(var j in data){   
+
+            		if(j=='id'||j=='title'||j=='time_start'||j=='students'||j=='remark')htmls+="<div style='width:100%;float:left;display:block;margin-top:5px;'/>";
+            		
+            		if(j=='title'||j=='subject_code'||j=='subject_name'||j=='cent'||j=='cent_all'||j=='cent_subjective'||j=='cent_objective'
+            		   ||j=='count_question'||j=='count_subjective'||j=='count_objective'||j=='count_used'||j=='cent_all'||j=='cent_subjective'||j=='cent_objective'){
+	            		eval("var key = top.getIl8n('exam_paper','"+j+"');");
+	            		htmls += "<span class='view_lable'>"+key+"</span><span class='view_data'>"+data[j]+"</span>";
+            		}
+            		
+            		if(j=='id'||j=='creater_code'||j=='creater_group_code'||j=='time_created'||j=='time_lastupdated'||j=='count_updated'||j=='status'||j=='type'){
+	            		eval("var key = top.getIl8n('"+j+"');");
+	            		htmls += "<span class='view_lable'>"+key+"</span><span class='view_data'>"+data[j]+"</span>";
+            		}
+            		
+            		if(j=='time_start'||j=='time_stop'||j=='passline'||j=='count_total'||j=='count_giveup'||j=='count_passed'||j=='count_failed'||j=='proportion'){
+            			eval("var key = top.getIl8n('exam_paper_multionline','"+j+"');");
+            			htmls += "<span class='view_lable'>"+key+"</span><span class='view_data'>"+data[j]+"</span>";
+            		}
+            		
+            		if(j=='remark'||j=='students'){
+            			eval("var key = top.getIl8n('exam_paper_multionline','"+j+"');");
+            			htmls += "<span class='view_lable' style='width:95%'>"+key+"</span><span style='width:95%' class='view_data'>"+data[j]+"</span>";
+            		}            		
+            	}; 
+            	
+            	$("#content").html(htmls);
+            	            	
+            	//查看详细,页面上也有按钮的
+            	var items = [];   
+        		var permission = top.basic_user.permission;
+        		for(var i=0;i<permission.length;i++){
+        			if(permission[i].code=='60'){
+        				permission = permission[i].children;
+        				for(var i2=0;i2<permission.length;i2++){
+        					if(permission[i2].code=='6001'){
+        						permission = permission[i2].children;
+                				for(var i3=0;i3<permission.length;i3++){
+                					if(permission[i3].code=='600102'){
+                						permission = permission[i3].children;
+                					}
+                				}	
+        					}
+        				}				
+        			}
+        		}
+        		if(permission.length>0){
+            		for(var i=0;i<permission.length;i++){
+            			var theFunction = function(){alert(1)};
+            			if(permission[i].code=='60010233'){
+            				//theFunction = exam_paper.search;
+            			}
+            			if(permission[i].code=='60010232'){
+            				//theFunction = exam_paper.search;
+            			}
+            			
+            			items.push({line: true });
+            			items.push({text: permission[i].name , img: permission[i].icon , click: theFunction });
+            		} 
+            		
+                	$("#menu").ligerToolBar({
+                		items:items
+                	});
+        		}
+        	}
+            
+            ,error : function(){               
+                alert(top.il8n.disConnect);
+            }
+        });
+	}
 };
 
 var paper = {

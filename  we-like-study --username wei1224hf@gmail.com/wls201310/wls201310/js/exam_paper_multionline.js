@@ -115,7 +115,7 @@ var exam_paper_multionline = {
 			            top.$.ligerui.remove(top.$.ligerui.get("exam_paper_multionline__view_"+selected.id));
 			        };
 					
-				}
+				};
 			}else if(permission[i].code=='4111'){
 				theFunction = exam_paper_multionline.upload;			
 			}else if(permission[i].code=='4112'){

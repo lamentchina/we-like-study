@@ -111,16 +111,25 @@ class exam_paper {
 				$t_return['action'] = $action;
 			}
 		}
-		else if($function =="submit"){
-			$action = "600190";
+		else if($function =="upload"){
+			$action = "600111";
 			if(basic_user::checkPermission($executor, $action, $session)){
 				$file = "../file/upload/paper/".rand(10000, 99999)."_".$_FILES["file"]["name"];
 				move_uploaded_file($_FILES["file"]["tmp_name"],$file);
-				$t_return = exam_paper::importExcel($file,$executor);
+				$t_return = exam_paper::upload($file,$executor);
 			}else{
 				$t_return['action'] = $action;
 			}
-		}		
+		}
+		else if($function =="download"){
+			$action = "600112";
+			if(basic_user::checkPermission($executor, $action, $session)){
+				$id = $_REQUEST['id'];
+				$t_return = exam_paper::download($id);
+			}else{
+				$t_return['action'] = $action;
+			}
+		}				
 
 		return $t_return;
 	}
@@ -504,8 +513,9 @@ class exam_paper {
 				mysql_query($sql,$conn);
 			}
 		}
-		tools::updateTableId("exam_question_log_wrongs");
+		
 		mysql_query("COMMIT;",$conn);
+		tools::updateTableId("exam_question_log_wrongs");
 		return $t_return;
 	}
 	
@@ -603,7 +613,7 @@ class exam_paper {
 	
 	
 	public static $phpexcel = null;	
-	public static function importExcel($file,$executor){  
+	public static function upload($file,$executor){  
 		$conn = tools::getConn();
 		$conn2 = tools::getConn(TRUE);
 		$session = basic_user::getSession($executor);
@@ -946,8 +956,12 @@ class exam_paper {
         $res = mysql_query($sql,$conn);
         $data = array();
         $index = 2;
+        $question_id_first = 0;
         while($temp = mysql_fetch_assoc($res)){
-    		$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, $temp['id']);
+        	if($question_id_first==0)$question_id_first = $temp['id'];
+        	$id_parent = $temp['id_parent'];
+        	if($id_parent!=0)$id_parent = $id_parent - $question_id_first + 1;
+    		$objPHPExcel->getActiveSheet()->setCellValue('A'.$index, ($temp['id']-$question_id_first + 1));
     		$objPHPExcel->getActiveSheet()->setCellValue('B'.$index, $temp['id_parent']);
     		$objPHPExcel->getActiveSheet()->setCellValue('C'.$index, $temp['cent']);
     		$objPHPExcel->getActiveSheet()->setCellValue('D'.$index, $temp['layout']);

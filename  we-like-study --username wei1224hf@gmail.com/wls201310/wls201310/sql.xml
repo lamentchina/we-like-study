@@ -328,8 +328,7 @@
 		<item ID="exam_paper__view">
 			SELECT
 			exam_paper.subject_code,
-			(select extend4 from basic_memory where basic_memory.code =
-			exam_paper.subject_code and basic_memory.type = '4') as subject_name,
+			(select extend4 from basic_memory where basic_memory.code = exam_paper.subject_code and basic_memory.type = '4') as subject_name,
 			exam_paper.title,
 			exam_paper.cost,
 			exam_paper.count_used,
@@ -343,6 +342,7 @@
 			exam_paper.id,
 			exam_paper.creater_code,
 			exam_paper.creater_group_code,
+			(select name from basic_group where code = exam_paper.creater_group_code) as creater_group,
 			left(exam_paper.time_created,10) as time_created,
 			exam_paper.time_lastupdated,
 			exam_paper.count_updated,
