@@ -43,41 +43,5 @@ if($class=='exam_subject_2_user_log')	$data = exam_subject_2_user_log::callFunct
 if($class=='exam_paper_multionline')	$data = exam_paper_multionline::callFunction();
 if($class=='exam_question_log_wrongs')	$data = exam_question_log_wrongs::callFunction();
 echo json_encode($data);
-/*
-//判断系统类型,是 独立安装,集成到DZX,还是集成到 JOOMLA
-tools::getSystemType();
 
-//loadConfig login logout add_register 这个几个函数,不需要验证用户身份
-if($function!='loadConfig' && $function!='login' && $function!='login_mobile' && $function!='logout' && $function!='add_register'){
-    
-    //验证用户身份,需要 用户名  跟 SESSION两个参数
-    if(!isset($_REQUEST['executor']) || !isset($_REQUEST['session'])){
-        echo json_encode(array(
-            'status'=>'2'
-            ,'msg'=>'illegal visit'
-        ));exit();
-    }
-    $_REQUEST['executor'] = htmlspecialchars($_REQUEST['executor'],ENT_QUOTES);
-    $_REQUEST['session'] = htmlspecialchars($_REQUEST['session'],ENT_QUOTES);
-    //验证用户身份的过程中,将当前登录用户的SESSION信息从内存表中读取出来
-    basic_user::getSession($_REQUEST['executor'],$_REQUEST['session']);
-    if(basic_user::$userType==NULL){
-        die( json_encode(array(
-            'status'=>'2'
-            ,'msg'=>'session wrong'
-            ,'H'=>date("G")
-            ,'sql'=>basic_user::$permissions
-            ,'userType'=>basic_user::$userType
-        )));
-    }
-}
-
-//服务端输出的数据,只有 JSON 这一种格式
-$eval_ = '$data ='.$class.'::'.$function.'();';
-eval($eval_);
-if($function!='upload' && $function!='upload_img')header('Content-Type:text/json;charset=utf-8');
-
-*/
-
-//如果使用了数据库连接,就关闭掉.一次访问,数据库必定只打开一次
 if(tools::$conn <> NULL)tools::closeConn();

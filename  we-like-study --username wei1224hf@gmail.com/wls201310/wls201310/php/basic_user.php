@@ -319,6 +319,9 @@ class basic_user {
 	}
 	
 	public static function login_joomla(){
+		include_once '../../configuration.php';
+		tools::$joomlaConfig = new JConfig();
+		
 	    $key = md5(md5( tools::$joomlaConfig->secret.'site'));
 	    $pfx = tools::$joomlaConfig->dbprefix;
 	    $conn = tools::getConn();
@@ -388,6 +391,8 @@ class basic_user {
 	}
 	
 	public static function login_dzx(){
+		include_once '../../config/config_global.php';
+		tools::$dzxConfig = $_config;
 	    if(!isset($_COOKIE[tools::$dzxConfig['cookie']['cookiepre'].'2132_sid'])){
 		    return array(
 		        'status'=>2
@@ -467,8 +472,8 @@ class basic_user {
         }		
 		
 		$t_return = basic_user::login_wls($data_dzx['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
-		$t_return['loginData']['money'] = $data_dzx['money'];
-		$t_return['loginData']['credits'] = $data_dzx['credits'];
+		$t_return['logindata']['money'] = $data_dzx['money'];
+		$t_return['logindata']['credits'] = $data_dzx['credits'];
 		return $t_return;
 	}
 	
@@ -559,8 +564,6 @@ class basic_user {
 		);
 		$mode = tools::getConfigItem("MODE");
 		if($mode=='DZX'){
-			include_once '../../config/config_global.php';
-			tools::$dzxConfig = $_config;
 			$t_return = basic_user::login_dzx();
 		}
 		else if($mode=='WLS'){
@@ -573,12 +576,12 @@ class basic_user {
 					,$gis_lot
 			);
 		}
-		//TODO
+		else if($mode=='DEDE'){
+			$t_return = basic_user::login_dede();
+		}	
 		else if($mode=='JOOMLA'){
-			include_once '../../config/config_global.php';
-			tools::$dzxConfig = $_config;
-			$t_return = basic_user::login_dzx();
-		}		
+			$t_return = basic_user::login_joomla();
+		}
 		return $t_return;
 	}
 
@@ -603,14 +606,16 @@ class basic_user {
 		
 		if($username=="guest"){
 		    $md5PasswordTime = "md5(concat(password, hour(now()) ))";
-		}else{
+		}
+		if(substr($md5PasswordTime, 0,3)!='md5'){
 			$md5PasswordTime = "'".$md5PasswordTime."'";
-		}		
+		}
 		
 		$sql = tools::getSQL("basic_user__login_check");
 		$sql = str_replace("__username__", "'".$username."'",$sql);
 		$sql = str_replace("__password__",$md5PasswordTime,$sql);
 		$sql = str_replace("\n"," ",$sql);
+		$sql = str_replace("\t"," ",$sql);
 
 		$res = mysql_query($sql,$conn);
 		if(!$temp = mysql_fetch_assoc($res)){

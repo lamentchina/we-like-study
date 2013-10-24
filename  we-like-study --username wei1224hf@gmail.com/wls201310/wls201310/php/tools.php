@@ -71,21 +71,6 @@ class tools{
         if($class==NULL)return self::$LANG;
 		return self::$LANG[$class][$item];
 	}	
-	
-	public static function getSystemType(){
-	    $type = tools::getConfigItem("MODE");
-	    if($type=='DZX'){
-	        include_once '../../config/config_global.php';
-	        tools::$dzxConfig = $_config;
-	        unset($_config);
-	    }
-	    if($type=='JOOMLA'){
-	        include_once '../../configuration.php';
-	        tools::$joomlaConfig = new JConfig();
-	        unset($_config);
-	    }
-	    tools::$systemType = $type;
-	}
 
 	/**
 	 * 数据库链接
