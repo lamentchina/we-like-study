@@ -357,7 +357,7 @@ class basic_user {
         if($temp2==false){      
         	$sutdent_default = tools::getConfigItem("dzx_defaultStudentGroup");
         	$teacher_default = tools::getConfigItem("dzx_defaultTeacherGroup");
-            $type = "'20'"; $group = $sutdent_default; 
+            $type =  20; $group = $sutdent_default; 
             if($temp['group_id']=='5' || $temp['group_id']=='6' || $temp['group_id']=='7'){
                 $type = '30'; $group = $teacher_default; 
             }
@@ -439,7 +439,7 @@ class basic_user {
         if($temp2==false){      
         	$sutdent_default = tools::getConfigItem("dzx_defaultStudentGroup");
         	$teacher_default = tools::getConfigItem("dzx_defaultTeacherGroup");
-            $type = "'20'"; $group = $sutdent_default; 
+            $type = "20"; $group = $sutdent_default; 
             if($data_dzx['groupid']=='2' || $data_dzx['groupid']=='3'){
             	
                 $type = '30'; $group = $teacher_default;      
@@ -518,7 +518,7 @@ class basic_user {
         if($temp2==false){      
         	$sutdent_default = tools::getConfigItem("dzx_defaultStudentGroup");
         	$teacher_default = tools::getConfigItem("dzx_defaultTeacherGroup");        	
-            $type = "'20'"; $group = $sutdent_default;
+            $type =  20; $group = $sutdent_default;
 			$data = array(
 			    'username'=>$data_dzx['username']
 			    ,'password'=>"DEDE"
