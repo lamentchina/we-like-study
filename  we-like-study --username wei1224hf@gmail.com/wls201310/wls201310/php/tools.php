@@ -323,7 +323,7 @@ class tools{
     }  	
 }
 
-function json_decode2($json_string,$what){
+function json_decode2($json_string,$what=TRUE){
 	if(ini_get("magic_quotes_gpc")=="1")  {  
 		$json_string=stripslashes($json_string);  
 	} 

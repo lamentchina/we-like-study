@@ -872,6 +872,7 @@ class exam_paper {
             $res = mysql_query($sql_q,$conn);
             if($res==FALSE){
             	mysql_query("ROLLBACK;",$conn);
+            	echo $sql_q;exit();
         		return array(
         		     'status'=>'2'
         		    ,'msg'=>"question wrong , line ".$i

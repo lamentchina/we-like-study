@@ -200,10 +200,22 @@ class install{
 	
 	public static function init_tables_dosql(){
 		$t_return = array("status"=>"2","msg"=>"");
-		$sqls = json_decode2($_REQUEST['sqls']);
+		$sqls = json_decode2($_REQUEST['sqls'],TRUE);
+		if(count($sqls)==0){
+			return array(
+				'status'=>'2'
+				,'msg'=>'wrong request:'.$_REQUEST['sqls']
+			);
+		}
 		$conn = tools::getConn();
 		for($i=0;$i<count($sqls);$i++){
-			mysql_query($sqls[$i],$conn);
+			$res = mysql_query($sqls[$i],$conn);
+			if($res==FALSE){
+				return array(
+					'status'=>'2'
+					,'msg'=>'SQL ERROR '.$sqls[$i]
+				);
+			}
 		}
 		$t_return = array("status"=>"1","msg"=>count($sqls)." sql executed ");
 		return $t_return;

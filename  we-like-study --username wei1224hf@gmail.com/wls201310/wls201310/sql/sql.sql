@@ -290,7 +290,7 @@ drop table if exists basic_parameter; create table basic_parameter (
  insert into basic_parameter (code,value,reference,extend4) values ('2','不可用','exam_question__status','2');
  insert into basic_parameter (code,value,reference,extend4) values ('1','完型填空','exam_question__type2','1');
  insert into basic_parameter (code,value,reference,extend4) values ('2','阅读理解','exam_question__type2','2');
- insert into basic_parameter (code,value,C164,extend4) values ('3','短文阅读','exam_question__type2','3');
+ insert into basic_parameter (code,value,reference,extend4) values ('3','短文阅读','exam_question__type2','3');
  
  drop table if exists exam_question_log; create table exam_question_log (
   paper_log_id int  comment '试卷日志'
