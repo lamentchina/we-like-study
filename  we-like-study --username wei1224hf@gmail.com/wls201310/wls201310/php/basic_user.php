@@ -429,7 +429,6 @@ class basic_user {
 		$res2 = mysql_query($sql2,$conn);
 		$temp2 = mysql_fetch_assoc($res2);			
 		
-		//如果DZX中有这个用户,而WLS中没有,就先把 DZX 中的用户同步到 WLS
         if($temp2==false){      
             $type = "'20'"; $group = "'20'"; 
             if($data_dzx['groupid']=='2' || $data_dzx['groupid']=='3'){
@@ -467,7 +466,7 @@ class basic_user {
     		mysql_query($sql2,$conn);	    		
         }		
 		
-		$t_return = basic_user::login_mobile($data_dzx['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
+		$t_return = basic_user::login_wls($data_dzx['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
 		$t_return['loginData']['money'] = $data_dzx['money'];
 		$t_return['loginData']['credits'] = $data_dzx['credits'];
 		return $t_return;
@@ -545,8 +544,45 @@ class basic_user {
 	public static function login_phpwind(){
 	    //TODO
 	}
-
+	
 	public static function login(
+			$username=NULL
+			,$md5PasswordTime=NULL
+			,$ip=NULL
+			,$client=NULL
+			,$gis_lat=NULL
+			,$gis_lot=NULL
+			){
+		$t_return = array(
+			'status'=>'2'
+			,'msg'=>'wrong config '
+		);
+		$mode = tools::getConfigItem("MODE");
+		if($mode=='DZX'){
+			include_once '../../config/config_global.php';
+			tools::$dzxConfig = $_config;
+			$t_return = basic_user::login_dzx();
+		}
+		else if($mode=='WLS'){
+			$t_return = basic_user::login_wls(
+					$username
+					,$md5PasswordTime
+					,$ip
+					,$client
+					,$gis_lat
+					,$gis_lot
+			);
+		}
+		//TODO
+		else if($mode=='JOOMLA'){
+			include_once '../../config/config_global.php';
+			tools::$dzxConfig = $_config;
+			$t_return = basic_user::login_dzx();
+		}		
+		return $t_return;
+	}
+
+	public static function login_wls(
 			 $username=NULL
 			,$md5PasswordTime=NULL
 			,$ip=NULL
