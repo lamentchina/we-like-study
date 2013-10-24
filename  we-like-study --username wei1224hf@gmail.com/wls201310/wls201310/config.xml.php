@@ -11,4 +11,6 @@
 <item ID="ZONE" Explanation="行政区划编码,参考国标文件 ,2位长度为省 4位长度为地级市6位长度为县级市,地级市所模拟出来的数据会达到800万,因此最好用 县级市 来模拟">330281</item>
 <item ID="ZONE_NAME">浙江省.宁波市.余姚市</item>
 <item ID="encrypt">md5_time</item>
+<item ID="dzx_defaultStudentGroup">330281-8432-04-13-01</item>
+<item ID="dzx_defaultTeacherGroup">330281-8432-04-X1</item>
 </root>

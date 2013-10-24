@@ -355,14 +355,16 @@ class basic_user {
 		$temp2 = mysql_fetch_assoc($res2);			
 		
         if($temp2==false){      
-            $type = "'20'"; $group = "'20'"; 
+        	$sutdent_default = tools::getConfigItem("dzx_defaultStudentGroup");
+        	$teacher_default = tools::getConfigItem("dzx_defaultTeacherGroup");
+            $type = "'20'"; $group = $sutdent_default; 
             if($temp['group_id']=='5' || $temp['group_id']=='6' || $temp['group_id']=='7'){
-                $type = '30'; $group = "'80'"; 
+                $type = '30'; $group = $teacher_default; 
             }
 			$data = array(
-			    'username'=>"'".$temp['username']."'"
-			    ,'password'=>"md5('".$temp['username']."')"
-			    ,'money'=>"'100'"
+			    'username'=>$temp['username']
+			    ,'password'=>"JOOMLA"
+			    ,'money'=>"0"
 			    ,'group_code'=>$group
 			    ,'group_all'=>$group
 			    ,'type'=>$type
@@ -374,7 +376,7 @@ class basic_user {
     		$keys = array_keys($data);
     		for($i=0;$i<count($keys);$i++){
         		$sql .= $keys[$i].",";
-    		    $sql_ .= $data[$keys[$i]].",";
+    		    $sql_ .= "'".$data[$keys[$i]]."',";
     		}
     		$sql = substr($sql, 0,strlen($sql)-1);
     		$sql_ = substr($sql_, 0,strlen($sql_)-1).")";
@@ -382,15 +384,15 @@ class basic_user {
  	  
     		mysql_query($sql,$conn);	
 
-    		$sql = "insert into basic_group_2_user (user_code,group_code) values ('".$temp['username']."',".$group.");";
+    		$sql = "insert into basic_group_2_user (user_code,group_code) values ('".$temp['username']."','".$group."');";
     		mysql_query($sql,$conn);	    		
         }		
 		
-		$t_return = basic_user::login_mobile($temp['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
+		$t_return = basic_user::login_wls($temp['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
 		return $t_return;		
 	}
 	
-	public static function login_dzx(){
+	public static function login_dzx(){		
 		include_once '../../config/config_global.php';
 		tools::$dzxConfig = $_config;
 	    if(!isset($_COOKIE[tools::$dzxConfig['cookie']['cookiepre'].'2132_sid'])){
@@ -435,18 +437,21 @@ class basic_user {
 		$temp2 = mysql_fetch_assoc($res2);			
 		
         if($temp2==false){      
-            $type = "'20'"; $group = "'20'"; 
+        	$sutdent_default = tools::getConfigItem("dzx_defaultStudentGroup");
+        	$teacher_default = tools::getConfigItem("dzx_defaultTeacherGroup");
+            $type = "'20'"; $group = $sutdent_default; 
             if($data_dzx['groupid']=='2' || $data_dzx['groupid']=='3'){
-                $type = '30'; $group = "'80'";      
+            	
+                $type = '30'; $group = $teacher_default;      
             }
             if($data_dzx['groupid']=='1'){
-                $type = '10'; $group = "'10'";      
+                $type = '10'; $group = "10";      
             }            
             if($data_dzx['type']=='special')$group = $data_dzx['groupid'];
 			$data = array(
-			    'username'=>"'".$data_dzx['username']."'"
-			    ,'password'=>"md5('".$data_dzx['username']."')"
-			    ,'money'=>"'100'"
+			    'username'=>$data_dzx['username']
+			    ,'password'=>"DZX"
+			    ,'money'=>"0"
 			    ,'group_code'=>$group
 			    ,'group_all'=>$group
 			    ,'type'=>$type
@@ -459,7 +464,7 @@ class basic_user {
     		$keys = array_keys($data);
     		for($i=0;$i<count($keys);$i++){
         		$sql .= $keys[$i].",";
-    		    $sql_ .= $data[$keys[$i]].",";
+    		    $sql_ .= "'".$data[$keys[$i]]."',";
     		}
     		$sql = substr($sql, 0,strlen($sql)-1);
     		$sql_ = substr($sql_, 0,strlen($sql_)-1).")";
@@ -467,7 +472,7 @@ class basic_user {
  	  
     		mysql_query($sql,$conn);	
 
-    		$sql2 = "insert into basic_group_2_user (user_code,group_code) values ('".$data_dzx['username']."',".$group.");";
+    		$sql2 = "insert into basic_group_2_user (user_code,group_code) values ('".$data_dzx['username']."','".$group."');";
     		mysql_query($sql2,$conn);	    		
         }		
 		
@@ -510,17 +515,19 @@ class basic_user {
 		$res2 = mysql_query($sql2,$conn);
 		$temp2 = mysql_fetch_assoc($res2);			
 		
-		//如果DZX中有这个用户,而WLS中没有,就先把 DZX 中的用户同步到 WLS
         if($temp2==false){      
-            $type = "'20'"; $group = "'20'";
+        	$sutdent_default = tools::getConfigItem("dzx_defaultStudentGroup");
+        	$teacher_default = tools::getConfigItem("dzx_defaultTeacherGroup");        	
+            $type = "'20'"; $group = $sutdent_default;
 			$data = array(
-			    'username'=>"'".$temp['username']."'"
-			    ,'password'=>"md5('".$temp['username']."')"
-			    ,'money'=>"'100'"
+			    'username'=>$data_dzx['username']
+			    ,'password'=>"DEDE"
+			    ,'money'=>"0"
 			    ,'group_code'=>$group
 			    ,'group_all'=>$group
 			    ,'type'=>$type
 			    ,'id'=>tools::getTableId("basic_user")
+			    ,'status'=>'10'
 			);
 			
 			$sql = "insert into basic_user (";
@@ -528,19 +535,19 @@ class basic_user {
     		$keys = array_keys($data);
     		for($i=0;$i<count($keys);$i++){
         		$sql .= $keys[$i].",";
-    		    $sql_ .= $data[$keys[$i]].",";
+    		    $sql_ .= "'".$data[$keys[$i]]."',";
     		}
     		$sql = substr($sql, 0,strlen($sql)-1);
     		$sql_ = substr($sql_, 0,strlen($sql_)-1).")";
     		$sql = $sql.$sql_;		
  	  
-    		mysql_query($sql,$conn);	
+    		mysql_query($sql,$conn);
 
     		$sql2 = "insert into basic_group_2_user (user_code,group_code) values ('".$temp['username']."',".$group.");";
     		mysql_query($sql2,$conn);	    		
         }		
 		
-		$t_return = basic_user::login_mobile($temp['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
+		$t_return = basic_user::login_wls($temp['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
 		$t_return['sql1'] = $sql;
 		$t_return['sql2'] = $sql2;
 		return $t_return;
