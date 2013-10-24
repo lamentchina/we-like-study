@@ -200,7 +200,7 @@ class install{
 	
 	public static function init_tables_dosql(){
 		$t_return = array("status"=>"2","msg"=>"");
-		$sqls = json_decode($_REQUEST['sqls']);
+		$sqls = json_decode2($_REQUEST['sqls']);
 		$conn = tools::getConn();
 		for($i=0;$i<count($sqls);$i++){
 			mysql_query($sqls[$i],$conn);
@@ -333,7 +333,7 @@ else if($functionName=="simulate__exam_paper_multionline"){
 			,$delete);
 }
 else if($functionName=="exam_paper_multionline__close"){
-	$ids = json_decode($_REQUEST['ids'],true);
+	$ids = json_decode2($_REQUEST['ids'],true);
 	for($i=0;$i<count($ids);$i++){
 		exam_paper_multionline::close($ids[$i]);
 	}

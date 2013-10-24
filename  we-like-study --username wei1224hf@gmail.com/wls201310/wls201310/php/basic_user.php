@@ -468,9 +468,6 @@ class basic_user {
         }		
 		
 		$t_return = basic_user::login_mobile($data_dzx['username'],'md5(concat(password, hour(now()) ))',$_SERVER["REMOTE_ADDR"],$_SERVER['HTTP_USER_AGENT'],"0","0");
-		//$t_return['sql1'] = $sql;
-		//$t_return['sql2'] = $sql2;
-		//$t_return['sql_dzx'] = $sql_dzx;
 		$t_return['loginData']['money'] = $data_dzx['money'];
 		$t_return['loginData']['credits'] = $data_dzx['credits'];
 		return $t_return;
