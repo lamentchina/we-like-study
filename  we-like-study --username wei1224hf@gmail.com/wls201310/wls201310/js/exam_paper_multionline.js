@@ -38,7 +38,7 @@ var exam_paper_multionline = {
 				    
 				],  pageSize:20 ,rownumbers:true
 				,parms : {
-	                executor: top.basic_user.loginData.username
+	                executor: top.basic_user.loginData.username	
 	                ,session: top.basic_user.loginData.session     
 	                ,search: "{}"
 				},

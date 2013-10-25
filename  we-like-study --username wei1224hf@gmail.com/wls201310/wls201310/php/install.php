@@ -116,6 +116,7 @@ class install{
 			$pwd = getenv('HTTP_BAE_ENV_SK');
 			$host = getenv('HTTP_BAE_ENV_ADDR_SQL_IP');
 			$port = getenv('HTTP_BAE_ENV_ADDR_SQL_PORT');
+			$MODE = "WLS";
 		}		
 
 		if($port!="")$host = $host.":".$port;

@@ -83,7 +83,9 @@ class tools{
 			    $pwd = tools::getConfigItem("DB_PWD");
 			    $dbname = tools::getConfigItem("DB_NAME");
 				self::$conn = mysql_connect($host,$unm,$pwd);
-				if(!self::$conn)exit("connenct wrong");
+				if(!self::$conn){
+					exit("connenct wrong");
+				}
 				mysql_select_db($dbname,self::$conn);
 				mysql_query("set time_zone='+8:00';");
 				mysql_query("SET NAMES UTF8;");
@@ -105,6 +107,7 @@ class tools{
 	
 	public static function closeConn(){
 	    mysql_close(self::$conn);
+	    self::$conn = NULL;
 	}
 	
 	/**
@@ -139,7 +142,7 @@ class tools{
 	public static function getConfigItem($id){
 		if(tools::$xml==null){
     		tools::$xml = new DOMDocument();
-            tools::$xml->load('../config.xml.php'); //读取xml文件
+            tools::$xml->load('../'.tools::$configfilename); //读取xml文件
     
     		$sqls = tools::$xml->getElementsByTagName('ITEM');
             for($i=0; $i<$sqls->length;$i++){                
